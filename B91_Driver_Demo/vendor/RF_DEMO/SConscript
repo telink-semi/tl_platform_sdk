@@ -1,0 +1,12 @@
+from building import *
+
+cwd          = GetCurrentDir()
+include_path = [cwd]
+src          = []
+
+# if GetDepend(['RT_USING_ZEWEN]):
+src = Glob('*.c')
+
+group = DefineGroup('base_test_demo', src, depend = [''], CPPPATH = include_path)
+
+Return('group')
