@@ -1,5 +1,7 @@
+## V1.0.0-Beta
+
 ### Version
-* SDK version : telink_b91_driver_sdk v1.0.0-Beta.
+* SDK version : telink_b91_driver_sdk V1.0.0-Beta.
 * This version sdk support B91 A0 chip.
 ### Features
 * AES/AUDIO/FLASH/LPC/MDEC/PKE/PM/PWM/RF/STIMER/TIMER/TRNG
