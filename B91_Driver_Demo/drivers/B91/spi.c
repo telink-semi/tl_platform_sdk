@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H / J.C.F
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,12 +41,11 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "spi.h"
 
 #include "timer.h"
-#include "../../common/assert.h"
 #include "compiler.h"
 static unsigned char s_hspi_tx_dma_chn;
 static unsigned char s_hspi_rx_dma_chn;
@@ -125,9 +124,9 @@ void hspi_set_pin_mux(hspi_pin_def_e pin)
 {
 	if (pin != HSPI_NONE_PIN)
 	{
-		u8 val = 0;
-		u8 start_bit = (BIT_LOW_BIT(pin & 0xff) % 4) << 1;
-		u8 mask = (u8)~BIT_RNG(start_bit, start_bit + 1);
+		unsigned char val = 0;
+		unsigned char start_bit = (BIT_LOW_BIT(pin & 0xff) % 4) << 1;
+		unsigned char mask = (unsigned char)~BIT_RNG(start_bit, start_bit + 1);
 
 		if ((pin == HSPI_CLK_PB4_PIN) || (pin == HSPI_CSN_PB6_PIN) || (pin == HSPI_MOSI_IO0_PB3_PIN) || (pin == HSPI_MISO_IO1_PB2_PIN) || (pin == HSPI_WP_IO2_PB1_PIN) || (pin == HSPI_HOLD_IO3_PB0_PIN))
 		{
@@ -145,6 +144,125 @@ void hspi_set_pin_mux(hspi_pin_def_e pin)
 }
 
 /**
+ * @brief     	This function enable hspi csn pin.
+ * @param[in] 	pin - the csn pin.
+ * @return 		none
+ */
+void hspi_cs_pin_en(hspi_csn_pin_def_e pin)
+{
+	hspi_set_pin_mux(pin);
+}
+
+/**
+ * @brief     	This function disable hspi csn pin.
+ * @param[in] 	pin - the csn pin.
+ * @return 		none
+ */
+void hspi_cs_pin_dis(hspi_csn_pin_def_e pin)
+{
+	gpio_function_en(pin);
+	gpio_set_high_level(pin);
+}
+
+/**
+ * @brief     	This function change hspi csn pin.
+ * @param[in] 	next_csn_pin - the next csn pin.
+ * @return 		next_csn_pin - the next csn pin.
+ */
+hspi_csn_pin_def_e hspi_change_csn_pin(hspi_csn_pin_def_e next_csn_pin)
+{
+	if (next_csn_pin == HSPI_CSN_PB6)
+	{
+		hspi_cs_pin_dis(HSPI_CSN_PA1);
+		hspi_cs_pin_en(HSPI_CSN_PB6);
+	}
+	else if (next_csn_pin == HSPI_CSN_PA1)
+	{
+		hspi_cs_pin_dis(HSPI_CSN_PB6);
+		hspi_cs_pin_en(HSPI_CSN_PA1);
+	}
+	return next_csn_pin;
+}
+
+/**
+ * @brief      This function selects  pin  for pspi master or slave mode.
+ * @param[in]  pin  - the selected pin.
+ * @return     none
+ */
+void pspi_set_pin_mux(pspi_pin_def_e pin)
+{
+	if (pin!= PSPI_NONE_PIN)
+	{
+		unsigned char val = 0;
+		unsigned char start_bit = (BIT_LOW_BIT(pin & 0xff) %4) << 1;
+		unsigned char mask  = (unsigned char)~BIT_RNG(start_bit, start_bit + 1);
+		if ((pin == PSPI_CLK_PC5_PIN) || (pin == PSPI_CSN_PC4_PIN) || (pin == PSPI_MOSI_IO0_PC7_PIN) || (pin == PSPI_MISO_IO1_PC6_PIN))
+		{
+			val = 0;//function 0
+		}
+
+		else if ((pin == PSPI_CLK_PB5_PIN) || (pin == PSPI_CLK_PD1_PIN) || (pin == PSPI_CSN_PC0_PIN) || (pin == PSPI_CSN_PD0_PIN) || (pin == PSPI_MOSI_IO0_PB7_PIN) || (pin == PSPI_MOSI_IO0_PD3_PIN) || (pin == PSPI_MISO_IO1_PB6_PIN) || (pin == PSPI_MISO_IO1_PD2_PIN))
+		{
+			val = 1 << (start_bit);//function 1
+		}
+
+		reg_gpio_func_mux(pin) = (reg_gpio_func_mux(pin) & mask) | val;
+		gpio_function_dis(pin);
+		gpio_input_en(pin);
+	}
+}
+/**
+ * @brief     	This function enable pspi csn pin.
+ * @param[in] 	pin - the csn pin.
+ * @return 		none
+ */
+void pspi_cs_pin_en(pspi_csn_pin_def_e pin)
+{
+	pspi_set_pin_mux(pin);
+}
+
+/**
+ * @brief     	This function disable pspi csn pin.
+ * @param[in] 	pin - the csn pin.
+ * @return 		none
+ */
+void pspi_cs_pin_dis(pspi_csn_pin_def_e pin)
+{
+	gpio_output_en(pin);
+	gpio_set_high_level(pin);
+	gpio_function_en(pin);
+	gpio_input_dis(pin);
+
+}
+
+/**
+ * @brief     	This function change pspi csn pin.
+ * @param[in] 	next_csn_pin - the next csn pin.
+ * @return 		next_csn_pin - the next csn pin.
+ */
+pspi_csn_pin_def_e pspi_change_csn_pin(pspi_csn_pin_def_e next_csn_pin)
+{
+	if (next_csn_pin == PSPI_CSN_PC4)
+	{
+		pspi_cs_pin_dis(PSPI_CSN_PC0);
+		pspi_cs_pin_dis(PSPI_CSN_PD0);
+		pspi_cs_pin_en(PSPI_CSN_PC4);
+	}
+	else if (next_csn_pin == PSPI_CSN_PC0)
+	{
+		pspi_cs_pin_dis(PSPI_CSN_PC4);
+		pspi_cs_pin_dis(PSPI_CSN_PD0);
+		pspi_cs_pin_en(PSPI_CSN_PC0);
+	}
+	else if (next_csn_pin == PSPI_CSN_PD0)
+	{
+		pspi_cs_pin_dis(PSPI_CSN_PC4);
+		pspi_cs_pin_dis(PSPI_CSN_PC0);
+		pspi_cs_pin_en(PSPI_CSN_PD0);
+	}
+	return next_csn_pin;
+}
+/**
  * @brief     This function configures hspi pin.
  * @param[in] config - the pointer of pin config struct.
  * @return    none
@@ -159,33 +277,7 @@ void hspi_set_pin(hspi_pin_config_t *config)
 	hspi_set_pin_mux(config->hspi_hold_io3_pin);
 }
 
-/**
- * @brief      This function selects  pin  for pspi master or slave mode.
- * @param[in]  pin  - the selected pin.
- * @return     none
- */
-void pspi_set_pin_mux(pspi_pin_def_e pin)
-{
-if (pin!= PSPI_NONE_PIN)
-{
-	u8 val = 0;
-	u8 start_bit = (BIT_LOW_BIT(pin & 0xff) %4) << 1;
-	u8 mask  = (u8)~BIT_RNG(start_bit, start_bit + 1);
-	if ((pin == PSPI_CLK_PC5_PIN) || (pin == PSPI_CSN_PC4_PIN) || (pin == PSPI_MOSI_IO0_PC7_PIN) || (pin == PSPI_MISO_IO1_PC6_PIN))
-	{
-		val = 0;//function 0
-	}
 
-	else if ((pin == PSPI_CLK_PB5_PIN) || (pin == PSPI_CLK_PD1_PIN) || (pin == PSPI_CSN_PC0_PIN) || (pin == PSPI_CSN_PD0_PIN) || (pin == PSPI_MOSI_IO0_PB7_PIN) || (pin == PSPI_MOSI_IO0_PD3_PIN) || (pin == PSPI_MISO_IO1_PB6_PIN) || (pin == PSPI_MISO_IO1_PD2_PIN))
-	{
-		val = 1 << (start_bit);//function 1
-	}
-
-	reg_gpio_func_mux(pin) = (reg_gpio_func_mux(pin) & mask) | val;
-	gpio_function_dis(pin);
-	gpio_input_en(pin);
-	}
-}
 
 /**
  * @brief     	This function configures pspi pin.
@@ -225,7 +317,7 @@ void spi_slave_set_pin(void)
  *           	MODE3:  CPHA = 1, CPOL = 1;
  * @return  	none
  */
-void spi_master_init(spi_sel_e spi_sel, u8 div_clock, spi_mode_type_e mode)
+void spi_master_init(spi_sel_e spi_sel, unsigned char div_clock, spi_mode_type_e mode)
 {
 	 reg_spi_mode1(spi_sel) = div_clock;
 	 reg_spi_mode0(spi_sel)	|= FLD_SPI_MASTER_MODE;//master
@@ -259,7 +351,7 @@ void spi_slave_init(spi_sel_e spi_sel, spi_mode_type_e mode)
  * @param[in] 	dummy_cnt 	- the cnt of dummy clock.
  * @return  	none
  */
-void spi_set_dummy_cnt(spi_sel_e spi_sel, u8 dummy_cnt)
+void spi_set_dummy_cnt(spi_sel_e spi_sel, unsigned char dummy_cnt)
 {
 	reg_spi_trans0(spi_sel) &= (~FLD_SPI_DUMMY_CNT);
 	reg_spi_trans0(spi_sel) |= (dummy_cnt - 1) & FLD_SPI_DUMMY_CNT;
@@ -386,38 +478,38 @@ void hspi_master_config_plus(hspi_config_t *config)
 	hspi_set_addr_len(config->hspi_addr_len);
 	spi_set_dummy_cnt(HSPI_MODULE, config->hspi_dummy_cnt);
 
-	if (true == config->hspi_cmd_en)
+	if (1 == config->hspi_cmd_en)
 	{
 		spi_cmd_en(HSPI_MODULE);
 	}
-	else if (false == config->hspi_cmd_en)
+	else if (0 == config->hspi_cmd_en)
 	{
 		spi_cmd_dis(HSPI_MODULE);
 	}
 
-	if (true == config->hspi_cmd_fmt_en)
+	if (1 == config->hspi_cmd_fmt_en)
 	{
 		hspi_cmd_fmt_en();
 	}
-	else if (false == config->hspi_cmd_fmt_en)
+	else if (0 == config->hspi_cmd_fmt_en)
 	{
 	   hspi_cmd_fmt_dis();
 	}
 
-	if (true == config->hspi_addr_en)
+	if (1 == config->hspi_addr_en)
 	{
 		hspi_addr_en();
 	}
-	else if (false == config->hspi_addr_en)
+	else if (0 == config->hspi_addr_en)
 	{
 		hspi_addr_dis();
 	}
 
-	if (true == config->hspi_addr_fmt_en)
+	if (1 == config->hspi_addr_fmt_en)
 	{
 		hspi_addr_fmt_en();
 	}
-	else if (false == config->hspi_addr_fmt_en)
+	else if (0 == config->hspi_addr_fmt_en)
 	{
 		hspi_addr_fmt_dis();
 	}
@@ -432,11 +524,11 @@ void pspi_master_config_plus(pspi_config_t *config)
 {
 	spi_set_io_mode(PSPI_MODULE, config->pspi_io_mode);
 	spi_set_dummy_cnt(PSPI_MODULE, config->pspi_dummy_cnt);
-	if (true == config->pspi_cmd_en)
+	if (1 == config->pspi_cmd_en)
 	{
 		spi_cmd_en(PSPI_MODULE);
 	}
-	else if (false == config->pspi_cmd_en)
+	else if (0 == config->pspi_cmd_en)
 	{
 		spi_cmd_dis(PSPI_MODULE);
 	}
@@ -447,7 +539,7 @@ void pspi_master_config_plus(pspi_config_t *config)
  * @param[in] 	addr - address of slave.
  * @return    	none
  */
-void hspi_set_address(u32 addr)
+void hspi_set_address(unsigned int addr)
 {
 	reg_hspi_addr_32 = addr;
 }
@@ -459,9 +551,9 @@ void hspi_set_address(u32 addr)
  * @param[in] 	len 	- write length.
  * @return    	none
  */
-void spi_write(spi_sel_e spi_sel, u8 *data, u32 len)
+void spi_write(spi_sel_e spi_sel, unsigned char *data, unsigned int len)
 {
-	for (u32 i = 0; i < len; i++)
+	for (unsigned int i = 0; i < len; i++)
 	{
 		while (reg_spi_fifo_state(spi_sel) & FLD_SPI_TXF_FULL);
 		reg_spi_wr_rd_data(spi_sel, i % 4) = data[i];
@@ -476,9 +568,9 @@ void spi_write(spi_sel_e spi_sel, u8 *data, u32 len)
  * @param[in] 	len 	- write length.
  * @return    	none
  */
-void spi_read(spi_sel_e spi_sel, u8 *data, u32 len)
+void spi_read(spi_sel_e spi_sel, unsigned char *data, unsigned int len)
 {
-	for (u32 i = 0; i < len; i++)
+	for (unsigned int i = 0; i < len; i++)
 	{
 	    while (reg_spi_fifo_state(spi_sel) & FLD_SPI_RXF_EMPTY);
 	    data[i] = reg_spi_wr_rd_data(spi_sel, i % 4);
@@ -492,13 +584,13 @@ void spi_read(spi_sel_e spi_sel, u8 *data, u32 len)
  * @param[in] 	len 	- write length.
  * @return  	none
  */
-void spi_master_write(spi_sel_e spi_sel, u8 *data, u32 len)
+void spi_master_write(spi_sel_e spi_sel, unsigned char *data, unsigned int len)
 {
 	spi_tx_fifo_clr(spi_sel);
 	spi_tx_cnt(spi_sel, len);
 	spi_set_transmode(spi_sel, SPI_MODE_WRITE_ONLY);
 	spi_set_cmd(spi_sel, 0x00);//when  cmd  disable that  will not sent cmd,just trigger spi send .
-	spi_write(spi_sel, (u8 *)data, len);
+	spi_write(spi_sel, (unsigned char *)data, len);
 	while (spi_is_busy(spi_sel));
 }
 
@@ -511,7 +603,7 @@ void spi_master_write(spi_sel_e spi_sel, u8 *data, u32 len)
  * @param[in] 	rd_len 	- read length.
  * @return  	none
  */
-void spi_master_write_read(spi_sel_e spi_sel, u8 *wr_data, u32 wr_len, u8 *rd_data, u32 rd_len)
+void spi_master_write_read(spi_sel_e spi_sel, unsigned char *wr_data, unsigned int wr_len, unsigned char *rd_data, unsigned int rd_len)
 {
 	spi_tx_fifo_clr(spi_sel);
 	spi_rx_fifo_clr(spi_sel);
@@ -519,8 +611,8 @@ void spi_master_write_read(spi_sel_e spi_sel, u8 *wr_data, u32 wr_len, u8 *rd_da
 	spi_rx_cnt(spi_sel, rd_len);
 	spi_set_transmode(spi_sel, SPI_MODE_WRITE_READ);
 	spi_set_cmd(spi_sel, 0x00);//when  cmd  disable that  will not sent cmd,just trigger spi send .
-	spi_write(spi_sel, (u8 *)wr_data, wr_len);
-	spi_read(spi_sel, (u8 *)rd_data, rd_len);
+	spi_write(spi_sel, (unsigned char *)wr_data, wr_len);
+	spi_read(spi_sel, (unsigned char *)rd_data, rd_len);
 	while (spi_is_busy(spi_sel));
 }
 
@@ -534,7 +626,7 @@ void spi_master_write_read(spi_sel_e spi_sel, u8 *wr_data, u32 wr_len, u8 *rd_da
  * @param[in] 	wr_mode 	- write mode.dummy or not dummy.
  * @return  	none
  */
-void spi_master_write_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 data_len, spi_wr_tans_mode_e wr_mode)
+void spi_master_write_plus(spi_sel_e spi_sel, unsigned char cmd, unsigned int addr, unsigned char *data, unsigned int data_len, spi_wr_tans_mode_e wr_mode)
 {
 	spi_tx_fifo_clr(spi_sel);
 	if (HSPI_MODULE == spi_sel)
@@ -545,7 +637,7 @@ void spi_master_write_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 da
 
 	spi_tx_cnt(spi_sel, data_len);
 	spi_set_cmd(spi_sel, cmd);
-	spi_write(spi_sel, (u8 *)data, data_len);
+	spi_write(spi_sel, (unsigned char *)data, data_len);
 	while (spi_is_busy(spi_sel));
 }
 
@@ -559,7 +651,7 @@ void spi_master_write_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 da
  * @param[in]  	rd_mode 	- read mode.dummy or not dummy.
  * @return   	none
  */
-void spi_master_read_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 data_len, spi_rd_tans_mode_e rd_mode)
+void spi_master_read_plus(spi_sel_e spi_sel, unsigned char cmd, unsigned int addr, unsigned char *data, unsigned int data_len, spi_rd_tans_mode_e rd_mode)
 {
 	spi_rx_fifo_clr(spi_sel);
 	if (HSPI_MODULE == spi_sel)
@@ -569,7 +661,7 @@ void spi_master_read_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 dat
 	spi_set_transmode(spi_sel, rd_mode);
 	spi_rx_cnt(spi_sel, data_len);
 	spi_set_cmd(spi_sel, cmd);
-	spi_read(spi_sel, (u8 *)data, data_len);
+	spi_read(spi_sel, (unsigned char *)data, data_len);
 	while (spi_is_busy(spi_sel));
 }
 
@@ -584,7 +676,7 @@ void spi_master_read_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 dat
  * @param[in] 	wr_mode 	- write mode.dummy or not dummy.
  * @return   	none
  */
-void spi_master_write_read_plus(spi_sel_e spi_sel, u8 cmd, u8 *addrs, u32 addr_len, u8 *data, u32 data_len, spi_rd_tans_mode_e wr_mode)
+void spi_master_write_read_plus(spi_sel_e spi_sel, unsigned char cmd, unsigned char *addrs, unsigned int addr_len, unsigned char *data, unsigned int data_len, spi_rd_tans_mode_e wr_mode)
 {
 	spi_tx_fifo_clr(spi_sel);
 	spi_rx_fifo_clr(spi_sel);
@@ -593,8 +685,8 @@ void spi_master_write_read_plus(spi_sel_e spi_sel, u8 cmd, u8 *addrs, u32 addr_l
 	spi_set_transmode(spi_sel, wr_mode);
 
 	spi_set_cmd(spi_sel, cmd);
-	spi_write(spi_sel, (u8 *)addrs, addr_len);
-	spi_read(spi_sel, (u8 *)data, data_len);
+	spi_write(spi_sel, (unsigned char *)addrs, addr_len);
+	spi_read(spi_sel, (unsigned char *)data, data_len);
 	while (spi_is_busy(spi_sel));
 }
 
@@ -651,7 +743,7 @@ void pspi_set_rx_dma_config(dma_chn_e chn)
  * @param[in]  	dst_addr 	- the address of destination.
  * @param[in]  	len 		- the length of data.
  * */
-void spi_set_dma(dma_chn_e spi_dma_chn, u32 src_addr, u32 dst_addr, u32 len)
+void spi_set_dma(dma_chn_e spi_dma_chn, unsigned int src_addr, unsigned int dst_addr, unsigned int len)
 {
     dma_set_address(spi_dma_chn, src_addr, dst_addr);
 	dma_set_size(spi_dma_chn, len, DMA_WORD_WIDTH);
@@ -664,9 +756,9 @@ void spi_set_dma(dma_chn_e spi_dma_chn, u32 src_addr, u32 dst_addr, u32 len)
  * @param[in]  	src_addr 	- the address of source.
  * @param[in]  	len 		- the length of data.
  * */
-void spi_set_tx_dma(spi_sel_e spi_sel, u8* src_addr,u32 len)
+void spi_set_tx_dma(spi_sel_e spi_sel, unsigned char* src_addr,unsigned int len)
 {
-	u8 tx_dma_chn;
+	unsigned char tx_dma_chn;
 	if (HSPI_MODULE == spi_sel)
 	{
 		tx_dma_chn = s_hspi_tx_dma_chn;
@@ -675,7 +767,9 @@ void spi_set_tx_dma(spi_sel_e spi_sel, u8* src_addr,u32 len)
 	{
 		tx_dma_chn = s_pspi_tx_dma_chn;
 	}
-    dma_set_address(tx_dma_chn, (u32)convert_ram_addr_cpu2bus(src_addr), reg_spi_data_buf_adr(spi_sel));
+	spi_rx_tx_irq_trig_cnt(spi_sel, 4);//recover trigger level to 4.
+	spi_tx_cnt(spi_sel,len);
+    dma_set_address(tx_dma_chn, (unsigned int)convert_ram_addr_cpu2bus(src_addr), reg_spi_data_buf_adr(spi_sel));
 	dma_set_size(tx_dma_chn, len, DMA_WORD_WIDTH);
 	dma_chn_en(tx_dma_chn);
 }
@@ -687,9 +781,9 @@ void spi_set_tx_dma(spi_sel_e spi_sel, u8* src_addr,u32 len)
  * @param[in]  	dst_addr 	- the address of destination.
  * @param[in]  	len 		- the length of data.
  * */
-void spi_set_rx_dma(spi_sel_e spi_sel, u8* dst_addr,u32 len)
+void spi_set_rx_dma(spi_sel_e spi_sel, unsigned char* dst_addr,unsigned int len)
 {
-	u8 rx_dma_chn;
+	unsigned char rx_dma_chn;
 	if (HSPI_MODULE == spi_sel)
 	{
 		rx_dma_chn = s_hspi_rx_dma_chn;
@@ -698,7 +792,8 @@ void spi_set_rx_dma(spi_sel_e spi_sel, u8* dst_addr,u32 len)
 	{
 		rx_dma_chn = s_pspi_rx_dma_chn;
 	}
-	dma_set_address(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (u32)convert_ram_addr_cpu2bus(dst_addr));
+	spi_rx_tx_irq_trig_cnt(spi_sel, 5);//setting only for fixing the bug that slave receive number of bytes in multiples of 4 will fail.
+	dma_set_address(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (unsigned int)convert_ram_addr_cpu2bus(dst_addr));
 	dma_set_size(rx_dma_chn, len, DMA_WORD_WIDTH);
 	dma_chn_en(rx_dma_chn);
 }
@@ -711,9 +806,9 @@ void spi_set_rx_dma(spi_sel_e spi_sel, u8* dst_addr,u32 len)
  * @param[in] 	len 		- write length.
  * @return  	none
  */
-void spi_master_write_dma(spi_sel_e spi_sel, u8 *src_addr, u32 len)
+void spi_master_write_dma(spi_sel_e spi_sel, unsigned char *src_addr, unsigned int len)
 {
-	u8 tx_dma_chn;
+	unsigned char tx_dma_chn;
 	spi_tx_fifo_clr(spi_sel);
 	spi_tx_dma_en(spi_sel);
 	spi_tx_cnt(spi_sel, len);
@@ -726,7 +821,7 @@ void spi_master_write_dma(spi_sel_e spi_sel, u8 *src_addr, u32 len)
 	{
 		tx_dma_chn = s_pspi_tx_dma_chn;
 	}
-	spi_set_dma(tx_dma_chn, (u32)convert_ram_addr_cpu2bus(src_addr), reg_spi_data_buf_adr(spi_sel), len);
+	spi_set_dma(tx_dma_chn, (unsigned int)convert_ram_addr_cpu2bus(src_addr), reg_spi_data_buf_adr(spi_sel), len);
 	spi_set_cmd(spi_sel, 0x00);
 }
 
@@ -739,9 +834,9 @@ void spi_master_write_dma(spi_sel_e spi_sel, u8 *src_addr, u32 len)
  * @param[in] 	data_len 	- read length.
  * @return  	none
  */
-void spi_master_write_read_dma(spi_sel_e spi_sel, u8 *addr, u32 addr_len, u8 *data, u32 data_len)
+void spi_master_write_read_dma(spi_sel_e spi_sel, unsigned char *addr, unsigned int addr_len, unsigned char *data, unsigned int data_len)
 {
-	u8 tx_dma_chn, rx_dma_chn;
+	unsigned char tx_dma_chn, rx_dma_chn;
 	spi_tx_fifo_clr(spi_sel);
 	spi_rx_fifo_clr(spi_sel);
 	spi_tx_dma_en(spi_sel);
@@ -759,8 +854,8 @@ void spi_master_write_read_dma(spi_sel_e spi_sel, u8 *addr, u32 addr_len, u8 *da
 		tx_dma_chn = s_pspi_tx_dma_chn;
 		rx_dma_chn = s_pspi_rx_dma_chn;
 	}
-	spi_set_dma(tx_dma_chn, (u32)convert_ram_addr_cpu2bus(addr), reg_spi_data_buf_adr(spi_sel), addr_len);
-	spi_set_dma(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (u32)convert_ram_addr_cpu2bus(data), data_len);
+	spi_set_dma(tx_dma_chn, (unsigned int)convert_ram_addr_cpu2bus(addr), reg_spi_data_buf_adr(spi_sel), addr_len);
+	spi_set_dma(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (unsigned int)convert_ram_addr_cpu2bus(data), data_len);
 	spi_set_cmd(spi_sel, 0x00);//when  cmd  disable that  will not sent cmd,just trigger spi send .
 }
 
@@ -774,9 +869,9 @@ void spi_master_write_read_dma(spi_sel_e spi_sel, u8 *addr, u32 addr_len, u8 *da
  * @param[in]  	wr_mode 	- write mode.dummy or not dummy.
  * @return   	none
  */
-void spi_master_write_dma_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u32 data_len, spi_wr_tans_mode_e wr_mode)
+void spi_master_write_dma_plus(spi_sel_e spi_sel, unsigned char cmd, unsigned int addr, unsigned char *data, unsigned int data_len, spi_wr_tans_mode_e wr_mode)
 {
-	u8 tx_dma_chn;
+	unsigned char tx_dma_chn;
 	spi_tx_fifo_clr(spi_sel);
 	spi_tx_dma_en(spi_sel);
 	spi_tx_cnt(spi_sel, data_len);
@@ -790,7 +885,7 @@ void spi_master_write_dma_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u3
 	{
 		tx_dma_chn = s_pspi_tx_dma_chn;
 	}
-	spi_set_dma(tx_dma_chn, (u32)convert_ram_addr_cpu2bus(data), reg_spi_data_buf_adr(spi_sel), data_len);
+	spi_set_dma(tx_dma_chn, (unsigned int)convert_ram_addr_cpu2bus(data), reg_spi_data_buf_adr(spi_sel), data_len);
 	spi_set_cmd(spi_sel, cmd);
 }
 
@@ -804,9 +899,9 @@ void spi_master_write_dma_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *data, u3
  * @param[in]  	rd_mode 	- read mode.dummy or not dummy.
  * @return   	none
  */
-void spi_master_read_dma_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *dst_addr, u32 data_len, spi_rd_tans_mode_e rd_mode)
+void spi_master_read_dma_plus(spi_sel_e spi_sel, unsigned char cmd, unsigned int addr, unsigned char *dst_addr, unsigned int data_len, spi_rd_tans_mode_e rd_mode)
 {
-	u8 rx_dma_chn;
+	unsigned char rx_dma_chn;
 	spi_rx_fifo_clr(spi_sel);
 	spi_rx_dma_en(spi_sel);
 	spi_set_transmode(spi_sel, rd_mode);
@@ -820,7 +915,7 @@ void spi_master_read_dma_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *dst_addr,
 	{
 		rx_dma_chn = s_pspi_rx_dma_chn;
 	}
-	spi_set_dma(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (u32)convert_ram_addr_cpu2bus(dst_addr), data_len);
+	spi_set_dma(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (unsigned int)convert_ram_addr_cpu2bus(dst_addr), data_len);
 	spi_set_cmd(spi_sel, cmd);
 }
 
@@ -835,9 +930,9 @@ void spi_master_read_dma_plus(spi_sel_e spi_sel, u8 cmd, u32 addr, u8 *dst_addr,
  * @param[in]  	rd_mode 	- read mode.dummy or not dummy.
  * @return   	none
  */
-void spi_master_write_read_dma_plus(spi_sel_e spi_sel, u8 cmd, u8 *addr, u32 addr_len, u8 *dst_addr, u32 rd_len, spi_rd_tans_mode_e rd_mode)
+void spi_master_write_read_dma_plus(spi_sel_e spi_sel, unsigned char cmd, unsigned char *addr, unsigned int addr_len, unsigned char *dst_addr, unsigned int rd_len, spi_rd_tans_mode_e rd_mode)
 {
-	u8 tx_dma_chn, rx_dma_chn;
+	unsigned char tx_dma_chn, rx_dma_chn;
 	spi_tx_fifo_clr(spi_sel);
 	spi_rx_fifo_clr(spi_sel);
 	spi_tx_dma_en(spi_sel);
@@ -855,8 +950,8 @@ void spi_master_write_read_dma_plus(spi_sel_e spi_sel, u8 cmd, u8 *addr, u32 add
 		tx_dma_chn = s_pspi_tx_dma_chn;
 		rx_dma_chn = s_pspi_rx_dma_chn;
 	}
-	spi_set_dma(tx_dma_chn, (u32)convert_ram_addr_cpu2bus(addr), reg_spi_data_buf_adr(spi_sel), addr_len);
-	spi_set_dma(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (u32)convert_ram_addr_cpu2bus(dst_addr), rd_len);
+	spi_set_dma(tx_dma_chn, (unsigned int)convert_ram_addr_cpu2bus(addr), reg_spi_data_buf_adr(spi_sel), addr_len);
+	spi_set_dma(rx_dma_chn, reg_spi_data_buf_adr(spi_sel), (unsigned int)convert_ram_addr_cpu2bus(dst_addr), rd_len);
 	spi_set_cmd(spi_sel, cmd);//when  cmd  disable that  will not sent cmd,just trigger spi send .
 }
 
@@ -869,12 +964,12 @@ void spi_master_write_read_dma_plus(spi_sel_e spi_sel, u8 cmd, u8 *addr, u32 add
  * @param[in]  	wr_mode 	- write mode  dummy or not dummy.
  * @return   	none
  */
-_attribute_ram_code_sec_noinline_ void hspi_master_write_xip(u8 cmd, u32 addr_offset, u8 *data, u32 data_len, spi_wr_tans_mode_e wr_mode)
+_attribute_ram_code_sec_noinline_ void hspi_master_write_xip(unsigned char cmd, unsigned int addr_offset, unsigned char *data, unsigned int data_len, spi_wr_tans_mode_e wr_mode)
 {
 	hspi_xip_write_transmode(wr_mode);
     hspi_xip_addr_offset(addr_offset);
     hspi_xip_set_wr_cmd(cmd);
-	for (u32 i = 0; i < data_len; i++)
+	for (unsigned int i = 0; i < data_len; i++)
 	{
 		write_reg8(reg_hspi_xip_base_adr + i, data[i]);
 	}
@@ -889,13 +984,13 @@ _attribute_ram_code_sec_noinline_ void hspi_master_write_xip(u8 cmd, u32 addr_of
  * @param[in]  	rd_mode 	- read mode.dummy or not dummy.
  * @return   	none
  */
-_attribute_ram_code_sec_noinline_ void hspi_master_read_xip(u8 cmd, u32 addr_offset, u8 *data, u32 data_len, spi_rd_tans_mode_e rd_mode)
+_attribute_ram_code_sec_noinline_ void hspi_master_read_xip(unsigned char cmd, unsigned int addr_offset, unsigned char *data, unsigned int data_len, spi_rd_tans_mode_e rd_mode)
 {
 	hspi_xip_read_transmode(rd_mode);
 	hspi_xip_addr_offset(addr_offset);
 	hspi_xip_set_rd_cmd(cmd);
 
-	for (u32 i = 0; i < data_len; i++)
+	for (unsigned int i = 0; i < data_len; i++)
 	{
 		data[i] = read_reg8(reg_hspi_xip_base_adr + i);
 	}
@@ -909,7 +1004,7 @@ _attribute_ram_code_sec_noinline_ void hspi_master_read_xip(u8 cmd, u32 addr_off
  * @param[in]  	wr_mode 	- write mode  dummy or not dummy.
  * @return   	none
  */
-void hspi_master_write_xip_cmd_data(u8 cmd, u32 addr_offset, u8 data_in, spi_wr_tans_mode_e wr_mode)
+void hspi_master_write_xip_cmd_data(unsigned char cmd, unsigned int addr_offset, unsigned char data_in, spi_wr_tans_mode_e wr_mode)
 {
 	hspi_xip_write_transmode(wr_mode);
     hspi_xip_addr_offset(addr_offset);

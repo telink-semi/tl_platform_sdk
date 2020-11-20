@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H / Z.S.X
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "app_config.h"
 #if(SET_PWM_MODE== PWM_IR_DMA)
@@ -85,7 +85,7 @@
 
 
 #if (SET_PWM_DMA_MODE  == PWM_IR_FIFO_DMA)
-void pwm_irq_handler(void)
+	_attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
 
 	if(pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ))
@@ -98,7 +98,7 @@ void pwm_irq_handler(void)
 
 	   IRQ_IR_DMA_Buff[++irq_index]= pwm_cal_pwm0_ir_fifo_cfg_data(4, 0, 1);
 
-	   pwm_set_dma_buf(DMA_CHN,(u32) IRQ_IR_DMA_Buff,4);
+	   pwm_set_dma_buf(DMA_CHN,(unsigned int) IRQ_IR_DMA_Buff,4);
 
 	   pwm_ir_dma_mode_start(DMA_CHN);
 
@@ -144,7 +144,7 @@ void user_init(void)
 
 	 IR_DMA_Buff[++index1]=pwm_cal_pwm0_ir_fifo_cfg_data(6, 1, 1);
 
-	 pwm_set_dma_buf(DMA_CHN, (u32) IR_DMA_Buff ,6);
+	 pwm_set_dma_buf(DMA_CHN, (unsigned int) IR_DMA_Buff ,6);
 
      pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ);
 
@@ -172,11 +172,11 @@ void user_init(void)
 
 	 CHAIN_DMA_Buff[1][++index3]= pwm_cal_pwm0_ir_fifo_cfg_data(3, 0, 1);
 
-     pwm_set_dma_chain_llp(DMA_CHN,(u16*)(&CHAIN_DMA_Buff[0]),CHAIN_BUFFER_SIZE,&tx_dma_list[0]);
+     pwm_set_dma_chain_llp(DMA_CHN,(unsigned short*)(&CHAIN_DMA_Buff[0]),CHAIN_BUFFER_SIZE,&tx_dma_list[0]);
 
-	 pwm_set_tx_dma_add_list_element(DMA_CHN,&tx_dma_list[0],&tx_dma_list[1],(u16*)(&CHAIN_DMA_Buff[0]),CHAIN_BUFFER_SIZE);
+	 pwm_set_tx_dma_add_list_element(DMA_CHN,&tx_dma_list[0],&tx_dma_list[1],(unsigned short*)(&CHAIN_DMA_Buff[0]),CHAIN_BUFFER_SIZE);
 
-     pwm_set_tx_dma_add_list_element(DMA_CHN,&tx_dma_list[1],&tx_dma_list[0],(u16*)(&CHAIN_DMA_Buff[1]),CHAIN_BUFFER_SIZE);
+     pwm_set_tx_dma_add_list_element(DMA_CHN,&tx_dma_list[1],&tx_dma_list[0],(unsigned short*)(&CHAIN_DMA_Buff[1]),CHAIN_BUFFER_SIZE);
 
 #endif
 

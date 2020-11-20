@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	B.Y
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,15 +41,15 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "clock.h"
 //#include "compiler.h"
 //#include "analog.h"
 //#include "gpio.h"
 #include "mspi.h"
-#include "../../common/assert.h"
 #include "sys.h"
+#include "stimer.h"
 /**********************************************************************************************************************
  *                                			  local constants                                                       *
  *********************************************************************************************************************/
@@ -122,7 +122,7 @@ unsigned char clock_kick_32k_xtal(unsigned char xtal_times)
 	int curr_32k_tick;
 	for(unsigned char i = 0; i< xtal_times; i++)
 	{
-		if(0xff == read_reg8(0x1401fd))
+		if(0xff == g_chip_version)
 		{
 			delay_ms(1000);
 		}
@@ -224,10 +224,10 @@ void clock_set_32k_tick(unsigned int tick)
 
 	reg_system_st = FLD_SYSTEM_CMD_SYNC;//cmd_sync = 1,trig write
 	//delay 10us
-	asm("nop");asm("nop");asm("nop");asm("nop");
-	asm("nop");asm("nop");asm("nop");asm("nop");
-	asm("nop");asm("nop");asm("nop");asm("nop");
-	asm("nop");asm("nop");asm("nop");asm("nop");
+	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
+	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
+	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
+	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
 	while(reg_system_st & FLD_SYSTEM_CMD_SYNC);//wait wr_busy = 0
 
 }
@@ -241,10 +241,10 @@ unsigned int clock_get_32k_tick(void)
 	unsigned int timer_32k_tick;
 	reg_system_st = FLD_SYSTEM_CLR_RD_DONE;//clr rd_done
 	while((reg_system_st & FLD_SYSTEM_CLR_RD_DONE) != 0);//wait rd_done = 0;
-	reg_system_ctrl &= ~FLD_SYSTEM_32K_WR_EN;//r_32k_wr = 0;
+	reg_system_ctrl &= ~FLD_SYSTEM_32K_WR_EN;	//1:32k write mode; 0:32k read mode
 	while((reg_system_st & FLD_SYSTEM_CLR_RD_DONE) == 0);//wait rd_done = 1;
 	timer_32k_tick = reg_system_timer_read_32k;
-	reg_system_ctrl |= FLD_SYSTEM_32K_WR_EN;//r_32k_wr = 1;
+	reg_system_ctrl |= FLD_SYSTEM_32K_WR_EN;	//1:32k write mode; 0:32k read mode
 	return timer_32k_tick;
 }
 
@@ -265,11 +265,6 @@ void clock_init(sys_pll_clk_e pll,
 		sys_hclk_div_to_pclk_e pclk_div,
 		sys_pll_div_to_mspi_clk_e mspi_clk_div)
 {
-	//if hclk = 1/2 cclk, pclk can not be 1/4 of hclk.
-	if(hclk_div == CCLK_DIV2_TO_HCLK)
-	{
-		assert(pclk_div != HCLK_DIV4_TO_PCLK);
-	}
 
 	//pll clk
 	analog_write_reg8(0x80, (analog_read_reg8(0x80) & 0xe0) | ((pll >> 2) & 0x1f));
@@ -285,9 +280,7 @@ void clock_init(sys_pll_clk_e pll,
 	analog_write_reg8(0x81, (analog_read_reg8(0x81) & ~BIT(6)));
 
 	//ensure mspi is not in busy status before change mspi clock
-	mspi_high();
-	while(reg_mspi_status & FLD_MSPI_BUSY);
-	while((read_reg8(0x140328) & BIT(0)) == 0);
+	mspi_stop_xip();
 
 	//change mspi clock should be ram code.
 	if(CCLK_TO_MSPI_CLK == mspi_clk_div)

@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H / Z.S.X
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #ifndef PWM_H_
 #define PWM_H_
@@ -293,10 +293,9 @@ static inline void pwm_n_invert_dis(pwm_id_e id){
 /**
  * @brief     This fuction servers to enable the pwm polarity.
  * @param[in] id - variable of enum to select the pwm number.
- * @param[in] en: 1 enable. 0 disable.
  * @return	  none.
  */
-static inline void pwm_set_polarity_en(pwm_id_e id, int en){
+static inline void pwm_set_polarity_en(pwm_id_e id){
 		BM_SET(reg_pwm_pol, BIT(id));
 }
 
@@ -304,10 +303,9 @@ static inline void pwm_set_polarity_en(pwm_id_e id, int en){
 /**
  * @brief     This fuction servers to disable the pwm polarity.
  * @param[in] id - variable of enum to select the pwm number.
- * @param[in] en: 1 enable. 0 disable.
  * @return	  none.
  */
-static inline void pwm_set_polarity_dis(pwm_id_e id, int en){
+static inline void pwm_set_polarity_dis(pwm_id_e id){
 		BM_CLR(reg_pwm_pol, BIT(id));
 }
 
@@ -340,7 +338,7 @@ static inline void pwm_clr_irq_mask(pwm_irq_e mask){
 
 	if(mask==FLD_PWM0_IR_FIFO_IRQ)
 	{
-		BM_SET(reg_pwm_irq_mask(1), mask>>15);
+		BM_SET(reg_pwm_irq_mask(1), BIT(0));
 	}
 	else
 	{
@@ -355,7 +353,7 @@ static inline void pwm_clr_irq_mask(pwm_irq_e mask){
  * @param[in] status - variable of enum to select the pwm interrupt source.
  * @return	  none.
  */
-static inline u8 pwm_get_irq_status(pwm_irq_e status){
+static inline unsigned char pwm_get_irq_status(pwm_irq_e status){
 
 	if(status==FLD_PWM0_IR_FIFO_IRQ)
 	{
@@ -521,7 +519,7 @@ void pwm_set_dma_config(dma_chn_e chn);
  * @param[in] len - the length of data in SRAM.
  * @return    none
  */
-void pwm_set_dma_buf(dma_chn_e chn,u32 buf_addr,u32 len);
+void pwm_set_dma_buf(dma_chn_e chn,unsigned int buf_addr,unsigned int len);
 
 
 /**
@@ -541,7 +539,7 @@ void pwm_ir_dma_mode_start(dma_chn_e chn);
  * @param[in] head_of_list - to configure the address of the next node configure.
  * @return    none
  */
-void pwm_set_dma_chain_llp(dma_chn_e chn,u16 * src_addr, u32 data_len,dma_chain_config_t * head_of_list);
+void pwm_set_dma_chain_llp(dma_chn_e chn,unsigned short * src_addr, unsigned int data_len,dma_chain_config_t * head_of_list);
 
 
 
@@ -555,7 +553,7 @@ void pwm_set_dma_chain_llp(dma_chn_e chn,u16 * src_addr, u32 data_len,dma_chain_
  * @param[in] data_len - to configure DMA length.
  * @return    none
  */
-void pwm_set_tx_dma_add_list_element(dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llponit ,u16 * src_addr,u32 data_len);
+void pwm_set_tx_dma_add_list_element(dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llponit ,unsigned short * src_addr,unsigned int data_len);
 
 
 

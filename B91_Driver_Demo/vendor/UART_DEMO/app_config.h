@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H / B.Y
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
 #include "../../drivers.h"
@@ -50,23 +50,35 @@
 extern "C" {
 #endif
 
-#define LED1            GPIO_PB5
-#define LED2            GPIO_PB7
+#define LED1            GPIO_PB4
+#define LED2            GPIO_PB5
+#define LED3            GPIO_PB6
+#define LED4            GPIO_PB7
 
 
 
 #define UART_DMA  		    1     //uart use dma
 #define UART_NDMA  	   		2     //uart not use dma
-#define UART_MODE	 	    UART_NDMA
+#define UART_MODE	 	    UART_DMA
 
 #define BASE_TX	   		0 //just for NDMA
 #define NORMAL	   		1
 #define USE_CTS    		2
 #define USE_RTS    		3
-
 #define FLOW_CTR  		NORMAL
 
-#define UART0_RX_IRQ_LEN    16 //uart receive data length by irq
+#define CHIP_VER_A0     0
+#define CHIP_VER_A1     1
+
+#define CHIP_VER   CHIP_VER_A1
+
+
+#define UART_1WIRE_MODE       0  //tx and rx is a same line
+#define UART_2WIRE_MODE       1  //tx and rx are two lines
+#define UART_WIRE_MODE        UART_2WIRE_MODE
+
+
+#define UART_RX_IRQ_LEN    16 //uart receive data length by irq
 
 
 

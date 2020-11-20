@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "../../../../vendor/USB_Demo/usb_default.h"
 #include "string.h"
@@ -60,14 +60,14 @@
 #include "../rf_frame.h"
 
 
-u8 usb_fifo[USB_FIFO_NUM][USB_FIFO_SIZE];
-u8 usb_ff_rptr = 0;
-u8 usb_ff_wptr = 0;
+unsigned char usb_fifo[USB_FIFO_NUM][USB_FIFO_SIZE];
+unsigned char usb_ff_rptr = 0;
+unsigned char usb_ff_wptr = 0;
 
-int usbkb_hid_report_normal(u8 ctrl_key, u8 *keycode);
+int usbkb_hid_report_normal(unsigned char ctrl_key, unsigned char *keycode);
 void usbkb_hid_report(kb_data_t *data);
 
-static u8 vk_sys_map[VK_SYS_CNT] = {
+static unsigned char vk_sys_map[VK_SYS_CNT] = {
 	VK_POWER_V, VK_SLEEP_V, VK_WAKEUP_V
 };
 
@@ -105,9 +105,9 @@ enum{
 kb_data_t kb_dat_buff[USBKB_BUFF_DATA_NUM];
 
 //static
-u8  usbkb_wptr, usbkb_rptr;
-static u32 usbkb_not_released;
-static u32 usbkb_data_report_time;
+unsigned char  usbkb_wptr, usbkb_rptr;
+static unsigned int usbkb_not_released;
+static unsigned int usbkb_data_report_time;
 
 
 void usbkb_report_frame(void)
@@ -122,7 +122,7 @@ void usbkb_report_frame(void)
 
 static void usbkb_release_normal_key(void){
 	if(usbkb_not_released & KB_NORMAL_RELEASE_MASK){
-		u8 normal_keycode[KEYBOARD_REPORT_KEY_MAX] = {0};
+		unsigned char normal_keycode[KEYBOARD_REPORT_KEY_MAX] = {0};
 		if(usbkb_hid_report_normal(0, normal_keycode)){
 			BM_CLR(usbkb_not_released, KB_NORMAL_RELEASE_MASK);
 		}
@@ -131,8 +131,8 @@ static void usbkb_release_normal_key(void){
 
 static void usbkb_release_sys_key(void){
 	if(usbkb_not_released & KB_SYS_RELEASE_MASK){
-		u32 release_data = 0;
-		if(usbmouse_hid_report(USB_HID_KB_SYS, (u8*)(&release_data), 1)){
+		unsigned int release_data = 0;
+		if(usbmouse_hid_report(USB_HID_KB_SYS, (unsigned char*)(&release_data), 1)){
 			BM_CLR(usbkb_not_released, KB_SYS_RELEASE_MASK);
 		}
 	}
@@ -140,7 +140,7 @@ static void usbkb_release_sys_key(void){
 
 static void usbkb_release_media_key(void){
 	if(usbkb_not_released & KB_MEDIA_RELEASE_MASK){
-		u8 ext_keycode[MOUSE_REPORT_DATA_LEN] = {0};
+		unsigned char ext_keycode[MOUSE_REPORT_DATA_LEN] = {0};
 		if(usbmouse_hid_report(USB_HID_KB_MEDIA, ext_keycode, MEDIA_REPORT_DATA_LEN)){
 			BM_CLR(usbkb_not_released, KB_MEDIA_RELEASE_MASK);
 		}
@@ -162,10 +162,7 @@ void usbkb_release_check(){
 }
 
 
-int usbkb_separate_key_types(u8 *keycode, u8 cnt, u8 *normal_key, u8 *ext_key){
-   // STATIC_ASSERT(KB_RETURN_KEY_MAX <= KEYBOARD_REPORT_KEY_MAX);
-   // assert(cnt <= KB_RETURN_KEY_MAX);
-
+int usbkb_separate_key_types(unsigned char *keycode, unsigned char cnt, unsigned char *normal_key, unsigned char *ext_key){
     int normal_cnt = 0;
     for(int i=0;i<cnt;++i)
     {
@@ -178,11 +175,11 @@ int usbkb_separate_key_types(u8 *keycode, u8 cnt, u8 *normal_key, u8 *ext_key){
 	return normal_cnt;
 }
 
-int usbkb_hid_report_normal(u8 ctrl_key, u8 *keycode){
+int usbkb_hid_report_normal(unsigned char ctrl_key, unsigned char *keycode){
 
 	if(usbhw_is_ep_busy(USB_EDP_KEYBOARD_IN)){
 
-		u8 *pData = (u8 *)&usb_fifo[usb_ff_wptr++ & (USB_FIFO_NUM - 1)];
+		unsigned char *pData = (unsigned char *)&usb_fifo[usb_ff_wptr++ & (USB_FIFO_NUM - 1)];
 		pData[0] = DAT_TYPE_KB;
 		pData[1] = ctrl_key;
 		memcpy(pData + 2, keycode, 6);
@@ -244,7 +241,7 @@ int usbkb_hid_report_normal(u8 ctrl_key, u8 *keycode){
 	return 1;
 }
 
-static inline void usbkb_report_normal_key(int ctrl_key, u8 *keycode, int cnt){
+static inline void usbkb_report_normal_key(int ctrl_key, unsigned char *keycode, int cnt){
 	if(cnt > 0 || ctrl_key){
 		if(usbkb_hid_report_normal(ctrl_key, keycode)){
 		    BM_SET(usbkb_not_released, KB_NORMAL_RELEASE_MASK);
@@ -254,10 +251,10 @@ static inline void usbkb_report_normal_key(int ctrl_key, u8 *keycode, int cnt){
 	}
 }
 
-static inline void usbkb_report_sys_key(u8 ext_key){
+static inline void usbkb_report_sys_key(unsigned char ext_key){
 	if(ext_key >= VK_SYS_START && ext_key < VK_SYS_END){
 		int idx = ext_key - VK_SYS_START;
-		if(usbmouse_hid_report(USB_HID_KB_SYS, (u8*)(&vk_sys_map[idx]), 1)){	// assert sys key len == 1, check descriptor
+		if(usbmouse_hid_report(USB_HID_KB_SYS, (unsigned char*)(&vk_sys_map[idx]), 1)){
 			BM_SET(usbkb_not_released, KB_SYS_RELEASE_MASK);
 		}
 	}else{
@@ -265,11 +262,11 @@ static inline void usbkb_report_sys_key(u8 ext_key){
 	}
 }
 
-static inline void usbkb_report_media_key(u8 ext_key){
+static inline void usbkb_report_media_key(unsigned char ext_key){
 	if(ext_key >= VK_MEDIA_START && ext_key < VK_MEDIA_END){
 	//	STATIC_ASSERT(VK_EXT_LEN <= MOUSE_REPORT_DATA_LEN);
 
-		u8 ext_keycode[MOUSE_REPORT_DATA_LEN] = {0};
+		unsigned char ext_keycode[MOUSE_REPORT_DATA_LEN] = {0};
 
 		int idx = ext_key - VK_MEDIA_START;
 
@@ -286,11 +283,11 @@ static inline void usbkb_report_media_key(u8 ext_key){
 }
 
 
-void usbkb_report_consumer_key(u16 consumer_key)
+void usbkb_report_consumer_key(unsigned short consumer_key)
 {
 	if(consumer_key){
 
-		u8 ext_keycode[MOUSE_REPORT_DATA_LEN] = {0};
+		unsigned char ext_keycode[MOUSE_REPORT_DATA_LEN] = {0};
 
 		//foreach(i, VK_EXT_LEN)
 		for(int i=0;i<VK_EXT_LEN;++i)
@@ -307,7 +304,7 @@ void usbkb_report_consumer_key(u16 consumer_key)
 	}
 
 
-    usbkb_data_report_time = sys_get_stimer_tick();
+    usbkb_data_report_time = stimer_get_tick();
 
 }
 
@@ -328,22 +325,22 @@ int kb_is_data_same(kb_data_t *a, kb_data_t *b){
 }
 
 static inline int usbkb_check_repeat_and_save(kb_data_t *data){
-    //assert(data);
+
 	static kb_data_t last_data;
 	int same = kb_is_data_same(&last_data, data);
 	if(!same){
 		//STATIC_ASSERT(sizeof(last_data) == 8);
-	    ((u32*) (&last_data))[0] = ((u32*) (data))[0];
-	    ((u32*) (&last_data))[1] = ((u32*) (data))[1];
+	    ((unsigned int*) (&last_data))[0] = ((unsigned int*) (data))[0];
+	    ((unsigned int*) (&last_data))[1] = ((unsigned int*) (data))[1];
 	}
 	return same;
 }
 
 
 void usbkb_hid_report(kb_data_t *data){
-   // assert(data);
-    u8 ext_key = VK_EXT_END, normal_key_cnt = 0;
-    u8 normal_keycode[KEYBOARD_REPORT_KEY_MAX] = {0};
+
+    unsigned char ext_key = VK_EXT_END, normal_key_cnt = 0;
+    unsigned char normal_keycode[KEYBOARD_REPORT_KEY_MAX] = {0};
 
 	if(data->cnt > KB_RETURN_KEY_MAX){	// must,   in case bad packets
 		return;
@@ -355,14 +352,14 @@ void usbkb_hid_report(kb_data_t *data){
 	*/
 	if((data->cnt > 0 || data->ctrl_key) && usbkb_check_repeat_and_save(data)){
 		if(usbkb_not_released){
-			usbkb_data_report_time = sys_get_stimer_tick();
+			usbkb_data_report_time = stimer_get_tick();
 			return;
 		}
 	}
 
 
 	if(data->cnt > 0){
-		
+
 	    normal_key_cnt = usbkb_separate_key_types(data->keycode, data->cnt, normal_keycode, &ext_key);
 	}
 
@@ -370,7 +367,7 @@ void usbkb_hid_report(kb_data_t *data){
 	usbkb_report_sys_key(ext_key);
 	usbkb_report_media_key(ext_key);
 
-    usbkb_data_report_time = sys_get_stimer_tick();
+    usbkb_data_report_time = stimer_get_tick();
 }
 
 
@@ -385,7 +382,7 @@ int usb_hid_report_fifo_proc(void)
 		return 0;
 	}
 
-	u8 *pData = (u8 *)&usb_fifo[usb_ff_rptr & (USB_FIFO_NUM - 1)];
+	unsigned char *pData = (unsigned char *)&usb_fifo[usb_ff_rptr & (USB_FIFO_NUM - 1)];
 
 	if(pData[0] == DAT_TYPE_KB){
 		if(usbhw_is_ep_busy(USB_EDP_KEYBOARD_IN)){

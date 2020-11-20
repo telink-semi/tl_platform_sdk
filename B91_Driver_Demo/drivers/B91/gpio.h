@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H / X.P.C
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 /**	@page GPIO
  *
@@ -55,8 +55,8 @@
  */
 #ifndef DRIVERS_GPIO_H_
 #define DRIVERS_GPIO_H_
-#include "../../common/bit.h"
-#include "../../common/types.h"
+
+
 #include "analog.h"
 #include "plic.h"
 #include "reg_include/gpio_reg.h"
@@ -191,84 +191,7 @@ typedef enum {
 	GPIO_PIN_PULLUP_10K 		= 3,
 }gpio_pull_type_e;
 
-/**
- *  @brief  Define port init by bit types
- */
-typedef union{
-	unsigned char port;
-	struct{
-		unsigned char p0 : 1;
-		unsigned char p1 : 1;
-		unsigned char p2 : 1;
-		unsigned char p3 : 1;
-		unsigned char p4 : 1;
-		unsigned char p5 : 1;
-		unsigned char p6 : 1;
-		unsigned char p7 : 1;
-	};
-}port_bit_init_u;
 
-/**
- *  @brief  Define port init by double bits types
- */
-typedef union{
-	unsigned short port;
-	struct{
-		unsigned char p0 : 2;
-		unsigned char p1 : 2;
-		unsigned char p2 : 2;
-		unsigned char p3 : 2;
-		unsigned char p4 : 2;
-		unsigned char p5 : 2;
-		unsigned char p6 : 2;
-		unsigned char p7 : 2;
-	};
-}port_2bits_init_u;
-
-/**
- *  @brief  Define port init by byte types
- */
-typedef struct{
-	union{
-		unsigned int setting1;
-		struct{
-			port_bit_init_u input;
-			port_bit_init_u ie;
-			port_bit_init_u oen;
-			port_bit_init_u output;
-		};
-	};
-	union{
-		unsigned int setting2;
-		struct{
-			port_bit_init_u polarity;
-			port_bit_init_u ds;
-			port_bit_init_u io;
-			port_bit_init_u irq;
-		};
-	};
-	port_2bits_init_u fs;
-	port_2bits_init_u pull;
-}port_init_t;
-
-/**
- *  @brief  Define gpio init types
- */
-typedef struct{
-	port_init_t PA;
-	port_init_t PB;
-	port_init_t PC;
-	port_init_t PD;
-	port_init_t PE;
-	port_init_t PF;
-}gpio_init_t;
-/**********************************************************************************************************************
- *                                     global variable declaration                                                    *
- *********************************************************************************************************************/
-
-/**********************************************************************************************************************
- *                                      global function prototype                                                     *
- *********************************************************************************************************************/
 
 
 /**
@@ -278,7 +201,7 @@ typedef struct{
  */
 static inline void gpio_function_en(gpio_pin_e pin)
 {
-	u8	bit = pin & 0xff;
+	unsigned char	bit = pin & 0xff;
 	BM_SET(reg_gpio_func(pin), bit);
 }
 
@@ -290,7 +213,7 @@ static inline void gpio_function_en(gpio_pin_e pin)
  */
 static inline void gpio_function_dis(gpio_pin_e pin)
 {
-	u8	bit = pin & 0xff;
+	unsigned char	bit = pin & 0xff;
 	BM_CLR(reg_gpio_func(pin), bit);
 }
 
@@ -321,6 +244,23 @@ static inline void gpio_set_low_level(gpio_pin_e pin)
 
 }
 
+/**
+ * @brief     This function set the pin's output level.
+ * @param[in] pin - the pin needs to set its output level
+ * @param[in] value - value of the output level(1: high 0: low)
+ * @return    none
+ */
+static inline void gpio_set_level(gpio_pin_e pin, unsigned char value)
+{
+	if(value)
+	{
+		gpio_set_high_level(pin);
+	}
+	else
+	{
+		gpio_set_low_level(pin);
+	}
+}
 
 /**
  * @brief     This function read the pin's input/output level.
@@ -384,6 +324,23 @@ static inline void gpio_output_dis(gpio_pin_e pin)
 	BM_SET(reg_gpio_oen(pin), bit);
 }
 
+/**
+ * @brief      This function enable set output function of a pin.
+ * @param[in]  pin - the pin needs to set the output function (1: enable,0: disable)
+ * @return     none
+ */
+static inline void gpio_set_output(gpio_pin_e pin, unsigned char value)
+{
+	if(value)
+	{
+		gpio_output_en(pin);
+	}
+	else
+	{
+		gpio_output_dis(pin);
+	}
+
+}
 /**
  * @brief      This function determines whether the output function of a pin is enabled.
  * @param[in]  pin - the pin needs to determine whether its output function is enabled.
@@ -464,7 +421,15 @@ static inline void gpio_gpio2risc1_irq_dis(gpio_pin_e pin)
 {
 	BM_CLR(reg_gpio_irq_risc1_en(pin), pin & 0xff);
 }
-
+/**
+ * @brief      This function serves to clr gpio irq status.
+ * @param[in]  status  - the pin needs to disable its IRQ.
+ * @return     none.
+ */
+static inline void gpio_clr_irq_status(gpio_irq_status_e status)
+{
+	reg_gpio_irq_clr=status;
+}
 
 /**
  * @brief      This function set the pin's driving strength at strong.
@@ -518,6 +483,13 @@ void gpio_input_en(gpio_pin_e pin);
 void gpio_input_dis(gpio_pin_e pin);
 
 /**
+ * @brief      This function set the input function of a pin.
+ * @param[in]  pin - the pin needs to set the input function
+ * @param[in]  value - enable or disable the pin's input function(1: enable,0: disable )
+ * @return     none
+ */
+void gpio_set_input(gpio_pin_e pin, unsigned char value);
+/**
  * @brief      This function servers to set the specified GPIO as high resistor.
  * @param[in]  pin  - select the specified GPIO.
  * @return     none.
@@ -533,19 +505,13 @@ void gpio_shutdown(gpio_pin_e pin);
 void gpio_set_up_down_res(gpio_pin_e pin, gpio_pull_type_e up_down_res);
 
 /**
- * @brief      This function servers to initialization all gpio.
- * @param[in]  anaRes_init_en  -  if mcu wake up from deep retention mode, determine whether it is NOT necessary to reset analog register.
- *                                1: set analog register.
- *                                0: not set analog register.
- * @param[in]  st  			   -  structure of gpio settings.
- * @return     none.
- * @attention  Processing methods of unused GPIO
- * 			   Set it to high resistance state and set it to open pull-up or pull-down resistance to
- *             let it be in the determined state.When GPIO uses internal pull-up or pull-down resistance,
- *             do not use pull-up or pull-down resistance on the board in the process of practical
- *             application because it may have the risk of electric leakage .
+ * @brief     This function set pin's 30k pull-up registor.
+ * @param[in] pin - the pin needs to set its pull-up registor.
+ * @return    none.
  */
-void gpio_usr_init(int anaRes_init_en, gpio_init_t* st);
+void gpio_set_pullup_res_30k(gpio_pin_e pin);
+
+
 #endif
 
 

@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	Z.X.D / D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,19 +41,18 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
- 
 #include "coremark.h"
 /*
 Topic: Description
 	Matrix manipulation benchmark
-	
-	This very simple algorithm forms the basis of many more complex algorithms. 
-	
-	The tight inner loop is the focus of many optimizations (compiler as well as hardware based) 
-	and is thus relevant for embedded processing. 
-	
+
+	This very simple algorithm forms the basis of many more complex algorithms.
+
+	The tight inner loop is the focus of many optimizations (compiler as well as hardware based)
+	and is thus relevant for embedded processing.
+
 	The total available data space will be divided to 3 parts:
 	NxN Matrix A - initialized with small values (upper 3/4 of the bits all zero).
 	NxN Matrix B - initialized with medium values (upper half of the bits all zero).
@@ -77,33 +76,33 @@ void matrix_add_const(ee_u32 N, MATDAT *A, MATDAT val);
 #if CORE_DEBUG
 void printmat(MATDAT *A, ee_u32 N, char *name) {
 	ee_u32 i,j;
-	ee_printf("Matrix %s [%dx%d]:\n",name,N,N);
+	printf("Matrix %s [%dx%d]:\n",name,N,N);
 	for (i=0; i<N; i++) {
 		for (j=0; j<N; j++) {
 			if (j!=0)
-				ee_printf(",");
-			ee_printf("%d",A[i*N+j]);
+				printf(",");
+			printf("%d",A[i*N+j]);
 		}
-		ee_printf("\n");
+		printf("\n");
 	}
 }
 void printmatC(MATRES *C, ee_u32 N, char *name) {
 	ee_u32 i,j;
-	ee_printf("Matrix %s [%dx%d]:\n",name,N,N);
+	printf("Matrix %s [%dx%d]:\n",name,N,N);
 	for (i=0; i<N; i++) {
 		for (j=0; j<N; j++) {
 			if (j!=0)
-				ee_printf(",");
-			ee_printf("%d",C[i*N+j]);
+				printf(",");
+			printf("%d",C[i*N+j]);
 		}
-		ee_printf("\n");
+		printf("\n");
 	}
 }
 #endif
 /* Function: core_bench_matrix
 	Benchmark function
 
-	Iterate <matrix_test> N times, 
+	Iterate <matrix_test> N times,
 	changing the matrix values slightly by a constant amount each time.
 */
 ee_u16 core_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc) {
@@ -129,11 +128,11 @@ ee_u16 core_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc) {
 
 	Returns:
 	A CRC value that captures all results calculated in the function.
-	In particular, crc of the value calculated on the result matrix 
+	In particular, crc of the value calculated on the result matrix
 	after each step by <matrix_sum>.
 
 	Operation:
-	
+
 	1 - Add a constant value to all elements of a matrix.
 	2 - Multiply a matrix by a constant.
 	3 - Multiply a matrix by a vector.
@@ -170,7 +169,7 @@ ee_s16 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val) {
 #if CORE_DEBUG
 	printmatC(C,N,"matrix_mul_matrix_bitextract");
 #endif
-	
+
 	matrix_add_const(N,A,-val); /* return matrix to initial value */
 	return crc;
 }
@@ -186,7 +185,7 @@ ee_s16 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val) {
 
 	Returns:
 	Matrix dimensions.
-	
+
 	Note:
 	The seed parameter MUST be supplied from a source that cannot be determined at compile time
 */
@@ -201,7 +200,7 @@ ee_u32 core_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params *p
 		seed=1;
 	while (j<blksize) {
 		i++;
-		j=i*i*2*4;		
+		j=i*i*2*4;
 	}
 	N=i-1;
 	A=(MATDAT *)align_mem(memblk);
@@ -235,10 +234,10 @@ ee_u32 core_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params *p
 	Calculate a function that depends on the values of elements in the matrix.
 
 	For each element, accumulate into a temporary variable.
-	
-	As long as this value is under the parameter clipval, 
+
+	As long as this value is under the parameter clipval,
 	add 1 to the result if the element is bigger then the previous.
-	
+
 	Otherwise, reset the accumulator and add 10 to the result.
 */
 ee_s16 matrix_sum(ee_u32 N, MATRES *C, MATDAT clipval) {

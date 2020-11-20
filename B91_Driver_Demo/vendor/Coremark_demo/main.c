@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	Z.X.D / D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,91 +41,13 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "app_config.h"
 
 extern void user_init(void);
 extern void main_loop (void);
-int timer0_irq_cnt = 0;
-int timer1_irq_cnt = 0;
-volatile unsigned int timer0_gpio_width =0;
-volatile unsigned int timer1_gpio_width =0;
-
-void timer0_irq_handler(void)
-{
-#if( TIMER_MODE == TIMER_SYS_CLOCK_MODE )
-
-	if(reg_tmr_sta & FLD_TMR_STA_TMR0)
-	{
-		reg_tmr_sta = FLD_TMR_STA_TMR0;
-
-		gpio_toggle(LED2);
-		timer0_irq_cnt ++;
-	}
-
-#elif(TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-
-	if(reg_tmr_sta & FLD_TMR_STA_TMR0)
-	{
-		reg_tmr_sta = FLD_TMR_STA_TMR0; //clear irq status
-
-		gpio_toggle(LED2);
-		timer0_irq_cnt ++;
-	}
-
-#elif(TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-
-	if(reg_tmr_sta & FLD_TMR_STA_TMR0)
-	{
-		reg_tmr_sta = FLD_TMR_STA_TMR0; //clear irq status
-
-		timer0_gpio_width = reg_tmr0_tick;
-		reg_tmr0_tick = 0;
-		gpio_toggle(LED2);
-	}
-
-#endif
-}
-
-void timer1_irq_handler(void)
-{
-#if( TIMER_MODE == TIMER_SYS_CLOCK_MODE )
-
-	if(reg_tmr_sta & FLD_TMR_STA_TMR1)
-	{
-		reg_tmr_sta = FLD_TMR_STA_TMR1;
-
-		gpio_toggle(LED3);
-		timer1_irq_cnt ++;
-
-	}
-
-#elif(TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-
-	if(reg_tmr_sta & FLD_TMR_STA_TMR1)
-	{
-		reg_tmr_sta = FLD_TMR_STA_TMR1; //clear irq status
-
-		gpio_toggle(LED3);
-		timer1_irq_cnt ++;
-
-	}
-
-#elif(TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-
-	if(reg_tmr_sta & FLD_TMR_STA_TMR1)
-	{
-		reg_tmr_sta = FLD_TMR_STA_TMR1; //clear irq status
-
-		timer1_gpio_width = reg_tmr1_tick;
-		reg_tmr1_tick = 0;
-		gpio_toggle(LED3);
-	}
-
-#endif
-}
-
+extern int main_coremark (void);
 /**
  * @brief		This is main function
  * @param[in]	none
@@ -136,29 +58,18 @@ extern float coremark_result;
 
 int main(void)
 {
-	sys_init(LDO_1P4_LDO_1P8);
-
-	
-
+	sys_init(LDO_1P4_LDO_1P8, VBAT_V_GREATER_THAN_3V6);
 	CCLK_24M_HCLK_24M_PCLK_24M;;
-
 	user_init();
 	while ((read_reg8(0x10080b) & 0x7f) == 0);
-
-
 	reg_usb_ep8_send_thre = 0x1;
 	printf ("\r\n\r\n Core Mark Starts(wait about 10s~20s...) ...\r\n");
 	delay_ms (100);
 	reg_usb_ep8_send_thre = 0x40;
-
 	main_coremark ();
-
 	reg_usb_ep8_send_thre = 1;
-
 	printf("coremark result = %f (24M)\r\n",coremark_result);
 	printf("coremark result/clk(Mhz) = %f \r\n",(coremark_result/24));
-	//while (1);
-
     while(1)
     {
     	main_loop();

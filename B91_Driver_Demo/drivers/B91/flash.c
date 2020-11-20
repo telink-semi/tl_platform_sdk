@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	Z.W.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "flash.h"
 #include "mspi.h"
@@ -49,10 +49,10 @@
 #include "timer.h"
 #include "sys.h"
 #include "core.h"
-
+#include "stimer.h"
 volatile unsigned char flash_cnt = 1;
 
-preempt_config_t  static s_flash_preempt_config =
+static preempt_config_t s_flash_preempt_config =
 {
 	.preempt_en =0,
 	.threshold  =1,
@@ -80,11 +80,13 @@ static inline int flash_is_busy(void)
 }
 
 /**
- * @brief		This function serves to set flash write command.
+ * @brief		This function serves to set flash write command.This function interface is only used internally by flash,
+ * 				and is currently included in the H file for compatibility with other SDKs. When using this interface,
+ * 				please ensure that you understand the precautions of flash before using it.
  * @param[in]	cmd	- set command.
  * @return		none.
  */
-_attribute_ram_code_sec_noinline_ static void flash_send_cmd(unsigned char cmd)
+_attribute_ram_code_sec_noinline_ void flash_send_cmd(unsigned char cmd)
 {
 	mspi_high();
 	CLOCK_DLY_10_CYC;
@@ -177,13 +179,13 @@ _attribute_ram_code_sec_noinline_ void flash_write_page_ram(unsigned long addr, 
 }
 _attribute_text_sec_ void flash_write_page(unsigned long addr, unsigned long len, unsigned char *buf)
 {
-	int ns = PAGE_SIZE - (addr & 0xff);
+	unsigned int ns = PAGE_SIZE - (addr & 0xff);
 	int nw = 0;
 
 	do{
 		nw = len > ns ? ns : len;
 		__asm__("csrci 	mmisc_ctl,8");	//disable BTB
-		flash_write_page_ram(addr,len,buf);
+		flash_write_page_ram(addr,nw,buf);
 		__asm__("csrsi 	mmisc_ctl,8");	//enable BTB
 		ns = PAGE_SIZE;
 		addr += nw;
@@ -211,7 +213,7 @@ _attribute_ram_code_sec_noinline_ void flash_read_page_ram(unsigned long addr, u
 	mspi_fm_rd_en();			/* auto mode, mspi_get() automatically triggers mspi_write(0x00) once. */
 	mspi_wait();
 	/* get data */
-	for(int i = 0; i < len; ++i){
+	for(unsigned int i = 0; i < len; ++i){
 		*buf++ = mspi_get();
 		mspi_wait();
 	}
@@ -362,7 +364,7 @@ _attribute_ram_code_sec_noinline_ unsigned short flash_read_status_ram(void)
 	mspi_stop_xip();
 	flash_send_cmd(FLASH_READ_STATUS_1_CMD);	/* get high 8 bit status */
 	status = (mspi_read()<<8);
-	mspi_high();	
+	mspi_high();
 	flash_send_cmd(FLASH_READ_STATUS_CMD);		/* get low 8 bit status */
 	status |= mspi_read();
 	mspi_high();

@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "app_config.h"
 #if(USB_DEMO_TYPE==USB_MICROPHONE)
@@ -60,11 +60,11 @@
 #define MIC_DMA_CHN             DMA2
 
 
-u16		iso_in_buff[MIC_BUFFER_SIZE];
+unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
 
-volatile u32		iso_in_w = 0;
-volatile u32  	     iso_in_r = 0;
-u32		num_iso_in = 0;
+volatile unsigned int		iso_in_w = 0;
+volatile unsigned int  	     iso_in_r = 0;
+unsigned int		num_iso_in = 0;
 /**
  * @brief     This function serves to send data to USB. only adaptive mono 16bit
  * @param[in] audio_rate - audio rate. This value is matched with usb_default.h :MIC_SAMPLE_RATE.
@@ -74,7 +74,7 @@ u32		num_iso_in = 0;
 void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 {
 	unsigned char length = 0;
-	iso_in_w = ((audio_get_rx_dma_wptr (MIC_DMA_CHN) - (u32)iso_in_buff) >> 1);
+	iso_in_w = ((audio_get_rx_dma_wptr (MIC_DMA_CHN) - (unsigned int)iso_in_buff) >> 1);
 	 usbhw_reset_ep_ptr(USB_EDP_MIC);//reset pointer of Endpoint7's buf
 	switch(audio_rate)
 	{
@@ -87,7 +87,7 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 
 	if (0 &&(iso_in_w - (iso_in_r&(MIC_BUFFER_SIZE-1)))< length)
 	{
-		for (u8 i=0; i<length*2; i++)
+		for (unsigned char i=0; i<length*2; i++)
 		{
 			reg_usb_ep7_dat = 0;
 		}
@@ -95,7 +95,7 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 
 	else
 	{
-		for (u8 i=0; i<length&& iso_in_r != iso_in_w ; i++)
+		for (unsigned char i=0; i<length&& iso_in_r != iso_in_w ; i++)
 		{
 			short md = iso_in_buff[iso_in_r++ &(MIC_BUFFER_SIZE-1)];
 			reg_usb_ep7_dat = md;
@@ -103,14 +103,14 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 		}
 
 	}
-	 usbhw_data_ep_ack(USB_EDP_MIC);;
+	 usbhw_data_ep_ack(USB_EDP_MIC);
 }
 /**
  * @brief		This function serves to handle  iso in usb endpoint interrupt ,interval is 1 ms
  * @param[in] 	none
  * @return 		none
  */
-void  usb_endpoint_irq_handler (void)
+_attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 {
 	if (usbhw_get_eps_irq() & FLD_USB_EDP7_IRQ)
 	{
@@ -126,7 +126,9 @@ void  usb_endpoint_irq_handler (void)
 
 void user_init(void)
 {
-	audio_set_codec_supply();
+#if(CHIP_VER_A0==CHIP_VER)
+	audio_set_codec_supply(CODEC_2P8V);
+#endif
 	gpio_function_en(LED1|LED2|LED3|LED4);
     gpio_output_en(LED1|LED2|LED3|LED4);
 	reg_usb_ep6_buf_addr = 0x40;		// 192 max
@@ -143,15 +145,15 @@ void user_init(void)
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
 #if(AUDIO_IN_MODE==AUDIO_LINE_IN)
-	audio_init(LINE_IN_ONLY ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
-	audio_rx_dma_chain_init(DMA2,(u16*)&iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_init(LINE_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
+	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #elif(AUDIO_IN_MODE==AUDIO_DMIC_IN)
 	audio_set_dmic_pin(DMIC_GROUPB_B2_DAT_B3_B4_CLK);
-	audio_init(DMIC_IN_ONLY ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
-	audio_rx_dma_chain_init(DMA2,(u16*)&iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_init(DMIC_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
+	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #elif(AUDIO_IN_MODE==AUDIO_AMIC_IN)
-	audio_init(AMIC_IN_ONLY ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
-	audio_rx_dma_chain_init(DMA2,(u16*)&iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_init(AMIC_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
+	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #endif
 
 }

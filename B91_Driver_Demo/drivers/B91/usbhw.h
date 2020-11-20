@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 /**	@page USBHW
  *
@@ -163,7 +163,7 @@ static inline void usbhw_reset_ep_ptr(unsigned int ep) {
  */
 static inline void usbhw_set_eps_irq_mask(usb_ep_irq_e mask)
 {
-	reg_usb_mask|=mask;
+	reg_usb_ep_irq_mask|=mask;
 
 }
 
@@ -173,7 +173,7 @@ static inline void usbhw_set_eps_irq_mask(usb_ep_irq_e mask)
  */
 static inline void usbhw_clr_eps_irq_mask(usb_ep_irq_e mask)
 {
-	reg_usb_mask &=(~mask);
+	reg_usb_ep_irq_mask &=(~mask);
 
 }
 
@@ -182,7 +182,7 @@ static inline void usbhw_clr_eps_irq_mask(usb_ep_irq_e mask)
  * @return    none.
  */
 static inline unsigned int usbhw_get_eps_irq(void) {
-	return reg_usb_irq;
+	return reg_usb_ep_irq_status;
 }
 
 /**
@@ -191,7 +191,7 @@ static inline unsigned int usbhw_get_eps_irq(void) {
  * @return    none.
  */
 static inline void usbhw_clr_eps_irq(int ep) {
-	reg_usb_irq = ep;
+	reg_usb_ep_irq_status = ep;
 }
 
 /**
@@ -216,11 +216,12 @@ static inline void usbhw_clr_irq_mask( usb_irq_mask_e mask)
 
 /**
  * @brief     This function servers to get usb irq status.
- * @return    none.
+ * @param[in]  status -the  irq status of usb.
+ * @return    the status of irq.
  */
-static inline unsigned char  usbhw_get_irq_status(void)
+static inline unsigned char  usbhw_get_irq_status(usb_irq_status_e status)
 {
-	return reg_usb_irq_mask;
+	return reg_usb_irq_mask&status;
 }
 
 /**
@@ -241,7 +242,7 @@ static inline void usbhw_clr_irq_status(usb_irq_status_e status)
  */
 static inline void  usbhw_set_eps_en(usb_ep_en_e ep)
 {
-	reg_usb_edp_en|= ep;
+	reg_usb_edp_en= ep;
 }
 
 /**
@@ -330,10 +331,10 @@ static inline void usbhw_set_printer_threshold(unsigned char th) {
 }
 
 enum {
-	USB_EDP_PRINTER_IN = 8, // endpoint 8 is alias of enpoint 0,  becareful.  // default hw buf len = 64
+	USB_EDP_PRINTER_IN = 8,     // default hw buf len = 64
 	USB_EDP_MOUSE = 2,			// default hw buf len = 8
 	USB_EDP_KEYBOARD_IN = 1,	// default hw buf len = 8
-	USB_EDP_KEYBOARD_OUT = 3,	// default hw buf len = 16
+	USB_EDP_IN = 3,				// default hw buf len = 16
 	USB_EDP_AUDIO_IN = 4,		// default hw buf len = 64
 	USB_EDP_PRINTER_OUT = 5,	// default hw buf len = 64
 	USB_EDP_SPEAKER = 6,		// default hw buf len = 16

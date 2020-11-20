@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	B.Y
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,11 +41,12 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "analog.h"
 #include "compiler.h"
 #include "plic.h"
+#include "stimer.h"
 /**********************************************************************************************************************
  *                                			  local constants                                                       *
  *********************************************************************************************************************/
@@ -285,20 +286,19 @@ _attribute_ram_code_sec_noinline_ void analog_write_buff(unsigned char addr, uns
 	unsigned int r =core_interrupt_disable();
 	reg_ana_len=len;
 	reg_ana_addr = addr;
-	reg_ana_ctrl = FLD_ANA_CYC | FLD_ANA_RW;
+
 	if(len_t <= 4)
 	{
 		while(len_t--)
 			reg_ana_data(wr_idx++) = *(buff++);
-		write_reg8(ALG_BASE_ADDR + 0x2, 0x60);
-		while((read_reg8(ALG_BASE_ADDR + 0x2) & BIT(7)) == BIT(7));
+		reg_ana_ctrl = FLD_ANA_CYC | FLD_ANA_RW;
 	}
 	else
 	{
 		len_t = 4;
 		while(len_t--)
 			reg_ana_data(wr_idx++) = *(buff++);
-		write_reg8(ALG_BASE_ADDR + 0x2, 0x60);
+		reg_ana_ctrl = FLD_ANA_CYC | FLD_ANA_RW;
 		len_t = len - 4;
 		wr_idx = 0;
 		while(len_t--)
@@ -306,15 +306,12 @@ _attribute_ram_code_sec_noinline_ void analog_write_buff(unsigned char addr, uns
 			reg_ana_data(wr_idx++) = *(buff++);
 			if(wr_idx == 4)
 			{
-				if(len_t == 0)
-					break;
 				wr_idx = 0;
-				while((read_reg8(ALG_BASE_ADDR + 0xa) & BIT(0)) == 0);
+				while((reg_ana_irq_sta & FLD_ANA_TXBUFF_IRQ) == 0);//tx_buf_irq
 			}
 		}
-		if(wr_idx != 0)
-		while((read_reg8(ALG_BASE_ADDR + 0x2) & BIT(7)) == BIT(7));
 	}
+	analog_wait();//busy
 	reg_ana_ctrl = 0x00;
 	core_restore_interrupt(r);
 }
@@ -334,15 +331,9 @@ _attribute_ram_code_sec_noinline_ void analog_read_buff(unsigned char addr, unsi
 	reg_ana_len=len;
 	reg_ana_addr = addr;
 	reg_ana_ctrl = FLD_ANA_CYC;
-	if (len_t <= 4)
+	if (len_t > 4)
 	{
-		while((read_reg8(ALG_BASE_ADDR + 0x9) & BIT(7)) == 0);
-		while(len_t--)
-			(*buff++) = reg_ana_data(rd_idx++);
-	}
-	else
-	{
-		while((read_reg8(ALG_BASE_ADDR + 0xa) & BIT(1)) == 0);
+		while((reg_ana_irq_sta & FLD_ANA_RXBUFF_IRQ) == 0);//rx_buf_irq
 		while(len_t--)
 		{
 			(*buff++) = reg_ana_data(rd_idx++);
@@ -352,13 +343,14 @@ _attribute_ram_code_sec_noinline_ void analog_read_buff(unsigned char addr, unsi
 				if(len_t <= 4)
 					break;
 				else
-					while((read_reg8(ALG_BASE_ADDR + 0xa) & BIT(1)) == 0);
+					while((reg_ana_irq_sta & FLD_ANA_RXBUFF_IRQ) == 0);//rx_buf_irq
 			}
 		}
-		while((read_reg8(ALG_BASE_ADDR + 0x9) & BIT(7)) == 0);
-		while(len_t--)
-			(*buff++) = reg_ana_data(rd_idx++);
 	}
+	analog_wait();
+	while(len_t--)
+		(*buff++) = reg_ana_data(rd_idx++);
+
 	reg_ana_ctrl = 0x00;
 	core_restore_interrupt(r);
 }
@@ -447,11 +439,9 @@ void analog_write_addr_data_dma(dma_chn_e chn, void *pdat, int len)
 	analog_tx_dma_config.srcwidth = DMA_CTR_WORD_WIDTH;
 	dma_config(chn, &analog_tx_dma_config);
 	dma_chn_en(chn);
-
 	delay_us(1);
 	reg_ana_ctrl = FLD_ANA_RW;
 	reg_ana_dma_ctl = FLD_ANA_CYC1|FLD_ANA_DMA_EN;
-
 	delay_us(1);
 	while(!(reg_ana_sta & BIT(3)));
     reg_ana_ctrl = 0x00;

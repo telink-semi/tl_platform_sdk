@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,14 +41,13 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #ifndef _CDC_CLASS_COMMON_H_
 #define _CDC_CLASS_COMMON_H_
 
 /* Includes: */
 #include "stdDescriptors.h"
-#include "../types.h"
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
@@ -71,8 +70,8 @@ extern "C" {
 	 struct \
 	 { \
 		  USB_Descriptor_Hdr_t Header; \
-		  u8 SubType; \
-		  u8 Data[DataSize]; \
+		  unsigned char SubType; \
+		  unsigned char Data[DataSize]; \
 	 }
 
 enum CDC_Descriptor_ClassSubclass_Protocol_t
@@ -145,56 +144,56 @@ enum CDC_LineEncoding_Parity_t
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u8 Subtype;
-	u16 CDCSpecification;
+	unsigned char Subtype;
+	unsigned short CDCSpecification;
 } USB_CDC_Descriptor_FunctionalHeader_t;
 
 typedef struct
 {
-	u8 bFunctionLength;
-	u8 bDescriptorType;
-	u8 bDescriptorSubType;
-	u16 bcdCDC;
+	unsigned char bFunctionLength;
+	unsigned char bDescriptorType;
+	unsigned char bDescriptorSubType;
+	unsigned short bcdCDC;
 } USB_CDC_StdDescriptor_FunctionalHeader_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u8 Subtype;
-	u8 Capabilities;
+	unsigned char Subtype;
+	unsigned char Capabilities;
 } USB_CDC_Descriptor_FunctionalACM_t;
 
 typedef struct
 {
-	u8 bFunctionLength;
-	u8 bDescriptorType;
-	u8 bDescriptorSubType;
-	u8 bmCapabilities;
+	unsigned char bFunctionLength;
+	unsigned char bDescriptorType;
+	unsigned char bDescriptorSubType;
+	unsigned char bmCapabilities;
 } USB_CDC_StdDescriptor_FunctionalACM_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u8 Subtype;
-	u8 MasterInterfaceNumber;
-	u8 SlaveInterfaceNumber;
+	unsigned char Subtype;
+	unsigned char MasterInterfaceNumber;
+	unsigned char SlaveInterfaceNumber;
 } USB_CDC_Descriptor_FunctionalUnion_t;
 
 typedef struct
 {
-	u8 bFunctionLength;
-	u8 bDescriptorType;
-	u8 bDescriptorSubType;
-	u8 bMasterInterface;
-	u8 bSlaveInterface0;
+	unsigned char bFunctionLength;
+	unsigned char bDescriptorType;
+	unsigned char bDescriptorSubType;
+	unsigned char bMasterInterface;
+	unsigned char bSlaveInterface0;
 } USB_CDC_StdDescriptor_FunctionalUnion_t;
 
 typedef struct
 {
-	u32 BaudRateBPS;
-	u8 CharFormat;
-	u8 ParityType;
-	u8 DataBits;
+	unsigned int BaudRateBPS;
+	unsigned char CharFormat;
+	unsigned char ParityType;
+	unsigned char DataBits;
 } CDC_LineEncoding_t;
 
 /* Disable C linkage for C++ Compilers: */

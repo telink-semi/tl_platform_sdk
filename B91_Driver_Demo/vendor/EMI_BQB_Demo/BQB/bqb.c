@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	X.P.C
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,25 +41,27 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "bqb.h"
-#include "../app_config.h"
 
 #if(TEST_DEMO==BQB_DEMO)
 
-
+#if SUPPORT_CONFIGURATION
+usr_def_u usr_def_byte;
+#endif
+uart_num_redef_e uart_using = UART_NONE;
 static unsigned short pkt_cnt =0,cmd_pkt,l, h;
 static unsigned char chn, pkt_type,freq,uart_tx_index,uart_rx_index,para, ctrl;
 static unsigned char bb_mode;
 static unsigned int pkt_interval;
 static unsigned int tick_rx = 0;
 volatile unsigned int t0,tick_tx;
-Test_Status_t test_state;
+Test_Status_e test_state;
 
 
 unsigned char	bqbtest_buffer[272] __attribute__ ((aligned (4)));
-u8 __attribute__ ((aligned (4))) bqbtest_pkt [264] = {
+unsigned char __attribute__ ((aligned (4))) bqbtest_pkt [264] = {
 	37, 0, 0, 0,
 	0, 37,
 	0, 1, 2, 3, 4, 5, 6, 7
@@ -80,23 +82,23 @@ static union pkt_length_u
  * @param   chn: input channel
  * @return  ble channel index
  */
-unsigned char bqbtest_channel (unsigned char chn)
+unsigned char bqbtest_channel (unsigned char channel)
 {
-	if (chn == 0)
+	if (channel == 0)
 	{
 		return 37;
 	}
-	else if (chn < 12)
+	else if (channel < 12)
 	{
-		return chn - 1;
+		return channel - 1;
 	}
-	else if (chn == 12)
+	else if (channel == 12)
 	{
 		return 38;
 	}
-	else if (chn < 39)
+	else if (channel < 39)
 	{
-		return chn - 2;
+		return channel - 2;
 	}
 	else
 	{
@@ -114,7 +116,6 @@ unsigned char bqbtest_channel (unsigned char chn)
  * 				4:BLE500K
  * @return  the pkt interval
  */
-//unsigned char preamble_len;
 unsigned int get_pkt_interval(unsigned char payload_len, unsigned char mode)
 {
 	unsigned int total_len,byte_time=8;
@@ -150,7 +151,6 @@ unsigned int get_pkt_interval(unsigned char payload_len, unsigned char mode)
 	return 0;
 }
 
-extern uart_num_redef uart_using;
 /**
  * @brief   This function serves to read the usrt data and execute BQB program
  * @param   Pointer to uart data
@@ -188,8 +188,8 @@ unsigned short uart_bqbtest_get(unsigned short* cmd)
 	{
 		unsigned char i;
 
-		unsigned char l = REG_ADDR8(0x9c)&0x0f;
-		for(i=0; i<l; i++)
+		unsigned char u = REG_ADDR8(0x9c)&0x0f;
+		for(i=0; i<u; i++)
 		{
 			reg_uart_data_buf(uart_using, uart_rx_index);
 			uart_rx_index++;
@@ -227,10 +227,12 @@ void bqb_serviceloop (void)
 					}
 					rf_set_tx_rx_off_auto_mode();
 					rf_set_ble_1M_NO_PN_mode();
+					rf_pn_disable();
+					bb_mode = 1;
 				}
 				else if(ctrl== 1)
 				{
-					if((para>=0) && (para<=3))
+					if(para<=3)
 					{
 						pkt_length.l.upper = para &0x03;
 					}
@@ -315,7 +317,7 @@ void bqb_serviceloop (void)
 				freq = bqbtest_channel(chn);//set channel
 				rf_set_tx_rx_off_auto_mode();
 				rf_set_ble_chn(freq);
-				rf_set_rx_dma(bqbtest_buffer,3,8);
+				rf_set_rx_dma(bqbtest_buffer, 1, 272);
 				rf_start_srx(reg_system_tick);
 				bqb_uart_send_byte((rsp>>8)&0xff);
 				bqb_uart_send_byte(rsp&0xff);
@@ -435,13 +437,12 @@ void bqb_serviceloop (void)
 
 }
 
-
 /**
- * @brief   This function serves to initialize  BQB
- * @param   none.
- * @return  none.
+ * @brief   	This function serves to initialize  BQB
+ * @param[in]   flash_size - flash size: 0->512K, 1->2M, 2-0xff->1M.
+ * @return  	none.
  */
-void  bqbtest_init(void)
+void  bqbtest_init()
 {
 	unsigned char chnidx=0;
 	t0 = reg_system_tick;
@@ -450,14 +451,48 @@ void  bqbtest_init(void)
 	rf_mode_init();
 	rf_set_ble_1M_NO_PN_mode();
 	rf_access_code_comm(ACCESS_CODE);
+	rf_pn_disable();
+	bb_mode = 1;
 	uart_tx_index=0;
 	uart_rx_index=0;
-	flash_read_page(0x77000,1,&chnidx);
-	if(chnidx!=0xff)
+#if SUPPORT_CONFIGURATION
+	if(usr_def_byte.usr_def_t.cap)
 	{
-		chnidx&=0x3f;
-		analog_write_reg8(0x8a,(analog_read_reg8(0x8a)&0xc0)|chnidx);//close internal cap
+		rf_turn_off_internal_cap();
 	}
+	else
+	{
+		if(usr_def_byte.usr_def_t.f_size == 0)
+		{
+			flash_read_page(CAP_SET_FLASH_ADDR_1M, 1, &chnidx);
+		}
+		else if (usr_def_byte.usr_def_t.f_size == 1)
+		{
+			flash_read_page(CAP_SET_FLASH_ADDR_2M, 1, &chnidx);
+		}
+		else
+		{
+			flash_read_page(CAP_SET_FLASH_ADDR_512K, 1, &chnidx);
+		}
+		if(chnidx!=0xff)
+		{
+			rf_update_internal_cap(chnidx);
+		}
+	}
+#else
+	if(SWITCH_INTERNAL_CAP)
+	{
+		flash_read_page(CAP_SET_FLASH_ADDR, 1, &chnidx);
+		if(chnidx!=0xff)
+		{
+			rf_update_internal_cap(chnidx);
+		}
+	}
+	else
+	{
+		rf_turn_off_internal_cap();
+	}
+#endif
 }
 
 /**
@@ -470,7 +505,6 @@ void  bqbtest_init(void)
 void bqb_uart_send_byte(unsigned char uartData)
 {
 	int t;
-//	static unsigned char uart_TxIndex = 0;
 
 	t = 0;
 	while((!(reg_uart_status2(uart_using)&FLD_UART_TX_DONE)) && (t<0xfffff))
@@ -485,7 +519,5 @@ void bqb_uart_send_byte(unsigned char uartData)
 	uart_tx_index++;
 	uart_tx_index &= 0x03;// cycle the four register 0x90 0x91 0x92 0x93.
 }
-
-
 
 #endif

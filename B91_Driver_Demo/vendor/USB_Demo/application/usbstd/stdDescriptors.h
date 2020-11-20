@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,15 +41,9 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
-
-/* Includes: */
-#include "../types.h"
-//#include "../../../../drivers.h"
-
-
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
@@ -103,168 +97,168 @@ enum USB_Descriptor_ClassSubclassProtocol_t
 
 typedef  struct USB_Descriptor_Hdr_t
 {
-    u8 Size;
-    u8 Type;
+    unsigned char Size;
+    unsigned char Type;
 }USB_Descriptor_Hdr_t;
 
 
 typedef struct
 {
-    u8 Length;
-    u8 DescriptorType;
+    unsigned char Length;
+    unsigned char DescriptorType;
 }USB_StdDescriptor_Hdr_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u16 USBSpecification;
-	u8 Class;
-	u8 SubClass;
-	u8 Protocol;
-	u8 Endpoint0Size;
-	u16 VendorID;
-	u16 ProductID;
-	u16 ReleaseNumber;
-	u8 ManufacturerStrIndex;
-	u8 ProductStrIndex;
-	u8 SerialNumStrIndex;
-	u8 NumberOfConfigurations;
+	unsigned short USBSpecification;
+	unsigned char Class;
+	unsigned char SubClass;
+	unsigned char Protocol;
+	unsigned char Endpoint0Size;
+	unsigned short VendorID;
+	unsigned short ProductID;
+	unsigned short ReleaseNumber;
+	unsigned char ManufacturerStrIndex;
+	unsigned char ProductStrIndex;
+	unsigned char SerialNumStrIndex;
+	unsigned char NumberOfConfigurations;
 }__attribute__((packed)) USB_Descriptor_Device_t;
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	u16 BcdUSB;
-	u8 DeviceClass;
-	u8 DeviceSubClass;
-	u8 DeviceProtocol;
-	u8 MaxPacketSize0;
-	u16 IdVendor;
-	u16 IdProduct;
-	u16 BcdDevice;
-	u8 Manufacturer;
-	u8 Product;
-	u8 SerialNumber;
-	u8 NumConfigurations;
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned short BcdUSB;
+	unsigned char DeviceClass;
+	unsigned char DeviceSubClass;
+	unsigned char DeviceProtocol;
+	unsigned char MaxPacketSize0;
+	unsigned short IdVendor;
+	unsigned short IdProduct;
+	unsigned short BcdDevice;
+	unsigned char Manufacturer;
+	unsigned char Product;
+	unsigned char SerialNumber;
+	unsigned char NumConfigurations;
 }__attribute__((packed)) USB_StdDescriptor_Device_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u16 USBSpecification;
-	u8 Class;
-	u8 SubClass;
-	u8 Protocol;
-	u8 Endpoint0Size;
-	u8 NumberOfConfigurations;
-	u8 Reserved;
+	unsigned short USBSpecification;
+	unsigned char Class;
+	unsigned char SubClass;
+	unsigned char Protocol;
+	unsigned char Endpoint0Size;
+	unsigned char NumberOfConfigurations;
+	unsigned char Reserved;
 }__attribute__((packed)) USB_Descriptor_DeviceQualifier_t;
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	u16 BcdUSB;
-	u8 DeviceClass;
-	u8 DeviceSubClass;
-	u8 DeviceProtocol;
-	u8 MaxPacketSize0;
-	u8 NumConfigurations;
-	u8 Reserved;
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned short BcdUSB;
+	unsigned char DeviceClass;
+	unsigned char DeviceSubClass;
+	unsigned char DeviceProtocol;
+	unsigned char MaxPacketSize0;
+	unsigned char NumConfigurations;
+	unsigned char Reserved;
 }__attribute__((packed)) USB_StdDescriptor_DeviceQualifier_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u16 TotalConfigurationSize;
-	u8 TotalInterfaces;
-	u8 ConfigurationNumber;
-	u8 ConfigurationStrIndex;
-	u8 ConfigAttributes;
-	u8 MaxPowerConsumption;
+	unsigned short TotalConfigurationSize;
+	unsigned char TotalInterfaces;
+	unsigned char ConfigurationNumber;
+	unsigned char ConfigurationStrIndex;
+	unsigned char ConfigAttributes;
+	unsigned char MaxPowerConsumption;
 }__attribute__((packed)) USB_Descriptor_Configuration_Hdr_t;
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	u16 TotalLength;
-	u8 NumInterfaces;
-	u8 ConfigurationValue;
-	u8 Configuration;
-	u8 MAttributes;
-	u8 MaxPower;
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned short TotalLength;
+	unsigned char NumInterfaces;
+	unsigned char ConfigurationValue;
+	unsigned char Configuration;
+	unsigned char MAttributes;
+	unsigned char MaxPower;
 }__attribute__((packed)) USB_StdDescriptor_Configuration_Hdr_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u8 InterfaceNumber;
-	u8 AlternateSetting;
-	u8 TotalEndpoints;
-	u8 Class;
-	u8 SubClass;
-	u8 Protocol;
-	u8 InterfaceStrIndex;
+	unsigned char InterfaceNumber;
+	unsigned char AlternateSetting;
+	unsigned char TotalEndpoints;
+	unsigned char Class;
+	unsigned char SubClass;
+	unsigned char Protocol;
+	unsigned char InterfaceStrIndex;
 }__attribute__((packed)) USB_Descriptor_Interface_t;
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	u8 InterfaceNum;
-	u8 AlternateSetting;
-	u8 NumberEndpoints;
-	u8 InterfaceClass;
-	u8 InterfaceSubclass;
-	u8 InterfaceProtocol;
-	u8 Interface;
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned char InterfaceNum;
+	unsigned char AlternateSetting;
+	unsigned char NumberEndpoints;
+	unsigned char InterfaceClass;
+	unsigned char InterfaceSubclass;
+	unsigned char InterfaceProtocol;
+	unsigned char Interface;
 }__attribute__((packed)) USB_StdDescriptor_Interface_t;
 
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u8 FirstInterfaceIndex;
-	u8 TotalInterfaces;
-	u8 Class;
-	u8 SubClass;
-	u8 Protocol;
-	u8 IADStrIndex;
+	unsigned char FirstInterfaceIndex;
+	unsigned char TotalInterfaces;
+	unsigned char Class;
+	unsigned char SubClass;
+	unsigned char Protocol;
+	unsigned char IADStrIndex;
 }__attribute__((packed)) USB_Descriptor_Interface_Association_t;
 
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	u8 FirstInterface;
-	u8 InterfaceCount;
-	u8 FunctionClass;
-	u8 FunctionSubClass;
-	u8 FunctionProtocol;
-	u8 Function;
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned char FirstInterface;
+	unsigned char InterfaceCount;
+	unsigned char FunctionClass;
+	unsigned char FunctionSubClass;
+	unsigned char FunctionProtocol;
+	unsigned char Function;
 }__attribute__((packed)) USB_StdDescriptor_Interface_Association_t;
 
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	u8 EndpointAddress;
-	u8 Attributes;
-	u16 EndpointSize;
-	u8 PollingIntervalMS;
+	unsigned char EndpointAddress;
+	unsigned char Attributes;
+	unsigned short EndpointSize;
+	unsigned char PollingIntervalMS;
 }__attribute__((packed)) USB_Descriptor_Endpoint_t;
 
 typedef struct
 {
-	u8  Length;
-	u8  DescriptorType;
-	u8  EndpointAddress;
-	u8  MAttributes;
-	u16 MaxPacketSize;
-	u8  Interval;
+	unsigned char  Length;
+	unsigned char  DescriptorType;
+	unsigned char  EndpointAddress;
+	unsigned char  MAttributes;
+	unsigned short MaxPacketSize;
+	unsigned char  Interval;
 }__attribute__((packed)) USB_StdDescriptor_Endpoint_t;
 
 
@@ -276,14 +270,14 @@ typedef struct
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
-	wchar_t UnicodeString[];
+	unsigned short UnicodeString[100];//If don't set the length here, will get an error. set the length based on the actual situation
 }USB_Descriptor_String_t;
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	wchar_t bString[];
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned short bString[];
 }USB_StdDescriptor_String_t;
 
 #ifndef __GNUC__

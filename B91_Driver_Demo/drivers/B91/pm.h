@@ -3,26 +3,44 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	Z.W.H
+ * @author	Driver Group
  * @date	2019
  *
- * @par		Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd.
- *			All rights reserved.
+ * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *          All rights reserved.
  *
- *			The information contained herein is confidential property of Telink
- *          Semiconductor (Shanghai) Co., Ltd. and is available under the terms
- *          of Commercial License Agreement between Telink Semiconductor (Shanghai)
- *          Co., Ltd. and the licensee or the terms described here-in. This heading
- *          MUST NOT be removed from this file.
+ *          Redistribution and use in source and binary forms, with or without
+ *          modification, are permitted provided that the following conditions are met:
  *
- *          Licensee shall not delete, modify or alter (or permit any third party to delete, modify, or  
- *          alter) any information contained herein in whole or in part except as expressly authorized  
- *          by Telink semiconductor (shanghai) Co., Ltd. Otherwise, licensee shall be solely responsible  
- *          for any claim to the extent arising out of or relating to such deletion(s), modification(s)  
- *          or alteration(s).
+ *              1. Redistributions of source code must retain the above copyright
+ *              notice, this list of conditions and the following disclaimer.
  *
- *          Licensees are granted free, non-transferable use of the information in this
- *          file under Mutual Non-Disclosure Agreement. NO WARRENTY of ANY KIND is provided.
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
+ *              conditions and the following disclaimer in the documentation and/or other
+ *              materials provided with the distribution.
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
+ *              specific prior written permission.
+ *
+ *              4. This software, with or without modification, must only be used with a
+ *              TELINK integrated circuit. All other usages are subject to written permission
+ *              from TELINK and different commercial license may apply.
+ *
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
+ *              relating to such deletion(s), modification(s) or alteration(s).
+ *
+ *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *          DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER BE LIABLE FOR ANY
+ *          DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ *          (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *          LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *******************************************************************************************************/
 #pragma once
@@ -31,6 +49,28 @@
 #include "compiler.h"
 #include "gpio.h"
 #include "clock.h"
+
+/********************************************************************************************************
+ *											internal
+ *******************************************************************************************************/
+
+/********************************************************************************************************
+ * 				This is currently included in the H file for compatibility with other SDKs.
+ *******************************************************************************************************/
+
+//When the watchdog comes back, the Eagle chip does not clear 0x7f[0]. To avoid this problem, this macro definition is added.
+#ifndef WDT_REBOOT_RESET_ANA7F_WORK_AROUND
+#define WDT_REBOOT_RESET_ANA7F_WORK_AROUND	1
+#endif
+
+#ifndef SYS_TIMER_AUTO_MODE
+#define SYS_TIMER_AUTO_MODE     			1
+#endif
+
+/********************************************************************************************************
+ *											external
+ *******************************************************************************************************/
+
 
 /**
  * @brief these analog register can store data in deepsleep mode or deepsleep with SRAM retention mode.
@@ -56,7 +96,7 @@
 typedef enum{
 	WAKEUP_LEVEL_LOW		= 0,
 	WAKEUP_LEVEL_HIGH		= 1,
-}pm_gpio_wakeup_Level_e;
+}pm_gpio_wakeup_level_e;
 
 /**
  * @brief	wakeup tick type definition
@@ -70,9 +110,9 @@ typedef enum {
  * @brief	suspend power weather to power down definition
  */
 typedef enum {
-	 PM_POWER_BASEBAND  	= BIT(0),	//weather to power down the BASEBAND before suspend.
-	 PM_POWER_USB  			= BIT(1),	//weather to power down the USB before suspend.
-	 PM_POWER_NPE 			= BIT(2),	//weather to power down the NPE before suspend.
+	 PM_POWERON_BASEBAND  	= BIT(0),	//weather to power on the BASEBAND before suspend.
+	 PM_POWERON_USB  		= BIT(1),	//weather to power on the USB before suspend.
+	 PM_POWERON_NPE 		= BIT(2),	//weather to power on the NPE before suspend.
 }pm_suspend_power_cfg_e;
 
 /**
@@ -154,9 +194,30 @@ typedef struct{
 	unsigned char rsvd;
 }pm_status_info_s;
 
+/**
+ * @brief   pm 32k rc calibration algorithm.
+ */
+typedef struct  pm_clock_drift
+{
+	unsigned int	ref_tick;
+	unsigned int	ref_tick_32k;
+	int				offset;
+	int				offset_dc;
+	int				offset_cur;
+	int				tc;
+	int				rc32;
+	int				rc32_wakeup;
+	int				rc32_rt;
+	int				s0;
+	unsigned char	calib;
 
+} pm_clock_drift_t;
+
+
+extern pm_clock_drift_t	pmcd;
 extern _attribute_aligned_(4) pm_status_info_s g_pm_status_info;
-
+extern _attribute_data_retention_sec_ unsigned char g_pm_suspend_power_cfg;
+extern _attribute_data_retention_sec_ unsigned char g_pm_vbat_v;
 
 /**
  * @brief		This function servers to set the match value for MDEC wakeup.
@@ -169,13 +230,13 @@ static inline void pm_set_mdec_value_wakeup(unsigned char value)
 }
 
 /**
- * @brief		This function serves to set suspend power down.
- * @param[in]	value - weather to power down the baseband/usb/npe.
+ * @brief		This function serves to set baseband/usb/npe power on.
+ * @param[in]	value - weather to power on the baseband/usb/npe.
  * @return		none.
  */
 static inline void pm_set_suspend_power_cfg(pm_suspend_power_cfg_e value)
 {
-	analog_write_reg8(0x7d, (0x80|value));
+	g_pm_suspend_power_cfg &= (~value);
 }
 
 /**
@@ -203,7 +264,7 @@ static inline pm_wakeup_status_e pm_get_wakeup_src(void)
  * @param[in]	en  - enable or disable the wakeup function for the pan pin(1: enable, 0: disable).
  * @return		none.
  */
-void pm_set_gpio_wakeup (gpio_pin_e pin, pm_gpio_wakeup_Level_e pol, int en);
+void pm_set_gpio_wakeup (gpio_pin_e pin, pm_gpio_wakeup_level_e pol, int en);
 
 /**
  * @brief		This function configures pm wakeup time parameter.
@@ -241,4 +302,15 @@ _attribute_ram_code_sec_noinline_ void pm_stimer_recover(void);
  */
 _attribute_ram_code_sec_noinline_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode,  pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int  wakeup_tick);
 
+/**
+ * @brief		Calculate the offset value based on the difference of 16M tick.
+ * @param[in]	offset_tick	- the 16M tick difference between the standard clock and the expected clock.
+ * @return		none.
+ */
+_attribute_ram_code_sec_noinline_ void pm_cal_32k_rc_offset (int offset_tick);
 
+/**
+ * @brief		When 32k rc sleeps, the calibration function is initialized.
+ * @return		none.
+ */
+_attribute_ram_code_sec_noinline_ void pm_32k_rc_offset_init(void);

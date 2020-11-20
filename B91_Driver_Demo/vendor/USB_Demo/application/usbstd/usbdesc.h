@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,10 +41,9 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
-#include "../types.h"
 #include "AudioClassCommon.h"
 #include "CDCClassCommon.h"
 #include "HIDClassCommon.h"
@@ -313,7 +312,7 @@ typedef struct {
 	// printer HID Interface
 	USB_Descriptor_Interface_t printer_interface;
 	USB_Descriptor_Endpoint_t printer_in_endpoint;
-#if(!USB_SOMATIC_ENABLE)		
+#if(!USB_SOMATIC_ENABLE)
 	USB_Descriptor_Endpoint_t printer_out_endpoint;
 #endif
 #endif
@@ -324,7 +323,7 @@ typedef struct {
 #else
 	USB_Audio_Descriptor_Interface_AC_t audio_control_interface_ac;
 #endif
-#endif	
+#endif
 #if (USB_SPEAKER_ENABLE)
 	USB_Audio_Descriptor_InputTerminal_t speaker_input_terminal;
 	USB_Audio_StdDescriptor_FeatureUnit_t speaker_feature_unit;
@@ -360,7 +359,7 @@ typedef struct {
 	// audio HID Interface
 	USB_Descriptor_Interface_t audio_interface;
 	USB_HID_Descriptor_HID_Audio_t audio_descriptor;
-#endif	
+#endif
 #if (USB_KEYBOARD_ENABLE)
 	// Keyboard HID Interface
 	USB_Descriptor_Interface_t keyboard_interface;
@@ -379,21 +378,21 @@ typedef struct {
 } USB_Descriptor_Configuration_t;
 
 typedef struct {
-	u32 dwLength;    // length, in bytes, of the complete extended compat ID descriptor
-	u16 bcdVersion;	 // BCD	The descriptors version number, in binary coded decimal (BCD) format
-	u16 wIndex;      // An index that identifies the particular OS feature descriptor
-	u8 bCount;	     //The number of custom property sections
-	u8 RESERVED[7];  //Reserved
+	unsigned int dwLength;    // length, in bytes, of the complete extended compat ID descriptor
+	unsigned short bcdVersion;	 // BCD	The descriptors version number, in binary coded decimal (BCD) format
+	unsigned short wIndex;      // An index that identifies the particular OS feature descriptor
+	unsigned char bCount;	     //The number of custom property sections
+	unsigned char RESERVED[7];  //Reserved
 
 }USB_MS_OS_compatID_Header_t;
 
 typedef struct {
 
-	u8 bFirstInterfaceNumber;  //The interface or function number
-	u8 RESERVED1;               //Reserved
-	u8 compatibleID[8];        //The functions compatible ID
-	u8 subCompatibleID[8];     //The functions subcompatible ID
-	u8 RESERVED2[6];           //Reserved
+	unsigned char bFirstInterfaceNumber;  //The interface or function number
+	unsigned char RESERVED1;               //Reserved
+	unsigned char compatibleID[8];        //The functions compatible ID
+	unsigned char subCompatibleID[8];     //The functions subcompatible ID
+	unsigned char RESERVED2[6];           //Reserved
 
 }USB_MS_OS_compatID_Function_t;
 
@@ -404,31 +403,31 @@ typedef struct {
 }USB_MS_OS_compatID_t;
 
 
-u8* usbdesc_get_language(void);
-u8* usbdesc_get_vendor(void);
-u8* usbdesc_get_product(void);
-u8* usbdesc_get_serial(void);
-u8* usbdesc_get_device(void);
-u8* usbdesc_get_configuration(void);
+unsigned char* usbdesc_get_language(void);
+unsigned char* usbdesc_get_vendor(void);
+unsigned char* usbdesc_get_product(void);
+unsigned char* usbdesc_get_serial(void);
+unsigned char* usbdesc_get_device(void);
+unsigned char* usbdesc_get_configuration(void);
 
 #if(USB_MIC_ENABLE || USB_SPEAKER_ENABLE)
-u8* usbdesc_get_audio(void);
+unsigned char* usbdesc_get_audio(void);
 #endif
 
 #if (USB_MOUSE_ENABLE)
-u8* usbdesc_get_mouse(void);
+unsigned char* usbdesc_get_mouse(void);
 #endif
 
 #if (USB_KEYBOARD_ENABLE)
-u8* usbdesc_get_keyboard(void);
+unsigned char* usbdesc_get_keyboard(void);
 #endif
 
 #if (USB_SOMATIC_ENABLE)
-u8* usbdesc_get_somatic(void);
+unsigned char* usbdesc_get_somatic(void);
 #endif
 
 #if (USB_CRC_ENABLE)
-u8 *usbdesc_get_cdc(void);
+unsigned char *usbdesc_get_cdc(void);
 #endif
 
 /* Disable C linkage for C++ Compilers: */

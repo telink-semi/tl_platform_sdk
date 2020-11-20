@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
 
@@ -85,17 +85,17 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 
 
     HID_RPT_LOGICAL_MINIMUM(8, 0x00)		,
-	
+
     HID_RPT_LOGICAL_MAXIMUM(8, 0x01),
 
-	
+
 	HID_RPT_REPORT_SIZE(8, 0x01),
 
     HID_RPT_REPORT_COUNT(8, 0x05), /* debug note: 3->5*/
 
 
     HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
-	
+
 	HID_RPT_REPORT_SIZE(8, 0x03), /* debug note: 5->3*/
 
     HID_RPT_REPORT_COUNT(8, 0x01),
@@ -112,7 +112,7 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
     HID_RPT_USAGE(8, 0x31), /* Usage Y */
     HID_RPT_LOGICAL_MINIMUM(8, 0x81), //     LOGICAL_MINIMUM (-127)
     HID_RPT_LOGICAL_MAXIMUM(8, 0x7f), //     LOGICAL_MAXIMUM (127)
-	
+
     HID_RPT_REPORT_SIZE(8, 0x08),
     HID_RPT_REPORT_COUNT(8, 0x02),
 
@@ -127,7 +127,7 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 
     HID_RPT_END_COLLECTION(0),
     HID_RPT_END_COLLECTION(0),
-        
+
     HID_RPT_USAGE_PAGE(8, 0x0c),             //global, usage page (follow 1 bytes) consumer page
     HID_RPT_USAGE(8, 0x01),                  //local,  usage ID 01  Consumer Control
     HID_RPT_COLLECTION(8, 0x01),             //main, collection
@@ -162,7 +162,7 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 	0x05, 0x01, // USAGE_PAGE (Generic Desktop)
 	0x09, 0x02, // USAGE (Mouse)
 	0xa1, 0x01, // COLLECTION (Application)
-	
+
 	0x85, USB_HID_MOUSE, ////global, report ID 0x01
 	0x09, 0x01, //   USAGE (Pointer)
 	0xa1, 0x00, //   COLLECTION (Physical)
@@ -248,14 +248,14 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 	0x75,0x08,     //global, report size 8
 	0x95,0x07,     //report count  7
 	0xb1,0x02,     //feature (data, var, abs)
-	HID_RPT_END_COLLECTION(0),         //main, end collection
+	HID_RPT_END_COLLECTION(0,0),         //main, end collection
 };
 
-static inline u8* usbmouse_get_report_desc(void) {
-	return (u8*) (mouse_report_desc);
+static inline unsigned char* usbmouse_get_report_desc(void) {
+	return (unsigned char*) (mouse_report_desc);
 }
 
-static inline u16 usbmouse_get_report_desc_size(void) {
+static inline unsigned short usbmouse_get_report_desc_size(void) {
 	return sizeof(mouse_report_desc);
 }
 

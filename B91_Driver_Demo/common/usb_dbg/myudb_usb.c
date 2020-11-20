@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	Z.X.D 
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,12 +41,11 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #if(1)
-
+#include "fifo.h"
 #define			HCI_VCD_EN		0
-#include "../../drivers.h"
 #include "myudb.h"
 #include "string.h"
 #include "myudb_usbdesc.h"
@@ -60,14 +59,14 @@
 #endif
 
 
-static u16	myudb_id = 0x120;
-static u8 * myudb_g_response = 0;
-static u16 	myudb_g_response_len = 0;
+static unsigned short	myudb_id = 0x120;
+static unsigned char * myudb_g_response = 0;
+static unsigned short 	myudb_g_response_len = 0;
 static int 	myudb_g_stall = 0;
 static USB_Request_Header_t control_request;
 
 
-u8 		 	myudb_txfifo_b[BUFFUSB_SIZE * BUFFUSB_NUM];
+unsigned char 		 	myudb_txfifo_b[BUFFUSB_SIZE * BUFFUSB_NUM];
 my_fifo_t	myudb_txfifo = {	BUFFUSB_SIZE,
 							BUFFUSB_NUM,
 							0,
@@ -95,7 +94,7 @@ void myudb_set_txfifo (void *p)
 
 //-----------------------------------------------------------------------------------------
 void myudb_usb_send_response(void) {
-	u16 n;
+	unsigned short n;
 	if (myudb_g_response_len < 8) {
 		n = myudb_g_response_len;
 	} else {
@@ -110,14 +109,14 @@ void myudb_usb_send_response(void) {
 }
 
 void myudb_usb_prepare_desc_data(void) {
-	u8 value_l = (control_request.wValue) & 0xff;
-	u8 value_h = (control_request.wValue >> 8) & 0xff;
+	unsigned char value_l = (control_request.wValue) & 0xff;
+	unsigned char value_h = (control_request.wValue >> 8) & 0xff;
 
 	myudb_g_response = 0;
 	myudb_g_response_len = 0;
 
 	switch (value_h) {
-		
+
 	case DTYPE_Device:
 		myudb_g_response = myudb_usbdesc_get_device();
 		myudb_g_response_len = sizeof(USB_Descriptor_Device_t);
@@ -160,7 +159,7 @@ void myudb_usb_prepare_desc_data(void) {
 }
 
 void myudb_usb_handle_in_class_intf_req() {
-	u8 property = control_request.bRequest;
+	unsigned char property = control_request.bRequest;
 	switch (property) {
 		case 0x00:
 			usbhw_write_ctrl_ep_data(0x00);
@@ -169,12 +168,12 @@ void myudb_usb_handle_in_class_intf_req() {
 			myudb_g_stall = 1;
 			break;
 	}
-	
+
 }
 
-void myudb_usb_handle_request(u8 data_request) {
-	u8 bmRequestType = control_request.bmRequestType;
-	u8 bRequest = control_request.bRequest;
+void myudb_usb_handle_request(unsigned char data_request) {
+	unsigned char bmRequestType = control_request.bmRequestType;
+	unsigned char bRequest = control_request.bRequest;
 
 	usbhw_reset_ctrl_ep_ptr();
 	switch (bmRequestType) {
@@ -184,7 +183,7 @@ void myudb_usb_handle_request(u8 data_request) {
 				myudb_usb_prepare_desc_data();
 			}
 			myudb_usb_send_response();
-		} 
+		}
 		break;
 	case (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE):
 		myudb_usb_handle_in_class_intf_req();
@@ -215,7 +214,7 @@ void myudb_usb_handle_request(u8 data_request) {
 				usbhw_write_ctrl_ep_data(0x01);
 				usbhw_write_ctrl_ep_data(0x00);
 			}
-			else if (0xc6 == bRequest) {			// 
+			else if (0xc6 == bRequest) {			//
 				usbhw_reset_ctrl_ep_ptr();
 				usbhw_write_ctrl_ep_data(0x04);
 			}
@@ -268,12 +267,12 @@ void myudb_usb_handle_ctl_ep_status() {
 		usbhw_write_ctrl_ep_ctrl(FLD_EP_STA_ACK);
 }
 
-_attribute_ram_code_sec_noinline_ void usb_send_status_pkt(u8 status, u8 buffer_num, u8 *pkt, u16 len)
+_attribute_ram_code_sec_noinline_ void usb_send_status_pkt(unsigned char status, unsigned char buffer_num, unsigned char *pkt, unsigned short len)
 {
 	if (((myudb_fifo->wptr - myudb_fifo->rptr) & 255) >= myudb_fifo->num ) return;		//skip if overflow
 
 	my_irq_disable ();
-	u8 *p = myudb_fifo->p + (myudb_fifo->wptr++ & (myudb_fifo->num - 1)) * myudb_fifo->size;
+	unsigned char *p = myudb_fifo->p + (myudb_fifo->wptr++ & (myudb_fifo->num - 1)) * myudb_fifo->size;
 	if (len > 272)
 	{
 		len = 272;
@@ -290,13 +289,13 @@ _attribute_ram_code_sec_noinline_ void usb_send_status_pkt(u8 status, u8 buffer_
 	my_irq_restore ();
 }
 
-void usb_send_str_data (char *str, u8 *ph, int n)
+void usb_send_str_data (char *str, unsigned char *ph, int n)
 {
 	if (((myudb_fifo->wptr - myudb_fifo->rptr) & 255) >= myudb_fifo->num ) return;		//skip if overflow
 
 	my_irq_disable ();
-	u8 *ps =  myudb_fifo->p + (myudb_fifo->wptr & (myudb_fifo->num - 1)) * myudb_fifo->size;;
-	u8 *pd = ps;
+	unsigned char *ps =  myudb_fifo->p + (myudb_fifo->wptr & (myudb_fifo->num - 1)) * myudb_fifo->size;;
+	unsigned char *pd = ps;
 
 	int ns = strlen (str);
 	if (n > 272)
@@ -334,8 +333,8 @@ void usb_send_str_data (char *str, u8 *ph, int n)
 
 _attribute_ram_code_sec_noinline_ void myudb_to_usb()
 {
-	static u16 len = 0;
-	static u8 *p = 0;
+	static unsigned short len = 0;
+	static unsigned char *p = 0;
 
 	if(usbhw_is_ep_busy(MYUDB_EDP_IN_HCI)) return;
 	if (!p && (myudb_fifo->wptr != myudb_fifo->rptr))		//first packet
@@ -364,13 +363,13 @@ _attribute_ram_code_sec_noinline_ void myudb_to_usb()
 
 #define			USB_ENDPOINT_BULK_OUT_FLAG		(1 << (MYUDB_EDP_OUT_HCI & 7))
 
-_attribute_ram_code_sec_noinline_ int myudb_usb_get_packet (u8 *p)
+_attribute_ram_code_sec_noinline_ int myudb_usb_get_packet (unsigned char *p)
 {
 	static	int len = 0;
-	if (reg_usb_irq & USB_ENDPOINT_BULK_OUT_FLAG)
+	if (reg_usb_ep_irq_status & USB_ENDPOINT_BULK_OUT_FLAG)
 	{
 		//clear interrupt flag
-		reg_usb_irq = USB_ENDPOINT_BULK_OUT_FLAG;
+		reg_usb_ep_irq_status = USB_ENDPOINT_BULK_OUT_FLAG;
 
 		// read data
 		int n = reg_usb_ep_ptr(MYUDB_EDP_OUT_HCI);
@@ -399,11 +398,11 @@ void myudb_register_hci_cb (void *p)
 
 #define			MYHCI_FW_DOWNLOAD			0xfe
 
-_attribute_ram_code_sec_noinline_ int myudb_mem_cmd (u8 *p, int nbyte)
+_attribute_ram_code_sec_noinline_ int myudb_mem_cmd (unsigned char *p, int nbyte)
 {
 	int len = nbyte;
 	int cmd = p[0];
-	u8	rsp[280];
+	unsigned char	rsp[280];
 
 	int ret = 0;
 
@@ -414,7 +413,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd (u8 *p, int nbyte)
 		rsp[0] = 0x29;
 		memcpy (rsp + 1, p + 1, 5);
 		int type = p[1];
-		u32 adr = p[2] | (p[3] << 8) | (p[4] << 16) | (p[5] << 24);
+		unsigned int adr = p[2] | (p[3] << 8) | (p[4] << 16) | (p[5] << 24);
 		int n = p[6] | (p[7] << 8);
 		if (n > 256)
 		{
@@ -445,8 +444,8 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd (u8 *p, int nbyte)
 		usb_send_status_pkt (0x81, 8, p, 12);
 		rsp[0] = 0x2b;
 		memcpy (rsp + 1, p + 1, 16);
-		u8 type = p[1];
-		u32 adr = p[2] | (p[3] << 8) | (p[4] << 16) | (p[5] << 24);
+		unsigned char type = p[1];
+		unsigned int adr = p[2] | (p[3] << 8) | (p[4] << 16) | (p[5] << 24);
 		int n = len - 6;
 
 		if (type == 0)				//RAM
@@ -500,7 +499,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd (u8 *p, int nbyte)
 	return ret;
 }
 
-u8 buff[320];
+unsigned char buff[320];
 _attribute_ram_code_sec_noinline_ int myudb_hci_cmd_from_usb (void)
 {
 	int fw_download = 0;
@@ -532,15 +531,15 @@ _attribute_ram_code_sec_noinline_ int myudb_hci_cmd_from_usb (void)
 
 /////////////////////////////////////////////////////////////////////////
 void myudb_usb_handle_irq(void) {
-	static u32 tick_sync = 0;
+	static unsigned int tick_sync = 0;
 	if(1){		//  do nothing when in suspend. Maybe not unnecessary
-		u32 irq = usbhw_get_ctrl_ep_irq();
+		unsigned int irq = usbhw_get_ctrl_ep_irq();
 		if (irq & FLD_CTRL_EP_IRQ_SETUP) {
 			usbhw_clr_ctrl_ep_irq(FLD_CTRL_EP_IRQ_SETUP);
 			myudb_usb_handle_ctl_ep_setup();
 			if (!tick_sync)
 			{
-				tick_sync = sys_get_stimer_tick () | 1;
+				tick_sync = stimer_get_tick () | 1;
 			}
 		}
 		if (irq & FLD_CTRL_EP_IRQ_DATA) {
@@ -566,7 +565,7 @@ void myudb_usb_handle_irq(void) {
 
 	if (tick_sync && clock_time_exceed (tick_sync, 10000))
 	{
-		tick_sync = sys_get_stimer_tick () | 1;
+		tick_sync = stimer_get_tick () | 1;
 		log_sync (SL_STACK_EN);
 	}
 
@@ -577,7 +576,7 @@ void myudb_usb_bulkout_ready ()
 	reg_usb_ep_ctrl (MYUDB_EDP_OUT_HCI) = FLD_EP_DAT_ACK;
 }
 
-void myudb_usb_init(u16 id, void *p)
+void myudb_usb_init(unsigned short id, void *p)
 {
 	if (!myudb_fifo && p)
 	{

@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	Z.X.D / D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,9 +41,8 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
- 
 #include "coremark.h"
 /* local functions */
 enum CORE_STATE core_state_transition( ee_u8 **instr , ee_u32 *transition_count);
@@ -51,13 +50,13 @@ enum CORE_STATE core_state_transition( ee_u8 **instr , ee_u32 *transition_count)
 /*
 Topic: Description
 	Simple state machines like this one are used in many embedded products.
-	
-	For more complex state machines, sometimes a state transition table implementation is used instead, 
+
+	For more complex state machines, sometimes a state transition table implementation is used instead,
 	trading speed of direct coding for ease of maintenance.
-	
+
 	Since the main goal of using a state machine in CoreMark is to excercise the switch/if behaviour,
-	we are using a small moore machine. 
-	
+	we are using a small moore machine.
+
 	In particular, this machine tests type of string input,
 	trying to determine whether the input is a number or something else.
 	(see core_state.png).
@@ -66,10 +65,10 @@ Topic: Description
 /* Function: core_bench_state
 	Benchmark function
 
-	Go over the input twice, once direct, and once after introducing some corruption. 
+	Go over the input twice, once direct, and once after introducing some corruption.
 */
-ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock, 
-		ee_s16 seed1, ee_s16 seed2, ee_s16 step, ee_u16 crc) 
+ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock,
+		ee_s16 seed1, ee_s16 seed2, ee_s16 step, ee_u16 crc)
 {
 	ee_u32 final_counts[NUM_CORE_STATES];
 	ee_u32 track_counts[NUM_CORE_STATES];
@@ -78,7 +77,7 @@ ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock,
 
 
 #if CORE_DEBUG
-	ee_printf("State Bench: %d,%d,%d,%04x\n",seed1,seed2,step,crc);
+	printf("State Bench: %d,%d,%d,%04x\n",seed1,seed2,step,crc);
 #endif
 	for (i=0; i<NUM_CORE_STATES; i++) {
 		final_counts[i]=track_counts[i]=0;
@@ -88,9 +87,9 @@ ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock,
 		enum CORE_STATE fstate=core_state_transition(&p,track_counts);
 		final_counts[fstate]++;
 #if CORE_DEBUG
-	ee_printf("%d,",fstate);
+	printf("%d,",fstate);
 	}
-	ee_printf("\n");
+	printf("\n");
 #else
 	}
 #endif
@@ -106,9 +105,9 @@ ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock,
 		enum CORE_STATE fstate=core_state_transition(&p,track_counts);
 		final_counts[fstate]++;
 #if CORE_DEBUG
-	ee_printf("%d,",fstate);
+	printf("%d,",fstate);
 	}
-	ee_printf("\n");
+	printf("\n");
 #else
 	}
 #endif
@@ -137,7 +136,7 @@ static ee_u8 *errpat[4]  ={(ee_u8 *)"T0.3e-1F",(ee_u8 *)"-T.T++Tq",(ee_u8 *)"1T3
 
 	Populate the input with several predetermined strings, interspersed.
 	Actual patterns chosen depend on the seed parameter.
-	
+
 	Note:
 	The seed parameter MUST be supplied from a source that cannot be determined at compile time
 */
@@ -146,7 +145,7 @@ void core_init_state(ee_u32 size, ee_s16 seed, ee_u8 *p) {
 	ee_u8 *buf=0;
 #if CORE_DEBUG
 	ee_u8 *start=p;
-	ee_printf("State: %d,%d\n",size,seed);
+	printf("State: %d,%d\n",size,seed);
 #endif
 	size--;
 	next=0;
@@ -189,7 +188,7 @@ void core_init_state(ee_u32 size, ee_s16 seed, ee_u8 *p) {
 		total++;
 	}
 #if CORE_DEBUG
-	ee_printf("State Input: %s\n",start);
+	printf("State Input: %s\n",start);
 #endif
 }
 
@@ -205,7 +204,7 @@ static ee_u8 ee_isdigit(ee_u8 c) {
 	The state machine will continue scanning until either:
 	1 - an invalid input is detcted.
 	2 - a valid number has been detected.
-	
+
 	The input pointer is updated to point to the end of the token, and the end state is returned (either specific format determined or invalid).
 */
 

@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	Z.X.D 
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #ifndef		__MYUDB_H__
 #define		__MYUDB_H__
@@ -54,39 +54,39 @@
 #define			SL_SNIFF_EN				0
 #define			SL_TIMEOUT_EN			0
 
-#define my_dump_str_data(en,s,p,n)		if(en){usb_send_str_data(s,(u8*)(p),n);}
+#define my_dump_str_data(en,s,p,n)		if(en){usb_send_str_data(s,(unsigned char*)(p),n);}
 
 
 typedef int (*func_myudb_hci_cmd_cb_t) (unsigned char *, int);
 
 void 	myudb_register_hci_cb (void *p);
 
-void 	myudb_usb_init(u16 id, void *p);
+void 	myudb_usb_init(unsigned short id, void *p);
 
 void 	myudb_usb_bulkout_ready ();
 
 void 	myudb_usb_handle_irq(void);
 
-int 	myudb_usb_get_packet (u8 *p);
+int 	myudb_usb_get_packet (unsigned char *p);
 
-void 	usb_send_status_pkt(u8 status, u8 buffer_num, u8 *pkt, u16 len);
+void 	usb_send_status_pkt(unsigned char status, unsigned char buffer_num, unsigned char *pkt, unsigned short len);
 
 void 	myudb_capture_enable (int en);
 
-void 	usb_send_str_data (char *str, u8 *ph, int n);
+void 	usb_send_str_data (char *str, unsigned char *ph, int n);
 
 void	myudb_set_txfifo_local ();
 
 void	myudb_set_txfifo (void *p);
 
-#define			my_irq_disable()		u32 rie = core_interrupt_disable ()
+#define			my_irq_disable()		unsigned int rie = core_interrupt_disable ()
 #define			my_irq_restore()		core_restore_interrupt(rie)
 #define			LOG_EVENT_TIMESTAMP		0
 #define			LOG_DATA_B1_0			0
 #define			LOG_DATA_B1_1			1
 
-//#define			get_systemtick()  	    (sys_get_stimer_tick()*3/2)
-#define			get_systemtick()  	    sys_get_stimer_tick()
+//#define			get_systemtick()  	    (stimer_get_tick()*3/2)
+#define			get_systemtick()  	    stimer_get_tick()
 
 //#define			log_uart(d)				uart_send_byte_dma(0,d)
 #define			log_uart(d)				reg_usb_ep8_dat=d

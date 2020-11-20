@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	Z.X.D / D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,21 +41,20 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
- 
 #include "coremark.h"
 /* Function: get_seed
 	Get a values that cannot be determined at compile time.
 
 	Since different embedded systems and compilers are used, 3 different methods are provided:
 	1 - Using a volatile variable. This method is only valid if the compiler is forced to generate code that
-	reads the value of a volatile variable from memory at run time. 
+	reads the value of a volatile variable from memory at run time.
 	Please note, if using this method, you would need to modify core_portme.c to generate training profile.
 	2 - Command line arguments. This is the preferred method if command line arguments are supported.
 	3 - System function. If none of the first 2 methods is available on the platform,
 	a system function which is not a stub can be used.
-	
+
 	e.g. read the value on GPIO pins connected to switches, or invoke special simulator functions.
 */
 #if (SEED_METHOD==SEED_VOLATILE)
@@ -181,7 +180,7 @@ ee_u16 crcu8(ee_u8 data, ee_u16 crc )
 		   crc ^= 0x4002;
 		   carry = 1;
 		}
-		else 
+		else
 			carry = 0;
 		crc >>= 1;
 		if (carry)
@@ -190,7 +189,7 @@ ee_u16 crcu8(ee_u8 data, ee_u16 crc )
 		   crc &= 0x7fff;
     }
 	return crc;
-} 
+}
 ee_u16 crcu16(ee_u16 newval, ee_u16 crc) {
 	crc=crcu8( (ee_u8) (newval)				,crc);
 	crc=crcu8( (ee_u8) ((newval)>>8)	,crc);
@@ -208,31 +207,31 @@ ee_u16 crc16(ee_s16 newval, ee_u16 crc) {
 ee_u8 check_data_types() {
 	ee_u8 retval=0;
 	if (sizeof(ee_u8) != 1) {
-		ee_printf("ERROR: ee_u8 is not an 8b datatype!\n");
+		printf("ERROR: ee_u8 is not an 8b datatype!\n");
 		retval++;
 	}
 	if (sizeof(ee_u16) != 2) {
-		ee_printf("ERROR: ee_u16 is not a 16b datatype!\n");
+		printf("ERROR: ee_u16 is not a 16b datatype!\n");
 		retval++;
 	}
 	if (sizeof(ee_s16) != 2) {
-		ee_printf("ERROR: ee_s16 is not a 16b datatype!\n");
+		printf("ERROR: ee_s16 is not a 16b datatype!\n");
 		retval++;
 	}
 	if (sizeof(ee_s32) != 4) {
-		ee_printf("ERROR: ee_s32 is not a 32b datatype!\n");
+		printf("ERROR: ee_s32 is not a 32b datatype!\n");
 		retval++;
 	}
 	if (sizeof(ee_u32) != 4) {
-		ee_printf("ERROR: ee_u32 is not a 32b datatype!\n");
+		printf("ERROR: ee_u32 is not a 32b datatype!\n");
 		retval++;
 	}
 	if (sizeof(ee_ptr_int) != sizeof(int *)) {
-		ee_printf("ERROR: ee_ptr_int is not a datatype that holds an int pointer!\n");
+		printf("ERROR: ee_ptr_int is not a datatype that holds an int pointer!\n");
 		retval++;
 	}
 	if (retval>0) {
-		ee_printf("ERROR: Please modify the datatypes in core_portme.h!\n");
+		printf("ERROR: Please modify the datatypes in core_portme.h!\n");
 	}
 	return retval;
 }

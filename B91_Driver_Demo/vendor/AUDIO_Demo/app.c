@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,12 +41,12 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "app_config.h"
 #include "app_sin_data.h"
-
-u32  dma_rx_irq_cnt=0;
+#include <string.h>
+unsigned int  dma_rx_irq_cnt=0;
 #if ((AUDIO_MODE==LINEIN_TO_LINEOUT)||(AUDIO_MODE==AMIC_TO_LINEOUT)||(AUDIO_MODE==DMIC_TO_LINEOUT)||(AUDIO_MODE==EXT_CODEC_LINEIN_LINEOUT))
 #define    AUDIO_BUFF_SIZE    4096
 volatile signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
@@ -61,68 +61,70 @@ dma_chain_config_t tx_dma_list_config[2];
 #define FLASH_48k_SIZE    0xF000
 #define AUIDO_BUFF_SIZE   4096
 #define AUIDO_THD_SIZE    1024
- u8 flash_read_16K_buff[FLASH_16k_SIZE]__attribute__((aligned(4)));
- u8 flash_read_48K_buff[FLASH_48k_SIZE]__attribute__((aligned(4)));
- u8 aduio_buff [AUIDO_BUFF_SIZE] __attribute__((aligned(4)));
+ unsigned char flash_read_16K_buff[FLASH_16k_SIZE]__attribute__((aligned(4)));
+ unsigned char flash_read_48K_buff[FLASH_48k_SIZE]__attribute__((aligned(4)));
+ unsigned char aduio_buff [AUIDO_BUFF_SIZE] __attribute__((aligned(4)));
 
-volatile u32 tx_rptr_out=0;
-volatile u32 tx_wptr_out=0;
-volatile u32 flash_rptr=0;
+volatile unsigned int tx_rptr_out=0;
+volatile unsigned int tx_wptr_out=0;
+volatile unsigned int flash_rptr=0;
 volatile unsigned short remaining;
-volatile u8 ex_cnt;
-volatile u8 swith;
+volatile unsigned char ex_cnt;
+volatile unsigned char swith;
 unsigned long t;
 #endif
 
 
 void user_init()
 {
-	audio_set_codec_supply();
+#if(CHIP_VER_A0==CHIP_VER)
+	audio_set_codec_supply(CODEC_2P8V);
+#endif
 	gpio_function_en(LED1|LED2|LED3|LED4);
 	gpio_output_en(LED1|LED2|LED3|LED4);
 #if (AUDIO_MODE==LINEIN_TO_LINEOUT)
-	audio_init(LINE_IN_OUT,AUDIO_16K,MONO_BIT_16);
-	audio_rx_dma_chain_init(DMA2,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
-	audio_tx_dma_chain_init (DMA3,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_16K,MONO_BIT_16);
+	audio_rx_dma_chain_init(DMA2,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_tx_dma_chain_init (DMA3,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 
 #elif(AUDIO_MODE==AMIC_TO_LINEOUT)
-	audio_init(AMIC_IN_OUT ,AUDIO_16K,MONO_BIT_16);
-	audio_rx_dma_chain_init(DMA2,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
-	audio_tx_dma_chain_init (DMA3,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_init(AMIC_IN_TO_BUF_TO_LINE_OUT ,AUDIO_16K,MONO_BIT_16);
+	audio_rx_dma_chain_init(DMA2,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_tx_dma_chain_init (DMA3,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 #elif(AUDIO_MODE==DMIC_TO_LINEOUT)
 	audio_set_dmic_pin(DMIC_GROUPB_B2_DAT_B3_B4_CLK);
-	audio_init(DMIC_IN_OUT ,AUDIO_16K,MONO_BIT_16);
-	audio_rx_dma_chain_init(DMA2,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
-	audio_tx_dma_chain_init (DMA3,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_init(DMIC_IN_TO_BUF_TO_LINE_OUT ,AUDIO_16K,MONO_BIT_16);
+	audio_rx_dma_chain_init(DMA2,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_tx_dma_chain_init (DMA3,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 
 #elif(AUDIO_MODE==BUFFER_TO_LINEOUT)
-	audio_init(OUT_ONLY,AUDIO_44EP1K,MONO_BIT_16);
+	audio_init(BUF_TO_LINE_OUT,AUDIO_44EP1K,MONO_BIT_16);
 	/*ping-pong buff*/
-	audio_tx_dma_config(DMA3,(u16*)(&sin_44K1_d1[0]),MIC_BUFFER_SIZE,&tx_dma_list_config[0]);
-	audio_tx_dma_add_list_element(&tx_dma_list_config[0],&tx_dma_list_config[1],(u16*)(&sin_44K1_d2[0]),MIC_BUFFER_SIZE);
-	audio_tx_dma_add_list_element(&tx_dma_list_config[1],&tx_dma_list_config[0],(u16*)(&sin_44K1_d1[0]),MIC_BUFFER_SIZE);
+	audio_tx_dma_config(DMA3,(unsigned short*)(&sin_44K1_d1[0]),MIC_BUFFER_SIZE,&tx_dma_list_config[0]);
+	audio_tx_dma_add_list_element(&tx_dma_list_config[0],&tx_dma_list_config[1],(unsigned short*)(&sin_44K1_d2[0]),MIC_BUFFER_SIZE);
+	audio_tx_dma_add_list_element(&tx_dma_list_config[1],&tx_dma_list_config[0],(unsigned short*)(&sin_44K1_d1[0]),MIC_BUFFER_SIZE);
 	audio_tx_dma_en();
 
 #elif(AUDIO_MODE==FLASH_TO_LINEOUT)
 	flash_read_page(0x8000,FLASH_16k_SIZE,(unsigned char *)flash_read_16K_buff);
 	flash_read_page(0xe000,FLASH_48k_SIZE,(unsigned char *)flash_read_48K_buff);
-	audio_init(OUT_ONLY,AUDIO_48K,MONO_BIT_16);
-	audio_tx_dma_chain_init (DMA3,(u16*)aduio_buff,AUIDO_BUFF_SIZE);
+	audio_init(BUF_TO_LINE_OUT,AUDIO_48K,MONO_BIT_16);
+	audio_tx_dma_chain_init (DMA3,(unsigned short*)aduio_buff,AUIDO_BUFF_SIZE);
 #elif(AUDIO_MODE==EXT_CODEC_LINEIN_LINEOUT)
 	/* WM8731 for demo*/
 	audio_i2s_init(PWM_PWM0_PB4,I2C_GPIO_SDA_B3,I2C_GPIO_SCL_B2);
-	audio_rx_dma_chain_init(DMA0,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
-	audio_tx_dma_chain_init (DMA1,(u16*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_rx_dma_chain_init(DMA0,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+	audio_tx_dma_chain_init (DMA1,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 
 #endif
 }
 
 
 #if(AUDIO_MODE==FLASH_TO_LINEOUT)
-_attribute_ram_code_sec_ void audio_data_fifo(u8 *pdata, u32 buff_len)
+_attribute_ram_code_sec_ void audio_data_fifo(unsigned char *pdata, unsigned int buff_len)
 {
-	u16 unused_buff;
-	tx_rptr_out = ((audio_get_tx_dma_rptr (DMA3)-(u32)aduio_buff));
+	unsigned short unused_buff;
+	tx_rptr_out = ((audio_get_tx_dma_rptr (DMA3)-(unsigned int)aduio_buff));
 	if((tx_wptr_out&(AUIDO_BUFF_SIZE - 1))>tx_rptr_out)
 	{
 		unused_buff=AUIDO_BUFF_SIZE-(tx_wptr_out&(AUIDO_BUFF_SIZE-1))+tx_rptr_out;
@@ -162,7 +164,7 @@ void main_loop (void)
 	audio_data_fifo(flash_read_48K_buff,FLASH_48k_SIZE);
 	if(clock_time_exceed(t,4000000))
 	{
-		  t = sys_get_stimer_tick()|1;
+		  t = stimer_get_tick()|1;
 		 gpio_toggle(LED4);
 		 ex_cnt++;
 		 if(ex_cnt&1)
@@ -192,7 +194,7 @@ void main_loop (void)
 
 	 if(clock_time_exceed(t,3000000))
 {
-	t = sys_get_stimer_tick()|1;
+	t = stimer_get_tick()|1;
 	gpio_toggle(LED4);
 	ex_cnt++;
 	if(ex_cnt&1)

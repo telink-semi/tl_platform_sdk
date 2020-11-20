@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,17 +41,16 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #ifndef AUDIO_REG_H
 #define AUDIO_REG_H
 #include "../sys.h"
-#include "../../../common/bit.h"
 
 #define 	REG_AUDIO_AHB_BASE		    0x120000
 #define 	REG_CODEC_BASE_ADDR		    0x120200
 #define 	REG_AUDIO_APB_BASE		    0x140500
-
+#define 	reg_fifo_buf_adr(i) 		REG_AUDIO_AHB_BASE+(i)*0x40
 #define   reg_audio_en				    REG_ADDR8(REG_AUDIO_APB_BASE+0x00)
 enum
 {
@@ -72,7 +71,12 @@ enum
 	FLD_AUDIO_I2S_DAC_DCI_MS              =  BIT(7),
 };
 
+#define   reg_i2s_cfg2		         REG_ADDR8(REG_AUDIO_APB_BASE+0x02)
 
+enum
+{
+	FLD_AUDIO_FIFO1_RST                     =  BIT(3),
+};
 #define   reg_audio_ctrl				    REG_ADDR8(REG_AUDIO_APB_BASE+0x03)
 enum
 {
@@ -261,6 +265,13 @@ enum
 enum
 {
 	FLD_AUDIO_CODEC_DAC_FREQ                   =   BIT_RNG(0,3),
+};
+
+#define   reg_audio_codec_adc_wnf_ctr           REG_ADDR8(REG_CODEC_BASE_ADDR+(0x0e<<2))
+#define   addr_audio_codec_adc_wnf_ctr           0x0e
+enum
+{
+	FLD_AUDIO_CODEC_ADC12_WNF                   =   BIT_RNG(0,1),
 };
 
 

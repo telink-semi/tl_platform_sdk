@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "../../../../drivers.h"
 #include "keyboard.h"
@@ -49,8 +49,8 @@
 
 #if (defined(KB_DRIVE_PINS) && defined(KB_SCAN_PINS))
 
-u32 drive_pins[] = KB_DRIVE_PINS;
-u32 scan_pins[] = KB_SCAN_PINS;
+unsigned int drive_pins[] = KB_DRIVE_PINS;
+unsigned int scan_pins[] = KB_SCAN_PINS;
 
 #if (STUCK_KEY_PROCESS_ENABLE)
 unsigned char stuckKeyPress[ARRAY_SIZE(drive_pins)];
@@ -59,7 +59,7 @@ unsigned char stuckKeyPress[ARRAY_SIZE(drive_pins)];
 kb_data_t	kb_event;
 kb_data_t	kb_event_cache;
 unsigned char  deepback_key_state;
-u32 deepback_key_tick;
+unsigned int deepback_key_tick;
 
 #ifndef		SCAN_PIN_50K_PULLUP_ENABLE
 #define		SCAN_PIN_50K_PULLUP_ENABLE		0
@@ -213,17 +213,17 @@ kb_k_mp_t *	kb_p_map[4] = {
 
 #endif
 
-u32	scan_pin_need;
+unsigned int	scan_pin_need;
 
 static unsigned char 	kb_is_fn_pressed = 0;
 
 kb_k_mp_t * kb_k_mp;
 
-void kb_rmv_ghost_key(u32 * pressed_matrix){
-	u32 mix_final = 0;
+void kb_rmv_ghost_key(unsigned int * pressed_matrix){
+	unsigned int mix_final = 0;
 	foreach_arr(i, drive_pins){
 		for(int j = (i+1); j < ARRAY_SIZE(drive_pins); ++j){
-			u32 mix = (pressed_matrix[i] & pressed_matrix[j]);
+			unsigned int mix = (pressed_matrix[i] & pressed_matrix[j]);
 			// >=2 غ,  Ǿ ghost key
 			//four or three key at "#" is pressed at the same time, should remove ghost key
 			if( mix && (!BIT_IS_POW2(mix) || (pressed_matrix[i] ^ pressed_matrix[j])) ){
@@ -241,15 +241,15 @@ void kb_rmv_ghost_key(u32 * pressed_matrix){
 int key_matrix_same_as_last_cnt = 0;  //record key matrix no change cnt
 #endif
 
-unsigned int key_debounce_filter( u32 mtrx_cur[], u32 filt_en ){
-    u32 kc = 0;
+unsigned int key_debounce_filter( unsigned int mtrx_cur[], unsigned int filt_en ){
+    unsigned int kc = 0;
 #if (LONG_PRESS_KEY_POWER_OPTIMIZE)
     unsigned char matrix_differ = 0;
 #endif
-    static u32 mtrx_pre[ARRAY_SIZE(drive_pins)];
-    static u32 mtrx_last[ARRAY_SIZE(drive_pins)];
+    static unsigned int mtrx_pre[ARRAY_SIZE(drive_pins)];
+    static unsigned int mtrx_last[ARRAY_SIZE(drive_pins)];
     foreach_arr(i, drive_pins){
-        u32 mtrx_tmp = mtrx_cur[i];
+        unsigned int mtrx_tmp = mtrx_cur[i];
 #if (STUCK_KEY_PROCESS_ENABLE)
         stuckKeyPress[i] = mtrx_tmp ? 1 : 0;
 #endif
@@ -285,7 +285,7 @@ unsigned int key_debounce_filter( u32 mtrx_cur[], u32 filt_en ){
 // input:          pressed_matrix,
 // key_code:   output keys array
 // key_max:    max keys should be returned
-static inline void kb_remap_key_row(int drv_ind, u32 m, int key_max, kb_data_t *kb_data){
+static inline void kb_remap_key_row(int drv_ind, unsigned int m, int key_max, kb_data_t *kb_data){
 	foreach_arr(i, scan_pins){
 		if(m & 0x01){
 			unsigned char kc = kb_k_mp[i][drv_ind];
@@ -316,11 +316,11 @@ static inline void kb_remap_key_row(int drv_ind, u32 m, int key_max, kb_data_t *
 	}
 }
 
-static inline void kb_remap_key_code(u32 * pressed_matrix, int key_max, kb_data_t *kb_data, int numlock_status){
+static inline void kb_remap_key_code(unsigned int * pressed_matrix, int key_max, kb_data_t *kb_data, int numlock_status){
 
 	kb_k_mp = kb_p_map[(numlock_status&1) | (kb_is_fn_pressed << 1)];
 	foreach_arr(i, drive_pins){
-		u32 m = pressed_matrix[i];
+		unsigned int m = pressed_matrix[i];
 		if(!m) continue;
 		kb_remap_key_row(i, m, key_max, kb_data);
 		if(kb_data->cnt >= key_max){
@@ -330,7 +330,7 @@ static inline void kb_remap_key_code(u32 * pressed_matrix, int key_max, kb_data_
 }
 
 
-u32 kb_scan_row(int drv_ind, unsigned char * gpio){
+unsigned int kb_scan_row(int drv_ind, unsigned char * gpio){
 	/*
 	 * set as gpio mode if using spi flash pin
 	 * */
@@ -340,7 +340,7 @@ u32 kb_scan_row(int drv_ind, unsigned char * gpio){
 #endif
 
 #if(!KB_LINE_MODE)
-	u32 drv_pin = drive_pins[drv_ind];
+	unsigned int drv_pin = drive_pins[drv_ind];
 	if(KB_LINE_HIGH_VALID)
 	{
 		gpio_set_high_level(drv_pin);
@@ -352,7 +352,7 @@ u32 kb_scan_row(int drv_ind, unsigned char * gpio){
 	gpio_output_en(drv_pin, 1);
 #endif
 
-	u32 matrix = 0;
+	unsigned int matrix = 0;
 	foreach_arr(j, scan_pins){
 		if(scan_pin_need & BIT(j)){
 			int key = !gpio_read_cache (scan_pins[j], gpio);
@@ -384,11 +384,11 @@ u32 kb_scan_row(int drv_ind, unsigned char * gpio){
 	return matrix;
 }
 
-u32 	matrix_buff[4][ARRAY_SIZE(drive_pins)];
+unsigned int 	matrix_buff[4][ARRAY_SIZE(drive_pins)];
 int		matrix_wptr, matrix_rptr;
 
 
-u32 kb_key_pressed(unsigned char * gpio)
+unsigned int kb_key_pressed(unsigned char * gpio)
 {
 	foreach_arr(i,drive_pins){
 		if(KB_LINE_HIGH_VALID)
@@ -404,9 +404,9 @@ u32 kb_key_pressed(unsigned char * gpio)
 	sleep_us (20);
 	gpio_read_all (gpio);
 
-	u32 ret = 0;
+	unsigned int ret = 0;
 	static unsigned char release_cnt = 0;
-	static u32 ret_last = 0;
+	static unsigned int ret_last = 0;
 
 	foreach_arr(i,scan_pins){
 		if(KB_LINE_HIGH_VALID != !gpio_read_cache (scan_pins[i], gpio)){
@@ -426,18 +426,18 @@ u32 kb_key_pressed(unsigned char * gpio)
 	return ret;
 }
 
-u32 kb_scan_key_value (int numlock_status, int read_key,unsigned char * gpio)
+unsigned int kb_scan_key_value (int numlock_status, int read_key,unsigned char * gpio)
 {
 		kb_event.cnt = 0;
 		kb_event.ctrl_key = 0;
 		kb_is_fn_pressed = 0;
 
-		u32 pressed_matrix[ARRAY_SIZE(drive_pins)] = {0};
+		unsigned int pressed_matrix[ARRAY_SIZE(drive_pins)] = {0};
 		kb_k_mp = kb_p_map[0];
 
 		kb_scan_row (0, gpio);
 		for (int i=0; i<=ARRAY_SIZE(drive_pins); i++) {
-			u32 r = kb_scan_row (i < ARRAY_SIZE(drive_pins) ? i : 0, gpio);
+			unsigned int r = kb_scan_row (i < ARRAY_SIZE(drive_pins) ? i : 0, gpio);
 			if (i) {
 				pressed_matrix[i - 1] = r;
 			}
@@ -447,13 +447,13 @@ u32 kb_scan_key_value (int numlock_status, int read_key,unsigned char * gpio)
 		kb_rmv_ghost_key(&pressed_matrix[0]);
 #endif
 
-		u32 key_changed = key_debounce_filter( pressed_matrix, \
+		unsigned int key_changed = key_debounce_filter( pressed_matrix, \
 						(numlock_status & KB_NUMLOCK_STATUS_POWERON) ? 0 : 1);
 
 #if (KB_REPEAT_KEY_ENABLE)
 		if(key_changed){
 			repeat_key.key_change_flg = KEY_CHANGE;
-			repeat_key.key_change_tick = clock_time();
+			repeat_key.key_change_tick = stimer_get_tick();
 		}
 		else{
 			if(repeat_key.key_change_flg == KEY_CHANGE){
@@ -462,7 +462,7 @@ u32 kb_scan_key_value (int numlock_status, int read_key,unsigned char * gpio)
 
 			if( repeat_key.key_change_flg == KEY_SAME &&  repeat_key.key_repeat_flg && \
 			    clock_time_exceed(repeat_key.key_change_tick,(KB_REPEAT_KEY_INTERVAL_MS-5)*1000)){
-				repeat_key.key_change_tick = clock_time();
+				repeat_key.key_change_tick = stimer_get_tick();
 				key_changed = 1;
 			}
 		}
@@ -472,7 +472,7 @@ u32 kb_scan_key_value (int numlock_status, int read_key,unsigned char * gpio)
 		//	insert buffer here
 		//       key mapping requires NUMLOCK status
 		///////////////////////////////////////////////////////////////////
-		u32 *pd;
+		unsigned int *pd;
 		if (key_changed) {
 
 			/////////// push to matrix buffer /////////////////////////

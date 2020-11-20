@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H / X.P.C
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "gpio.h"
 
@@ -75,6 +75,9 @@
 /**********************************************************************************************************************
  *                                         global function implementation                                             *
  *********************************************************************************************************************/
+
+
+
 
 /**
  * @brief      This function enable the input function of a pin.
@@ -126,6 +129,24 @@ void gpio_input_dis(gpio_pin_e pin)
     {
     	analog_write_reg8(areg_gpio_pd_ie, analog_read_reg8(areg_gpio_pd_ie)&(~bit));
     }
+}
+
+/**
+ * @brief      This function set the input function of a pin.
+ * @param[in]  pin - the pin needs to set the input function
+ * @param[in]  value - enable or disable the pin's input function(1: enable,0: disable )
+ * @return     none
+ */
+void gpio_set_input(gpio_pin_e pin, unsigned char value)
+{
+	if(value)
+	{
+		gpio_input_en(pin);
+	}
+	else
+	{
+		gpio_input_dis(pin);
+	}
 }
 
 /**
@@ -377,57 +398,32 @@ void gpio_set_up_down_res(gpio_pin_e pin, gpio_pull_type_e up_down_res)
 }
 
 /**
- * @brief      This function servers to initialization all gpio.
- * @param[in]  anaRes_init_en  -  if mcu wake up from deep retention mode, determine whether it is NOT necessary to reset analog register
- *                                1: set analog register.
- *                                0: not set analog register.
- * @param[in]  st  			   -  structure of gpio settings.
- * @return     none.
- * @attention  Processing methods of unused GPIO
- * 			   Set it to high resistance state and set it to open pull-up or pull-down resistance to
- *             let it be in the determined state.When GPIO uses internal pull-up or pull-down resistance,
- *             do not use pull-up or pull-down resistance on the board in the process of practical
- *             application because it may have the risk of electric leakage .
+ * @brief     This function set pin's 30k pull-up registor.
+ * @param[in] pin - the pin needs to set its pull-up registor.
+ * @return    none.
+  * @attention  This function sets the digital pull-up, it will not work after entering low power consumption.
  */
-void gpio_usr_init(int anaRes_init_en, gpio_init_t* st)
+void gpio_set_pullup_res_30k(gpio_pin_e pin)
 {
-	/********PA group********/
-	reg_gpio_pa_setting1 = st->PA.setting1;
-	reg_gpio_pa_setting2 = st->PA.setting2;
+	unsigned char	bit = pin & 0xff;
+	unsigned short group = pin & 0xf00;
 
-	/********PB group********/
-	reg_gpio_pb_setting1 = st->PB.setting1;
-	reg_gpio_pb_setting2 = st->PB.setting2;
-
-	/********PC group********/
-	reg_gpio_pc_setting1 = st->PC.setting1;
-	reg_gpio_pc_setting2 = st->PC.setting2;
-	analog_write_reg8(areg_gpio_pc_ie, st->PC.ie.port);
-	analog_write_reg8(areg_gpio_pc_ds, st->PC.ds.port);
-
-	/********PD group********/
-	reg_gpio_pd_setting1 = st->PD.setting1;
-	reg_gpio_pd_setting2 = st->PD.setting2;
-	analog_write_reg8(areg_gpio_pd_ie, st->PD.ie.port);
-	analog_write_reg8(areg_gpio_pd_ds, st->PD.ds.port);
-
-	/********PE group********/
-	reg_gpio_pe_setting1 = st->PE.setting1;
-	reg_gpio_pe_setting2 = st->PE.setting2;
-
-	/********PF group********/
-	reg_gpio_pf_setting1 = st->PF.setting1;
-	reg_gpio_pf_setting2 = st->PF.setting2;
-
-	if(anaRes_init_en)
+	if(group==GPIO_GROUPC)
 	{
-		analog_write_reg16(0x0e, st->PA.pull.port);
-		analog_write_reg16(0x10, st->PB.pull.port);
-		analog_write_reg16(0x12, st->PC.pull.port);
-		analog_write_reg16(0x14, st->PD.pull.port);
-		analog_write_reg16(0x16, st->PE.pull.port);
+		analog_write_reg8(areg_gpio_pc_pe, analog_read_reg8(areg_gpio_pc_pe) | bit);
+	}
+	else if(group==GPIO_GROUPD)
+	{
+		analog_write_reg8(areg_gpio_pd_pe, analog_read_reg8(areg_gpio_pd_pe) | bit);
+	}
+	else
+	{
+		BM_SET(reg_gpio_oen(pin),bit);
+		BM_SET(reg_gpio_out(pin),bit);
 	}
 }
+
+
 /**********************************************************************************************************************
   *                    						local function implementation                                             *
   *********************************************************************************************************************/

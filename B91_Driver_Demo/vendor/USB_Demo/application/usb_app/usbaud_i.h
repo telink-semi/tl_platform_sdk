@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
 
@@ -70,7 +70,7 @@ static const USB_Descriptor_HIDReport_Datatype_t usbaud_report_desc[] = {
     HID_RI_INPUT(8, HID_IOF_VARIABLE),
     HID_RI_LOGICAL_MINIMUM(8, 0x00),
     HID_RI_LOGICAL_MAXIMUM(8, 0x01),
-    
+
     HID_RI_USAGE(8, 0xb0),  /* Play */
     HID_RI_USAGE(8, 0xb1)		, /* Pause */
     HID_RI_USAGE(8, 0xb3)		, /* Fast Forward */
@@ -112,7 +112,7 @@ static const USB_Descriptor_HIDReport_Datatype_t usbaud_report_desc[] = {
 
 #endif
 
-//USB HIDĶ
+
 static const USB_Descriptor_HIDReport_Datatype_t usbaud_report_desc[] = {
 		0x05, 0x0c, 0x09, 0x01, 0xa1, 0x01,
 		0x85, 0x01, 0x15, 0x00, 0x25, 0x01, 0x09, 0xcd, 0x09, 0xb5, 0x09, 0xb6,
@@ -124,11 +124,11 @@ static const USB_Descriptor_HIDReport_Datatype_t usbaud_report_desc[] = {
 		0x15, 0x00, 0x26, 0xff, 0x00, 0x75, 0x08, 0x95, 0x02, 0x91, 0x00, 0x09,
 		0x02, 0x75, 0x08, 0x95, 0x02, 0x81, 0x00, 0xc0, };
 
-static inline u8* usbaud_get_report_desc(void) {
-	return (u8*) (usbaud_report_desc);
+static inline unsigned char* usbaud_get_report_desc(void) {
+	return (unsigned char*) (usbaud_report_desc);
 }
 
-static inline u16 usbaud_get_report_desc_size(void) {
+static inline unsigned short usbaud_get_report_desc_size(void) {
 	return sizeof(usbaud_report_desc);
 }
 

@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	L.X
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,11 +41,16 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "app_config.h"
 #if (TEST_DEMO == EMI_DEMO)
 
+/*
+ * @brief 	this macro definition serve to open the setting to deal with problem of zigbee mode 2480Mhz
+ * 			band edge can't pass the spec.only use it at the time of certification.
+ * */
+#define	  FIX_ZIGBEE_BANDEAGE_EN	0
 #define TX_PACKET_MODE_ADDR 		     0x00000005
 #define RUN_STATUE_ADDR 			     0x00000006
 #define TEST_COMMAND_ADDR			     0x00000007
@@ -165,6 +170,7 @@ void emi_init(void)
 
 void emicarrieronly(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
+	(void)(rf_mode);
 	rf_mode_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_single_tone(power,rf_chn);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
@@ -190,6 +196,19 @@ void emi_con_prbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
 			&& ((read_sram8(RF_MODE_ADDR)) == g_mode ))
 	{
+#if FIX_ZIGBEE_BANDEAGE_EN
+		if(rf_mode == RF_MODE_ZIGBEE_250K)
+		{
+			if (rf_chn == 80)
+			{
+				write_reg8(0x140c23,0x00);
+			}
+			else
+			{
+				write_reg8(0x140c23,0x80);
+			}
+		}
+#endif
 		rf_continue_mode_run();
 		if(g_hop)
 		{
@@ -218,6 +237,7 @@ void emi_con_prbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emirx(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
+	(void)(pwr);
 	rf_emi_rx_setup(rf_mode,rf_chn);
 	write_sram8(RSSI_ADDR,0);
 	write_sram32(RX_PACKET_NUM_ADDR,0);

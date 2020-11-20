@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H / B.Y
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "uart.h"
 
@@ -178,7 +178,8 @@ static void uart_set_fuc_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin);
 */
 void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_parity_e parity, uart_stop_bit_e stop_bit)
 {
-    reg_uart_ctrl0(uart_num) = bwpc; //set bwpc
+	reg_uart_ctrl0(uart_num) &= ~ (FLD_UART_BPWC_O); 
+	reg_uart_ctrl0(uart_num) = bwpc; //set bwpc
     reg_uart_clk_div(uart_num) = (div | FLD_UART_CLK_DIV_EN); //set div_clock
 
     //parity config
@@ -203,7 +204,7 @@ void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_
 /***********************************************************
  * @brief  		This function serves to calculate the best bwpc(bit width) .i.e reg0x96.
  * @param[in]	baudrate - baut rate of UART.
- * @param[in]	sysclk   - system clock.
+ * @param[in]	pclk   - system clock.
  * @param[out]	div      - uart clock divider.
  * @param[out]	bwpc     - bitwidth, should be set to larger than 2.
  * @return 		none
@@ -211,7 +212,7 @@ void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_
  *  		    simplify the expression: div*bwpc =  constant(z)
  * 		        bwpc range from 3 to 15.so loop and get the minimum one decimal point
  */
-void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int sysclk, unsigned short* div, unsigned char *bwpc)
+void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned short* div, unsigned char *bwpc)
 {
 	unsigned char i = 0, j= 0;
 	unsigned int primeInt = 0;
@@ -219,8 +220,8 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int sysclk, unsigned 
 	unsigned int D_intdec[13],D_int[13];
 	unsigned char D_dec[13];
 
-	primeInt = sysclk/baudrate;
-	primeDec = 10*sysclk/baudrate - 10*primeInt;
+	primeInt = pclk/baudrate;
+	primeDec = 10*pclk/baudrate - 10*primeInt;
 
 	if(uart_is_prime(primeInt)){ // primeInt is prime
 		primeInt += 1;  //+1 must be not prime. and primeInt must be larger than 2.
@@ -287,14 +288,13 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int sysclk, unsigned 
 void uart_set_dma_rx_timeout(uart_num_e uart_num,unsigned char bwpc, unsigned char bit_cnt, uart_timeout_mul_e mul)
 {
     reg_uart_rx_timeout0(uart_num) = (bwpc+1) * bit_cnt; //one byte includes 12 bits at most
-	reg_uart_rx_timeout1(uart_num)  = mul; //if over 2*(tmp_bwpc+1),one transaction end.
+    reg_uart_rx_timeout1(uart_num) &= (~FLD_UART_TIMEOUT_MUL);
+	reg_uart_rx_timeout1(uart_num) |= mul; //if over 2*(tmp_bwpc+1),one transaction end.
 }
 
  unsigned char uart_tx_byte_index[2] = {0};
 /**
  * @brief     This function serves to send data by byte with not DMA method.
- *            variable uart_TxIndex,it must cycle the four registers 0x14080 0x14081 0x14082 0x14083 for the design of SOC.
- *            so we need variable to remember the index.
  * @param[in] uart_num - UART0 or UART1.
  * @param[in] tx_data  - the data to be send.
  * @return    none
@@ -386,8 +386,8 @@ void uart_set_rts_level(uart_num_e uart_num, unsigned char polarity)
  */
 void uart_set_cts_pin(uart_cts_pin_e cts_pin)
 {
-	u8 val = 0;
-	u8 mask = 0xff;
+	unsigned char val = 0;
+	unsigned char mask = 0xff;
 	if(cts_pin == UART0_CTS_PA1)
 	{
 		mask= (unsigned char)~(BIT(2)|BIT(3));
@@ -431,8 +431,8 @@ void uart_set_cts_pin(uart_cts_pin_e cts_pin)
  */
 void uart_set_rts_pin(uart_rts_pin_e rts_pin)
 {
-	u8 val = 0;
-	u8 mask = 0xff;
+	unsigned char val = 0;
+	unsigned char mask = 0xff;
 	if(rts_pin == UART0_RTS_PA2)
 	{
 		mask= (unsigned char)~(BIT(4)|BIT(5));
@@ -485,17 +485,64 @@ void uart_set_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
 }
 
 /**
+* @brief      This function serves to set rtx pin for UART module.
+* @param[in]  rx_pin  - the rtx pin need to set.
+* @return     none
+*/
+void uart_set_rtx_pin(uart_rx_pin_e rx_pin)
+{
+	unsigned char val = 0;
+ 	unsigned char mask = 0xff;
+	gpio_set_up_down_res(rx_pin, GPIO_PIN_PULLUP_10K);
+	if(rx_pin == UART0_RX_PA4)
+	{
+	 	mask= (unsigned char)~(BIT(1)|BIT(0));
+	 	val = BIT(0);
+	}
+	else if(rx_pin == UART0_RX_PB3)
+	{
+	 	mask = (unsigned char)~(BIT(7)|BIT(6));
+	 	val = BIT(7);
+	 	reg_gpio_pad_mul_sel|=BIT(0);
+	}
+    else if(rx_pin ==UART0_RX_PD3)
+	{
+	    mask = (unsigned char)~(BIT(7)|BIT(6));
+	 	val = 0;
+	}
+	else if(rx_pin == UART1_RX_PC7)
+	{
+	    mask = (unsigned char)~(BIT(7)|BIT(6));
+	 	val = BIT(7);
+	 	reg_gpio_pad_mul_sel|=BIT(0);
+	}
+	else if(rx_pin ==  UART1_RX_PD7)
+	{
+	 	mask = (unsigned char)~(BIT(7)|BIT(6));
+	 	val = 0;
+	}
+	else if(rx_pin ==  UART1_RX_PE2)
+	{
+	    mask = (unsigned char)~(BIT(5)|BIT(4));
+	    val = BIT(4);
+	}
+	reg_gpio_func_mux(rx_pin)=(reg_gpio_func_mux(rx_pin)& mask)|val;
+	gpio_input_en(rx_pin);
+	gpio_function_dis(rx_pin);
+}
+
+/**
 * @brief     This function serves to send data with not DMA method.
 * @param[in] uart_num - UART0 or UART1.
 * @param[in] addr     - pointer to the buffer containing data need to send.
 * @param[in] len      - NDMA transmission length.
 * @return    1
 */
-volatile unsigned char uart_send(uart_num_e uart_num, unsigned char * addr, unsigned char len )
+unsigned char uart_send(uart_num_e uart_num, unsigned char * addr, unsigned char len )
 {
-	for(u8 i=0;i<len;i++)
+	for(unsigned char i=0;i<len;i++)
 	{
-		uart_send_byte(UART0,addr[i]);
+		uart_send_byte(uart_num,addr[i]);
 	}
 	return 1;
 }
@@ -504,35 +551,52 @@ volatile unsigned char uart_send(uart_num_e uart_num, unsigned char * addr, unsi
  * @brief     	This function serves to send data by DMA, this function tell the DMA to get data from the RAM and start.
  * @param[in]  	uart_num - UART0 or UART1.
  * @param[in] 	addr     - pointer to the buffer containing data need to send.
- * @param[in] 	len      - DMA transmission length.
- * @return      1
+ * @param[in] 	len      - DMA transmission length.The maximum transmission length of DMA is 0xFFFFFC bytes, so dont'n over this length.
+ * @return      1  dma start send.
+ *              0  the length is error.
  */
-volatile unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned char len )
+unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned int len )
 {
-	while(!(reg_uart_status2(uart_num) & FLD_UART_TX_DONE));//It ensures that the data of last frame has been sent.
-	dma_set_address(uart_dma_tx_chn[uart_num],(u32)convert_ram_addr_cpu2bus(addr),reg_uart_data_buf_adr(uart_num));
-	dma_set_size(uart_dma_tx_chn[uart_num],len,DMA_WORD_WIDTH);
-	dma_chn_en(uart_dma_tx_chn[uart_num]);
-	while(reg_uart_status2(uart_num) & FLD_UART_TX_DONE); //It ensures that the data of this frame start to send.
-	return 1;
+	if(len!=0)
+	{
+	    uart_clr_tx_done(uart_num);
+	    dma_set_address(uart_dma_tx_chn[uart_num],(unsigned int)convert_ram_addr_cpu2bus(addr),reg_uart_data_buf_adr(uart_num));
+	    dma_set_size(uart_dma_tx_chn[uart_num],len,DMA_WORD_WIDTH);
+	    dma_chn_en(uart_dma_tx_chn[uart_num]);
+	    return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 /**
  * @brief     	This function serves to receive data function by DMA, this  function tell the DMA to get data from the uart data fifo.
  * @param[in]  	uart_num - UART0 or UART1.
  * @param[in] 	addr     - pointer to the buffer  receive data.
- * @param[in]   rev_size - the receive length of DMA
- * @note        The DMA version of A0  has some limitians.
- *              0:must to know the length your received it equals rev_size.
- *              1:The relation of the rev_size and the real receive length: REC_BUFF_LEN= (rev_size%4)==0 ? rev_size : ((rev_size/4)+1)*4.
- *              2:If the data length you set isn't the multiple of 4(the DMA carry 4-byte one time),like 5,it will carry 8 byte,while the last 3-byte data is random.
+ * @param[in]   rev_size - the receive length of DMA,The maximum transmission length of DMA is 0xFFFFFC bytes, so dont'n over this length.
+ * @note        The DMA version of A0 has some limitians.
+ *              0:We should know the real receive length-len.
+ *              1:If the data length we receive isn't the multiple of 4(the DMA carry 4-byte one time),like 5,it will carry 8 byte,
+ *                while the last 3-byte data is random.
+ *              2:The receive buff length sholud be equal to rec_size.The relation of the receive buff length and rec_size and
+ *                the real receive data length-len : REC_BUFF_LEN=rec_size= ((len%4)==0 ? len : ((len/4)+1)*4).
+ *              The DMA version of A1 can receive any length of data,the rev_size is useless.
  * @return    	none
  */
- void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned char rev_size)
+ void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev_size)
 {
+	dma_set_address(uart_dma_rx_chn[uart_num],reg_uart_data_buf_adr(uart_num),(unsigned int)convert_ram_addr_cpu2bus(addr));
+	if(0xff== g_chip_version)
+	{
+		dma_set_size(uart_dma_rx_chn[uart_num], rev_size, DMA_WORD_WIDTH);
+	}
+	else
+	{
+	    reg_dma_size(uart_dma_rx_chn[uart_num])=0xffffffff;
+	}
 
-	dma_set_address(uart_dma_rx_chn[uart_num],reg_uart_data_buf_adr(uart_num),(u32)convert_ram_addr_cpu2bus(addr));
-	dma_set_size(uart_dma_rx_chn[uart_num], rev_size, DMA_WORD_WIDTH);
 	dma_chn_en(uart_dma_rx_chn[uart_num]);
 }
 
@@ -567,7 +631,7 @@ volatile unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, 
   * @param[in] cts_parity - when CTS's input equals to select, tx will be stopped.
   * @return    none
   */
- void uart_cts_config(uart_num_e uart_num,uart_cts_pin_e cts_pin,u8 cts_parity)
+ void uart_cts_config(uart_num_e uart_num,uart_cts_pin_e cts_pin,unsigned char cts_parity)
  {
 	uart_set_cts_pin(cts_pin);
 
@@ -591,7 +655,7 @@ volatile unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, 
   * @param[in] auto_mode_en - set the mode of RTS(auto or manual).
   * @return    none
   */
- void uart_rts_config(uart_num_e uart_num,uart_rts_pin_e rts_pin,u8 rts_parity,u8 auto_mode_en)
+ void uart_rts_config(uart_num_e uart_num,uart_rts_pin_e rts_pin,unsigned char rts_parity,unsigned char auto_mode_en)
  {
 	uart_set_rts_pin(rts_pin);
 
@@ -648,8 +712,8 @@ volatile unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, 
   */
 static void uart_set_fuc_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
  {
- 	u8 val = 0;
- 	u8 mask = 0xff;
+ 	unsigned char val = 0;
+ 	unsigned char mask = 0xff;
 
  	if(tx_pin == UART0_TX_PA3)
  	{

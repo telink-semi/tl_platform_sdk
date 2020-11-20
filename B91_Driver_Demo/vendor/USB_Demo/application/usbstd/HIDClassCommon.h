@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,13 +41,13 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
 
 /* Includes: */
 #include "StdDescriptors.h"
-#include "../types.h"
+
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
@@ -431,39 +431,39 @@ typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
 
-	u16 HIDSpec;
-	u8  CountryCode;
-	u8 TotalReportDescriptors;
-	u8 HIDReportType;
-	u8 HIDReportLength[2];
+	unsigned short HIDSpec;
+	unsigned char  CountryCode;
+	unsigned char TotalReportDescriptors;
+	unsigned char HIDReportType;
+	unsigned char HIDReportLength[2];
 }__attribute__((packed))  USB_HID_Descriptor_HID_t;
 
 typedef struct
 {
-	u8 Length;
-	u8 DescriptorType;
-	u16 BcdHID;
-	u8 CountryCode;
-	u8 NumDescriptors;
-	u8 DescriptorType2;
-	u8 DescriptorLength[2];
+	unsigned char Length;
+	unsigned char DescriptorType;
+	unsigned short BcdHID;
+	unsigned char CountryCode;
+	unsigned char NumDescriptors;
+	unsigned char DescriptorType2;
+	unsigned char DescriptorLength[2];
 }USB_HID_StdDescriptor_HID_t;
 
 typedef struct
 {
-	u8 Button;
-	s8  X;
-	s8  Y;
+	unsigned char Button;
+	signed char  X;
+	signed char  Y;
 }USB_MouseReport_Data_t;
 
 typedef struct
 {
-	u8 Modifier;
-	u8 Reserved;
-	u8 KeyCode[6];
+	unsigned char Modifier;
+	unsigned char Reserved;
+	unsigned char KeyCode[6];
 }USB_KeyboardReport_Data_t;
 
-typedef u8 USB_Descriptor_HIDReport_Datatype_t;
+typedef unsigned char USB_Descriptor_HIDReport_Datatype_t;
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

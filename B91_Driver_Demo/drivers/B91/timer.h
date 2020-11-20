@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 /**	@page TIMER
  *
@@ -70,10 +70,7 @@
 /**********************************************************************************************************************
  *                                         global constants                                                           *
  *********************************************************************************************************************/
-/**
- *  @brief  Define system tick
- */
-#define	    tl_sys_tick_per_us   				16
+
 
 /**********************************************************************************************************************
  *                                         global data type                                                           *
@@ -131,7 +128,7 @@ static inline void timer_clr_irq_status(time_irq_e status)
  * @brief   This function refer to get timer0 tick.
  * @return  none
  */
-static inline  u32 timer0_get_gpio_width(void)
+static inline  unsigned int timer0_get_gpio_width(void)
 {
 	 return reg_tmr0_tick;
 
@@ -142,7 +139,7 @@ static inline  u32 timer0_get_gpio_width(void)
  * @brief   This function refer to get timer1 tick.
  * @return  none
  */
-static inline u32 timer1_get_gpio_width(void)
+static inline unsigned int timer1_get_gpio_width(void)
 {
 	return reg_tmr1_tick;
 
@@ -154,7 +151,7 @@ static inline u32 timer1_get_gpio_width(void)
  * @param[in] tick - the tick of timer0
  * @return  none
  */
-static inline void timer0_set_tick(u32 tick)
+static inline void timer0_set_tick(unsigned int tick)
 {
 	reg_tmr0_tick = tick;
 }
@@ -163,7 +160,7 @@ static inline void timer0_set_tick(u32 tick)
  * @brief   This function refer to get timer0 tick.
  * @return  none
  */
-static inline u32 timer0_get_tick(void)
+static inline unsigned int timer0_get_tick(void)
 {
 	return reg_tmr0_tick ;
 }
@@ -174,7 +171,7 @@ static inline u32 timer0_get_tick(void)
  * @param[in] tick - the tick of timer1
  * @return  none
  */
-static inline void timer1_set_tick(u32 tick)
+static inline void timer1_set_tick(unsigned int tick)
 {
 	reg_tmr1_tick = tick;
 }
@@ -183,7 +180,7 @@ static inline void timer1_set_tick(u32 tick)
  * @brief   This function refer to get timer1 tick.
  * @return  none
  */
-static inline u32 timer1_get_tick(void)
+static inline unsigned int timer1_get_tick(void)
 {
 	return reg_tmr1_tick;
 }

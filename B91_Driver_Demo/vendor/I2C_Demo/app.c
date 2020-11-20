@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	L.R 
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "app_config.h"
 
@@ -120,7 +120,7 @@ void main_loop(void)
 
 	if( (slave_rx_done_end_flag==1)|| (slave_rx_end_flag==1))
 	{
-		i2c_slave_write((u8*)i2c_rx_buff,BUFF_DATA_LEN_NO_DMA);
+		i2c_slave_write((unsigned char*)i2c_rx_buff,BUFF_DATA_LEN_NO_DMA);
 		slave_rx_done_end_flag=0;
 		slave_rx_end_flag=0;
 		gpio_toggle(LED4);
@@ -134,13 +134,13 @@ void main_loop(void)
  * @param[in] 	none
  * @return 		none
  */
-void i2c_irq_handler(void)
+_attribute_ram_code_sec_noinline_ void i2c_irq_handler(void)
 {
 #if(I2C_DEVICE==I2C_SLAVE_DEVICE)
 
 	if(i2c_get_irq_status(I2C_RX_BUF_STATUS))
 	{
-		i2c_slave_read((u8*)(i2c_rx_buff+i2c_read_flag),SLAVE_RX_IRQ_TRIG_LEVEL);
+		i2c_slave_read((unsigned char*)(i2c_rx_buff+i2c_read_flag),SLAVE_RX_IRQ_TRIG_LEVEL);
 
 		 i2c_read_flag+=SLAVE_RX_IRQ_TRIG_LEVEL;
 		 if(i2c_read_flag>BUFF_DATA_LEN_NO_DMA-SLAVE_RX_IRQ_TRIG_LEVEL)
@@ -157,7 +157,7 @@ void i2c_irq_handler(void)
 	{
        if((BUFF_DATA_LEN_NO_DMA%SLAVE_RX_IRQ_TRIG_LEVEL !=0))
        {
-    	   i2c_slave_read((u8*)(i2c_rx_buff+BUFF_DATA_LEN_NO_DMA-BUFF_DATA_LEN_NO_DMA%SLAVE_RX_IRQ_TRIG_LEVEL),BUFF_DATA_LEN_NO_DMA%SLAVE_RX_IRQ_TRIG_LEVEL);
+    	   i2c_slave_read((unsigned char*)(i2c_rx_buff+BUFF_DATA_LEN_NO_DMA-BUFF_DATA_LEN_NO_DMA%SLAVE_RX_IRQ_TRIG_LEVEL),BUFF_DATA_LEN_NO_DMA%SLAVE_RX_IRQ_TRIG_LEVEL);
        }
 	    i2c_clr_fifo(I2C_RX_BUFF_CLR);
 		slave_rx_done_end_flag=1;

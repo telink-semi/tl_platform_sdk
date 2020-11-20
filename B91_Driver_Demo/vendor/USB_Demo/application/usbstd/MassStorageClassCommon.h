@@ -3,34 +3,34 @@
  *
  * @brief	This is the header file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,13 +41,13 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #pragma once
 
 /* Includes: */
 #include "StdDescriptors.h"
-#include "../types.h"
+
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
@@ -130,67 +130,67 @@ enum MS_CommandStatusCodes_t
 
 typedef struct
 {
-	u32 Signature;
-	u32 Tag;
-	u32 DataTransferLength;
-	u8  Flags;
-	u8  LUN;
-	u8  SCSICommandLength;
-	u8  SCSICommandData[16];
+	unsigned int Signature;
+	unsigned int Tag;
+	unsigned int DataTransferLength;
+	unsigned char  Flags;
+	unsigned char  LUN;
+	unsigned char  SCSICommandLength;
+	unsigned char  SCSICommandData[16];
 }  MS_CommandBlockWrapper_t;
 
 typedef struct
 {
-	u32 Signature;
-	u32 Tag;
-	u32 DataTransferResidue;
-	u8  Status;
+	unsigned int Signature;
+	unsigned int Tag;
+	unsigned int DataTransferResidue;
+	unsigned char  Status;
 }  MS_CommandStatusWrapper_t;
 
 typedef struct
 {
-	u8  ResponseCode;
-	u8  SegmentNumber;
-	u8 SenseKey            : 4;
-	u8 Reserved            : 1;
-	u8 ILI                 : 1;
-	u8 EOM                 : 1;
-	u8 FileMark            : 1;
-	u8  Information[4];
-	u8  AdditionalLength;
-	u8  CmdSpecificInformation[4];
-	u8  AdditionalSenseCode;
-	u8  AdditionalSenseQualifier;
-	u8  FieldReplaceableUnitCode;
-	u8  SenseKeySpecific[3];
+	unsigned char  ResponseCode;
+	unsigned char  SegmentNumber;
+	unsigned char SenseKey            : 4;
+	unsigned char Reserved            : 1;
+	unsigned char ILI                 : 1;
+	unsigned char EOM                 : 1;
+	unsigned char FileMark            : 1;
+	unsigned char  Information[4];
+	unsigned char  AdditionalLength;
+	unsigned char  CmdSpecificInformation[4];
+	unsigned char  AdditionalSenseCode;
+	unsigned char  AdditionalSenseQualifier;
+	unsigned char  FieldReplaceableUnitCode;
+	unsigned char  SenseKeySpecific[3];
 } MS_SCSI_Request_Sense_Response_t;
 
 
 typedef struct
 {
-	u8 DeviceType          : 5;
-	u8 PeripheralQualifier : 3;
-	u8 Reserved            : 7;
-	u8 Removable           : 1;
-	u8  Version;
-	u8 ResponseDataFormat  : 4;
-	u8 Reserved2           : 1;
-	u8 NormACA             : 1;
-	u8 TrmTsk              : 1;
-	u8 AERC                : 1;
-	u8  AdditionalLength;
-	u8  Reserved3[2];
-	u8 SoftReset           : 1;
-	u8 CmdQue              : 1;
-	u8 Reserved4           : 1;
-	u8 Linked              : 1;
-	u8 Sync                : 1;
-	u8 WideBus16Bit        : 1;
-	u8 WideBus32Bit        : 1;
-	u8 RelAddr             : 1;
-	u8 VendorID[8];
-	u8 ProductID[16];
-	u8 RevisionID[4];
+	unsigned char DeviceType          : 5;
+	unsigned char PeripheralQualifier : 3;
+	unsigned char Reserved            : 7;
+	unsigned char Removable           : 1;
+	unsigned char  Version;
+	unsigned char ResponseDataFormat  : 4;
+	unsigned char Reserved2           : 1;
+	unsigned char NormACA             : 1;
+	unsigned char TrmTsk              : 1;
+	unsigned char AERC                : 1;
+	unsigned char  AdditionalLength;
+	unsigned char  Reserved3[2];
+	unsigned char SoftReset           : 1;
+	unsigned char CmdQue              : 1;
+	unsigned char Reserved4           : 1;
+	unsigned char Linked              : 1;
+	unsigned char Sync                : 1;
+	unsigned char WideBus16Bit        : 1;
+	unsigned char WideBus32Bit        : 1;
+	unsigned char RelAddr             : 1;
+	unsigned char VendorID[8];
+	unsigned char ProductID[16];
+	unsigned char RevisionID[4];
 } MS_SCSI_Inquiry_Response_t;
 
 #pragma pack()

@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H / Z.S.X
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "pwm.h"
 
@@ -70,9 +70,9 @@ dma_config_t pwm_tx_dma_config={
  */
 void pwm_set_pin(pwm_pin_e pin)
 {
-	u8 val=0;
-	u8 start_bit = (BIT_LOW_BIT(pin & 0xff) %4 )<<1;
-    u8 mask =(u8) ~BIT_RNG(start_bit , start_bit+1);
+	unsigned char val=0;
+	unsigned char start_bit = (BIT_LOW_BIT(pin & 0xff) %4 )<<1;
+    unsigned char mask =(unsigned char) ~BIT_RNG(start_bit , start_bit+1);
 
     if(pin==PWM_PWM2_PB7){ 																					// Pad Function Mux:0
 		 val = 0;
@@ -107,7 +107,7 @@ void pwm_set_dma_config(dma_chn_e chn)
  * @param[in] len - the length of data in SRAM.
  * @return    none
  */
-void pwm_set_dma_buf(dma_chn_e chn,u32 buf_addr,u32 len)
+void pwm_set_dma_buf(dma_chn_e chn,unsigned int buf_addr,unsigned int len)
 {
 	dma_set_address( chn,convert_ram_addr_cpu2bus(buf_addr),reg_pwm_data_buf_adr);
 	dma_set_size(chn,len,DMA_WORD_WIDTH);
@@ -134,12 +134,12 @@ void pwm_ir_dma_mode_start(dma_chn_e chn)
  * @param[in] head_of_list - to configure the address of the next node configure.
  * @return    none
  */
-void pwm_set_dma_chain_llp(dma_chn_e chn,u16 * src_addr, u32 data_len,dma_chain_config_t * head_of_list)
+void pwm_set_dma_chain_llp(dma_chn_e chn,unsigned short * src_addr, unsigned int data_len,dma_chain_config_t * head_of_list)
 {
 	 dma_config(chn,&pwm_tx_dma_config);
 	 dma_set_address( chn,convert_ram_addr_cpu2bus(src_addr),reg_pwm_data_buf_adr);
 	 dma_set_size(chn,data_len,DMA_WORD_WIDTH);
-	 reg_dma_llp(chn)=(u32)convert_ram_addr_cpu2bus(head_of_list);
+	 reg_dma_llp(chn)=(unsigned int)convert_ram_addr_cpu2bus(head_of_list);
 }
 
 
@@ -152,12 +152,12 @@ void pwm_set_dma_chain_llp(dma_chn_e chn,u16 * src_addr, u32 data_len,dma_chain_
  * @param[in] data_len - to configure DMA length.
  * @return    none
  */
-void pwm_set_tx_dma_add_list_element(dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llponit ,u16 * src_addr,u32 data_len)
+void pwm_set_tx_dma_add_list_element(dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llponit ,unsigned short * src_addr,unsigned int data_len)
 {
 	config_addr->dma_chain_ctl= reg_dma_ctrl(chn)|BIT(0);
-	config_addr->dma_chain_src_addr=(u32)convert_ram_addr_cpu2bus(src_addr);
+	config_addr->dma_chain_src_addr=(unsigned int)convert_ram_addr_cpu2bus(src_addr);
 	config_addr->dma_chain_dst_addr=reg_pwm_data_buf_adr;
     config_addr->dma_chain_data_len=dma_cal_size(data_len,DMA_WORD_WIDTH);
-	config_addr->dma_chain_llp_ptr=(u32)convert_ram_addr_cpu2bus(llponit);
+	config_addr->dma_chain_llp_ptr=(unsigned int)convert_ram_addr_cpu2bus(llponit);
 }
 

@@ -3,34 +3,34 @@
  *
  * @brief	This is the source file for B91
  *
- * @author	D.M.H
+ * @author	Driver Group
  * @date	2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *          All rights reserved.
- *          
+ *
  *          Redistribution and use in source and binary forms, with or without
  *          modification, are permitted provided that the following conditions are met:
- *          
+ *
  *              1. Redistributions of source code must retain the above copyright
  *              notice, this list of conditions and the following disclaimer.
- *          
- *              2. Unless for usage inside a TELINK integrated circuit, redistributions 
- *              in binary form must reproduce the above copyright notice, this list of 
+ *
+ *              2. Unless for usage inside a TELINK integrated circuit, redistributions
+ *              in binary form must reproduce the above copyright notice, this list of
  *              conditions and the following disclaimer in the documentation and/or other
  *              materials provided with the distribution.
- *          
- *              3. Neither the name of TELINK, nor the names of its contributors may be 
- *              used to endorse or promote products derived from this software without 
+ *
+ *              3. Neither the name of TELINK, nor the names of its contributors may be
+ *              used to endorse or promote products derived from this software without
  *              specific prior written permission.
- *          
+ *
  *              4. This software, with or without modification, must only be used with a
  *              TELINK integrated circuit. All other usages are subject to written permission
  *              from TELINK and different commercial license may apply.
  *
- *              5. Licensee shall be solely responsible for any claim to the extent arising out of or 
+ *              5. Licensee shall be solely responsible for any claim to the extent arising out of or
  *              relating to such deletion(s), modification(s) or alteration(s).
- *         
+ *
  *          THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  *          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  *          WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@
  *          ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  *          (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *         
+ *
  *******************************************************************************************************/
 #include "../PLIC_Demo/app_config.h"
 /**************************notices******************************************
@@ -74,10 +74,10 @@ void user_init(void)
 	rf_set_tx_dma(2,128);
 
 
-	u8 rf_data_len = TX_PKT_PAYLOAD+2;
+	unsigned char rf_data_len = TX_PKT_PAYLOAD+2;
 	ble_tx_packet[4]=0;
 	ble_tx_packet[5]=TX_PKT_PAYLOAD;
-	u32 rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
+	unsigned int rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
 	ble_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
 	ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
 	ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
@@ -89,7 +89,7 @@ void user_init(void)
 
 	  /******** stimer init********/
 	plic_interrupt_enable(IRQ1_SYSTIMER);
-	stimer_set_irq_capture(sys_get_stimer_tick() + CLOCK_16M_SYS_TIMER_CLK_1MS); //1ms
+	stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); //1ms
 
   /******** timer0 init********/
 	plic_interrupt_enable(IRQ4_TIMER0);
@@ -109,19 +109,19 @@ void main_loop(void)
 }
 
 
-void stimer_irq_handler()
+_attribute_ram_code_sec_  void stimer_irq_handler()
 {
 	if(stimer_get_irq_status(FLD_SYSTEM_IRQ))
 	{
 		gpio_set_high_level(LED2);
 		stimer_clr_irq_status(FLD_SYSTEM_IRQ);  //clr irq
-		stimer_set_irq_capture(sys_get_stimer_tick() + 16*1000);
+		stimer_set_irq_capture(stimer_get_tick() + 16*1000);
 		delay_us(250);
 		gpio_set_low_level(LED2);
 	}
 }
 
-void timer0_irq_handler(void)
+_attribute_ram_code_sec_ void timer0_irq_handler(void)
 {
 
 	if(timer_get_irq_status(TMR_STA_TMR0))
@@ -133,7 +133,7 @@ void timer0_irq_handler(void)
 	}
 }
 
-void rf_irq_handler(void)
+_attribute_ram_code_sec_  void rf_irq_handler(void)
 {
 	if(rf_get_irq_status(FLD_RF_IRQ_TX)){
 		gpio_set_high_level(LED4);
