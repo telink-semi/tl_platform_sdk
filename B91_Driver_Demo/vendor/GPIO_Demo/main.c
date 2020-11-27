@@ -87,7 +87,7 @@ _attribute_ram_code_sec_noinline_ void gpio_risc1_irq_handler(void)
  */
 int main (void)
 {
-	sys_init(LDO_1P4_LDO_1P8, VBAT_V_GREATER_THAN_3V6);
+	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
 	CCLK_24M_HCLK_24M_PCLK_24M;
 			
 	gpio_init(1);

@@ -270,7 +270,6 @@ void gpio_shutdown(gpio_pin_e pin)
  */
 void gpio_set_irq(gpio_pin_e pin, gpio_irq_trigger_type_e trigger_type)
 {
-	gpio_irq_en(pin);
 	switch(trigger_type)
 	{
 	case INTR_RISING_EDGE:
@@ -304,7 +303,7 @@ void gpio_set_irq(gpio_pin_e pin, gpio_irq_trigger_type_e trigger_type)
  */
 void gpio_set_gpio2risc0_irq(gpio_pin_e pin, gpio_irq_trigger_type_e trigger_type)
 {
-	gpio_gpio2risc0_irq_en(pin);
+
 	switch(trigger_type)
 	{
 	case INTR_RISING_EDGE:
@@ -337,7 +336,6 @@ void gpio_set_gpio2risc0_irq(gpio_pin_e pin, gpio_irq_trigger_type_e trigger_typ
  */
 void gpio_set_gpio2risc1_irq(gpio_pin_e pin, gpio_irq_trigger_type_e trigger_type)
 {
-	gpio_gpio2risc1_irq_en(pin);
 	switch(trigger_type)
 	{
 	case INTR_RISING_EDGE:

@@ -72,7 +72,7 @@ void user_init(void)
 	//Therefore, notice the processing of the interrupt sequence here.changed by shuaixing,confirmed by jianzhi.20201104.
 	mdec_clr_irq_status(FLD_WKUP_MDEC|FLD_WKUP_TIMER|FLD_WKUP_DIG);
 	plic_interrupt_enable(IRQ62_PM_TM);
-	plic_interrupt_claim(IRQ62_PM_TM);
+	plic_interrupt_claim();
 	plic_interrupt_complete(IRQ62_PM_TM);
 	core_interrupt_enable();
 	mdec_reset();

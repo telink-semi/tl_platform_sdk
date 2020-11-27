@@ -44,10 +44,6 @@
  *
  *******************************************************************************************************/
 #include "timer.h"
-#include "compiler.h"
-#include "plic.h"
-
-
 /**********************************************************************************************************************
  *                                         global function implementation                                             *
  *********************************************************************************************************************/
@@ -102,11 +98,8 @@ void timer_stop(timer_type_e type)
  * @param[in] cap_tick  - tick of capture.
  * @return    none
  */
-void timer_set_mode(timer_type_e type, timer_mode_e mode,unsigned int init_tick, unsigned int cap_tick)
+void timer_set_mode(timer_type_e type, timer_mode_e mode)
 {
-	reg_tmr_tick(type) = init_tick;
-	reg_tmr_capt(type) = cap_tick;
-
 	switch(type)
  	{
  		case TIMER0:
@@ -137,21 +130,20 @@ void timer_gpio_init(timer_type_e type, gpio_pin_e pin, gpio_pol_e pol )
 	gpio_function_en(pin);
 	gpio_output_dis(pin); 	//disable output
 	gpio_input_en(pin);		//enable input
-
  	switch(type)
  	{
  		case TIMER0:
  		 	if(pol==POL_FALLING)
  		 	{
  		 		gpio_set_up_down_res(pin,GPIO_PIN_PULLUP_10K);
-
  		 		gpio_set_gpio2risc0_irq(pin,INTR_LOW_LEVEL);
+ 		 		gpio_gpio2risc0_irq_en(pin);
  		 	}
  		 	else if(pol==POL_RISING)
  		 	{
  		 		gpio_set_up_down_res(pin,GPIO_PIN_PULLDOWN_100K);
-
  		 		gpio_set_gpio2risc0_irq(pin,INTR_HIGH_LEVEL);
+ 		 		gpio_gpio2risc0_irq_en(pin);
  		 	}
  			break;
 
@@ -159,14 +151,14 @@ void timer_gpio_init(timer_type_e type, gpio_pin_e pin, gpio_pol_e pol )
  		 	if(pol==POL_FALLING)
  		 	{
  		 		gpio_set_up_down_res(pin,GPIO_PIN_PULLUP_10K);
-
  		 		gpio_set_gpio2risc1_irq(pin,INTR_LOW_LEVEL);
+ 		 		gpio_gpio2risc1_irq_en(pin);
  		 	}
  		 	else if(pol==POL_RISING)
  		 	{
  		 		gpio_set_up_down_res(pin,GPIO_PIN_PULLDOWN_100K);
-
  		 		gpio_set_gpio2risc1_irq(pin,INTR_HIGH_LEVEL);
+ 		 		gpio_gpio2risc1_irq_en(pin);
 
  		 	}
  			break;

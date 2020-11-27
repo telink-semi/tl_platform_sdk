@@ -56,7 +56,7 @@ extern void main_loop(void);
  */
 int main (void)
 {
-	sys_init(LDO_1P4_LDO_1P8, VBAT_V_GREATER_THAN_3V6);
+	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
 #if(SPI_MODE == SPI_XIP_MODE)//SPI_XIP_MODE need fast frequent
 	CCLK_96M_HCLK_48M_PCLK_24M;
 #else

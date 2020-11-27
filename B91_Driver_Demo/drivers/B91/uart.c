@@ -179,7 +179,7 @@ static void uart_set_fuc_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin);
 void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_parity_e parity, uart_stop_bit_e stop_bit)
 {
 	reg_uart_ctrl0(uart_num) &= ~ (FLD_UART_BPWC_O); 
-	reg_uart_ctrl0(uart_num) = bwpc; //set bwpc
+	reg_uart_ctrl0(uart_num) |= bwpc; //set bwpc
     reg_uart_clk_div(uart_num) = (div | FLD_UART_CLK_DIV_EN); //set div_clock
 
     //parity config
@@ -587,6 +587,9 @@ unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned 
  */
  void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev_size)
 {
+	dma_chn_dis(uart_dma_rx_chn[uart_num]);
+	/*In order to be able to receive data of unknown length(A0 doesn't suppport),the DMA SIZE is set to the longest value 0xffffffff.After entering suspend and wake up, and then continue to receive, 
+	DMA will no longer move data from uart fifo, because DMA thinks that the last transmission was not completed and must disable dma_chn first.modified by minghai,confirmed qiangkai 2020.11.26.*/
 	dma_set_address(uart_dma_rx_chn[uart_num],reg_uart_data_buf_adr(uart_num),(unsigned int)convert_ram_addr_cpu2bus(addr));
 	if(0xff== g_chip_version)
 	{

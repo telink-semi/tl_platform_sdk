@@ -851,15 +851,25 @@ void audio_set_codec_in_path_a_d_gain (codec_in_path_digital_gain_e d_gain,codec
  void audio_set_i2s_codec_m_s (i2s_codec_m_s_mode_e m_s);
 
 
+ /**
+  * @brief    This function serves to active soft mute dac and disable dma.
+  * @return    none
+  */
+  void audio_pause_out_path(void);
+
+
+  /**
+   * @brief    This function serves to inactive soft mute dac and enable dma .
+   * @return    none
+   */
+  void audio_resume_out_path(void);
 
  /**
   * @brief     This function serves to change sample rate for dac.
   * @param[in] rate     -  the sample rate of dac
-  * @param[in] buff     - the pointer of audio buff
-  * @param[in] buff_len - the length of audio buff
   * @return    none
   */
- _attribute_ram_code_sec_noinline_ void audio_change_sample_rate (audio_sample_rate_e  rate,void * buff,unsigned int buff_len);
+ _attribute_ram_code_sec_noinline_ void audio_change_sample_rate (audio_sample_rate_e  rate);
 
 
  /**

@@ -797,16 +797,10 @@
 #define PF3_INPUT_ENABLE	1	//MSPI
 #endif
 #ifndef PF4_INPUT_ENABLE
-#define PF4_INPUT_ENABLE	0
+#define PF4_INPUT_ENABLE	1  //MSPI
 #endif
 #ifndef PF5_INPUT_ENABLE
-#define PF5_INPUT_ENABLE	0
-#endif
-#ifndef PF6_INPUT_ENABLE
-#define PF6_INPUT_ENABLE	0
-#endif
-#ifndef PF7_INPUT_ENABLE
-#define PF7_INPUT_ENABLE	0
+#define PF5_INPUT_ENABLE	1   //MSPI
 #endif
 #ifndef PF0_OUTPUT_ENABLE
 #define PF0_OUTPUT_ENABLE	0

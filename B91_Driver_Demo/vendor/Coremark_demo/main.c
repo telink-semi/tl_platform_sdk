@@ -58,7 +58,7 @@ extern float coremark_result;
 
 int main(void)
 {
-	sys_init(LDO_1P4_LDO_1P8, VBAT_V_GREATER_THAN_3V6);
+	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
 	CCLK_24M_HCLK_24M_PCLK_24M;;
 	user_init();
 	while ((read_reg8(0x10080b) & 0x7f) == 0);

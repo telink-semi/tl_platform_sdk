@@ -48,7 +48,7 @@
 #include "pwm.h"
 #include "stimer.h"
 
-#include <string.h>
+
 unsigned char audio_rx_dma_chn;
 unsigned char audio_tx_dma_chn;
 
@@ -1084,25 +1084,36 @@ void audio_i2s_init(pwm_pin_e pwm0_pin, i2c_sda_pin_e sda_pin,i2c_scl_pin_e scl_
 
 }
 
-
-
 /**
- * @brief     This function serves to change sample rate for dac.
- * @param[in] rate     -  the sample rate of dac
- * @param[in] buff     - the pointer of audio buff
- * @param[in] buff_len - the length of audio buff
+ * @brief    This function serves to active soft mute dac and disable dma .
  * @return    none
  */
-_attribute_ram_code_sec_noinline_ void audio_change_sample_rate (audio_sample_rate_e  rate,void * buff,unsigned int buff_len)
+ void audio_pause_out_path(void)
 {
 	BM_SET(reg_audio_codec_dac_ctr,FLD_AUDIO_CODEC_DAC_SOFT_MUTE);//dac mute
 	audio_tx_dma_dis();
-	audio_set_i2s_clock(rate, AUDIO_RATE_EQUAL,1); //must
-	reg_audio_codec_dac_freq_ctr=(FLD_AUDIO_CODEC_DAC_FREQ&rate);
-	memset(buff,0,buff_len);//CLR BUFF
-	BM_CLR(reg_audio_codec_dac_ctr,FLD_AUDIO_CODEC_DAC_SOFT_MUTE);//dac unmute  must
+}
+
+ /**
+  * @brief    This function serves to inactive soft mute dac and enable dma after change_sample_rate.
+  * @return    none
+  */
+ void audio_resume_out_path(void)
+{
+	BM_CLR(reg_audio_codec_dac_ctr,FLD_AUDIO_CODEC_DAC_SOFT_MUTE);//dac unmute 
 	audio_tx_dma_en();
 }
+/**
+ * @brief     This function serves to change sample rate for dac.
+ * @param[in] rate     -  the sample rate of dac
+ * @return    none
+ */
+_attribute_ram_code_sec_ void audio_change_sample_rate (audio_sample_rate_e  rate)
+{
+	audio_set_i2s_clock(rate, AUDIO_RATE_EQUAL,1);
+	reg_audio_codec_dac_freq_ctr=(FLD_AUDIO_CODEC_DAC_FREQ&rate);
+}
+
 
 
 /**

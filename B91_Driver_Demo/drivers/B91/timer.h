@@ -185,6 +185,28 @@ static inline unsigned int timer1_get_tick(void)
 	return reg_tmr1_tick;
 }
 
+/*
+ * @brief     This function set to initial tick for timr0/timer1.
+ * @param[in] type - timer0/timer1.
+ * @param[in] init_tick - initial tick value.
+ * @return    none
+ */
+static inline void timer_set_init_tick(timer_type_e type, unsigned int init_tick)
+{
+	reg_tmr_tick(type) = init_tick;
+}
+/*
+ * @brief     This function set to capture tick for timr0/timer1.
+ * @param[in] type - timer0/timer1.
+ * @param[in] cap_tick - initial tick value.
+ * @return    none
+ */
+static inline void timer_set_cap_tick(timer_type_e type, unsigned int cap_tick)
+{
+	reg_tmr_capt(type) = cap_tick;
+}
+
+
 
 /**
  * @brief     the specifed timer start working.
@@ -197,11 +219,9 @@ void timer_start(timer_type_e type);
  * @brief     set mode, initial tick and capture of timer.
  * @param[in] type - select the timer to start.
  * @param[in] mode - select mode for timer.
- * @param[in] init_tick - initial tick.
- * @param[in] cap_tick  - tick of capture.
  * @return    none
  */
-void timer_set_mode(timer_type_e type, timer_mode_e mode,unsigned int init_tick, unsigned int cap_tick);
+void timer_set_mode(timer_type_e type, timer_mode_e mode);
 
 /**
  * @brief     initiate GPIO for gpio trigger and gpio width mode of timer.

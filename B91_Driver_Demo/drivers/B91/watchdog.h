@@ -92,13 +92,13 @@ static inline void wd_clear_cnt(void)
  * 			  Because the lower 8bit of the wd timer register will always be 0, there will be an error ,
 			  The time error = (0x00~0xff)/(APB clock frequency)
  * @param[in] period_ms - The watchdog trigger time. Unit is  millisecond
- * @param[in] tick_per_ms - Number of tick in 1 millisecond;
  * @return    none
+ * @attention  The clock source of watchdog comes from pclk, when pclk changes it needs to be reconfigured.
  */
-static inline void wd_set_interval_ms(unsigned int period_ms,unsigned long int tick_per_ms)
+static inline void wd_set_interval_ms(unsigned int period_ms)
 {
 	static unsigned int tmp_period_ms = 0;
-	tmp_period_ms=period_ms*tick_per_ms;
+	tmp_period_ms=period_ms*sys_clk.pclk*1000;
 	reg_wt_target=tmp_period_ms;
 }
 

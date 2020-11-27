@@ -199,13 +199,19 @@ void main_loop (void)
 	ex_cnt++;
 	if(ex_cnt&1)
 	{
-		audio_change_sample_rate(AUDIO_16K,aduio_buff,AUIDO_BUFF_SIZE);
+		audio_pause_out_path();
+		audio_change_sample_rate(AUDIO_16K);
+		memset(aduio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
+		audio_resume_out_path();
 		swith=1;
 		flash_rptr=0;
 	}
 	else
 	{
-		audio_change_sample_rate(AUDIO_48K,aduio_buff,AUIDO_BUFF_SIZE);
+		audio_pause_out_path();
+		audio_change_sample_rate(AUDIO_48K);
+		memset(aduio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
+		audio_resume_out_path();
 		swith=0;
 		flash_rptr=0;
 	}

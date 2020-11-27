@@ -56,7 +56,6 @@
 #include "pwm.h"
 #include "pm.h"
 #include "timer.h"
-#include "compiler.h"
 #include "flash.h"
 #include "usbhw.h"
 #include "watchdog.h"

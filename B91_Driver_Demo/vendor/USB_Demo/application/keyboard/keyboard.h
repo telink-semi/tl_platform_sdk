@@ -89,6 +89,16 @@ extern unsigned int deepback_key_tick;
 #endif
 
 
+/**
+* @brief This function read a pin's cache from the buffer.
+* @param[in] pin - the pin needs to read.
+* @param[in] p - the buffer from which to read the pin's level.
+* @return the state of the pin.
+*/
+static inline unsigned int gpio_read_cache(gpio_pin_e pin, unsigned char *p)
+{
+return p[pin>>8] & (pin & 0xff);
+}
 
 
 

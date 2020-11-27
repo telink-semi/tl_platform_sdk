@@ -60,6 +60,7 @@ void user_init()
 	gpio_set_up_down_res(SW1, GPIO_PIN_PULLUP_10K);
 	core_interrupt_enable();
 	gpio_set_irq(SW1, INTR_FALLING_EDGE);
+	gpio_irq_en(SW1);
 	plic_interrupt_enable(IRQ25_GPIO);
 
 #elif(GPIO_MODE == GPIO_IRQ_RSIC0)
@@ -71,8 +72,8 @@ void user_init()
 	gpio_input_en(SW1);
 	gpio_set_up_down_res(SW1, GPIO_PIN_PULLUP_10K);
 	core_interrupt_enable();
-
 	gpio_set_gpio2risc0_irq(SW1,INTR_FALLING_EDGE);
+	gpio_gpio2risc0_irq_en(SW1);
 	plic_interrupt_enable(IRQ26_GPIO2RISC0);
 
 
@@ -88,6 +89,7 @@ void user_init()
 	core_interrupt_enable();
 	gpio_gpio2risc1_irq_en(SW1);
 	gpio_set_gpio2risc1_irq(SW1,INTR_FALLING_EDGE);
+	gpio_gpio2risc1_irq_en(SW1);
 	plic_interrupt_enable(IRQ27_GPIO2RISC1);
 #elif(GPIO_MODE == GPIO_HIGH_RESISTOR)
 	gpio_shutdown(GPIO_ALL);//set all gpio as high resistor except sws and mspi

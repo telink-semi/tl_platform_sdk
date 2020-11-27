@@ -46,7 +46,7 @@
 #include "app_config.h"
 /**************************notices******************************************
  * ********timer clock use APB clock ******************/
-#define TIMER_MODE_GPIO_TRIGGER_TICK    0xf
+#define TIMER_MODE_GPIO_TRIGGER_TICK    0x01
 volatile unsigned int t0;
 
 
@@ -59,8 +59,12 @@ void user_init(void)
 	plic_interrupt_enable(IRQ4_TIMER0);
 	plic_interrupt_enable(IRQ3_TIMER1);
 	core_interrupt_enable();
-	timer_set_mode(TIMER0, TIMER_MODE_SYSCLK, 0, 50*sys_clk.pclk*1000);
-	timer_set_mode(TIMER1, TIMER_MODE_SYSCLK, 0, 50*sys_clk.pclk*1000);
+	timer_set_init_tick(TIMER0,0);
+	timer_set_cap_tick(TIMER0,50*sys_clk.pclk*1000);
+	timer_set_init_tick(TIMER1,0);
+	timer_set_cap_tick(TIMER1,50*sys_clk.pclk*1000);
+	timer_set_mode(TIMER0, TIMER_MODE_SYSCLK);
+	timer_set_mode(TIMER1, TIMER_MODE_SYSCLK);
 	timer_start(TIMER1);
 	timer_start(TIMER0);
 
@@ -74,14 +78,18 @@ void user_init(void)
 	gpio_output_en(GPIO_PA2|GPIO_PA3);
 	gpio_set_low_level(GPIO_PA2|GPIO_PA3);
 
-	/****  timer0 POL_FALLING  SW1 link PA2  **/
+	/****  timer0 POL_RISING  SW1 link PA2  **/
 	timer_gpio_init(TIMER0, SW1,POL_RISING);
-	timer_set_mode(TIMER0, TIMER_MODE_GPIO_TRIGGER,0,TIMER_MODE_GPIO_TRIGGER_TICK);
+	timer_set_init_tick(TIMER0,0);
+	timer_set_cap_tick(TIMER0,TIMER_MODE_GPIO_TRIGGER_TICK);
+	timer_set_mode(TIMER0, TIMER_MODE_GPIO_TRIGGER);
 	timer_start(TIMER0);
 
 	/****  timer1  POL_RISING  SW2 link PA3  **/
 	timer_gpio_init(TIMER1, SW2,POL_RISING);
-	timer_set_mode(TIMER1, TIMER_MODE_GPIO_TRIGGER,0,TIMER_MODE_GPIO_TRIGGER_TICK);
+	timer_set_init_tick(TIMER1,0);
+	timer_set_cap_tick(TIMER1,TIMER_MODE_GPIO_TRIGGER_TICK);
+	timer_set_mode(TIMER1, TIMER_MODE_GPIO_TRIGGER);
 	timer_start(TIMER1);
 
 #elif(TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
@@ -97,7 +105,9 @@ void user_init(void)
 	gpio_set_high_level(GPIO_PA2);
 	delay_ms(50);
 	timer_gpio_init(TIMER0, SW1, POL_FALLING);
-	timer_set_mode(TIMER0, TIMER_MODE_GPIO_WIDTH,0,0);
+	timer_set_init_tick(TIMER0,0);
+	timer_set_cap_tick(TIMER0,0);
+	timer_set_mode(TIMER0, TIMER_MODE_GPIO_WIDTH);
 	timer_start(TIMER0);
 	gpio_set_low_level(GPIO_PA2);
 	delay_ms(250);
@@ -107,20 +117,23 @@ void user_init(void)
 	gpio_set_low_level(GPIO_PA3);
 	delay_ms(50);
 	timer_gpio_init(TIMER1, SW2, POL_RISING);
-	timer_set_mode(TIMER1, TIMER_MODE_GPIO_WIDTH,0,0);
+	timer_set_init_tick(TIMER1,0);
+	timer_set_cap_tick(TIMER1,0);
+	timer_set_mode(TIMER1, TIMER_MODE_GPIO_WIDTH);
 	timer_start(TIMER1);
 	gpio_set_high_level(GPIO_PA3);
 	delay_ms(250);
 	gpio_set_low_level(GPIO_PA3);
 
 #elif(TIMER_MODE == TIMER_TICK_MODE)
-
-	timer_set_mode(TIMER0, TIMER_MODE_TICK,0,0);//cpu clock tick.
+	timer_set_init_tick(TIMER0,0);
+	timer_set_cap_tick(TIMER0,0);
+	timer_set_mode(TIMER0, TIMER_MODE_TICK);//cpu clock tick.
 	timer_start(TIMER0);
 
 #elif(TIMER_MODE == TIMER_WATCHDOG_MODE)
 
-	wd_set_interval_ms(1000,sys_clk.pclk*1000);
+	wd_set_interval_ms(1000);
 	wd_start();
 
 #endif

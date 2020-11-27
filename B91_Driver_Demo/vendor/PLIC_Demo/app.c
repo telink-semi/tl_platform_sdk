@@ -93,7 +93,9 @@ void user_init(void)
 
   /******** timer0 init********/
 	plic_interrupt_enable(IRQ4_TIMER0);
-	timer_set_mode(TIMER0, TIMER_MODE_SYSCLK, 0, sys_clk.pclk*1000);//1ms
+	timer_set_init_tick(TIMER0,0);
+	timer_set_cap_tick(TIMER0,sys_clk.pclk*1000);//1ms
+	timer_set_mode(TIMER0, TIMER_MODE_SYSCLK);
 	rf_set_irq_mask(FLD_RF_IRQ_TX);
 	timer_start(TIMER0);
 	stimer_set_irq_mask(FLD_SYSTEM_IRQ);		//irq enable

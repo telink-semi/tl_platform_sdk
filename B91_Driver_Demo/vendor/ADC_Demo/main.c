@@ -63,14 +63,13 @@ int main (void)
 	 * 		and must set sys_init() function with the mode for battery voltage less than 3.6V.
 	 * 		For battery voltage > 3.6V, should take some external voltage divider.
 	 **/
-	sys_init(LDO_1P4_LDO_1P8, VBAT_V_LESS_THAN_3V6);
+	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_LESS_THAN_3V6);
 #else
-	sys_init(LDO_1P4_LDO_1P8, VBAT_V_GREATER_THAN_3V6);
+	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
 #endif
 	CCLK_24M_HCLK_24M_PCLK_24M;
 
 	user_init();
-
 
 	while (1) {
 
@@ -80,3 +79,4 @@ int main (void)
 	}
 	return 0;
 }
+
