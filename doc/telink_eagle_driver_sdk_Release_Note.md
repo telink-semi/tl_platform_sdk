@@ -1,7 +1,7 @@
 ## V1.3.0-Beta
 
 ### Version
-* SDK version : telink_b91_driver_sdk v1.3.0-Beta.
+* SDK version : telink_b91_driver_sdk V1.3.0-Beta.
 * This version sdk support B91 A0，A1 and A2 chip.
 
 ### Bug Fixes
@@ -38,8 +38,6 @@
   * add host speaker stop playback detection function in spk demo.
 * **pwm**
   * add function interface pwm_32k_chn_update_duty_cycle.
-* **mdec**
-  * the function plic_interrupt_claim() don't need parameter.
 
 
 ### Known issues
@@ -52,7 +50,7 @@
 
 ### 版本
 
-* SDK版本: telink_b91_driver_sdk v1.3.0-Beta。
+* SDK版本: telink_b91_driver_sdk V1.3.0-Beta。
 * 此版本SDK支持B91 A0、A1和A2芯片。
 
 ### Bug Fixes
@@ -99,9 +97,7 @@
 
   * 添加功能接口pwm_32k_chn_update_duty_cycle。
 
-* **mdec**
 
-  * 函数plic_interrupt_claim()不需要参数。
 
 
 ### Known issues
