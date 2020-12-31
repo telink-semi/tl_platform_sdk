@@ -64,7 +64,6 @@
 #include "mdec.h"
 
 #include "trng.h"
-
 #include "sys.h"
 #include "pke.h"
 #include "plic.h"
@@ -80,4 +79,4 @@
 
 #include "mspi.h"
 #include "adc.h"
-
+#include "swire.h"

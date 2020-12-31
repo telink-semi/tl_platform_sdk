@@ -47,6 +47,7 @@
 #if(USB_DEMO_TYPE==USB_MIC_SPEAKER)
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
+#include <string.h>
 #define AUDIO_SAMPLING_RATE  AUDIO_48K
 #define LED1            GPIO_PB4
 #define LED2            GPIO_PB5
@@ -115,13 +116,9 @@ void  audio_rx_data_from_usb ()
 		d0 |= reg_usb_ep6_dat << 8;
 	    signed short d1 = reg_usb_ep6_dat;
 		d1 |= reg_usb_ep6_dat << 8;
-#if 0
+
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d0;
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d1;
-#else
-		unsigned int d = (d0 + d1) >> 1;
-		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d;
-#endif
 	}
 	usbhw_data_ep_ack(USB_EDP_SPEAKER);
 }
@@ -129,7 +126,7 @@ void  audio_rx_data_from_usb ()
 
 
 int		num_iso_in = 0;
-int 	num_iso_out = 0;
+volatile int 	num_iso_out = 0;
 
 _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 {
@@ -182,15 +179,32 @@ void user_init(void)
 	core_interrupt_enable();
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ|FLD_USB_EDP6_IRQ);
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
-	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_ADC_16K_DAC_48K,MONO_BIT_16);//mic sampling=16K,spk sampling=48K,should match the setting in usb_default.h.
+	/*1.AUDIO_ADC_16K_DAC_48K mic sampling=16K,spk sampling=48K,should match the setting  in usb_default.h
+	 *2  mic and spk  channel count should be the same (1 or 2 ) in usb_default.h
+	 *3  channel count =1,MONO_BIT_16;channel count =2  STEREO_BIT_16*/
+	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_ADC_16K_DAC_48K,STEREO_BIT_16);
 	audio_rx_dma_chain_init(MIC_DMA_CHN,iso_in_buff,MIC_BUFFER_SIZE * 2);
 	audio_tx_dma_chain_init (SPK_DMA_CHN,iso_out_buff, SPK_BUFFER_SIZE * 2);
 }
-
+unsigned int t=0;
+int temp=0;
 void main_loop (void)
 {
 
 	usb_handle_irq();
+	if(clock_time_exceed(t,2000)&&(num_iso_out))//2ms
+	{
+		if(num_iso_out==temp)
+		{
+			memset(iso_out_buff,0,SPK_BUFFER_SIZE * 2);//if host pause playback clear buff.
+			num_iso_out=0;
+		}
+
+		gpio_toggle(LED4);
+		temp=num_iso_out;
+		t = stimer_get_tick()|1;
+
+	}
 }
 
 

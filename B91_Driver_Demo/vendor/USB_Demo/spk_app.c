@@ -44,18 +44,21 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "application/usbstd/usb.h"
 #if(USB_DEMO_TYPE==USB_SPEAKER)
+#include "usb_default.h"
+#include "application/usbstd/usb.h"
+#include <string.h>
 #define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
+#define SPK_MONO_STEREO       ((SPK_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
 #define SPK_DMA_CHN    DMA3
 #define	SPK_BUFFER_SIZE			2048
 unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
 
 volatile unsigned int		iso_out_w = 0;
 volatile unsigned int  	     iso_out_r = 0;
-volatile unsigned int  	     iso_out_w_r = 0;
 
-unsigned int		            num_iso_out = 0;
+
+volatile unsigned int		            num_iso_out = 0;
 
 unsigned char more_rate;
 unsigned char less_rate;
@@ -82,7 +85,7 @@ void user_init(void)
 	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
-	audio_init(BUF_TO_LINE_OUT ,SPK_SAMPLING_RATE,MONO_BIT_16);
+	audio_init(BUF_TO_LINE_OUT ,SPK_SAMPLING_RATE,SPK_MONO_STEREO);
 	audio_tx_dma_chain_init(SPK_DMA_CHN,(unsigned short*)&iso_out_buff,SPK_BUFFER_SIZE*2);
 }
 
@@ -101,15 +104,11 @@ void  audio_rx_data_from_usb ()
 		d0 |= reg_usb_ep6_dat << 8;
 	    signed short d1 = reg_usb_ep6_dat;
 		d1 |= reg_usb_ep6_dat << 8;
-#if 0
+
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d0;
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d1;
-#else
-		unsigned int d = (d0 + d1) >> 1;
-		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d;
 
-#endif
-		iso_out_w_r=((iso_out_w&(SPK_BUFFER_SIZE - 1))- iso_out_r)&(SPK_BUFFER_SIZE - 1);
+
 
 	}
 	usbhw_data_ep_ack(USB_EDP_SPEAKER);
@@ -129,6 +128,11 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 		num_iso_out++;
 		if ((num_iso_out & 0x7f) == 0)		gpio_toggle(LED2);
 	}
+
+	if (usbhw_get_eps_irq()& FLD_USB_EDP7_IRQ)
+		{
+			usbhw_clr_eps_irq(FLD_USB_EDP7_IRQ);
+		}
 
 }
 #if 0
@@ -172,10 +176,24 @@ _attribute_ram_code_sec_  void change_rate(void)
 
 	}
 #endif
-
+unsigned int t=0;
+unsigned int temp=0;
 void main_loop (void)
 {
 	usb_handle_irq();
+	if(clock_time_exceed(t,2000)&&(num_iso_out))//2ms
+	{
+		if(num_iso_out==temp)
+		{
+			memset(iso_out_buff,0,SPK_BUFFER_SIZE * 2);//if host pause playback clear buff.
+			num_iso_out=0;
+		}
+
+		gpio_toggle(LED4);
+		temp=num_iso_out;
+		t = stimer_get_tick()|1;
+
+	}
 }
 #endif
 

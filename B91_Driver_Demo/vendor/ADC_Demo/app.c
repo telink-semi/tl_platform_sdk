@@ -70,12 +70,12 @@ void user_init()
 #endif
 
 #if (ADC_SAMPLE_MODE == ADC_GPIO_SAMPLE)
-	adc_gpio_sample_init(ADC_SAMPLE_PIN, ADC_VREF_1P2V, ADC_PRESCALE_1F8, ADC_SAMPLE_FREQ_96K);
+	/**
+	*   Change the default Pre_scale setting as ADC_PRESCALE_1F4.
+	*	Changed by chaofan.20201230.
+	**/
+	adc_gpio_sample_init(ADC_SAMPLE_PIN, ADC_VREF_1P2V, ADC_PRESCALE_1F4, ADC_SAMPLE_FREQ_96K);
 #elif(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
-	/**		The battery voltage sample range is 1.8~3.5V,
-	 * 		and must set sys_init() function  with the mode for battery voltage less than 3.6V.
-	 * 		For battery voltage > 3.6V, should take some external voltage divider.
-	 **/
 	adc_battery_voltage_sample_init();
 #elif(ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
 	adc_temperature_sample_init();
@@ -109,7 +109,7 @@ unsigned short adc_sort_and_get_average_code(void)
 {
 
 	unsigned short adc_code_average = 0;
-	unsigned int i, j;
+	int i, j;
 	unsigned short temp;
 	/**** insert Sort and get average value ******/
 	for(i = 1 ;i < ADC_SAMPLE_NUM; i++)
@@ -118,7 +118,12 @@ unsigned short adc_sort_and_get_average_code(void)
 		{
 			temp = adc_sample_buffer[i];
 			adc_sample_buffer[i] = adc_sample_buffer[i-1];
-			for(j=i-1; adc_sample_buffer[j] > temp;j--)
+	/**
+		 * add judgment condition "j>=0" in for loop,
+		 * otherwise may have array out of bounds.
+		 * changed by chaofan.20201230.
+	 */
+			for(j=i-1; j>=0 && adc_sample_buffer[j] > temp;j--)
 			{
 				adc_sample_buffer[j+1] = adc_sample_buffer[j];
 			}
@@ -158,9 +163,13 @@ unsigned short adc_get_voltage(void)
 	unsigned short adc_code_average = 0;
 	for (int i = 0; i < ADC_SAMPLE_NUM; i++)
 	{
+	/**
+	 * move the "2 sample cycle" wait operation before adc_get_code(),
+	 * otherwise may have data lose due to no waiting when adc_power_on.
+	 * changed by chaofan.20201230.
+	 */
+		delay_us(21);//wait at least 2 sample cycle(f = 96K, T = 10.4us)
 		adc_sample_buffer[i] = adc_get_code();
-		//wait at least 2 sample cycle(f = 96K, T = 10.4us)
-		delay_us(21);
 	}
 	adc_code_average = adc_sort_and_get_average_code();
 	adc_vol_mv_average = adc_calculate_voltage(adc_code_average);
@@ -192,9 +201,13 @@ unsigned short adc_get_temperature(void)
 
 	for (int i = 0; i < ADC_SAMPLE_NUM; i++)
 	{
+	/**
+		 * move the "2 sample cycle" wait operation before adc_get_code(),
+		 * otherwise may have data lose due to no waiting when adc_power_on.
+		 * changed by chaofan.20201230.
+	 */		
+		delay_us(21);//wait at least 2 sample cycle(f = 96K, T = 10.4us)
 		adc_sample_buffer[i] = adc_get_code();
-		//wait at least 2 sample cycle(f = 96K, T = 10.4us)
-		delay_us(21);
 	}
 	adc_code_average = adc_sort_and_get_average_code();
 	adc_temp_average = adc_calculate_temperature(adc_code_average);

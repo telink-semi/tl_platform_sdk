@@ -145,13 +145,19 @@ void user_init(void)
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
 #if(AUDIO_IN_MODE==AUDIO_LINE_IN)
+   // set in path digital and analog gain, must be set before audio_init();
+	audio_set_codec_in_path_a_d_gain(CODEC_IN_D_GAIN_12_DB,CODEC_IN_A_GAIN_20_DB);
 	audio_init(LINE_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
 	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #elif(AUDIO_IN_MODE==AUDIO_DMIC_IN)
-	audio_set_dmic_pin(DMIC_GROUPB_B2_DAT_B3_B4_CLK);
+	audio_set_dmic_pin(DMIC_GROUPD_D4_DAT_D5_D6_CLK);
+	// set in path digital gain,analog gain does not work, must be set before audio_init(),;
+	audio_set_codec_in_path_a_d_gain(CODEC_IN_D_GAIN_12_DB,CODEC_IN_A_GAIN_0_DB);
 	audio_init(DMIC_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
 	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #elif(AUDIO_IN_MODE==AUDIO_AMIC_IN)
+	// set in path digital and analog gain, must be set before audio_init();
+	audio_set_codec_in_path_a_d_gain(CODEC_IN_D_GAIN_12_DB,CODEC_IN_A_GAIN_20_DB);
 	audio_init(AMIC_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
 	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #endif

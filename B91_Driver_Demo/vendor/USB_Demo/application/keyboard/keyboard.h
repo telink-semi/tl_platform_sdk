@@ -101,7 +101,6 @@ return p[pin>>8] & (pin & 0xff);
 }
 
 
-
 int kb_is_data_same(kb_data_t *a, kb_data_t *b);
 
 static inline int kb_is_key_valid(kb_data_t *p){

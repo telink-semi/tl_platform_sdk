@@ -92,7 +92,7 @@ void user_init()
 	audio_rx_dma_chain_init(DMA2,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 	audio_tx_dma_chain_init (DMA3,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 #elif(AUDIO_MODE==DMIC_TO_LINEOUT)
-	audio_set_dmic_pin(DMIC_GROUPB_B2_DAT_B3_B4_CLK);
+	audio_set_dmic_pin(DMIC_GROUPD_D4_DAT_D5_D6_CLK);
 	audio_init(DMIC_IN_TO_BUF_TO_LINE_OUT ,AUDIO_16K,MONO_BIT_16);
 	audio_rx_dma_chain_init(DMA2,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
 	audio_tx_dma_chain_init (DMA3,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);

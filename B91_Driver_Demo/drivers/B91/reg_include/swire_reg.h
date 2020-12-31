@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file	swire_reg.h
  *
- * @brief	This is the source file for B91
+ * @brief	This is the header file for B91
  *
  * @author	Driver Group
  * @date	2019
@@ -43,76 +43,38 @@
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#ifndef SWIRE_REG_H
+#define SWIRE_REG_H
+#include "../sys.h"
 
-volatile unsigned int  s7816_irq_cnt=0;
 
-volatile __attribute__((aligned(4))) unsigned char s7816_rx_buff_byte[S7816_RX_BUFF_LEN] ={0};
-volatile __attribute__((aligned(4))) unsigned char command[5]={0x00,0x84,0x00,0x00,0x04};//the command serves to get random number.
 
-void user_init()
-{
-	s7816_set_pin(S7816_RST_PIN,S7816_VCC_PIN,S7816_CLK_PIN,S7816_TRX_PIN);
-	s7816_init(S7816_UART_CHN,S7816_4MHZ,F,D);
 
-	core_interrupt_enable();
-#if( S7816_UART_CHN == S7816_UART0)
-	plic_interrupt_enable(IRQ19_UART0);
-#elif(S7816_UART_CHN == S7816_UART1)
-	plic_interrupt_enable(IRQ18_UART1);
+#define    SWIRE_BASE_ADDR			        0x100c00
+
+
+#define   reg_swire_data      		    REG_ADDR8(SWIRE_BASE_ADDR)
+
+#define   reg_swire_ctl				    REG_ADDR8(SWIRE_BASE_ADDR+1)
+enum{
+	FLD_SWIRE_WR	        	= BIT(0),
+	FLD_SWIRE_RD 	     	    = BIT(1),
+	FLD_SWIRE_CMD 		        = BIT(2),
+	FLD_SWIRE_ERR_FLAG			= BIT(3),
+	// default :FLD_SWIRE_EOP = 1: 1byte format--- 1bit cmd + 8bit data +1 clock end(0)
+	// FLD_SWIRE_EOP = 0: 1byte format--- 1bit cmd + 8bit data +1bit(1) + 1 clock end(0)
+	FLD_SWIRE_EOP     			= BIT(4),
+	FLD_SWIRE_USB_DET    	  	= BIT(6),
+	FLD_SWIRE_USB_EN      		= BIT(7),
+};
+#define   reg_swire_ctl2				 REG_ADDR8(SWIRE_BASE_ADDR+2)
+enum{
+	FLD_SWIRE_CLK_DIV	        = BIT_RNG(0,6),
+};
+
+#define   reg_swire_id				    REG_ADDR8(SWIRE_BASE_ADDR+3)
+enum{
+	FLD_SWIRE_ID_VALID	        = BIT_RNG(0,4),
+	FLD_SWIRE_FIFO_MODE	        = BIT(7),
+};
 #endif
-	uart_tx_irq_trig_level(S7816_UART_CHN, 0);
-	uart_rx_irq_trig_level(S7816_UART_CHN, 1);
-	uart_set_irq_mask(S7816_UART_CHN, UART_RX_IRQ_MASK);
-
-	s7816_en(S7816_UART_CHN);//enable the 7816 module
-}
-void main_loop (void)
-{
-	/*********************activate and coldReset and set trx pin***************/
-	s7816_coldreset();// the coldreset accompanied by IC-CARD activate.
-	delay_ms(30);//wait for the return atr.the time is decided by the clock and the atr numbers.
-	//s7816_warmreset(); //the warmreset is required after the IC-CARD activate.
-   /*******************************TX*****************************/
-    for(int i=0;i<5;i++)
-    {
-    	s7816_send_byte(S7816_UART_CHN,command[i]);
-    	//delay_ms(0.5);//extra protect time
-    }
-    /******************************RX****************************/
-}
-
-/**
- * @brief		This function serves to handle the interrupt of MCU
- * @param[in] 	none
- * @return 		none
- */
-#if(S7816_UART_CHN == S7816_UART0)
-void uart0_irq_handler(void)
-{
-	if(uart_get_irq_status(UART0, UART_RXBUF_IRQ_STATUS))
-	{
-		if(s7816_irq_cnt<=S7816_RX_BUFF_LEN)//if the rx buff is full,it won't receive data.
-	    {
-			s7816_rx_buff_byte[s7816_irq_cnt] = uart_read_byte(UART0);
-			s7816_irq_cnt++;
-		}
-	}
-}
-
-
-#elif(S7816_UART_CHN == S7816_UART1)
-void uart1_irq_handler(void)
-{
-	if(uart_get_irq_status(UART1, UART_RXBUF_IRQ_STATUS))
-	{
-		if(s7816_irq_cnt<=S7816_RX_BUFF_LEN)
-	    {
-			s7816_rx_buff_byte[s7816_irq_cnt] = uart_read_byte(UART1);
-			s7816_irq_cnt++;
-		}
-	}
-}
-#endif
-
-

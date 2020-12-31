@@ -45,74 +45,92 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-volatile unsigned int  s7816_irq_cnt=0;
+/**********************************************************************************************************************
+*                                         swire device selection                                                	 *
+*********************************************************************************************************************/
+#define SWIRE_MASTER_DEVICE		       		  1
+#define SWIRE_SLAVE_DEVICE		      		  2
+#define SWIRE_DEVICE				   		  SWIRE_MASTER_DEVICE
 
-volatile __attribute__((aligned(4))) unsigned char s7816_rx_buff_byte[S7816_RX_BUFF_LEN] ={0};
-volatile __attribute__((aligned(4))) unsigned char command[5]={0x00,0x84,0x00,0x00,0x04};//the command serves to get random number.
 
+#define DATA_LEN			6
+#define ADDRESS_LEN			4			//B91s is four bytes, B85s is three bytes.
+#define ADDRESS_VALUE		0xc0000000
+#define SLAVE_ID			0           //The default id of an empty chip is 0
+#define SWIRE_SPEED			1000000
+
+
+unsigned char wbuf[DATA_LEN] = {};
+unsigned char rbuf[DATA_LEN] = {};
 void user_init()
 {
-	s7816_set_pin(S7816_RST_PIN,S7816_VCC_PIN,S7816_CLK_PIN,S7816_TRX_PIN);
-	s7816_init(S7816_UART_CHN,S7816_4MHZ,F,D);
-
-	core_interrupt_enable();
-#if( S7816_UART_CHN == S7816_UART0)
-	plic_interrupt_enable(IRQ19_UART0);
-#elif(S7816_UART_CHN == S7816_UART1)
-	plic_interrupt_enable(IRQ18_UART1);
+	gpio_function_en(LED1|LED2|LED3|LED4);
+	gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_input_dis(LED1|LED2|LED3|LED4);
+	delay_ms(3000);
+#if (SWIRE_DEVICE == SWIRE_MASTER_DEVICE)
+	unsigned int i;
+	for( i = 0; i < DATA_LEN; i++){
+		wbuf[i]= i;
+	}
+	swire_set_swm_en();
+	//Swire communication needs to be connected to a pull-up resistor
+	//if there is no external pull-up, the software configuration of the pull-up resistor is required
+	gpio_set_up_down_res(GPIO_SWM, GPIO_PIN_PULLUP_10K);
+	swire_set_clk(SWIRE_SPEED);
+#else
+	swire_set_sws_en();
+	swire_set_slave_id(SLAVE_ID);
 #endif
-	uart_tx_irq_trig_level(S7816_UART_CHN, 0);
-	uart_rx_irq_trig_level(S7816_UART_CHN, 1);
-	uart_set_irq_mask(S7816_UART_CHN, UART_RX_IRQ_MASK);
 
-	s7816_en(S7816_UART_CHN);//enable the 7816 module
 }
+
+
 void main_loop (void)
 {
-	/*********************activate and coldReset and set trx pin***************/
-	s7816_coldreset();// the coldreset accompanied by IC-CARD activate.
-	delay_ms(30);//wait for the return atr.the time is decided by the clock and the atr numbers.
-	//s7816_warmreset(); //the warmreset is required after the IC-CARD activate.
-   /*******************************TX*****************************/
-    for(int i=0;i<5;i++)
-    {
-    	s7816_send_byte(S7816_UART_CHN,command[i]);
-    	//delay_ms(0.5);//extra protect time
-    }
-    /******************************RX****************************/
-}
-
-/**
- * @brief		This function serves to handle the interrupt of MCU
- * @param[in] 	none
- * @return 		none
- */
-#if(S7816_UART_CHN == S7816_UART0)
-void uart0_irq_handler(void)
-{
-	if(uart_get_irq_status(UART0, UART_RXBUF_IRQ_STATUS))
-	{
-		if(s7816_irq_cnt<=S7816_RX_BUFF_LEN)//if the rx buff is full,it won't receive data.
-	    {
-			s7816_rx_buff_byte[s7816_irq_cnt] = uart_read_byte(UART0);
-			s7816_irq_cnt++;
+#if (SWIRE_DEVICE == SWIRE_MASTER_DEVICE)
+	unsigned char i;
+	unsigned int addr = ADDRESS_VALUE;
+	swire_master_write(SLAVE_ID,(unsigned char*)(&addr),ADDRESS_LEN,wbuf,DATA_LEN);
+	unsigned int read_result = swire_master_read(SLAVE_ID,(unsigned char*)(&addr),ADDRESS_LEN,rbuf,DATA_LEN);
+	if(read_result == 0){
+		//read timeout
+		gpio_set_high_level(LED4);
+	}else{
+		for( i = 0; i < DATA_LEN; i++){
+			if(wbuf[i] != rbuf[i]){
+				break;
+			}
+		}
+		if(i<DATA_LEN){
+			//read error
+			gpio_set_high_level(LED4);
+		}else{
+			//read ok
+			gpio_set_high_level(LED1);
 		}
 	}
-}
-
-
-#elif(S7816_UART_CHN == S7816_UART1)
-void uart1_irq_handler(void)
-{
-	if(uart_get_irq_status(UART1, UART_RXBUF_IRQ_STATUS))
-	{
-		if(s7816_irq_cnt<=S7816_RX_BUFF_LEN)
-	    {
-			s7816_rx_buff_byte[s7816_irq_cnt] = uart_read_byte(UART1);
-			s7816_irq_cnt++;
-		}
-	}
-}
+	//If you keep reading and writing in the mainloop and use the BDT to access the chip through sws at the same time,
+	//sometimes there will be BDT access errors (the reason is: there is a problem with the BMC of the B91 chip, so there will be such a phenomenon)
+	//In case there is a bus conflict, after the test, the program stops here
+	gpio_input_dis(GPIO_SWM);
+	gpio_output_dis(GPIO_SWM);
+	gpio_function_en(GPIO_SWM);
+	gpio_set_low_level(LED2);
+	while(1);
+#else
+	gpio_toggle(LED1|LED2|LED3|LED4);
+	delay_ms(1000);
 #endif
+}
+
+
+
+
+
+
+
+
+
 
 

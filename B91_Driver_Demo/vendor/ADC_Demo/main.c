@@ -59,10 +59,11 @@ int main (void)
 {
 
 #if(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
-	/**		The battery voltage sample range is 1.8~3.5V,
-	 * 		and must set sys_init() function with the mode for battery voltage less than 3.6V.
-	 * 		For battery voltage > 3.6V, should take some external voltage divider.
-	 **/
+	/**
+	* 		The Vbat channel battery voltage sample range is 1.8~3.5V and is low accuracy,
+	* 		and must set sys_init with the mode for battery voltage less than 3.6V.
+	*		changed by chaofan.20201230.
+	**/
 	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_LESS_THAN_3V6);
 #else
 	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
@@ -70,6 +71,7 @@ int main (void)
 	CCLK_24M_HCLK_24M_PCLK_24M;
 
 	user_init();
+
 
 	while (1) {
 
@@ -79,4 +81,3 @@ int main (void)
 	}
 	return 0;
 }
-

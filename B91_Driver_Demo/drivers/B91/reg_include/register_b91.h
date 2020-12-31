@@ -66,4 +66,5 @@
 #include "aes_reg.h"
 #include "adc_reg.h"
 #include "mdec_reg.h"
+#include "swire_reg.h"
 #endif

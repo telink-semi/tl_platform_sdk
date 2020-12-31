@@ -61,7 +61,18 @@ extern "C" {
 #define ADC_MODE 		ADC_NDMA_MODE
 
 #define ADC_GPIO_SAMPLE			1	//GPIO voltage
-#define ADC_VBAT_SAMPLE			2	//Vbat channel Battery Voltage
+/**
+	* 	The Vbat channel battery voltage sample range is 1.8~3.5V and is low accuracy,
+	* 	and must set sys_init with the mode for battery voltage less than 3.6V.
+	* 	For accurate battery voltage sampling or battery voltage > 3.6V, should use gpio sampling with some external voltage divider.
+	*	Recommended configuration parameters:
+	*	--3/4 external resistor voltage divider(total resistance 400k, without any capacitance),
+	*	--1.2V Vref,
+	*	--1/4 Scale
+	*	--Sampling frequence below 48K.
+	*	add by chaofan.20201230.
+**/
+#define ADC_VBAT_SAMPLE			2	//Vbat channel Battery Voltage with low accuracy.
 #define ADC_TEMP_SENSOR_SAMPLE	3	//Temp test
 
 #define ADC_SAMPLE_MODE				ADC_GPIO_SAMPLE

@@ -155,6 +155,10 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
     if(uart_get_irq_status(UART0,UART_RXDONE)) //A0-SOC can't use RX-DONE status,so this interrupt can noly used in A1-SOC.
     {
     	gpio_toggle(LED3);
+		if((uart_get_irq_status(UART0,UART_RX_ERR)))
+    	{
+    		uart_clr_irq_status(UART0,UART_CLR_RX);//it will clear rx_fifo and rx_err_status,rx_done_irq.
+    	}
     	/************************get the length of receive data****************************/
     	if(((reg_uart_status1(UART0)&FLD_UART_RBCNT)%4)==0)
     	{
@@ -168,10 +172,6 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
     	uart_clr_irq_status(UART0,UART_CLR_RX);
     	uart_send_dma(UART0, (unsigned char*)rec_buff, rev_data_len);
     	uart_receive_dma(UART0, (unsigned char*)rec_buff,32);
-    	if((uart_get_irq_status(UART0,UART_RX_ERR)))
-    	{
-    		uart_clr_irq_status(UART0,UART_CLR_RX);
-    	}
     }
 #endif
 }

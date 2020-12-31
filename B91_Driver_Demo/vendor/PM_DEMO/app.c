@@ -99,7 +99,7 @@ void user_init(void)
 	clock_cal_32k_rc();	//6.68ms
 #elif(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP)
 	clock_32k_init(CLK_32K_XTAL);
-	clock_kick_32k_xtal(100);
+	clock_kick_32k_xtal(10);
 #endif
 
 #if(PM_MODE == IDLE_TIMER_WAKEUP)
@@ -208,26 +208,18 @@ void main_loop(void)
 {
 	clock_cal_24m_rc();
 
-#if(PM_MODE == SUSPEND_PAD_WAKEUP)
-	gpio_set_high_level(LED2);
-	delay_ms(500);
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER_16M, 0);
+#if !CURRENT_TEST
 	gpio_set_low_level(LED2);
+	delay_ms(500);
+#endif
+#if(PM_MODE == SUSPEND_PAD_WAKEUP)
+	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER_16M, 0);
 
 #elif(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == SUSPEND_32K_XTAL_WAKEUP)
-#if CURRENT_TEST
 	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER_16M, stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS);
-#else
-	gpio_set_high_level(LED2);
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER_16M, stimer_get_tick() + 500*SYSTEM_TIMER_TICK_1MS);
-	gpio_set_low_level(LED2);
-#endif
 
 #elif(PM_MODE == SUSPEND_MDEC_WAKEUP)
-	gpio_set_high_level(LED2);
-	delay_ms(500);
 	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_MDEC, PM_TICK_STIMER_16M, 0);
-	gpio_set_low_level(LED2);
 	if((CRC_OK == mdec_read_dat(dat)))
 	{
 		gpio_toggle(LED3);
@@ -235,24 +227,22 @@ void main_loop(void)
 	mdec_reset();
 
 #elif(PM_MODE == SUSPEND_COMPARATOR_WAKEUP)
-	gpio_set_high_level(LED2);
-	delay_ms(500);
 	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER_16M, 0);
-	gpio_set_low_level(LED2);
 	if(1 == lpc_get_result())
 	{
 		gpio_toggle(LED3);
 	}
 
 #elif(PM_MODE == SUSPEND_CORE_WAKEUP)
-	gpio_set_high_level(LED2);
-	delay_ms(500);
 	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER_16M, 0);
-	gpio_set_low_level(LED2);
 
 #else
 	gpio_set_high_level(LED2);
 
+#endif
+
+#if !CURRENT_TEST
+	gpio_set_high_level(LED2);
 #endif
 
 	delay_ms(2000);

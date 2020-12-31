@@ -95,7 +95,7 @@
 #define MIC_SAMPLE_RATE			16000//set sample for mic
 
 
-#define MIC_CHANNLE_COUNT		1   //1 or 2
+#define MIC_CHANNLE_COUNT		2  //1 or 2
 #define	MIC_ENOCDER_ENABLE		0
 
 

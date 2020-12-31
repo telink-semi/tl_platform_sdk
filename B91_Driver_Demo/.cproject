@@ -2,7 +2,7 @@
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010" moduleId="org.eclipse.cdt.core.settings" name="B91_UART_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010" moduleId="org.eclipse.cdt.core.settings" name="UART_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="adx" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010" name="B91_UART_Demo" parent="config.nds.base" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+				<configuration artifactExtension="adx" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010" name="UART_Demo" parent="config.nds.base" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010." name="/" resourcePath="">
 						<toolChain errorParsers="" id="nds.nds32le-elf-mculib-v5f.base.1887933447" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1988992115" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -66,10 +66,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1207483362" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.2062284842" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.2066391841" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.92631813" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1958736815" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1883437267" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.136808467" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1065994281" superClass="tool.nds.c.linker.input">
@@ -126,14 +126,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550" moduleId="org.eclipse.cdt.core.settings" name="B91_Debug_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550" moduleId="org.eclipse.cdt.core.settings" name="Debug_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -145,7 +145,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550" name="B91_Debug_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550" name="Debug_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1023999570" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.563724714" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -213,10 +213,10 @@
 								<option id="nds.c.link.option.ldflags.1484241884" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1812236454" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.271682916" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.2136322946" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.786026154" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1763023223" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1661340877" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1535159444" superClass="tool.nds.c.linker.input">
@@ -276,14 +276,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379" moduleId="org.eclipse.cdt.core.settings" name="B91_TIMER_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379" moduleId="org.eclipse.cdt.core.settings" name="TIMER_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -295,7 +295,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379" name="B91_TIMER_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379" name="TIMER_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1757790350" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1333670004" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -346,10 +346,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.592417164" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.220421097" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.2052785802" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.260450926" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1914914856" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.196281967" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.367620031" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.66613716" superClass="tool.nds.c.linker.input">
@@ -406,14 +406,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1175532269">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1175532269" moduleId="org.eclipse.cdt.core.settings" name="B91_PWM_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1175532269" moduleId="org.eclipse.cdt.core.settings" name="PWM_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -425,7 +425,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1175532269" name="B91_PWM_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1175532269" name="PWM_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1175532269." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1102111199" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.2041573555" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -476,10 +476,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.210771187" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1434376790" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1926838596" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.784418180" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.530380026" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.765421294" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1464973835" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.345822379" superClass="tool.nds.c.linker.input">
@@ -536,14 +536,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1671662551.1015712691">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1671662551.1015712691" moduleId="org.eclipse.cdt.core.settings" name="B91_SPI_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1671662551.1015712691" moduleId="org.eclipse.cdt.core.settings" name="SPI_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -555,7 +555,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1671662551.1015712691" name="B91_SPI_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1671662551.1015712691" name="SPI_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1671662551.1015712691." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.669502041" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1111567831" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -623,10 +623,10 @@
 								<option id="nds.c.link.option.ldflags.1498142473" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1554172258" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.437565539" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.2111962346" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1966648547" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.875646339" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.540138083" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1764478472" superClass="tool.nds.c.linker.input">
@@ -686,14 +686,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.383166182">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.383166182" moduleId="org.eclipse.cdt.core.settings" name="B91_Flash_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.383166182" moduleId="org.eclipse.cdt.core.settings" name="Flash_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -705,7 +705,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.383166182" name="B91_Flash_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.383166182" name="Flash_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.383166182." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1153500637" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1722527880" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -773,10 +773,10 @@
 								<option id="nds.c.link.option.ldflags.1881107487" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.650304865" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1208457811" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.534477579" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.192728025" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.270725497" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1688131371" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.918411533" superClass="tool.nds.c.linker.input">
@@ -836,14 +836,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1791727530">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1791727530" moduleId="org.eclipse.cdt.core.settings" name="B91_s7816_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1791727530" moduleId="org.eclipse.cdt.core.settings" name="s7816_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -855,7 +855,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1791727530" name="B91_s7816_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1791727530" name="s7816_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1791727530." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1837203159" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.375679849" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -923,10 +923,10 @@
 								<option id="nds.c.link.option.ldflags.1479629567" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.679803768" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.39350350" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.473504770" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1423881662" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.315913676" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.650819413" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.725715735" superClass="tool.nds.c.linker.input">
@@ -986,14 +986,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1287809320">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1287809320" moduleId="org.eclipse.cdt.core.settings" name="B91_ALG_REG_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1287809320" moduleId="org.eclipse.cdt.core.settings" name="ALG_REG_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1005,7 +1005,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1287809320" name="B91_ALG_REG_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1287809320" name="ALG_REG_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1287809320." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1258563327" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.674247070" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1073,10 +1073,10 @@
 								<option id="nds.c.link.option.ldflags.1480321787" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1568534802" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1134722337" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.462324600" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1096470700" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1484976361" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1309096124" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.935496152" superClass="tool.nds.c.linker.input">
@@ -1136,14 +1136,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979" moduleId="org.eclipse.cdt.core.settings" name="B91_GPIO_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979" moduleId="org.eclipse.cdt.core.settings" name="GPIO_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1155,7 +1155,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979" name="B91_GPIO_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979" name="GPIO_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.661693100" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.92580088" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1223,10 +1223,10 @@
 								<option id="nds.c.link.option.ldflags.2007756597" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1154858155" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1508665807" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1553582045" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.356297091" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.2045857814" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.339089069" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.700874776" superClass="tool.nds.c.linker.input">
@@ -1286,14 +1286,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1646951558">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1646951558" moduleId="org.eclipse.cdt.core.settings" name="B91_I2C_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1646951558" moduleId="org.eclipse.cdt.core.settings" name="I2C_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1305,7 +1305,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1646951558" name="B91_I2C_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1646951558" name="I2C_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1646951558." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.2093886307" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.2105722825" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1373,10 +1373,10 @@
 								<option id="nds.c.link.option.ldflags.1527081749" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.868872230" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1370832343" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.127619613" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2082874192" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.632972256" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.901391272" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.608006768" superClass="tool.nds.c.linker.input">
@@ -1436,14 +1436,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.2141318542">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.2141318542" moduleId="org.eclipse.cdt.core.settings" name="B91_RF_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.2141318542" moduleId="org.eclipse.cdt.core.settings" name="RF_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1455,7 +1455,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.2141318542" name="B91_RF_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.2141318542" name="RF_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.2141318542." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1147560668" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1682401090" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1524,10 +1524,10 @@
 								<option id="nds.c.linker.option.cmodel.908287364" name="Code Model" superClass="nds.c.linker.option.cmodel" value="" valueType="string"/>
 								<option id="nds.c.link.option.LTO.2126951569" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.2143508140" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1249492398" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.8074957" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1959761350" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.2016567586" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1183978943" superClass="tool.nds.c.linker.input">
@@ -1587,14 +1587,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1947266950">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1947266950" moduleId="org.eclipse.cdt.core.settings" name="B91_TRNG_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1947266950" moduleId="org.eclipse.cdt.core.settings" name="TRNG_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1606,7 +1606,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1947266950" name="B91_TRNG_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1947266950" name="TRNG_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1947266950." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1897347924" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.399782093" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1675,10 +1675,10 @@
 								<option id="nds.c.linker.option.cmodel.360359399" name="Code Model" superClass="nds.c.linker.option.cmodel" value="" valueType="string"/>
 								<option id="nds.c.link.option.LTO.1559129943" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1214600965" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.249822642" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.47268610" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.891976774" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.208525033" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.608221288" superClass="tool.nds.c.linker.input">
@@ -1738,14 +1738,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1146699834">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1146699834" moduleId="org.eclipse.cdt.core.settings" name="B91_PKE_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1146699834" moduleId="org.eclipse.cdt.core.settings" name="PKE_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1757,7 +1757,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1146699834" name="B91_PKE_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1146699834" name="PKE_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.1146699834." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.967425937" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1525570178" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1825,10 +1825,10 @@
 								<option id="nds.c.link.option.ldflags.1956291970" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1456935644" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1174345926" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1914303763" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.357107251" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.394136111" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1327889659" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.859519842" superClass="tool.nds.c.linker.input">
@@ -1888,14 +1888,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.129917995">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.129917995" moduleId="org.eclipse.cdt.core.settings" name="B91_USB_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.129917995" moduleId="org.eclipse.cdt.core.settings" name="USB_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -1907,7 +1907,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.129917995" name="B91_USB_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.129917995" name="USB_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.984054979.129917995." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1157077720" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1052183656" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -1975,10 +1975,10 @@
 								<option id="nds.c.link.option.ldflags.530116362" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.771506433" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1815573520" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.132903179" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2033412429" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1992899136" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1167181287" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1271367799" superClass="tool.nds.c.linker.input">
@@ -2038,14 +2038,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.1943883724">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.1943883724" moduleId="org.eclipse.cdt.core.settings" name="B91_STIMER_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.1943883724" moduleId="org.eclipse.cdt.core.settings" name="STIMER_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2057,7 +2057,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.1943883724" name="B91_STIMER_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.1943883724" name="STIMER_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.1943883724." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1198152503" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.145038182" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2108,10 +2108,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1804766322" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.531647128" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1859610391" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1778084327" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1266312132" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1730850827" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.985513621" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1823647299" superClass="tool.nds.c.linker.input">
@@ -2168,14 +2168,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/Timer_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/Timer_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550.1753050522">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550.1753050522" moduleId="org.eclipse.cdt.core.settings" name="B91_AUDIO_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550.1753050522" moduleId="org.eclipse.cdt.core.settings" name="AUDIO_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2187,7 +2187,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550.1753050522" name="B91_AUDIO_Demo" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550.1753050522" name="AUDIO_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.1332259550.1753050522." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1061774887" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.2119261766" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2255,10 +2255,10 @@
 								<option id="nds.c.link.option.ldflags.1843264181" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.954763532" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.704368185" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1564294733" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2132544413" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.844122082" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.2042823272" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.249855606" superClass="tool.nds.c.linker.input">
@@ -2318,14 +2318,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/Flash_Demo|vendor/UART0_DEMO|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345" moduleId="org.eclipse.cdt.core.settings" name="B91_DHRYSTONE">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345" moduleId="org.eclipse.cdt.core.settings" name="DHRYSTONE">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2337,7 +2337,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345" name="B91_DHRYSTONE" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345" name="DHRYSTONE" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.883387758" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1774101920" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2387,10 +2387,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1790829997" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot_ramcode.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.440096666" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1033621745" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.911766524" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.665333962" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.173784694" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1514976000" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.765735458" superClass="tool.nds.c.linker.input">
@@ -2447,14 +2447,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|common/string.c|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/Timer_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|common/string.c|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/Timer_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345.1330941356">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345.1330941356" moduleId="org.eclipse.cdt.core.settings" name="B91_COREMARK">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345.1330941356" moduleId="org.eclipse.cdt.core.settings" name="COREMARK">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2466,7 +2466,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345.1330941356" name="B91_COREMARK" parent="config.nds.base">
+				<configuration artifactExtension="lst" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345.1330941356" name="COREMARK" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.991521379.255864339.593869345.1330941356." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1581020627" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1437822773" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2517,10 +2517,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.521474053" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot_ramcode.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1300200091" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.89385030" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1592343824" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1586930326" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.526253246" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1477686214" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.837403541" superClass="tool.nds.c.linker.input">
@@ -2577,14 +2577,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|common/string.c|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/Timer_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|common/string.c|vendor/UART0_DEMO|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/Timer_Demo|vendor/USB_Speaker_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.608228414">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.608228414" moduleId="org.eclipse.cdt.core.settings" name="B91_AES_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.608228414" moduleId="org.eclipse.cdt.core.settings" name="AES_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2596,7 +2596,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.608228414" name="B91_AES_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.608228414" name="AES_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.608228414." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.858630823" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.297591422" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2648,10 +2648,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.696572791" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.317662964" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.100125039" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.24084561" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2126259211" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.999114669" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1044056869" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.529374217" superClass="tool.nds.c.linker.input">
@@ -2708,14 +2708,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1986706254">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1986706254" moduleId="org.eclipse.cdt.core.settings" name="B91_PM_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1986706254" moduleId="org.eclipse.cdt.core.settings" name="PM_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2727,7 +2727,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1986706254" name="B91_PM_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1986706254" name="PM_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1986706254." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1128602460" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.215452969" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2779,10 +2779,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.561013578" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1938184108" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.772923992" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1059604923" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1210819419" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1895056784" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.847331389" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1712004910" superClass="tool.nds.c.linker.input">
@@ -2839,14 +2839,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1776329523">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1776329523" moduleId="org.eclipse.cdt.core.settings" name="B91_LPC_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1776329523" moduleId="org.eclipse.cdt.core.settings" name="LPC_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2858,7 +2858,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1776329523" name="B91_LPC_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1776329523" name="LPC_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1776329523." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.699601142" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1202342675" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -2910,10 +2910,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.437569930" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.647705828" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.62183555" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1830125946" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.320884726" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.631537763" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1467241028" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1708304268" superClass="tool.nds.c.linker.input">
@@ -2970,14 +2970,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1720866470">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1720866470" moduleId="org.eclipse.cdt.core.settings" name="B91_MDEC_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1720866470" moduleId="org.eclipse.cdt.core.settings" name="MDEC_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -2989,7 +2989,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1720866470" name="B91_MDEC_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1720866470" name="MDEC_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1720866470." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1941652320" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1787266386" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -3041,10 +3041,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.182524405" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1976711915" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1915357596" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1388791036" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1616749519" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1168609516" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.742674968" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.129958520" superClass="tool.nds.c.linker.input">
@@ -3101,14 +3101,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.882223911">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.882223911" moduleId="org.eclipse.cdt.core.settings" name="B91_EMI_BQB_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.882223911" moduleId="org.eclipse.cdt.core.settings" name="EMI_BQB_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -3120,7 +3120,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.882223911" name="B91_EMI_BQB_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.882223911" name="EMI_BQB_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.882223911." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.1685824241" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1626615768" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -3172,10 +3172,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.831131818" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.279648785" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.385719783" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1908212128" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.768984205" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1829861804" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1358081663" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.812491384" superClass="tool.nds.c.linker.input">
@@ -3232,14 +3232,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1812718135">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1812718135" moduleId="org.eclipse.cdt.core.settings" name="B91_PLIC_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1812718135" moduleId="org.eclipse.cdt.core.settings" name="PLIC_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -3251,7 +3251,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1812718135" name="B91_PLIC_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1812718135" name="PLIC_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1812718135." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.608119396" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1100180693" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -3303,10 +3303,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1192264227" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1476686961" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1734495971" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.89651946" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1089630460" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1586587439" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.498685200" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.874981578" superClass="tool.nds.c.linker.input">
@@ -3363,14 +3363,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/UART_DEMO|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/UART_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
 		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.834240011">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.834240011" moduleId="org.eclipse.cdt.core.settings" name="B91_ADC_Demo">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.834240011" moduleId="org.eclipse.cdt.core.settings" name="ADC_Demo">
 				<externalSettings/>
 				<extensions>
 					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -3382,7 +3382,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.834240011" name="B91_ADC_Demo" parent="config.nds.base">
+				<configuration artifactExtension="elf" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.834240011" name="ADC_Demo" parent="config.nds.base">
 					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.834240011." name="/" resourcePath="">
 						<toolChain id="nds.nds32le-elf-mculib-v5f.base.302661796" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
 							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1826800403" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
@@ -3434,10 +3434,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.133825626" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1543775107" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1449031048" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1478346380" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.478221921" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1558917027" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.334717664" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.653492452" superClass="tool.nds.c.linker.input">
@@ -3494,7 +3494,138 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/UART_DEMO|vendor/Coremark_Demo|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="vendor/Swire_Demo|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/UART_DEMO|vendor/Coremark_Demo|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1775432420">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1775432420" moduleId="org.eclipse.cdt.core.settings" name="Swire_Demo">
+				<externalSettings/>
+				<extensions>
+					<extension id="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="adx" artifactName="${ConfigName}" buildArtefactType="nds.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=nds.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1775432420" name="Swire_Demo" parent="config.nds.base" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="">
+					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1775432420." name="/" resourcePath="">
+						<toolChain errorParsers="" id="nds.nds32le-elf-mculib-v5f.base.726980230" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base">
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.598444268" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIST_CPU.1427504244" name="LIST_CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIST_CPU"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CORE.1224298083" name="CORE" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CORE"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ARCH.1467910067" name="ARCH" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ARCH"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ISA_REDUCE_REGS.1603016705" name="ISA_REDUCE_REGS" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ISA_REDUCE_REGS"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_TARGET.794135355" name="TARGET" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_TARGET"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ENDIAN.708565079" name="ENDIAN" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ENDIAN"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_C_DEFAULT.99870005" name="LIB_C_DEFAULT" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_C_DEFAULT"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_CPP_DEFAULT.1262727247" name="LIB_CPP_DEFAULT" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_CPP_DEFAULT"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_TARGET.2026025709" name="RSE_TARGET" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_TARGET" value="rse://LOCALHOST/~target/ADP-AE350-D25F-EAGLE-0106" valueType="string"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_CONNECT.1693230332" name="RSE_CONNECT" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_CONNECT" value="ICE" valueType="string"/>
+							<targetPlatform archList="all" binaryParser="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" id="target.nds.platform.base.v5.758999208" name="Debug Platform" osList="all" superClass="target.nds.platform.base.v5"/>
+							<builder buildPath="${workspace_loc:/Eagle_Driver_Demo}/B91_UART_DEMO" errorParsers="org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.CWDLocator" id="target.nds.builder.base.v5.804123472" keepEnvironmentInBuildfile="false" name="Andes Make Builder" superClass="target.nds.builder.base.v5"/>
+							<tool id="tool.nds32le-elf-mculib-v5f.archiver.base.1064448224" name="Andes Archiver" superClass="tool.nds32le-elf-mculib-v5f.archiver.base"/>
+							<tool id="tool.nds32le-elf-mculib-v5f.cpp.compiler.base.747924807" name="Andes C++ Compiler" superClass="tool.nds32le-elf-mculib-v5f.cpp.compiler.base">
+								<option id="nds.cpp.compiler.option.debugging.level.167239563" name="Debug Level" superClass="nds.cpp.compiler.option.debugging.level" value="nds.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+							</tool>
+							<tool id="tool.nds32le-elf-mculib-v5f.cpp.linker.base.1196349330" name="Andes C++ Linker" superClass="tool.nds32le-elf-mculib-v5f.cpp.linker.base">
+								<option defaultValue="-O0" id="nds.cpp.link.option.optimization.level.1469409502" name="Optimization Level" superClass="nds.cpp.link.option.optimization.level" valueType="string"/>
+								<option defaultValue="true" id="nds32le-elf-mculib-v5f.cpp.link.option.noshared.base.2022525627" name="No shared libraries (-static)" superClass="nds32le-elf-mculib-v5f.cpp.link.option.noshared.base" valueType="boolean"/>
+							</tool>
+							<tool command="$(CROSS_COMPILE)gcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="tool.nds32le-elf-mculib-v5f.c.compiler.base.1604936364" name="Andes C Compiler" superClass="tool.nds32le-elf-mculib-v5f.c.compiler.base">
+								<option id="nds.c.compiler.option.debugging.level.166679734" name="Debug Level" superClass="nds.c.compiler.option.debugging.level" value="nds.c.debugging.level.max" valueType="enumerated"/>
+								<option id="nds32le-elf-mculib-v5f.c.compiler.option.optimization.level.base.310063494" name="Optimization Level" superClass="nds32le-elf-mculib-v5f.c.compiler.option.optimization.level.base" value="nds.c.optimization.level.more" valueType="enumerated"/>
+								<option id="nds.c.compiler.option.optimization.lto.916115369" name="Link Time Optimization (-flto)" superClass="nds.c.compiler.option.optimization.lto" value="true" valueType="boolean"/>
+								<option id="nds.c.compiler.option.optimization.removesections.function.552892029" name="Remove unused function sections (-ffunction-sections)" superClass="nds.c.compiler.option.optimization.removesections.function" value="true" valueType="boolean"/>
+								<option id="nds.c.compiler.option.optimization.removesections.data.1773722235" name="Remove unused data sections (-fdata-sections)" superClass="nds.c.compiler.option.optimization.removesections.data" value="true" valueType="boolean"/>
+								<option id="nds.c.compiler.option.misc.other.6093029" name="Other flags" superClass="nds.c.compiler.option.misc.other" value="-mext-dsp -mabi=ilp32f  -c -fmessage-length=0  -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-nonnull-compare -Wall -Wextra -Wshadow -Werror -std=c99 -Wno-gnu-zero-variadic-macro-arguments" valueType="string"/>
+								<option id="nds.c.compiler.option.cmodel.529101204" name="Code Model" superClass="nds.c.compiler.option.cmodel" value="nds.c.compiler.option.cmodel.medlow" valueType="enumerated"/>
+								<option id="nds.c.compiler.option.preprocessor.def.symbols.991082649" name="Defined symbols (-D)" superClass="nds.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="MCU_STARTUP_FLASH_B91=1"/>
+								</option>
+								<option id="nds.c.compiler.option.optimization.flags.427312868" name="Other optimization flags" superClass="nds.c.compiler.option.optimization.flags" value="-fpack-struct -fshort-enums" valueType="string"/>
+								<option id="nds.c.compiler.option.include.paths.1124039219" name="Include paths (-I)" superClass="nds.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="../common"/>
+									<listOptionValue builtIn="false" value="../vendor/common"/>
+								</option>
+								<inputType id="tool.nds.c.compiler.input.772107142" superClass="tool.nds.c.compiler.input"/>
+							</tool>
+							<tool command="$(CROSS_COMPILE)gcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="tool.nds32le-elf-mculib-v5f.c.linker.base.1243318481" name="Andes C Linker" superClass="tool.nds32le-elf-mculib-v5f.c.linker.base">
+								<option defaultValue="-O0" id="nds.c.link.option.optimization.level.1151879627" name="Optimization Level" superClass="nds.c.link.option.optimization.level" value="-O2" valueType="string"/>
+								<option defaultValue="true" id="nds32le-elf-mculib-v5f.c.link.option.noshared.base.2048076422" name="No shared libraries (-static)" superClass="nds32le-elf-mculib-v5f.c.link.option.noshared.base" valueType="boolean"/>
+								<option id="nds.c.linker.option.cmodel.1903333880" name="Code Model" superClass="nds.c.linker.option.cmodel" value="" valueType="string"/>
+								<option id="nds.c.link.option.LTO.1767146621" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
+								<option id="nds.c.link.option.other.duplacitecompiler.1156554897" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
+								<option id="nds.c.link.option.removesections.579870664" name="Remove unused sections (-ffunction-sections or -fdata-sections)" superClass="nds.c.link.option.removesections" value="true" valueType="boolean"/>
+								<option defaultValue="" id="nds.c.link.option.ldscript.2060300855" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
+								<option id="nds.c.link.option.nostart.1555685033" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
+								<option id="nds.c.link.option.virtualhosting.1920435820" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
+								<option id="nds.c.link.option.libs.508316922" superClass="nds.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="B91"/>
+								</option>
+								<option id="nds.c.link.option.paths.1913430044" superClass="nds.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
+								</option>
+								<inputType id="tool.nds.c.linker.input.1369075174" superClass="tool.nds.c.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool command="$(CROSS_COMPILE)as" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GASErrorParser" id="tool.nds32le-elf-mculib-v5f.assembler.base.1143971220" name="Andes Assembler" superClass="tool.nds32le-elf-mculib-v5f.assembler.base">
+								<option defaultValue="-g" id="nds.both.asm.option.flags.1106542384" name="Assembler flags" superClass="nds.both.asm.option.flags" valueType="string"/>
+								<inputType id="tool.nds.assembler.input.1890896228" superClass="tool.nds.assembler.input"/>
+							</tool>
+							<tool command="$(CROSS_COMPILE)nm" commandLinePattern="${COMMAND} ${FLAGS} &quot;${BuildArtifactFilePrefix}${BuildArtifactFileName}&quot; ${OUTPUT_FLAG} ${OUTPUT}" errorParsers="" id="tool.nds32le-elf-mculib-v5f.nm.base.2061555854" name="NM (symbol listing)" superClass="tool.nds32le-elf-mculib-v5f.nm.base"/>
+							<tool command="$(CROSS_COMPILE)readelf" commandLinePattern="${COMMAND} ${FLAGS} &quot;${BuildArtifactFilePrefix}${BuildArtifactFileName}&quot; ${OUTPUT_FLAG} ${OUTPUT}" errorParsers="" id="tool.nds32le-elf-mculib-v5f.readelf.base.848766405" name="Readelf (ELF info listing)" superClass="tool.nds32le-elf-mculib-v5f.readelf.base"/>
+							<tool command="$(CROSS_COMPILE)objdump" commandLinePattern="${COMMAND} ${FLAGS} &quot;${BuildArtifactFilePrefix}${BuildArtifactFileName}&quot; ${OUTPUT_FLAG} ${OUTPUT}" errorParsers="" id="tool.nds32le-elf-mculib-v5f.objdump.base.1034440353" name="Objdump (disassembly)" superClass="tool.nds32le-elf-mculib-v5f.objdump.base">
+								<option id="nds.objdump.option.disable.1448718547" name="Disable. (Do not auto-generate output file.)" superClass="nds.objdump.option.disable" value="false" valueType="boolean"/>
+							</tool>
+							<tool command="$(CROSS_COMPILE)objcopy" commandLinePattern="${COMMAND} ${FLAGS} &quot;${BuildArtifactFilePrefix}${BuildArtifactFileName}&quot; ${OUTPUT}" errorParsers="" id="tool.nds32le-elf-mculib-v5f.objcopy.base.955025010" name="Objcopy (object content copy)" superClass="tool.nds32le-elf-mculib-v5f.objcopy.base">
+								<option id="nds.objcopy.option.disable.36808745" name="Disable. (Do not auto-generate output file.)" superClass="nds.objcopy.option.disable" value="false" valueType="boolean"/>
+							</tool>
+							<tool command="$(CROSS_COMPILE)size" commandLinePattern="${COMMAND} ${FLAGS} &quot;${BuildArtifactFilePrefix}${BuildArtifactFileName}&quot; ${OUTPUT_FLAG} ${OUTPUT}" errorParsers="" id="tool.nds32le-elf-mculib-v5f.size.base.1446076834" name="Size (section size listing)" superClass="tool.nds32le-elf-mculib-v5f.size.base"/>
+							<tool command="nds_ldsag" commandLinePattern="${COMMAND} ${FLAGS} &quot;$(SAG_FILE)&quot; ${OUTPUT_FLAG} $(LDSAG_OUT)" errorParsers="" id="tool.nds32le-elf-mculib-v5f.ldsag.base.1627382476" name="LdSaG Tool" superClass="tool.nds32le-elf-mculib-v5f.ldsag.base"/>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="config.nds32le-elf-mculib-v5.exe.debug.28004847.1438473168.105987010.1775432420.tools" name="/" resourcePath="tools">
+						<toolChain errorParsers="" id="nds.nds32le-elf-mculib-v5f.base.2097016331" name="nds32le-elf-mculib-v5f" superClass="nds.nds32le-elf-mculib-v5f.base" unusedChildren="">
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1988992115.1941520640.404365387" name="CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CPU.1988992115"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIST_CPU.1848194622.650344521.1529122150" name="LIST_CPU" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIST_CPU.1848194622"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CORE.21418820.389232480.1483124422" name="CORE" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_CORE.21418820"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ARCH.354556685.793753114.568764639" name="ARCH" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ARCH.354556685"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ISA_REDUCE_REGS.2097807269.1729879458.1507079790" name="ISA_REDUCE_REGS" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ISA_REDUCE_REGS.2097807269"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_TARGET.1299016300.362343993.2128415982" name="TARGET" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_TARGET.1299016300"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ENDIAN.1862306990.1176162126.1538671920" name="ENDIAN" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_ENDIAN.1862306990"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_C_DEFAULT.1873894634.377758830.1726425592" name="LIB_C_DEFAULT" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_C_DEFAULT.1873894634"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_CPP_DEFAULT.1475723066.2116871976.1080355607" name="LIB_CPP_DEFAULT" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.NDS_LIB_CPP_DEFAULT.1475723066"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_TARGET.526978836.468108503.1347857140" name="RSE_TARGET" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_TARGET.526978836"/>
+							<option id="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_CONNECT.1134918219.271024425.1139150992" name="RSE_CONNECT" superClass="nds32le-elf-mculib-v5f.managedbuild.option.toolchain.RSE_CONNECT.1134918219"/>
+							<targetPlatform archList="all" binaryParser="com.andestech.ide.cdt.managedbuilder.core.CROSS_GNU_ELF" id="target.nds.platform.base.v5.659497021" name="Debug Platform" osList="all" superClass="target.nds.platform.base.v5"/>
+							<tool id="tool.nds32le-elf-mculib-v5f.archiver.base.1074985657" name="Andes Archiver" superClass="tool.nds32le-elf-mculib-v5f.archiver.base.1064448224"/>
+							<tool id="tool.nds32le-elf-mculib-v5f.cpp.compiler.base.2145093592" name="Andes C++ Compiler" superClass="tool.nds32le-elf-mculib-v5f.cpp.compiler.base.747924807"/>
+							<tool id="tool.nds32le-elf-mculib-v5f.cpp.linker.base.688962849" name="Andes C++ Linker" superClass="tool.nds32le-elf-mculib-v5f.cpp.linker.base.1196349330"/>
+							<tool errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="tool.nds32le-elf-mculib-v5f.c.compiler.base.300865146" name="Andes C Compiler" superClass="tool.nds32le-elf-mculib-v5f.c.compiler.base.1604936364">
+								<inputType id="tool.nds.c.compiler.input.63259331" superClass="tool.nds.c.compiler.input"/>
+							</tool>
+							<tool id="tool.nds32le-elf-mculib-v5f.c.linker.base.574439715" name="Andes C Linker" superClass="tool.nds32le-elf-mculib-v5f.c.linker.base.1243318481"/>
+							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="tool.nds32le-elf-mculib-v5f.assembler.base.1215889384" name="Andes Assembler" superClass="tool.nds32le-elf-mculib-v5f.assembler.base.1143971220">
+								<inputType id="tool.nds.assembler.input.924872655" superClass="tool.nds.assembler.input"/>
+							</tool>
+							<tool errorParsers="" id="tool.nds32le-elf-mculib-v5f.nm.base.1623171549" name="NM (symbol listing)" superClass="tool.nds32le-elf-mculib-v5f.nm.base.2061555854"/>
+							<tool errorParsers="" id="tool.nds32le-elf-mculib-v5f.readelf.base.1916815428" name="Readelf (ELF info listing)" superClass="tool.nds32le-elf-mculib-v5f.readelf.base.848766405"/>
+							<tool errorParsers="" id="tool.nds32le-elf-mculib-v5f.objdump.base.1669210738" name="Objdump (disassembly)" superClass="tool.nds32le-elf-mculib-v5f.objdump.base.1034440353"/>
+							<tool errorParsers="" id="tool.nds32le-elf-mculib-v5f.objcopy.base.2083991136" name="Objcopy (object content copy)" superClass="tool.nds32le-elf-mculib-v5f.objcopy.base.955025010"/>
+							<tool errorParsers="" id="tool.nds32le-elf-mculib-v5f.size.base.2142918991" name="Size (section size listing)" superClass="tool.nds32le-elf-mculib-v5f.size.base.1446076834"/>
+							<tool errorParsers="" id="tool.nds32le-elf-mculib-v5f.ldsag.base.1126765849" name="LdSaG Tool" superClass="tool.nds32le-elf-mculib-v5f.ldsag.base.1627382476"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="vendor/UART_DEMO|src/boot.c|vendor/PKE_Demo|vendor/SPI_Demo|vendor/TRNG_Demo|vendor/AUDIO_Demo|vendor/Flash_Demo|vendor/B91_Debug_Demo|vendor/B91_HSPI_Demo|vendor/ADC_Demo|vendor/Coremark_Demo|vendor/ALG_REG_Demo|vendor/HSPI_Demo|vendor/s7816_Demo|vendor/AES_Demo|vendor/Dhrystone_Demo|vendor/Test_Demo|vendor/IIC_DEMO|vendor/I2C_Demo|vendor/B91_USB_MIC_Demo|vendor/Debug_Demo|vendor/USB_MIC_Demo|vendor/B91_USB_Mouse_Demo|B91_Flash_Demo|vendor/src|vendor/B91_PLIC_irq_nested_Demo|vendor/GPIO_DEMO|vendor/Coremark_demo|vendor/GPIO_Demo|vendor/PLIC_Demo|vendor/USB_Speaker_Demo|vendor/Timer_Demo|vendor/RF_DEMO|vendor/BT_AutoTest_Demo|vendor/Base_Test_Demo|vendor/RF_Demo|vendor/B91_PSPI_Demo|vendor/8258_USB_Speaker_Demo|vendor/UART1_DEMO|vendor/8258_USB_MIC_Demo|vendor/USB_Demo|vendor/VCD_Demo|vendor/DUT_Test_Demo|vendor/B91_USB_Speaker_Demo|usbstd|vendor/HTOL_Demo|vendor/LPC_Demo|vendor/NPE_Demo|vendor/EMI_Demo|vendor/PM_DEMO|tools|vendor/PSPI_Demo|vendor/STimer_Demo|vendor/PM_Demo|vendor/USB_Mouse_Demo|vendor/PWM_DEMO|vendor/EMI_BQB_Demo|vendor/PSRAM_Demo|vendor/MDEC_Demo|vendor/UART_DEMO/B91_Debug_Demo|vendor/B91_SPI_Demo|alg_test_demo|vendor/PWM_Demo|vendor/Auto_Test_Demo|vendor/DebugPrint_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -3512,10 +3643,13 @@
 		<configuration configurationName="B91_I2C_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
+		<configuration configurationName="B91_TIMER_Demo"/>
 		<configuration configurationName="B91_HSPI_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
 		<configuration configurationName="PWM_DEMO"/>
+		<configuration configurationName="B91_PLIC_Demo"/>
+		<configuration configurationName="B91_PM_Demo"/>
 		<configuration configurationName="B91_UART0_DEMO">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
@@ -3531,6 +3665,8 @@
 		<configuration configurationName="B91_MDEC_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
+		<configuration configurationName="B91_ADC_Demo"/>
+		<configuration configurationName="B91_UART_Demo"/>
 		<configuration configurationName="B91_PSPI_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
@@ -3543,10 +3679,11 @@
 		<configuration configurationName="B91_UART1_DEMO">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
-		<configuration configurationName="B91_PWM_DEMO">
+		<configuration configurationName="B91_VCD_Demo"/>
+		<configuration configurationName="B91_Flash_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
-		<configuration configurationName="B91_Flash_Demo">
+		<configuration configurationName="B91_PWM_DEMO">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
 		<configuration configurationName="B91_PKE_Demo"/>
@@ -3566,10 +3703,12 @@
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
 		<configuration configurationName="B91_UART_DEMO"/>
+		<configuration configurationName="B91_DUT_Test_Demo"/>
 		<configuration configurationName="B91_VCD_DEMO"/>
 		<configuration configurationName="B91_GPIO_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
+		<configuration configurationName="B91_PWM_Demo"/>
 		<configuration configurationName="B91_AUDIO_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
@@ -3590,6 +3729,7 @@
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
+		<configuration configurationName="B91_BT_AutoTest_Demo"/>
 		<configuration configurationName="B91_USB_Speaker_DEMO">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
@@ -3607,6 +3747,7 @@
 		<configuration configurationName="B91_ALG_REG_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>
+		<configuration configurationName="B91_Make_lib"/>
 		<configuration configurationName="B91_LPC_Demo">
 			<resource resourceType="PROJECT" workspacePath="/B91_Driver_Demo"/>
 		</configuration>

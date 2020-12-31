@@ -111,6 +111,32 @@ typedef enum{
 }flash_type_e;
 
 /**
+ * @brief   flash capacity definition
+ * 			Call flash_read_mid function to get the size of flash capacity.
+ * 			Example is as follows:
+ * 			unsigned char temp_buf[4];
+ * 			flash_read_mid(temp_buf);
+ * 			The value of temp_buf[2] reflects flash capacity.
+ */
+typedef enum {
+    FLASH_SIZE_64K     = 0x10,
+    FLASH_SIZE_128K    = 0x11,
+    FLASH_SIZE_256K    = 0x12,
+    FLASH_SIZE_512K    = 0x13,
+    FLASH_SIZE_1M      = 0x14,
+    FLASH_SIZE_2M      = 0x15,
+    FLASH_SIZE_4M      = 0x16,
+    FLASH_SIZE_8M      = 0x17,
+} flash_capacity_e;
+
+typedef struct{
+	unsigned char  flash_read_cmd;			/**< xip read command */
+	unsigned char  flash_read_dummy:4;		/**< dummy cycle = flash_read_dummy + 1 */
+	unsigned char  flash_read_data_line:2;	/**< 0:single line;  1: dual line;  2:quad line; 3:quad line */
+	unsigned char  flash_read_addr_line:1;	/**< 0:single line;  1:the same to dat_line_h */
+	unsigned char  flash_read_cmd_line:1; 	/**< 0:single line;  1:the same to dat_line_h */
+}flash_xip_config_t;
+/**
  * @brief     	This function serves to erase a page(256 bytes).
  * @param[in] 	addr	- the start address of the page needs to erase.
  * @return    	none.
@@ -217,7 +243,7 @@ _attribute_text_sec_ void flash_read_uid(unsigned char idcmd, unsigned char *buf
  * @brief		This function serves to read flash mid and uid,and check the correctness of mid and uid.
  * @param[out]	flash_mid	- Flash Manufacturer ID
  * @param[out]	flash_uid	- Flash Unique ID
- * @return		0:error 1:ok
+ * @return		0: flash no uid or not a known flash model 	 1:the flash model is known and the uid is read.
  */
 _attribute_text_sec_ int flash_read_mid_uid_with_check( unsigned int *flash_mid ,unsigned char *flash_uid);
 
@@ -243,7 +269,14 @@ _attribute_text_sec_ void flash_unlock(flash_type_e type);
  * @return    	none.
  */
 _attribute_text_sec_ void flash_plic_preempt_config(unsigned char preempt_en, unsigned char threshold);
-
+/**
+ * @brief 		This function is used to update the configuration parameters of xip(eXecute In Place),
+ * 				this configuration will affect the speed of MCU fetching,
+ * 				this parameter needs to be consistent with the corresponding parameters in the flash datasheet.
+ * @param[in]	config	- xip configuration,reference structure flash_xip_config_t
+ * @return none
+ */
+_attribute_text_sec_ void flash_set_xip_config(flash_xip_config_t config);
 /**
  * @brief		This function serves to set flash write command.This function interface is only used internally by flash,
  * 				and is currently included in the H file for compatibility with other SDKs. When using this interface,

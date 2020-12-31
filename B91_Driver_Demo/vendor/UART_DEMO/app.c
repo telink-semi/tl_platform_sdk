@@ -186,6 +186,12 @@ void main_loop (void)
 _attribute_ram_code_sec_ void uart0_irq_handler(void)// if you want to use UART1,the function is - uart1_irq_handler()
 {
 #if( FLOW_CTR == NORMAL)
+	if(uart_get_irq_status(UART0, UART_RX_ERR))
+	{
+		uart_clr_irq_status(UART0,UART_CLR_RX);// it will clear rx_fifo and rx_err_irq ,rx_buff_irq,so it won't enter rx_buff interrupt.
+		uart_reset(UART0); //clear hardware pointer
+		uart_clr_rx_index(UART0); //clear software pointer
+	}
 	if(uart_get_irq_status(UART0, UART_RXBUF_IRQ_STATUS))
 	{
 		if(uart_rx_flag==0)
@@ -202,11 +208,6 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)// if you want to use UART1
 		}
 	}
 
-	if(uart_get_irq_status(UART0, UART_RX_ERR))
-	{
-		uart_clr_irq_status(UART0,UART_CLR_RX);
-		uart_clr_rx_index(UART0);
-	}
 #endif
 }
 #endif
