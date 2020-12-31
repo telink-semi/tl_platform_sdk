@@ -1,3 +1,118 @@
+## V1.3.0-Beta
+
+### Version
+* SDK version : telink_b91_driver_sdk v1.3.0-Beta.
+* This version sdk support B91 A0，A1 and A2 chip.
+
+### Bug Fixes
+
+* **pm**:
+  * Solved the problem that the reboot state cannot be read after the reboot comes back, and the deep state is read only. The solution is to add a status "MCU_STATUS_REBOOT_DEEP_BACK" to the enumeration type "pm_mcu_status".
+  * Solved the problem that the timer could not wake up after waking up several times when the function clock_cal_32k_rc() was not called.
+  * Solved the problem that when the flash is configured with four wires, it cannot work normally after waking up from suspend mode.
+* **clock**: 
+  * Solved the problem of invalid kick with PD0 port when 32k xtal starts to vibrate.
+* **adc**: 
+  * Fix the sort bug of function adc_sort_and_get_average_code() in ADC_Demo.
+  * Fix the problem that the adc_get_temperature()/adc_get_voltage() function in ADC_Demo may not get data for the first time.
+
+### Features
+
+* **swire**
+  * add swire driver and demo.
+* **cproject**: 
+  * delete B91 keyword.
+* **adc**
+  * Added the 1/4 pre_scale parameter enum of the adc_set_scale_factor() function, and deleted the 1, 1/2, 1/8 pre_scale parameter enum.
+* **pm** 
+  * change the variable name g_pm_multi_addr ->g_pm_mspi_cfg.
+    
+  * Improved the problem of incorrect LED configuration during the suspend sleep current test in pm_demo.
+* **audio** 
+  * add audio_set_codec_wnf api.
+  * add input_mode_select at line_in.
+  * set all gain to 0db default in audio.c.
+* **flash** 
+  * add flash_set_xip_config function.
+* **usb** 
+  * add host speaker stop playback detection function in spk demo.
+* **pwm**
+  * add function interface pwm_32k_chn_update_duty_cycle.
+* **mdec**
+  * the function plic_interrupt_claim() don't need parameter.
+
+
+### Known issues
+* N/A
+### BREAKING CHANGES
+* **s7816**
+  * modify the s7816_set_time(),delete the atr wait time in the function of coldreset and warmreset.
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### 版本
+
+* SDK版本: telink_b91_driver_sdk v1.3.0-Beta。
+* 此版本SDK支持B91 A0、A1和A2芯片。
+
+### Bug Fixes
+
+* **pm**:
+  * 解决了reboot回来后不能读到reboot状态，只读到deep状态的问题。解决方案是在枚举类型"pm_mcu_status"中新增一种状态"MCU_STATUS_REBOOT_DEEP_BACK"。 
+  * 解决了不调用函数clock_cal_32k_rc()时，timer唤醒几次后不能再唤醒的问题。
+  * 解决了设置flash四线时，suspend唤醒后flash不能正常工作的问题。
+* **clock**:
+  * 解决了32k xtal起振时用PD0口kick无效的问题。
+* **adc**:
+  * 修复了ADC_Demo中的adc_sort_and_get_average_code()函数的排序问题。
+  * 修复了ADC_Demo中的adc_get_temperature()/adc_get_voltage()函数第一次可能会采不到数据的问题。
+
+### Features
+
+* **swire**
+  * 增加swire的驱动和demo。
+* **cproject**:
+  * 删除关键字B91。
+* **adc**
+  * 添加了adc_set_scale_factor（）函数的1/4 pre_scale参数枚举，并删除了1、1 / 2、1 / 8 pre_scale参数枚举。
+
+
+* **pm**
+
+  * 更改变量名称g_pm_multi_addr-> g_pm_mspi_cfg。
+  * 改进了在pm_demo中的suspend睡眠电流测试过程中，指示灯配置错误的问题。
+
+* **audio** 
+  * 添加接口audio_set_codec_wnf。
+  * 在line_in添加input_mode_select。
+  * 在audio.c中将所有增益设置为0db默认值。
+
+* **flash** 
+
+  * 添加函数flash_set_xip_config 。
+
+* **usb** 
+
+  * 在spk_demo中添加主机扬声器停止播放的检测功能。
+
+* **pwm**
+
+  * 添加功能接口pwm_32k_chn_update_duty_cycle。
+
+* **mdec**
+
+  * 函数plic_interrupt_claim()不需要参数。
+
+
+### Known issues
+* N/A
+
+### BREAKING CHANGES
+* **s7816**
+
+  * 修改函数s7816_set_time()，在coldreset和warmreset函数中删除atr等待时间。
+
+
 
 ## V1.2.0-Beta
 
