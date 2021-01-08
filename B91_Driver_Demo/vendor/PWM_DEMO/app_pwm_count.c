@@ -54,7 +54,7 @@
  *  pwm_clk_source is pclk or 32K
  */
 #define	 PWM_PCLK		       1
-#define	 PWM_32K  	           2
+#define	 PWM_32K  	           2      //If want to work properly in suspend mode (the wake source:32K_rc/32k_crystal), can set the PWM to use the 32K clock source.
 #define  PWM_CLK             PWM_PCLK
 
 /*
@@ -140,6 +140,12 @@ void user_init(void)
 	 #endif
 
 #elif(PWM_CLK  == PWM_32K)
+	
+    //there are two 32K clock sources, 32K_RC and 32K_Crystal.
+    //if want higher 32K clock source accuracy, need to calibrate it.
+	clock_32k_init(CLK_32K_RC);
+
+	clock_cal_32k_rc();
 
 	pwm_set_pin(PWM_PIN);
 

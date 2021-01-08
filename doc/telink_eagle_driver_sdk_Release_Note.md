@@ -1,3 +1,61 @@
+## V1.3.1-Beta
+
+### Version
+* SDK version : telink_b91_driver_sdk V1.3.1-Beta.
+* This version sdk support B91 A0，A1 and A2 chip.
+
+### Bug Fixes
+* **pm**:
+
+ * Use digital register way to get 32k tick may read error tick,cause the wakeup time is incorrect with the setting time,the sleep time will very little or very big,will not wakeup ontime.
+
+  + The previous configuration will cause the voltage on the VDD1V8 pin to be generally high during normal operation, about 3.0V~3.1V (the reason is that the previous configuration will cause the two power supplies to be powered at the same time), which may cause abnormal phenomena. The version is modified to the correct configuration. In the default configuration, the voltage on the VDD1V8 pin will be about 2.8V.
+
+* **USB**:
+  + The header file "stdDescriptors.h" is not case sensitive when included, so it is uniformly changed to "StdDescriptors.h"
+
+* **AUDIO**:
+      + In the function audio_set_dmic_pin(), fix the problem of possible errors in setting the dmic pin
+
+### Known issues
+* N/A
+### BREAKING CHANGES
+* **pwm**
+   + Detailed description: add 32k clock calibration,the interface function(pwm_32k_chn_en) changes" =" to |=，to prevent reset other channels.
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### 版本
+
+* SDK版本: telink_b91_driver_sdk V1.3.0-Beta。
+* 此版本SDK支持B91 A0、A1和A2芯片。
+
+### Bug Fixes
+
+* **pm**:
+  * 使用数字方式获取32k tick出错会导致设置的唤醒tick与预期不符，从而导致唤醒时间与设置的不相符，睡眠时间可能过小或者过大，可能会表现为不唤醒。
+ + 之前的配置会导致正常工作时，VDD1V8引脚上的电压会普遍偏高，大概为3.0V~3.1V（原因是之前的配置会导致两个电源会同时供电），可能会造成异常现象，此版本修改为正确配置，默认配置下，VDD1V8引脚上的电压会是2.8V左右。
+
+* **USB**:
+    + 头文件"stdDescriptors.h",include时没有区分大小写，统一改成"StdDescriptors.h"
+
+
+* **AUDIO**:
+      + 在函数audio_set_dmic_pin()中，修复设置dmic pin可能出错问题
+
+### Known issues
+* N/A
+
+### BREAKING CHANGES
+* **pwm**
+ + 添加32k时钟源校准，接口函数pwm_32k_chn_en修改，=改为|=，防止重置其他通道.
+
+---
+
+### Version
+
+
+
 ## V1.3.0-Beta
 
 ### Version
@@ -109,7 +167,7 @@
   * 修改函数s7816_set_time()，在coldreset和warmreset函数中删除atr等待时间。
 
 
-
+---
 ## V1.2.0-Beta
 
 ### Version
@@ -179,6 +237,389 @@
   - GPIO_PD0在A1版本芯片上不能使用
 * **其他**
   - 注意事项（A1版本芯片）：使用2.8V电压给芯片供电，供电电压高于2.8V时，程序有可能会跑不起来。
+
+### BREAKING CHANGES
+* N/A
+
+---
+## V1.1.0-Beta
+### Version
+
+* SDK version : telink_b91_driver_sdk v1.1.0-Beta.
+* This version sdk support B91 A0 and A1 chip.
+
+### Bug Fixes
+
+* **pm**
+
+  * Solved the problem of not being able to wake up when the sleep time is less than 950us.
+
+  * Solved the problem that the sleep function cannot be awakened when the sleep function is called immediately within 500us after power on.
+
+* **mdec**: 
+
+  * Solved the problem of first interruption after initialization.
+
+* **clock**: 
+
+  * Solve the problem that the program sometimes stops in the clock initialization function (clock_init).
+
+* **lpc**: 
+
+  * Solved the problem of abnormal operation of lpc.
+
+* **flash**: 
+
+  * Remove the declaration of the function flash_read_mid_uid_with_check_ram. Added declaration of function flash_read_mid_uid_with_check.
+
+  * Solved the problem of not being able to cross pages when writing flash across pages.
+
+* **bqb:** 
+
+  * fix the issue that could not send packets through instructions in initialization state.
+
+* **rf:** 
+
+  * Fixed an abnormal function of rf_set_rffe_pin function.
+
+  * Modify the function rf_set_rx_dma and rf_set_tx_dma to adapt to sending and receiving long packets(up to 255 byte)
+
+  * Modified the usage example of rx　interrupt. 
+
+  * fix the issue that rf_set_pipe_access_code can not set 5-byte access code.
+
+  * Fix the register setting error in the rf_set_preamble_len function.
+
+  * Modify the access code of S2 and S8 mode to manual trigger.
+
+* **emi** 
+
+  * Fix the problem of zigbee mode 2480Mhz band edge can not pass the spec.
+  * Fixed single carrier frequency offset in emi.
+
+* **.s** 
+
+  * Modified cstartup_b91_flash.S and cstartup_b91_ram.S file to reserve space. 
+
+* **reboot&clock**
+
+  * fix the issue that reboot will crash when hclk is half of cclk in pll_clk and pad24M_clk,need add a 
+
+* **analog** 
+
+  * fix a compile error in analog demo
+
+* **spi** 
+
+  * Simplify structure and macro definition naming, optimize SPI slave demo structure，fix compilation error
+
+* **uart** 
+
+  * Fix the issue that the mask might be overwritten by the set of bit width when the uart-init.
+
+### Features
+* **sys**
+
+  * Add parameters vbat_v in the sys_init function.
+
+* **sys_time**
+
+  * Change CLOCK_16M_SYS_TIMER_CLK_XXX to SYSTEM_TIMER_TICK_XX.
+
+* **pm** 
+
+  * Increase the convergence calibration function of sleep time.
+
+  * Increase USB wake-up function.
+
+  * Increase the suspend sleep function.
+  * add long sleep wakeup api.
+
+* **bqb** 
+
+  * add a macro to switch new/old setting ways to configure uart/cap/flash.
+
+* **license** 
+
+  * change the author to "Driver Group" and modify the license template to meet the requiements CI checking.
+
+* **rf** 
+
+  * Add ANT mode to rf demo.
+
+  * update the function rf_set_chn and rf_set_ble_chn to support out-of-band frequency point setting
+
+  * In order to facilitate the development of SDK, the DMA setting function related to RF is divided into several functions with single function, and added to the driver.
+
+* **AES** 
+
+  * optimize AES_set_mode apiuart:add Single line transceiver function
+
+* **uart**
+
+  * add UART-TXDONE/RXDONE interrupt in DMA mode in the chip version of A1 .
+
+  * data of variable length is acceptable in uart-dma mode in the chip version of A1, the length of receive-date can be work out.
+
+* **s7816**
+
+  * add s7816 demo, can communicate with the equipment that support IS07816 protocol.
+
+* **gpio**
+
+  * add 30k-digital pull-up。
+
+* **plic**
+
+  * Optimized interrupt handling function structure in PLIC
+
+* **i2c**
+
+  * add function that the master sends a stop after detecting a NACK in the ID phase，then stops reading and writing。
+
+  * Add tx_done interrupt in dma demo
+
+* **audio**
+
+  * In MONO mode, the input channel (left/right) can be selected
+
+  * Add input channel acquisition mode selection (single-ended/differential)
+
+  * Add configuration for ADC and DAC to work at different sampling rates（ADC=16K，DAC=48K）
+
+* **spi**
+
+  * Add 3line mode and master to multiple-slave function
+
+* **adc**
+
+  * Add ADC module  in the chip version of A1 which support DMA sampling mode and manual sampling mode, support Vbat\GPIO\Temperature sensor sampling
+
+### Known issues
+* **32k xtal** 
+  - 32k xtal can't be used on the A1 version chip
+* **gpio** 
+  - GPIO_PD0 can't be used on the A1 version chip
+* **other**
+  - Note (A1 version chip): Use 2.8V voltage to power the chip. When the power supply voltage is higher than 2.8V, the program may not run.
+### BREAKING CHANGES
+* N/A
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Bug Fixes
+
+* **pm**  
+
+  * 解决了睡眠时间小于950us时，不能唤醒的问题。 
+
+  * 解决了上电500us内立即调用睡眠函数时无法唤醒的问题。
+
+* **mdec**  
+
+  * 解决了初始化后先进一次中断的问题。
+
+* **clock**  
+
+  * 解决了程序有时会停在时钟初始化函数（clock_init）中的问题。
+
+* **lpc**  
+
+  * 解决了lpc工作异常的问题。
+
+* **flash**  
+
+  * 去掉函数flash_read_mid_uid_with_check_ram的声明。新增函数flash_read_mid_uid_with_check的声明。
+
+  * 解决了跨页写flash时，不能跨页的问题。
+
+* **bqb** 
+
+  * 修复了在初始化状态下，不能通过指令发包的问题。
+
+* **rf** 
+
+  * 修复了函数rf_set_rffe_pin功能异常 。
+
+  * 修改函数参数rf_set_rx_dma ,rf_set_tx_dma以适应长包（最大长度255byte）
+
+  * 修改rx interrupt使用示例
+
+  * 修复了rf_set_pipe_access_code不能设置5byte长度的access code
+
+  * 修复了rf_set_preamble_len函数中的寄存器设置错误
+
+  *  修改S2,S8模式access code为手动触发
+
+* **emi** 
+
+  * 修复zigbee 2480Mhz边带不能过spec的问题
+  * 修复单通频偏的问题
+
+* **.s** 
+
+  * 更新s文件以预留空间
+
+* **reboot&clock** 
+
+  * 修复当hclk等于1/2cclk时reboot出现宕机的问题。
+
+* **analog** 
+
+  * 修复analog_demo中的错误
+
+* **spi** 
+
+  * 精简结构体和宏定义命名，优化SPI slave demo结构，修复编译错误
+
+* **uart** 
+
+  * 修复UART初始化设置位宽时可能会覆盖掉mask的问题
+
+### 版本
+* SDK版本: telink_b91_driver_sdk v1.0.0-Beta.
+* 此版本SDK支持B91 A0和A1芯片.
+### Features
+* **sys**
+
+  * 在sys_init函数中添加参数vbat_v。
+
+* **sys_time**
+
+  * 将CLOCK_16M_SYS_TIMER_CLK_XXX更改为SYSTEM_TIMER_TICK_XX。
+
+* **pm**
+
+  * 增加睡眠时间的收敛校准功能。
+
+  * 增加USB唤醒功能。 
+
+  * 增加suspend睡眠功能。    
+  * 新增长睡眠接口。
+
+* **bqb** 
+
+  * 增加了一个宏，用来选择新的或旧的方式来配置串口、CAP值以及适配的Flash大小。
+
+* **license** 
+
+  * 将License的作者统一改成了“Driver Group”以及统一调整了License的模板。    
+
+* **rf** 
+
+  * 添加ANT模式到rf demo中.
+
+  * 更新设置channel的函数rf_set_chn和rf_set_ble_chn以支持带外频点设置
+
+  * 为了方便SDK的开发将DMA设置函数拆分成几个功能单一的函数并添加到驱动中。
+
+* **AES** 
+
+  * 优化AES_set_mode接口uart:新增单线收发模式
+
+* **uart**
+
+  * A1版本芯片新增DMA模式UART-TXDONE/RXDONE中断。
+
+  * A1版本芯片UART-DMA模式可以接收不定长的数据，并能计算出接收数据的长度
+
+* **s7816**
+
+  * 新增s7816模块，可与支持ISO7816协议的设备进行单线半双工通信。
+
+* **gpio**
+
+  * 新增30k数字上拉。
+
+* **plic**
+
+  * 在PLIC中优化了中断处理函数结构
+
+* **i2c**
+
+  * 增加了master在发ID阶段检测到NACK后发stop，并停止读写动作
+
+  * 在dma demo中增加了tx_done中断。
+
+* **audio**
+
+  * MONO模式下，可选择输入通道（左/右)，默认只有左通道输出；
+
+  * 增加了输入通道采集模式选择（单端/差分）
+
+  * 新增ADC和DAC在不同采样率工作的配置（ADC=16K，DAC=48K）。
+
+* **spi**
+
+  * 新增3line模式和master对多slave功能。
+
+* **adc**
+
+  * A1版本芯片新增ADC模块，支持DMA采样模式和手动采样模式，支持Vbat\GPIO\Temperature sensor采样
+
+
+### Known issues
+* **32k xtal** 
+   - 32k xtal 在A1版本芯片上不能使用。
+* **gpio** 
+  - GPIO_PD0在A1版本芯片上不能使用
+* **其他**
+  - 注意事项（A1版本芯片）：使用2.8V电压给芯片供电，供电电压高于2.8V时，程序有可能会跑不起来。
+
+### BREAKING CHANGES
+* N/A
+
+---
+## V1.0.0-Beta
+### Version
+* SDK version : telink_b91_driver_sdk v1.0.0-Beta.
+* This version sdk support B91 A0 chip.
+### Features
+* AES/AUDIO/FLASH/LPC/MDEC/PKE/PM/PWM/RF/STIMER/TIMER/TRNG
+* Interface:GPIO/I2C/SPI/UART/USB
+### Known issues
+* **pm** 
+  - The suspend mode can't be used on the A0 version chip
+  - In order to avoid the problem of abnormal overwrite sram in the A0 chip, a special treatment is added to the sys_init function 
+    (if it is the A0 chip and it is the first power-on, it will enter deep, wake up after 100ms, and the program will be executed normally after wake-up)
+* **gpio** 
+  - GPIO_PD can't be used on the A0 version chip
+* **uart** 
+  - It is recommended to use the non-DMA mode. In the A0 version, the function of the DMA mode is defective. When receiving, the interrupt can be generated normally 
+    only when the received data length is known.
+* **clock**
+  - The use of clock_init function needs to pay attention to two points:
+   - CCLK_DIV2_TO_HCLK and HCLK_DIV4_TO_PCLK can’t be set at the same time
+   - If the pm or reboot function is used, the parameter hclk_div cannot be set to CCLK_DIV2_TO_HCLK
+* **other**
+  - Precautions for the use of the development board (A0 version chip):
+  If USB power supply, you need to unplug the USBVBUS-VBUS jumper (that is, you can't use +5V directly to the Vbus of the chip), otherwise it will cause USB/Audio 
+  instability.
+### BREAKING CHANGES
+* N/A
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### 版本
+* SDK版本: telink_b91_driver_sdk v1.0.0-Beta.
+* 此版本SDK支持B91 A0芯片.
+### Features
+* AES/AUDIO/FLASH/LPC/MDEC/PKE/PM/PWM/RF/STIMER/TIMER/TRNG
+* Interface:GPIO/I2C/SPI/UART/USB
+### Known issues
+* **pm** 
+   - suspend模式在A0版本芯片上不可以使用
+   - 为了规避A0芯片存在的异常改写sram问题，在sys_init函数中加了一段特殊处理（如果是A0芯片，并且是第一次上电，则会进入deep，100ms后唤醒，唤醒后会正常执行程序）
+* **gpio** 
+  - GPIO_PD在A0版本芯片上不能使用
+* **uart** 
+  - 建议使用非DMA模式，在A0版本，DMA模式的功能有缺陷，接收时，只有已知接收数据长度时，才能正常的产生中断。
+* **clock**
+  - clock_init函数的使用需要注意一下两点:
+   - CCLK_DIV2_TO_HCLK和HCLK_DIV4_TO_PCLK不能同时设置 
+   - 如果有使用pm或者reboot功能，则参数hclk_div不能设置为CCLK_DIV2_TO_HCLK
+* **其他**
+  - 开发板使用注意事项（A0版本芯片）：如果USB供电时，需要拔掉USBVBUS-VBUS跳帽（即不能用+5V直接给芯片的Vbus），否则会导致USB/Audio不稳定
 
 ### BREAKING CHANGES
 * N/A

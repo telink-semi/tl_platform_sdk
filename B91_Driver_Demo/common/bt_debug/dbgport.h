@@ -168,7 +168,7 @@ static inline void bt_diagcntl_diag3_setf(unsigned char diag3)
 
 static inline void bt_diagcntl_diag3_en_setf(unsigned char diag3en)
 {
-    assert((((unsigned int)diag3en << 31) & ~((unsigned int)0x80000000)) == 0);
+    //assert((((unsigned int)diag3en << 31) & ~((unsigned int)0x80000000)) == 0);
     write_reg32(BT_DIAGCNTL_ADDR, (read_reg32(BT_DIAGCNTL_ADDR) & ~((unsigned int)0x80000000)) | ((unsigned int)diag3en << 31));
 }
 
