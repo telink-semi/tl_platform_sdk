@@ -27,7 +27,7 @@
 
 ### 版本
 
-* SDK版本: telink_b91_driver_sdk V1.3.0-Beta。
+* SDK版本: telink_b91_driver_sdk V1.3.1-Beta。
 * 此版本SDK支持B91 A0、A1和A2芯片。
 
 ### Bug Fixes
