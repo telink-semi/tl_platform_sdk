@@ -62,14 +62,21 @@ aduio_i2s_codec_config_t audio_i2s_codec_config=
    .i2s_data_select			=I2S_BIT_16_DATA,
    .codec_data_select		=CODEC_BIT_16_DATA,
    .i2s_codec_m_s_mode		=I2S_M_CODEC_S,
-   .i2s_data_invert_select  =I2S_DATA_INVERT_DIS,//L channel default
    .in_digital_gain			=CODEC_IN_D_GAIN_0_DB,
    .in_analog_gain     		=CODEC_IN_A_GAIN_0_DB,
    .out_digital_gain   		=CODEC_OUT_D_GAIN_0_DB,
    .out_analog_gain    		=CODEC_OUT_A_GAIN_0_DB,
-   .mic_input_mode_select   =1,//0 single-ended input, 1 differential input
+   .mic_input_mode_select   =DIFF_ENDED_INPUT,//0 single-ended input, 1 differential input
+   .dac_output_chn_select   =DAC_OUTPUT_L_R_CHN,//0 right and left channel both active ,1 only left channel active
    .adc_wnf_mode_select     =CODEC_ADC_WNF_INACTIVE,
 };
+
+
+aduio_i2s_invert_config_t audio_i2s_invert_config={
+	.i2s_lr_clk_invert_select=I2S_LR_CLK_INVERT_DIS,
+	.i2s_data_invert_select=I2S_DATA_INVERT_DIS,
+};
+
 
 dma_config_t audio_dma_rx_config=
 {
@@ -109,20 +116,35 @@ dma_config_t audio_dma_tx_config=
 
 /**
  * @brief      This function serves to invert data between R channel and L channel.
- * @param[in]  en - I2S_DATA_INVERT_DIS: L channel (default); I2S_DATA_INVERT_EN: R channel.
+ * @param[in]  en - I2S_DATA_INVERT_DIS: L channel ( left channel data left);  I2S_DATA_INVERT_EN(right channel data left)
+ * @attention must be set before audio_init().
  * @return     none
  */
 void audio_set_mono_chn(audio_data_invert_e en)
 {
-	audio_i2s_codec_config.i2s_data_invert_select=en;
+	audio_i2s_invert_config.i2s_data_invert_select=en;
+}
+
+/**
+ * @brief      This function serves to invert LR-clk.
+ * @param[in]  en -lr_clk phase control(in RJ,LJ or i2s modes),in i2s mode(opposite phasing in  RJ,LJ mode), 0=right channel data when lr_clk high ,1=right channel data when lr_clk low.
+ *                                                             in DSP mode(in DSP mode only), DSP mode A/B select,0=DSP mode A ,1=DSP mode B
+ * @attention If the left and right channels are both active,there will be a phase difference(about 1 sample) between the left and right channels,invert lr_clk can eliminate the phase difference,but data output channel will invert.
+ * @attention must be set before audio_init().
+ * @return     none
+ */
+void audio_invert_i2s_lr_clk(audio_i2s_lr_clk_invert_e en)
+{
+	audio_i2s_invert_config.i2s_lr_clk_invert_select=en;
 }
 
 /**
  * @brief      This function serves to set mic input mode.
  * @param[in]  input_mode - 0 single-ended input, 1 differential input.
+ * @attention must be set before audio_init().
  * @return     none
  */
-void audio_set_codec_mic_input_mode (unsigned char input_mode)
+void audio_set_codec_mic_input_mode (audio_input_mode_select_e input_mode)
 {
 	audio_i2s_codec_config.mic_input_mode_select=input_mode;
 }
@@ -131,6 +153,7 @@ void audio_set_codec_mic_input_mode (unsigned char input_mode)
  * 	@brief      This function serves to set in path digital and analog gain  .
  * 	@param[in]  d_gain - digital gain value
  * 	@param[in]  a_gain - analog  gain value
+ *  @attention must be set before audio_init().
  * 	@return     none
  */
 void audio_set_codec_in_path_a_d_gain (codec_in_path_digital_gain_e d_gain,codec_in_path_analog_gain_e a_gain )
@@ -144,6 +167,7 @@ void audio_set_codec_in_path_a_d_gain (codec_in_path_digital_gain_e d_gain,codec
  * 	@brief      This function serves to set out path digital and analog gain  .
  * 	@param[in]  d_gain - digital gain value
  * 	@param[in]  a_gain - analog  gain value
+ * 	@attention must be set before audio_init().
  * 	@return     none
  */
  void audio_set_codec_out_path_a_d_gain (codec_out_path_digital_gain_e d_gain,codec_out_path_analog_gain_e a_gain)
@@ -156,6 +180,7 @@ void audio_set_codec_in_path_a_d_gain (codec_in_path_digital_gain_e d_gain,codec
  /**
   * @brief      This function serves to choose which is master to provide clock.
   * @param[in]  m_s - I2S_S_CODEC_M: i2s as slave ,codec as master; I2S_M_CODEC_S: i2s as  master, codec  as slave.
+  * @attention must be set before audio_init().
   * @return     none
   */
 void audio_set_i2s_codec_m_s (i2s_codec_m_s_mode_e m_s)
@@ -169,11 +194,23 @@ void audio_set_i2s_codec_m_s (i2s_codec_m_s_mode_e m_s)
 *                                              Mode1  -3dB   59Hz
 *  Wind Noise Filter corner frequency          Mode2  -3dB   117Hz
 			                                   Mode3  -3dB   235Hz
+* @attention must be set before audio_init().
 * @return    none
- */
+*/
 void audio_set_codec_wnf(adc_wnf_mode_sel_e mode)
 {
 	audio_i2s_codec_config.adc_wnf_mode_select = mode;
+}
+
+/**
+ * @brief  This function serves to set dac output channel.
+ * @param[in] chn-DAC_OUTPUT_L_R_CHN - right and left channel both active ; DAC_OUTPUT_L_CHN, only left channel active.
+ * @return    none
+ * @attention must be set before audio_init().
+ */
+void audio_set_output_chn(audio_output_chn_e chn)
+{
+	audio_i2s_codec_config.dac_output_chn_select = chn;
 }
 
 /**
@@ -278,29 +315,41 @@ void audio_i2s_set_pin(void)
 void audio_set_codec_supply (codec_volt_supply_e volt)
 {
 
-	 if(0xff==g_chip_version )//A0 1.8v default ( BIT(7) - 1: 2.8v 0: 1.8v )
+	if(0xff==g_chip_version )//A0 1.8v default ( BIT(7) - 1: 2.8v 0: 1.8v )
 	{
 		if(CODEC_2P8V==volt)
 		{
+			/*
+			 * VDD_1V8 configured as 2.8V,dcdc_trim_flash_out need trim down (ana_0c<2:0>100 --> 000).Only effect in DCDC mode.
+			 *                                          theory(max)        2.84V     2.60V
+			 *                                          actual(max)  about 3.02V     2.74V
+			 */
+			analog_write_reg8(0x0c, analog_read_reg8(0x0c) & 0xf8);
 			analog_write_reg8(0x02,analog_read_reg8(0x02)|BIT(7));
 		}
 
 		else if(CODEC_1P8V==volt)
 		{
+			//VDD_1V8 configured as 1.8V,VDD_1V8 need set default. theory 1.8V, actual about 2.04V
+			analog_write_reg8(0x0c, (analog_read_reg8(0x0c) & 0xf8) | 0x04);
 			analog_write_reg8(0x02,analog_read_reg8(0x02)&(~BIT(7)));
 		}
 
 	}
 
-	 else //A1 2.8v default ( BIT(7) - 1: 1.8v 0: 2.8v )
+	else //A1 2.8v default ( BIT(7) - 1: 1.8v 0: 2.8v )
 	{
 		if(CODEC_1P8V==volt)
 		{
+			//VDD_1V8 configured as 1.8V,VDD_1V8 need set default.
+			analog_write_reg8(0x0c, (analog_read_reg8(0x0c) & 0xf8) | 0x04);
 			analog_write_reg8(0x02,analog_read_reg8(0x02)|BIT(7));
 		}
 
 		else if(CODEC_2P8V==volt)
 		{
+			//VDD_1V8 configured as 2.8V,VDD_1V8 need trim down (ana_0c<2:0>100 --> 000).Only effect in DCDC mode.
+			analog_write_reg8(0x0c, analog_read_reg8(0x0c) & 0xf8);
 			analog_write_reg8(0x02,analog_read_reg8(0x02)&(~BIT(7)));
 		}
 	}
@@ -476,7 +525,7 @@ void audio_init(audio_flow_mode_e flow_mode,audio_sample_rate_e rate,audio_chann
 	aduio_set_chn_wl(channel_wl);
 	audio_set_codec_clk(1,16);//from ppl 192/16=12M
 	audio_mux_config(CODEC_I2S,audio_i2s_codec_config.audio_in_mode,audio_i2s_codec_config.audio_in_mode,audio_i2s_codec_config.audio_out_mode);
-	audio_i2s_config(I2S_I2S_MODE,audio_i2s_codec_config.i2s_data_select,audio_i2s_codec_config.i2s_codec_m_s_mode,audio_i2s_codec_config.i2s_data_invert_select);
+	audio_i2s_config(I2S_I2S_MODE,audio_i2s_codec_config.i2s_data_select,audio_i2s_codec_config.i2s_codec_m_s_mode,&audio_i2s_invert_config);
 	audio_set_i2s_clock(rate,AUDIO_RATE_EQUAL,0);
 	audio_clk_en(1,1);
 	reg_audio_codec_vic_ctr=FLD_AUDIO_CODEC_SLEEP_ANALOG;//active analog sleep mode
@@ -498,39 +547,29 @@ void audio_init(audio_flow_mode_e flow_mode,audio_sample_rate_e rate,audio_chann
 /**
  * @brief     This function serves to read data from codec register.
  * @param[in] addr: the address of codec register
+ * @attention This function only supports internal codec.
  * @return    none
  */
 unsigned char audio_i2c_codec_read(unsigned char addr)
 {
-	reg_i2c_data_buf(0)=addr<<1;
-	reg_i2c_len=0x01;//rx_len
-	reg_i2c_sct1=FLD_I2C_LS_ID|FLD_I2C_LS_ADDR|FLD_I2C_LS_START;
-
-	while(i2c_master_busy()); //wait busy=0
-	while(reg_i2c_mst & FLD_I2C_ACK_IN);//wait ack=0
-
-	reg_i2c_sct1=FLD_I2C_LS_ID|FLD_I2C_LS_DATAR|FLD_I2C_LS_START|FLD_I2C_LS_ID_R|FLD_I2C_LS_ACK;
-	while(i2c_master_busy()); //wait busy=0
-	unsigned char rdat8= reg_i2c_data_buf(0);
-	reg_i2c_sct1=FLD_I2C_LS_STOP|FLD_I2C_LS_ID_R;
-	while(i2c_master_busy()); //wait busy=0
-	return rdat8;
+	unsigned char codec_addr_rdat[2]={0x00,0x00};
+	codec_addr_rdat[0]=addr<<1;
+	i2c_master_write_read(0x34<<1,&codec_addr_rdat[0],1,&codec_addr_rdat[1],1);
+	return codec_addr_rdat[1];
 }
 
 /**
  * @brief     This function serves to write data to  codec register.
  * @param[in] addr: the address of codec register
+ * @attention This function only supports internal codec.
  * @return    none
  */
 void audio_i2c_codec_write(unsigned char addr ,unsigned char wdat)
 {
-
-	reg_i2c_data_buf(0)=addr<<1;
-	reg_i2c_data_buf(1)=wdat;
-	reg_i2c_len=2;//tx_len
-	reg_i2c_sct1=FLD_I2C_LS_ID|FLD_I2C_LS_DATAW| FLD_I2C_LS_START| FLD_I2C_LS_STOP;
-	while(i2c_master_busy()); //wait busy=0
-	while(reg_i2c_mst & FLD_I2C_ACK_IN);//wait ack=0
+    unsigned char codec_addr_wdat[2]={0x00,0x00};
+	codec_addr_wdat[0]=addr<<1;
+	codec_addr_wdat[1]=wdat;
+	i2c_master_write(0x34<<1,codec_addr_wdat,2);
 }
 
 /**
@@ -541,17 +580,14 @@ void audio_i2c_codec_write(unsigned char addr ,unsigned char wdat)
 void audio_i2c_init(codec_type_e codec_type, i2c_sda_pin_e sda_pin,i2c_scl_pin_e scl_pin)
 {
 	i2c_master_init();
-	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*20000)));//set i2c frequency 400K.
-	//reg_i2c_sp=0x1e;//200k sys_clk.pclk=24M
+	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K.
 	if(codec_type==INNER_CODEC)
 	{
 		reg_audio_i2c_mode=0x05;//codec config by i2c
-		reg_i2c_id=(0x34<<1);//set i2c id
 		reg_audio_i2c_addr=0x34;
 	}
 	else if(codec_type==EXT_CODEC)
 	{
-		reg_i2c_id=0x34;
 		i2c_set_pin(sda_pin,scl_pin);
 	}
 }
@@ -568,7 +604,7 @@ void audio_init_i2c(audio_flow_mode_e flow_mode,audio_sample_rate_e rate,audio_c
 	aduio_set_chn_wl(channel_wl);
 	audio_set_codec_clk(1,16);////from ppl 192/16=12M
 	audio_mux_config(CODEC_I2S,audio_i2s_codec_config.audio_in_mode,audio_i2s_codec_config.audio_in_mode,audio_i2s_codec_config.audio_out_mode);
-	audio_i2s_config(I2S_I2S_MODE,audio_i2s_codec_config.i2s_data_select,audio_i2s_codec_config.i2s_codec_m_s_mode,audio_i2s_codec_config.i2s_data_invert_select);
+	audio_i2s_config(I2S_I2S_MODE,audio_i2s_codec_config.i2s_data_select,audio_i2s_codec_config.i2s_codec_m_s_mode,&audio_i2s_invert_config);
 	audio_set_i2s_clock(rate,AUDIO_RATE_EQUAL,0);
 	audio_clk_en(1,1);
 	audio_i2c_init(INNER_CODEC,0,0);
@@ -600,7 +636,7 @@ void audio_codec_dac_config(i2s_codec_m_s_mode_e mode,audio_sample_rate_e rate,c
 	if(wreg_mode==MCU_WREG)
 	{
 		BM_SET(reg_audio_codec_dac_ctr,FLD_AUDIO_CODEC_DAC_SOFT_MUTE); //dac mute
-		if((audio_i2s_codec_config.audio_out_mode==BIT_16_MONO_FIFO0)||((audio_i2s_codec_config.audio_out_mode==BIT_20_OR_24_MONO_FIFO0)))
+		if(audio_i2s_codec_config.dac_output_chn_select)
 		{
 			BM_CLR(reg_audio_codec_dac_ctr,FLD_AUDIO_CODEC_DAC_SB);			//active DAC power
 			BM_SET(reg_audio_codec_dac_ctr,FLD_AUDIO_CODEC_DAC_LEFT_ONLY);	//active left channel only
@@ -855,16 +891,21 @@ void audio_mux_config(audio_flow_e audio_flow, audio_in_mode_e ain0_mode , audio
  * @param[in] i2s_format - interface protocol
  * @param[in] wl   		 - audio data word length
  * @param[in] m_s        - select i2s as master or slave
- * @param[in] en         - 1 enable audio data invert , 0 disable audio data invert .for example in mono mode switch R and L channel data to fifo0
+ * @param[in] i2s_config_t - the prt of i2s_config_t that configure i2s lr_clk phase and lr_clk swap.
+ *  i2s_config_t->i2s_lr_clk_invert_select-lr_clk phase control(in RJ,LJ or i2s modes),in i2s mode(opposite phasing in  RJ,LJ mode), 0=right channel data when lr_clk high ,1=right channel data when lr_clk low.
+ *                                                                                     in DSP mode(in DSP mode only), DSP mode A/B select,0=DSP mode A ,1=DSP mode B.
+ *            i2s_config_t->i2s_data_invert_select - 0=left channel data left,1=right channel data left.
+ * @attention:If the left and right channels are both active in i2s mode,there will be a phase difference(about 1 sample) between the left and right channels,you can set i2s_lr_clk_invert_select=1 to eliminate the phase difference,
+ * but data output channel will be inverted,you can also set i2s_config_t->i2s_data_invert_select=1 to recovery it.
  * @return    none
  */
-void audio_i2s_config(i2s_mode_select_e i2s_format,i2s_data_select_e wl,  i2s_codec_m_s_mode_e m_s , audio_data_invert_e en )
+void audio_i2s_config(i2s_mode_select_e i2s_format,i2s_data_select_e wl,  i2s_codec_m_s_mode_e m_s , aduio_i2s_invert_config_t * i2s_config_t)
 {
 
     reg_i2s_cfg = MASK_VAL( FLD_AUDIO_I2S_FORMAT, i2s_format,\
 		   FLD_AUDIO_I2S_WL, wl, \
-		   FLD_AUDIO_I2S_LRP, 0, \
-		   FLD_AUDIO_I2S_LRSWAP, en, \
+		   FLD_AUDIO_I2S_LRP, i2s_config_t->i2s_lr_clk_invert_select, \
+		   FLD_AUDIO_I2S_LRSWAP, i2s_config_t->i2s_data_invert_select, \
 		   FLD_AUDIO_I2S_ADC_DCI_MS, m_s, \
 		   FLD_AUDIO_I2S_DAC_DCI_MS, m_s);
 }
@@ -1051,11 +1092,12 @@ unsigned char LineIn_To_I2S_CMD_TAB[9][2]={	 		{WM8731_RESET_CTRL, 				0x00},
  * @brief     This function serves to  set external  codec by i2c
  * @return    none
  */
+
 void audio_set_ext_codec(void)
 {
 	for (unsigned char i=0;i<9;i++)
 	{
-		audio_i2c_codec_write(LineIn_To_I2S_CMD_TAB[i][0]>>1,LineIn_To_I2S_CMD_TAB[i][1]);
+		i2c_master_write(0x34,&LineIn_To_I2S_CMD_TAB[i][0],2);
 	}
 }
 
@@ -1067,11 +1109,8 @@ void audio_set_ext_codec(void)
  */
 void pwm_set(pwm_pin_e pin)
 {
-	reg_pwm_enable=0;
-	reg_pwm0_enable=0;//off pwm0
 	pwm_set_pin(pin);
-	pwm_set_clk((unsigned char) (sys_clk.pclk*1000*1000/24000000-1));
-	//reg_pwm_clkdiv = 0;//set pwm clk equal pclk 24M
+	pwm_set_clk((unsigned char) (sys_clk.pclk*1000*1000/24000000-1));//set pwm clk equal pclk 24M
 	pwm_set_pwm0_mode(PWM_NORMAL_MODE);
 	pwm_set_tcmp(PWM0_ID,1);
 	pwm_set_tmax(PWM0_ID,2);//24M/2=12M pwm  mclk to  ext codec clk
@@ -1094,7 +1133,7 @@ void audio_i2s_init(pwm_pin_e pwm0_pin, i2c_sda_pin_e sda_pin,i2c_scl_pin_e scl_
 	audio_i2c_init(EXT_CODEC,sda_pin,scl_pin);
 	aduio_set_chn_wl(MONO_BIT_16);
 	audio_mux_config(IO_I2S,BIT_16_MONO,BIT_16_MONO,BIT_16_MONO_FIFO0);
-	audio_i2s_config(I2S_I2S_MODE,I2S_BIT_16_DATA,I2S_M_CODEC_S,I2S_DATA_INVERT_DIS);
+	audio_i2s_config(I2S_I2S_MODE,I2S_BIT_16_DATA,I2S_M_CODEC_S,&audio_i2s_invert_config);
 	audio_set_i2s_clock(AUDIO_32K,AUDIO_RATE_EQUAL,0);
 	audio_clk_en(1,1);
 	audio_set_ext_codec();

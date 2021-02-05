@@ -98,7 +98,7 @@ static unsigned short g_response_len = 0;
 static int g_stall = 0;
 unsigned char usb_mouse_report_proto = 0; //default 1 for report proto
 unsigned char g_rate = 0; //default 0 for all report
-
+unsigned char g_usb_config = 0;
 static unsigned short usb_len_idx_0;
 static unsigned short usb_len_idx_s;
 static unsigned short usb_len_idx_h;
@@ -750,6 +750,13 @@ void usb_handle_request(unsigned char data_request) {
 				}
 		break;
 
+	case (REQDIR_HOSTTODEVICE | REQTYPE_STANDARD | REQREC_DEVICE)://00
+		if(control_request.Value&0xff)
+		{
+			g_usb_config=1;
+		}
+	break;
+
 	default:
 		g_stall = 1;
 		break;
@@ -927,7 +934,7 @@ void usb_handle_irq(void)
 
 void usb_init_interrupt(void)
 {
-	usbhw_enable_manual_interrupt(FLD_CTRL_EP_AUTO_STD | FLD_CTRL_EP_AUTO_DESC);;
+	usbhw_enable_manual_interrupt(FLD_CTRL_EP_AUTO_STD | FLD_CTRL_EP_AUTO_DESC|FLD_CTRL_EP_AUTO_CFG);//"FLD_CTRL_EP_AUTO_CFG" manual enable,mean that software to handle set_configuration control transmission
 	usbhw_set_eps_en(FLD_USB_EDP8_EN|FLD_USB_EDP1_EN|FLD_USB_EDP2_EN|FLD_USB_EDP3_EN|FLD_USB_EDP4_EN|FLD_USB_EDP5_EN|FLD_USB_EDP6_EN|FLD_USB_EDP7_EN);
 
 }

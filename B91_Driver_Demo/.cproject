@@ -66,10 +66,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1207483362" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.2062284842" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.2066391841" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.9830553" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.9830553" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.725886706" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.725886706" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1065994281" superClass="tool.nds.c.linker.input">
@@ -213,10 +213,10 @@
 								<option id="nds.c.link.option.ldflags.1484241884" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1812236454" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.271682916" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1685463858" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1685463858" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1683441952" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1683441952" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1535159444" superClass="tool.nds.c.linker.input">
@@ -346,10 +346,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.592417164" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.220421097" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.2052785802" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1630017562" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1630017562" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.731023057" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.731023057" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.66613716" superClass="tool.nds.c.linker.input">
@@ -476,10 +476,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.210771187" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1434376790" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1926838596" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.439207603" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.439207603" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.2111884947" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.2111884947" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.345822379" superClass="tool.nds.c.linker.input">
@@ -623,10 +623,10 @@
 								<option id="nds.c.link.option.ldflags.1498142473" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1554172258" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.437565539" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.938606982" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.938606982" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.179976093" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.179976093" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1764478472" superClass="tool.nds.c.linker.input">
@@ -773,10 +773,10 @@
 								<option id="nds.c.link.option.ldflags.1881107487" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.650304865" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1208457811" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.967783914" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.967783914" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.364840172" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.364840172" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.918411533" superClass="tool.nds.c.linker.input">
@@ -923,10 +923,10 @@
 								<option id="nds.c.link.option.ldflags.1479629567" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.679803768" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.39350350" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.56945057" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.56945057" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1574182562" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1574182562" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.725715735" superClass="tool.nds.c.linker.input">
@@ -1073,10 +1073,10 @@
 								<option id="nds.c.link.option.ldflags.1480321787" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1568534802" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1134722337" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1290041764" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1290041764" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.2139775127" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.2139775127" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.935496152" superClass="tool.nds.c.linker.input">
@@ -1223,10 +1223,10 @@
 								<option id="nds.c.link.option.ldflags.2007756597" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1154858155" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1508665807" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1532384625" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1532384625" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.3970565" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.3970565" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.700874776" superClass="tool.nds.c.linker.input">
@@ -1373,10 +1373,10 @@
 								<option id="nds.c.link.option.ldflags.1527081749" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.868872230" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1370832343" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.2145166202" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2145166202" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1589551950" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1589551950" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.608006768" superClass="tool.nds.c.linker.input">
@@ -1524,10 +1524,10 @@
 								<option id="nds.c.linker.option.cmodel.908287364" name="Code Model" superClass="nds.c.linker.option.cmodel" value="" valueType="string"/>
 								<option id="nds.c.link.option.LTO.2126951569" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.2143508140" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1080364779" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1080364779" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1235671837" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1235671837" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1183978943" superClass="tool.nds.c.linker.input">
@@ -1675,10 +1675,10 @@
 								<option id="nds.c.linker.option.cmodel.360359399" name="Code Model" superClass="nds.c.linker.option.cmodel" value="" valueType="string"/>
 								<option id="nds.c.link.option.LTO.1559129943" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1214600965" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1102687993" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1102687993" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1212803807" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1212803807" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.608221288" superClass="tool.nds.c.linker.input">
@@ -1825,10 +1825,10 @@
 								<option id="nds.c.link.option.ldflags.1956291970" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.1456935644" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1174345926" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1821801350" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1821801350" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.877053276" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.877053276" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.859519842" superClass="tool.nds.c.linker.input">
@@ -1975,10 +1975,10 @@
 								<option id="nds.c.link.option.ldflags.530116362" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.771506433" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.1815573520" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.324734172" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.324734172" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.241554868" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.241554868" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1271367799" superClass="tool.nds.c.linker.input">
@@ -2108,10 +2108,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1804766322" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.531647128" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1859610391" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.493695576" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.493695576" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1330300422" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1330300422" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1823647299" superClass="tool.nds.c.linker.input">
@@ -2255,10 +2255,10 @@
 								<option id="nds.c.link.option.ldflags.1843264181" name="Linker flags" superClass="nds.c.link.option.ldflags" value=" " valueType="string"/>
 								<option id="nds.c.link.option.LTO.954763532" name="Link Time Optimization (-flto)" superClass="nds.c.link.option.LTO" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.other.duplacitecompiler.704368185" name="DuplaciteComplierOption" superClass="nds.c.link.option.other.duplacitecompiler" value="-fpack-struct -fshort-enums -g3 -mcpu=d25f -ffunction-sections -fdata-sections -mext-dsp -mabi=ilp32f -fmessage-length=0 -fomit-frame-pointer -fno-strict-aliasing -fshort-wchar -fuse-ld=bfd -Wno-gnu-zero-variadic-macro-arguments " valueType="string"/>
-								<option id="nds.c.link.option.libs.1371006577" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1371006577" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.301364218" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.301364218" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.249855606" superClass="tool.nds.c.linker.input">
@@ -2387,10 +2387,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1790829997" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot_ramcode.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.440096666" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1033621745" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1321527855" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1321527855" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.51209717" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.51209717" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.765735458" superClass="tool.nds.c.linker.input">
@@ -2517,10 +2517,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.521474053" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot_ramcode.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1300200091" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.89385030" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.401758517" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.401758517" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.912989866" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.912989866" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.837403541" superClass="tool.nds.c.linker.input">
@@ -2648,10 +2648,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.696572791" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.317662964" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.100125039" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1699472611" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1699472611" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1546095363" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1546095363" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.529374217" superClass="tool.nds.c.linker.input">
@@ -2779,10 +2779,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.561013578" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1938184108" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.772923992" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1208443181" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1208443181" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1143736128" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1143736128" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1712004910" superClass="tool.nds.c.linker.input">
@@ -2910,10 +2910,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.437569930" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.647705828" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.62183555" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.2016437936" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2016437936" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.2050663411" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.2050663411" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1708304268" superClass="tool.nds.c.linker.input">
@@ -3041,10 +3041,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.182524405" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1976711915" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1915357596" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.2087065191" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.2087065191" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1339469825" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1339469825" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.129958520" superClass="tool.nds.c.linker.input">
@@ -3172,10 +3172,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.831131818" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.279648785" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.385719783" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1748840283" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1748840283" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1367662888" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1367662888" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.812491384" superClass="tool.nds.c.linker.input">
@@ -3303,10 +3303,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.1192264227" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1476686961" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1734495971" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.1779375993" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.1779375993" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.750940724" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.750940724" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.874981578" superClass="tool.nds.c.linker.input">
@@ -3434,10 +3434,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.133825626" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1543775107" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1449031048" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.89329067" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.89329067" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.1269884748" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.1269884748" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.653492452" superClass="tool.nds.c.linker.input">
@@ -3565,10 +3565,10 @@
 								<option defaultValue="" id="nds.c.link.option.ldscript.2060300855" name="Linker Script (-T)" superClass="nds.c.link.option.ldscript" value="../link/flash_boot.link" valueType="string"/>
 								<option id="nds.c.link.option.nostart.1555685033" name="Do not use standard start files (-nostartfiles)" superClass="nds.c.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="nds.c.link.option.virtualhosting.1920435820" name="Virtual Hosting (-mvh)" superClass="nds.c.link.option.virtualhosting" value="false" valueType="boolean"/>
-								<option id="nds.c.link.option.libs.497034323" superClass="nds.c.link.option.libs" valueType="libs">
+								<option id="nds.c.link.option.libs.497034323" name="Libraries (-l)" superClass="nds.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="B91"/>
 								</option>
-								<option id="nds.c.link.option.paths.186547696" superClass="nds.c.link.option.paths" valueType="libPaths">
+								<option id="nds.c.link.option.paths.186547696" name="Library search path (-L)" superClass="nds.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/B91}&quot;"/>
 								</option>
 								<inputType id="tool.nds.c.linker.input.1369075174" superClass="tool.nds.c.linker.input">

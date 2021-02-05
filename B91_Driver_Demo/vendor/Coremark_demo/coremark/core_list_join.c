@@ -50,14 +50,14 @@ Topic: Description
 
 	Linked list is a common data structure used in many applications.
 
-	For our purposes, this will excercise the memory units of the processor.
+	For our purposes, this will exercise the memory units of the processor.
 	In particular, usage of the list pointers to find and alter data.
 
 	We are not using Malloc since some platforms do not support this library.
 
 	Instead, the memory block being passed in is used to create a list,
 	and the benchmark takes care not to add more items then can be
-	accomodated by the memory block. The porting layer will make sure
+	accommodated by the memory block. The porting layer will make sure
 	that we have a valid memory block.
 
 	All operations are done in place, without using any extra memory.
@@ -239,7 +239,7 @@ ee_u16 core_bench_list(core_results *res, ee_s16 finder_idx) {
 list_head *core_list_init(ee_u32 blksize, list_head *memblock, ee_s16 seed) {
 	/* calculated pointers for the list */
 	ee_u32 per_item=16+sizeof(struct list_data_s);
-	ee_u32 size=(blksize/per_item)-2; /* to accomodate systems with 64b pointers, and make sure same code is executed, set max list elements */
+	ee_u32 size=(blksize/per_item)-2; /* to accommodate systems with 64b pointers, and make sure same code is executed, set max list elements */
 	list_head *memblock_end=memblock+size;
 	list_data *datablock=(list_data *)(memblock_end);
 	list_data *datablock_end=datablock+size;

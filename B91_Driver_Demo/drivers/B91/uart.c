@@ -128,6 +128,7 @@ dma_config_t uart_rx_dma_config[2]={
  *********************************************************************************************************************/
  static unsigned char uart_dma_tx_chn[2];
  static unsigned char uart_dma_rx_chn[2];
+ static unsigned int uart_dma_rev_size=0;
 /**********************************************************************************************************************
  *                                          local function prototype                                               *
  *********************************************************************************************************************/
@@ -276,7 +277,7 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned sh
 }
 
 /**
- * @brief  		This funtion serves to set r_rxtimeout. this setting is transfer one bytes need cycles base on uart_clk.
+ * @brief  		This function serves to set r_rxtimeout. this setting is transfer one bytes need cycles base on uart_clk.
  * 				For example, if  transfer one bytes (1start bit+8bits data+1 priority bit+2stop bits) total 12 bits,
  * 				this register setting should be (bpwc+1)*12.
  * @param[in]	uart_num - UART0 or UART1.
@@ -576,33 +577,40 @@ unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned 
  * @param[in]  	uart_num - UART0 or UART1.
  * @param[in] 	addr     - pointer to the buffer  receive data.
  * @param[in]   rev_size - the receive length of DMA,The maximum transmission length of DMA is 0xFFFFFC bytes, so dont'n over this length.
- * @note        The DMA version of A0 has some limitians.
- *              0:We should know the real receive length-len.
- *              1:If the data length we receive isn't the multiple of 4(the DMA carry 4-byte one time),like 5,it will carry 8 byte,
- *                while the last 3-byte data is random.
- *              2:The receive buff length sholud be equal to rec_size.The relation of the receive buff length and rec_size and
- *                the real receive data length-len : REC_BUFF_LEN=rec_size= ((len%4)==0 ? len : ((len/4)+1)*4).
- *              The DMA version of A1 can receive any length of data,the rev_size is useless.
+ * @note        1. rev_size must be larger than the data you received actually.
+ *              2. the data length can be arbitrary if less than rev_size.
  * @return    	none
  */
  void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev_size)
 {
+	uart_dma_rev_size = rev_size;
 	dma_chn_dis(uart_dma_rx_chn[uart_num]);
 	/*In order to be able to receive data of unknown length(A0 doesn't suppport),the DMA SIZE is set to the longest value 0xffffffff.After entering suspend and wake up, and then continue to receive, 
 	DMA will no longer move data from uart fifo, because DMA thinks that the last transmission was not completed and must disable dma_chn first.modified by minghai,confirmed qiangkai 2020.11.26.*/
 	dma_set_address(uart_dma_rx_chn[uart_num],reg_uart_data_buf_adr(uart_num),(unsigned int)convert_ram_addr_cpu2bus(addr));
-	if(0xff== g_chip_version)
-	{
-		dma_set_size(uart_dma_rx_chn[uart_num], rev_size, DMA_WORD_WIDTH);
-	}
-	else
-	{
-	    reg_dma_size(uart_dma_rx_chn[uart_num])=0xffffffff;
-	}
-
+	dma_set_size(uart_dma_rx_chn[uart_num], rev_size, DMA_WORD_WIDTH);
 	dma_chn_en(uart_dma_rx_chn[uart_num]);
 }
 
+/**
+ * @brief     This function serves to get the length of the data that dma received.
+ * @param[in] chn - dma channel.
+ * @return    data length.
+ */
+unsigned int uart_get_dma_rev_data_len(dma_chn_e chn)
+{
+	unsigned int data_len=0;
+	unsigned int buff_data_len = (reg_uart_status1(UART0)&FLD_UART_RBCNT)%4;
+	if(buff_data_len==0)
+	{
+		data_len=4*((uart_dma_rev_size/4)-reg_dma_size(chn));
+	}
+	else
+	{
+		data_len=4*((uart_dma_rev_size/4)-reg_dma_size(chn)-1)+buff_data_len;
+	}
+	return data_len;
+}
  /**
   * @brief     This function serves to set uart tx_dam channel and config dma tx default.
   * @param[in] uart_num - UART0 or UART1.
@@ -692,7 +700,7 @@ unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned 
  {
  	unsigned int i = 5;
  	if(n <= 3){
- 		return 1; //althought n is prime, the bwpc must be larger than 2.
+ 		return 1; //although n is prime, the bwpc must be larger than 2.
  	}
  	else if((n %2 == 0) || (n % 3 == 0)){
  		return 0;

@@ -179,10 +179,10 @@ void user_init(void)
 	core_interrupt_enable();
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ|FLD_USB_EDP6_IRQ);
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
-	/*1.AUDIO_ADC_16K_DAC_48K mic sampling=16K,spk sampling=48K,should match the setting  in usb_default.h
+	/*1  "AUDIO_ADC_16K_DAC_48K" - mic sampling=16K,spk sampling=48K;"AUDIO_16K"-mic sampling=16K,spk sampling=16K,should match the setting  in usb_default.h
 	 *2  mic and spk  channel count should be the same (1 or 2 ) in usb_default.h
 	 *3  channel count =1,MONO_BIT_16;channel count =2  STEREO_BIT_16*/
-	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_ADC_16K_DAC_48K,STEREO_BIT_16);
+	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_16K,STEREO_BIT_16);
 	audio_rx_dma_chain_init(MIC_DMA_CHN,iso_in_buff,MIC_BUFFER_SIZE * 2);
 	audio_tx_dma_chain_init (SPK_DMA_CHN,iso_out_buff, SPK_BUFFER_SIZE * 2);
 }

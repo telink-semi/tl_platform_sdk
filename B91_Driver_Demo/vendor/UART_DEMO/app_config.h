@@ -67,12 +67,6 @@ extern "C" {
 #define USE_RTS    		3
 #define FLOW_CTR  		NORMAL
 
-#define CHIP_VER_A0     0
-#define CHIP_VER_A1     1
-
-#define CHIP_VER   CHIP_VER_A1
-
-
 #define UART_1WIRE_MODE       0  //tx and rx is a same line
 #define UART_2WIRE_MODE       1  //tx and rx are two lines
 #define UART_WIRE_MODE        UART_2WIRE_MODE

@@ -84,7 +84,8 @@ void user_init()
 void main_loop (void)
 {
 	usb_handle_irq();
-
+	if(g_usb_config != 0 )//set_configuration has been completed, indicating that the device can transmit data
+	{
 		if(gpio_get_level(GPIO_PC1)==0)
 		{
 			delay_us(10000);
@@ -122,5 +123,5 @@ void main_loop (void)
 			}
 		}
 	}
-
+}
 #endif

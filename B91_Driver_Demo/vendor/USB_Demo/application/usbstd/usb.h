@@ -67,7 +67,7 @@ enum{
 	USB_REPORT_NO_EVENT		= 0xf0,
 	USB_REPORT_RELEASE 		= 0xff,
 };
-
+extern unsigned char g_usb_config;
 #if (USB_MIC_ENABLE)
 extern unsigned char usb_alt_intf[USB_INTF_MAX];
 static inline int usb_mic_is_enable(){

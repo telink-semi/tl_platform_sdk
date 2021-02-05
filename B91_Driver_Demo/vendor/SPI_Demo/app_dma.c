@@ -233,10 +233,12 @@ unsigned char spi_rx_buff[DATA_BYTE_LEN] __attribute__((aligned(4))) = {0x00};
 void user_init()
 {
 	delay_ms(2000);
-	gpio_function_en(LED4);
-	gpio_output_en(LED4); 		//enable output
-	gpio_input_dis(LED4);			//disable input
-	gpio_set_high_level(LED4);             	        //LED On
+	gpio_output_en(LED2 | LED4); 		//enable output
+	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_set_high_level(LED4);              	     //LED4  On
+	gpio_set_low_level(LED2);
+	gpio_function_en(LED2 | LED4);
+	
 	core_interrupt_enable();
 	spi_set_irq_mask(SPI_MODULE_SEL, SPI_END_INT_EN);//endint_en
 #if(SPI_MODULE_SEL == PSPI_MODULE)
@@ -386,10 +388,12 @@ _attribute_ram_code_sec_ void hspi_irq_handler(void)
 void user_init()
 {
 	delay_ms(2000);
-	gpio_function_en(LED4 | LED2);
-	gpio_output_en(LED4 | LED2); 		//enable output
-	gpio_input_dis(LED4 | LED2);			//disable input
-	gpio_set_high_level(LED4 | LED2);              	//LED On
+	gpio_output_en(LED2 | LED4); 		//enable output
+	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_set_high_level(LED4);              	    //LED4  On
+	gpio_set_low_level(LED2);
+	gpio_function_en(LED2 | LED4);
+	
 #if(SPI_TRANS_MODE!= SPI_SLAVE_PROTOCOL)
 	spi_slave_init(SPI_MODULE_SEL, SPI_MODE0);
 	spi_rx_dma_en(SPI_MODULE_SEL);

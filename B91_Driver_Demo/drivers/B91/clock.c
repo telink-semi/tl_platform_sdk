@@ -264,25 +264,24 @@ unsigned int clock_get_32k_tick(void)
 {
     unsigned int t0 = 0;
     unsigned int t1 = 0;
-    unsigned int n = 0;
 
-    while (1) {
-
-        t0 = t1;
-        t1 = analog_read_reg32(0x60);
-
-        if (n)
-        {
-            if ((unsigned int)(t1 - t0) < 2) {
-                return t1;
-            }
-            else if ( (t0^t1) == 1 ) {
-                return t0;
-            }
-        }
-        n++;
-    }
-    return t1;
+    //In the system timer auto mode, when writing a tick value to the system tick, if the writing operation overlaps
+    //with the 32k rising edge, the writing operation will be unsuccessful. When reading the 32k tick value,
+    //first wait for the rising edge to pass to avoid overlap with the subsequent write tick value operation.
+    //modify by weihua.zhang, confirmed by jianzhi at 20210126
+	t0 = analog_read_reg32(0x60);
+	while(1)
+	{
+		t1 = analog_read_reg32(0x60);
+		if((t1-t0) == 1)
+		{
+			return t1;
+		}
+		else if(t1-t0)
+		{
+			t0 = t1;
+		}
+	}
 }
 #endif
 

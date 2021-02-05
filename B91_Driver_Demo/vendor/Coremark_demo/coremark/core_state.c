@@ -54,7 +54,7 @@ Topic: Description
 	For more complex state machines, sometimes a state transition table implementation is used instead,
 	trading speed of direct coding for ease of maintenance.
 
-	Since the main goal of using a state machine in CoreMark is to excercise the switch/if behaviour,
+	Since the main goal of using a state machine in CoreMark is to exercise the switch/if behaviour,
 	we are using a small moore machine.
 
 	In particular, this machine tests type of string input,

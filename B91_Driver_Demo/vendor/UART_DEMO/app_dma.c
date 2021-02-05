@@ -69,9 +69,10 @@
 #define UART_DMA_RX_IRQ_CHANNEL  FLD_DMA_CHANNEL2_IRQ
 #define UART_DMA_TX_IRQ_CHANNEL  FLD_DMA_CHANNEL3_IRQ
 
+#define BUFF_DATA_LEN   256
 volatile unsigned char tx_byte_buff[16] __attribute__((aligned(4))) ={0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
-volatile unsigned char rec_buff[32] __attribute__((aligned(4))) = {0};
+volatile unsigned char rec_buff[BUFF_DATA_LEN] __attribute__((aligned(4))) = {0};//the data-length you received actually should be less than the size you set in uart_receive_dma().
 
 volatile unsigned char uart_dma_send_flag = 1;
 volatile unsigned char rev_data_len=0;
@@ -111,15 +112,11 @@ void user_init()
 	uart_clr_tx_done(UART0);
 	dma_clr_irq_mask(UART_DMA_CHANNEL_TX,TC_MASK|ABT_MASK|ERR_MASK);
 	dma_clr_irq_mask(UART_DMA_CHANNEL_RX,TC_MASK|ABT_MASK|ERR_MASK);
-#if(CHIP_VER==CHIP_VER_A0)
-	dma_set_irq_mask(UART_DMA_CHANNEL_RX, TC_MASK);
-	plic_interrupt_enable(IRQ5_DMA);
-#elif(CHIP_VER==CHIP_VER_A1)
+
 	uart_set_irq_mask(UART0, UART_RXDONE_MASK);
-#endif
 	uart_set_irq_mask(UART0, UART_TXDONE_MASK);
 	plic_interrupt_enable(IRQ19_UART0);
-	uart_receive_dma(UART0, (unsigned char*)rec_buff,16);
+	uart_receive_dma(UART0, (unsigned char*)rec_buff,BUFF_DATA_LEN);//Attention:the length of data you received actually can't larger than the size you set.the data length can be arbitrary if less than the size.
 }
 void main_loop (void)
 {
@@ -127,12 +124,12 @@ void main_loop (void)
 
 #if(UART_DEVICE==UART_MASTER_DEVICE)
 	gpio_toggle(LED1);
+	delay_ms(500);
 	if(uart_dma_send_flag==1)
 	{
 		uart_send_dma(UART0, (unsigned char*)tx_byte_buff, 16);
 		uart_dma_send_flag=0;
 	}
-
 #elif(UART_DEVICE==UART_SLAVE_DEVICE)
 	gpio_toggle(LED1);
 	delay_ms(500);
@@ -142,7 +139,6 @@ void main_loop (void)
 #endif
 }
 #if( (FLOW_CTR == NORMAL)||(FLOW_CTR ==  USE_CTS))
-
 _attribute_ram_code_sec_ void uart0_irq_handler(void)
 {
     if(uart_get_irq_status(UART0,UART_TXDONE))
@@ -151,8 +147,7 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
 		gpio_toggle(LED2);
 	    uart_clr_tx_done(UART0);
 	}
-#if(CHIP_VER==CHIP_VER_A1)
-    if(uart_get_irq_status(UART0,UART_RXDONE)) //A0-SOC can't use RX-DONE status,so this interrupt can noly used in A1-SOC.
+    if(uart_get_irq_status(UART0,UART_RXDONE))
     {
     	gpio_toggle(LED3);
 		if((uart_get_irq_status(UART0,UART_RX_ERR)))
@@ -160,37 +155,13 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
     		uart_clr_irq_status(UART0,UART_CLR_RX);//it will clear rx_fifo and rx_err_status,rx_done_irq.
     	}
     	/************************get the length of receive data****************************/
-    	if(((reg_uart_status1(UART0)&FLD_UART_RBCNT)%4)==0)
-    	{
-    		rev_data_len=4*(0xffffff-reg_dma_size(UART_DMA_CHANNEL_RX));
-    	}
-    	else
-    	{
-    		rev_data_len=4*(0xffffff-reg_dma_size(UART_DMA_CHANNEL_RX)-1)+(reg_uart_status1(UART0)&FLD_UART_RBCNT)%4;
-    	}
-    	/************************cll rx_irq****************************/
+		rev_data_len = uart_get_dma_rev_data_len(UART_DMA_CHANNEL_RX);
+    	/************************clr rx_irq****************************/
     	uart_clr_irq_status(UART0,UART_CLR_RX);
     	uart_send_dma(UART0, (unsigned char*)rec_buff, rev_data_len);
-    	uart_receive_dma(UART0, (unsigned char*)rec_buff,32);
+    	uart_receive_dma(UART0, (unsigned char*)rec_buff,BUFF_DATA_LEN);//Attention:the length of data you received actually can't larger than the size you set.the data length can be arbitrary if less than the size.
     }
-#endif
 }
-#if(CHIP_VER==CHIP_VER_A0)
-_attribute_ram_code_sec_ void dma_irq_handler(void)
-{
-	if(dma_get_tc_irq_status(UART_DMA_RX_IRQ_CHANNEL))
-	{
-		dma_clr_tc_irq_status(UART_DMA_RX_IRQ_CHANNEL);
-		gpio_toggle(LED1);
-		uart_receive_dma(UART0, (unsigned char*)rec_buff,16);
-		if(uart_dma_send_flag==1)
-		{
-			uart_send_dma(UART0, (unsigned char*)tx_byte_buff, 16);
-			uart_dma_send_flag=0;
-	    }
-	}
-}
-#endif
 #endif
 
 #endif

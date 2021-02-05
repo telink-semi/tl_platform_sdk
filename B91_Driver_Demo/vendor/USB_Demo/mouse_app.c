@@ -83,38 +83,39 @@ void user_init(void)
 void main_loop (void)
 {
 	usb_handle_irq();
-
-	if(gpio_get_level(GPIO_PC1)==0)
+	if(g_usb_config != 0 )//set_configuration has been completed, indicating that the device can transmit data
 	{
-		delay_us(10000);
 		if(gpio_get_level(GPIO_PC1)==0)
 		{
-			while(gpio_get_level(GPIO_PC1)==0);
-			gpio_set_high_level(LED1);
-			//printf("Key:Mouse  Click ! \r\n");
-			mouse[0] = BIT(1);// BIT(0) - left key; BIT(1) - right key; BIT(2) - middle key; BIT(3) - side key; BIT(4) - external key
-			mouse[1] = -2;	  // Displacement relative to x coordinate
-			mouse[2] = 2;	  // Displacement relative to y coordinate
-			mouse[3] = 0;     // Displacement relative to the roller
-			usbmouse_hid_report(USB_HID_MOUSE,(unsigned char*)mouse,4);
+			delay_us(10000);
+			if(gpio_get_level(GPIO_PC1)==0)
+			{
+				while(gpio_get_level(GPIO_PC1)==0);
+				gpio_set_high_level(LED1);
+				//printf("Key:Mouse  Click ! \r\n");
+				mouse[0] = BIT(1);// BIT(0) - left key; BIT(1) - right key; BIT(2) - middle key; BIT(3) - side key; BIT(4) - external key
+				mouse[1] = -2;	  // Displacement relative to x coordinate
+				mouse[2] = 2;	  // Displacement relative to y coordinate
+				mouse[3] = 0;     // Displacement relative to the roller
+				usbmouse_hid_report(USB_HID_MOUSE,(unsigned char*)mouse,4);
+			}
 		}
-	}
 
-	if(gpio_get_level(GPIO_PC2)==0)
-	{
-		delay_us(10000);
 		if(gpio_get_level(GPIO_PC2)==0)
 		{
-			while(gpio_get_level(GPIO_PC2)==0);
-			gpio_set_low_level(LED1);
-			//printf("Key:release \r\n");
-			mouse[0] = 0;
-			mouse[1] = 0;
-			mouse[2] = 0;
-			mouse[3] = 0;
-			usbmouse_hid_report(USB_HID_MOUSE,(unsigned char*)mouse,4);
+			delay_us(10000);
+			if(gpio_get_level(GPIO_PC2)==0)
+			{
+				while(gpio_get_level(GPIO_PC2)==0);
+				gpio_set_low_level(LED1);
+				//printf("Key:release \r\n");
+				mouse[0] = 0;
+				mouse[1] = 0;
+				mouse[2] = 0;
+				mouse[3] = 0;
+				usbmouse_hid_report(USB_HID_MOUSE,(unsigned char*)mouse,4);
+			}
 		}
 	}
 }
-
 #endif

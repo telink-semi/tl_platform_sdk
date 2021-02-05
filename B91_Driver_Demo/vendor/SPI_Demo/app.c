@@ -228,10 +228,12 @@ unsigned char spi_rx_buff[DATA_BYTE_LEN] __attribute__((aligned(4))) = {0x00};
 void user_init()
 {
 	delay_ms(2000);
-	gpio_function_en(LED4);
-	gpio_output_en(LED4); 		//enable output
-	gpio_input_dis(LED4);			//disable input
-	gpio_set_high_level(LED4);              	//LED On
+	gpio_output_en(LED2 | LED4); 		//enable output
+	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_set_high_level(LED4);              	     //LED4  On
+	gpio_set_low_level(LED2);
+	gpio_function_en(LED2 | LED4);
+	
 #if(SPI_MODULE_SEL == PSPI_MODULE)
 	spi_master_init(SPI_MODULE_SEL, sys_clk.pclk * 1000000 / (2 * SPI_CLK) - 1, SPI_MODE0);
 	pspi_set_pin(&pspi_pin_config);
@@ -333,10 +335,12 @@ void main_loop (void)
 void user_init()
 {
 	delay_ms(2000);
-	gpio_function_en(LED4 | LED2);
-	gpio_output_en(LED4 | LED2); 		//enable output
-	gpio_input_dis(LED4 | LED2);			//disable input
-	gpio_set_high_level(LED4 | LED2);              	//LED On
+	gpio_output_en(LED2 | LED4); 		//enable output
+	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_set_high_level(LED4);              	     //LED4  On
+	gpio_set_low_level(LED2);
+	gpio_function_en(LED2 | LED4);
+	
 #if(SPI_TRANS_MODE!= SPI_SLAVE_PROTOCOL)
 	spi_slave_init(SPI_MODULE_SEL, SPI_MODE0);
 	core_interrupt_enable();

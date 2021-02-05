@@ -311,10 +311,10 @@ void spi_slave_set_pin(void)
  *           	spi_clock_out = ahb_clock / ((div_clock+1)*2)
  * @param[in]	 mode 		- the selected working mode of SPI module.
  *           	bit5:CPHA-Clock Polarity ; bit6:CPOL:CPHA-Clock Phase
- *           	MODE0:  CPHA = 0, CPOL = 0;
- *           	MODE1:  CPHA = 0, CPOL = 1;
- *           	MODE2:  CPHA = 1, CPOL = 0;
- *           	MODE3:  CPHA = 1, CPOL = 1;
+ *            	MODE0:  CPOL = 0, CPHA =0;
+ *            	MODE1:  CPOL = 0, CPHA =1;
+ *            	MODE2:  CPOL = 1, CPHA =0;
+ *            	MODE3:  CPOL = 1, CPHA =1;
  * @return  	none
  */
 void spi_master_init(spi_sel_e spi_sel, unsigned char div_clock, spi_mode_type_e mode)
@@ -331,10 +331,10 @@ void spi_master_init(spi_sel_e spi_sel, unsigned char div_clock, spi_mode_type_e
  * @param[in] 	spi_sel - the spi module.
  * @param[in] 	mode 	- the selected working mode of SPI module.
  *          	bit5:CPHA-Clock Polarity ; bit6:CPOL:CPHA-Clock Phase
- *           	MODE0:  CPHA = 0, CPOL = 0;
- *           	MODE1:  CPHA = 0, CPOL = 1;
- *          	MODE2:  CPHA = 1, CPOL = 0;
- *           	MODE3:  CPHA = 1,  CPOL = 1;
+ *            	MODE0:  CPOL = 0, CPHA =0;
+ *            	MODE1:  CPOL = 0, CPHA =1;
+ *            	MODE2:  CPOL = 1, CPHA =0;
+ *            	MODE3:  CPOL = 1, CPHA =1;
  * @return  	none
  * @note  		spi_clock_in  (spi_slave_clock frequency)/3
  */

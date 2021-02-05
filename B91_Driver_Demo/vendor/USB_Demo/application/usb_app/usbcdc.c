@@ -54,7 +54,7 @@ unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];
 unsigned short usb_cdc_data_len;
 unsigned int usb_cdc_tx_cnt;
 unsigned char LineCoding[7]={0x00,0xC2,0x01,0x00,0x00,0x00,0x08};
-
+unsigned char g_cdc_lenth=0;
 
 void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len)
 {
@@ -63,20 +63,29 @@ void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len)
 		return;
 	}
 
-	if(data_len >(CDC_TXRX_EPSIZE - 1)) {
-		data_len = CDC_TXRX_EPSIZE - 1;
+	if(data_len >CDC_TXRX_EPSIZE) {
+		data_len = CDC_TXRX_EPSIZE;
 	}
-
+	g_cdc_lenth=data_len;
 	usbhw_reset_ep_ptr(USB_EDP_CDC_IN);
 
-	while(data_len-- > 0) {					//only send 63Byteother Bytes will be sent by EDP4 data IRQ
+	while(data_len-- > 0) {
 		reg_usb_ep_dat(USB_EDP_CDC_IN) = (*data_ptr);
-		//printf("0x%1x ",*data_ptr);
+
 		++data_ptr;
 	}
 
 	usbhw_data_ep_ack(USB_EDP_CDC_IN);
-	//printf(" ACK \r\n");
+	/*If the length of the data sent is equal to the wMaxPacketSize (CDC_TXRX_EPSIZE),
+	 the device must return a zero-length packet to indicate the end of the data stage,
+	 The following is the process of sending zero-length packet*/
+	if(g_cdc_lenth%CDC_TXRX_EPSIZE==0)
+	{
+		delay_us(64);//delay for the actual data transfer to complete
+		usbhw_reset_ep_ptr(USB_EDP_CDC_IN);
+		usbhw_data_ep_ack(USB_EDP_CDC_IN);
+	}
+
 }
 
 void usb_cdc_rx_data_from_host(unsigned char* rx_buff)
