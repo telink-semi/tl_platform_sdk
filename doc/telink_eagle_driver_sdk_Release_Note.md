@@ -1,3 +1,102 @@
+
+## V1.4.0-Beta
+
+### Version
+* SDK version : telink_b91_driver_sdk v1.4.0-Beta.
+* This version sdk support B91 A0，A1 and A2 chip.
+
+### Bug Fixes
+
+* **pm**:
+  * solve the problem that pragrem can not run when VBAT power supply is greater than 4.1V,and sys_int configer power mode as DCDC mode.
+  * During the stability test, the program freezes after running for a period of time.
+* **spi**: 
+  * spi enum SPI_MODE1、SPI_MODE2 definition as error value, fixed as correct value.
+* **uart**: 
+  * when close the irq in dma mode,the receive buffer maybe overflow if dma receive data continuous.
+
+### Features
+
+* **pwm**
+  * add function interface "pwm_32k_chn_dis".
+* **audio**: 
+  * Add the interface for selecting DAC output channel (audio_set_output_chn).
+* **usb**
+  * Add software to handle set_configuration control transmission.
+  * Support usb cdc to send wMaxPacketSize (64bytes) length data.
+* **uart** 
+  * Add function uart_get_dma_rev_data_len() in DMA mode.
+    
+
+### Refactoring
+
+* **spi** 
+- adjusted the initial process of LED in SPI_Demo.
+* **audio**
+  - Adjust the calls of i2c (control codec) and pwm (provide external clock) interfaces in audio applications.
+* **usb/audio**
+  - set the sampling rate of the DAC to 16k by default,In the mic_spk demo.
+
+### Known issues
+
+* N/A
+### BREAKING CHANGES
+* **audio**
+  * Modify the audio_i2s_config function parameters, add audio_i2s_invert_config structure parameters to select i2s_lr_clk_invert and i2s_data_invert.
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### 版本
+
+* SDK版本: telink_b91_driver_sdk v1.4.0-Beta。
+* 此版本SDK支持B91 A0、A1和A2芯片。
+
+### Bug Fixes
+
+* **pm**:
+  * 解决VBAT供电高于4.1V且sys_int配置供电模式为DCDC时程序不能运行的问题。
+  * 稳定性测试时，运行一段时间程序卡死的问题。
+* **spi**:
+  * spi 的SPI_MODE1、SPI_MODE2枚举值定义错了，修复为了正确值。
+* **uart**:
+  * DMA模式下关闭总中断时，如果UART仍在接收数据，有可能导致接收数组溢出。
+
+### Features
+
+* **pwm**
+  * 添加函数接口pwm_32k_chn_dis。
+* **audio**:
+  * 增加invert I2S CLK接口（audio_invert_i2s_lr_clk）。
+* **usb**
+  * 添加软件处理set_configuration控制传输。
+  * 支持USB CDC发送wMaxPacketSize（64bytes）长度数据。
+
+
+* **uart**
+  * DMA模式增加函数uart_get_dma_rev_data_len()。
+
+
+### Refactoring
+
+* **spi** 
+
+  - 调整了SPI_Demo中LED的初始化过程。
+* **audio**
+- 调整AUDIO应用中i2c（控制codec）和pwm(提供外部时钟)接口的调用。
+* **usb/audio**
+- 在mic_spk demo中将DAC的采样率默认设为16k。
+
+### Known issues
+
+* N/A
+
+### BREAKING CHANGES
+
+* **audio**
+  - 修改audio_i2s_config function函数参数，新增audio_i2s_invert_config 结构体形参，设置i2s_lr_clk_invert 和i2s_data_invert。
+
+
+---
 ## V1.3.1-Beta
 
 ### Version
