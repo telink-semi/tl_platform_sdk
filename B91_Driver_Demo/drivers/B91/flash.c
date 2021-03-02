@@ -449,12 +449,12 @@ _attribute_text_sec_ void flash_release_deep_powerdown(void)
  * @brief	  	This function serves to read MID of flash(MAC id). Before reading UID of flash,
  * 				you must read MID of flash. and then you can look up the related table to select
  * 				the idcmd and read UID of flash
- * @param[in] 	buf		- store MID of flash
- * @return    	none.
+ * @return    	MID of the flash(4 bytes).
  */
-_attribute_ram_code_sec_noinline_ void flash_read_mid_ram(unsigned char *buf){
+_attribute_ram_code_sec_noinline_ unsigned int flash_read_mid_ram(void){
 
 	unsigned char j = 0;
+	unsigned int flash_mid = 0;
 	unsigned int r=plic_enter_critical_sec(s_flash_preempt_config.preempt_en,s_flash_preempt_config.threshold);
 
 	mspi_stop_xip();
@@ -465,7 +465,7 @@ _attribute_ram_code_sec_noinline_ void flash_read_mid_ram(unsigned char *buf){
 	mspi_wait();
 
 	for(j = 0; j < 3; ++j){
-		*buf++ = mspi_get();
+		((unsigned char*)(&flash_mid))[j] = mspi_get();
 		mspi_wait();
 	}
 	mspi_fm_rd_dis();			/* off read auto mode */
@@ -473,12 +473,15 @@ _attribute_ram_code_sec_noinline_ void flash_read_mid_ram(unsigned char *buf){
 	CLOCK_DLY_5_CYC;
 
 	plic_exit_critical_sec(s_flash_preempt_config.preempt_en,r);
+	return flash_mid;
 }
-_attribute_text_sec_ void flash_read_mid(unsigned char *buf){
+_attribute_text_sec_ unsigned int flash_read_mid(void){
 
+	unsigned int flash_mid = 0;
 	__asm__("csrci 	mmisc_ctl,8");	//disable BTB
-	flash_read_mid_ram(buf);
+	flash_mid = flash_read_mid_ram();
 	__asm__("csrsi 	mmisc_ctl,8");	//enable BTB
+	return flash_mid;
 }
 
 /**
@@ -637,7 +640,7 @@ _attribute_text_sec_ int flash_read_mid_uid_with_check( unsigned int *flash_mid 
 	int i,f_cnt=0;
 	unsigned int mid;
 
-	flash_read_mid((unsigned char*)&mid);
+	mid = flash_read_mid();
 	mid = mid&0xffff;
 	*flash_mid = mid;
 	//     	  			CMD         MID

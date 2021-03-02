@@ -129,11 +129,6 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 		if ((num_iso_out & 0x7f) == 0)		gpio_toggle(LED2);
 	}
 
-	if (usbhw_get_eps_irq()& FLD_USB_EDP7_IRQ)
-		{
-			usbhw_clr_eps_irq(FLD_USB_EDP7_IRQ);
-		}
-
 }
 #if 0
 /**

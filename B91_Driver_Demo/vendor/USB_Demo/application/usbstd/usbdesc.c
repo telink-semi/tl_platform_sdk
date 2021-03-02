@@ -477,7 +477,7 @@ const USB_Descriptor_Configuration_t
 				{(sizeof(USB_Audio_Descriptor_Interface_AC_t) + /*9*/
 						sizeof(USB_Audio_Descriptor_InputTerminal_t) + /*12*/
 						sizeof(USB_Audio_Descriptor_OutputTerminal_t)
-						//+ /*9*/sizeof(USB_Audio_StdDescriptor_FeatureUnit_t) /*10*/
+						+ /*9*/sizeof(USB_Audio_StdDescriptor_FeatureUnit_t) /*10*/
 						)
 								,
 								0},

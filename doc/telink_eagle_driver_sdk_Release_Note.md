@@ -1,3 +1,82 @@
+
+## V1.5.0-Beta
+
+### Version
+
+* SDK version : telink_b91_driver_sdk v1.5.0-Beta.
+* This version sdk support B91 A0，A1 and A2 chip.
+
+### Bug Fixes
+
+* **usb**
+  * Fix the problem that usb_spk could not work when only USB_SPEAKER_ENABLE is turned on in USB_SPK Demo.
+* **audio**
+  * Corrct spelling errors in "audio_buff" in AUDIO Demo.
+  * Correct the data type definition error in the app_sin_data.h file in AUDIO_Demo.
+* **spi**
+  * Interface hspi_change_csn_pin()/pspi_change_csn_pin() have logic error, would configure the unused csn pin, the error has been fixed.And hspi_change_csn_pin()/pspi_change_csn_pin() has been deleted from the driver and moved to SPI_Demo.
+  * Interface spi_slave_set_pin() have a pin configuration bug, the bug has been fixed.
+  * Fixed the comment error of the hspi address length of the hspi_set_addr_len function.
+* **rf**
+  * Fixed the following problem: When using the function rf_clr_irq_status () to clear a certain rf interrupt status, other rf interrupts may  be cleared by mistake.
+* **uart** 
+  * add parameter of uart_num in function "uart_get_dma_rev_data_len() to distinguish UART0 and UART1".
+
+### Features
+
+* **freertos**
+  * add freertos Demo
+
+### Known issues
+
+* N/A
+
+### BREAKING CHANGES
+
+* **flash**
+  * In order to be compatible with other sdk, the flash_read_mid function used to pass in a buf pointer, and instead returns an unsigned int variable.
+  * Mid is changed from 3byte to 4byte, and the highest byte is used to distinguish flashes with the same mid but different functions.
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+
+### 版本
+
+* SDK版本: telink_b91_driver_sdk v1.5.0-Beta。
+* 此版本SDK支持B91 A0、A1和A2芯片。
+
+### Bug Fixes
+
+* **usb**
+  * 修复在USB_SPK Demo中仅打开USB_SPEAKER_ENABLE时，usb_spk无法工作的问题。
+* **audio**
+  * 更正在AUDIO_DEMO中“audio_buff”中的拼写错误。
+  * 更正在AUDIO_DEMO中app_sin_data.h文件中数据类型定义不符的错误。
+* **spi**
+  * Hspi_change_csn_pin()/Pspi_change_csn_pin() 接口有逻辑错误，会配置没有用到的csn引脚，该问题已经修复。并且Hspi_change_csn_pin()/Pspi_change_csn_pin()接口已经从Drvier中删除并移到了SPI_Demo中。
+  * spi_slave_set_pin()接口引脚配置有错误，该问题已经修复。
+  * 修复了hspi_set_addr_len函数的hspi地址长度的注释错误。
+* **rf**
+  * 修复了如下问题：在使用函数rf_clr_irq_status ()清除rf某个中断状态时，有可能会误清除其他rf中断。
+* **uart**
+  * 函数uart_get_dma_rev_data_len()增加参数uart_num区分UART0和UART1。
+
+### Features
+
+* **freertos**
+  * 增加 freertos Demo
+
+### Known issues
+
+* N/A
+
+### BREAKING CHANGES
+
+* **flash**
+  * 为了兼容其他sdk，flash_read_mid函数以前是传入一个buf指针，改为返回unsigned int型变量。
+  * mid由3byte改为4byte,最高byte用于区分mid相同但是功能存在差异的flash。
+
+---
 ## V1.4.0-Beta
 
 ### Version

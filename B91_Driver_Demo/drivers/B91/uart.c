@@ -594,13 +594,14 @@ unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned 
 
 /**
  * @brief     This function serves to get the length of the data that dma received.
- * @param[in] chn - dma channel.
+ * @param[in] uart_num - UART0 or UART1.
+ * @param[in] chn      - dma channel.
  * @return    data length.
  */
-unsigned int uart_get_dma_rev_data_len(dma_chn_e chn)
+unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
 {
 	unsigned int data_len=0;
-	unsigned int buff_data_len = (reg_uart_status1(UART0)&FLD_UART_RBCNT)%4;
+	unsigned int buff_data_len = (reg_uart_status1(uart_num)&FLD_UART_RBCNT)%4;
 	if(buff_data_len==0)
 	{
 		data_len=4*((uart_dma_rev_size/4)-reg_dma_size(chn));
@@ -611,6 +612,7 @@ unsigned int uart_get_dma_rev_data_len(dma_chn_e chn)
 	}
 	return data_len;
 }
+
  /**
   * @brief     This function serves to set uart tx_dam channel and config dma tx default.
   * @param[in] uart_num - UART0 or UART1.

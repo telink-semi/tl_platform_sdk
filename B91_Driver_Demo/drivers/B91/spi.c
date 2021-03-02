@@ -160,28 +160,14 @@ void hspi_cs_pin_en(hspi_csn_pin_def_e pin)
  */
 void hspi_cs_pin_dis(hspi_csn_pin_def_e pin)
 {
-	gpio_function_en(pin);
+	/**
+	 * Bug fix: Move the operation of gpio_function_en to the end of the function.
+	 * 		changed by chaofan.20210301.
+	 */
+	gpio_output_en(pin);
+	gpio_input_dis(pin);
 	gpio_set_high_level(pin);
-}
-
-/**
- * @brief     	This function change hspi csn pin.
- * @param[in] 	next_csn_pin - the next csn pin.
- * @return 		next_csn_pin - the next csn pin.
- */
-hspi_csn_pin_def_e hspi_change_csn_pin(hspi_csn_pin_def_e next_csn_pin)
-{
-	if (next_csn_pin == HSPI_CSN_PB6)
-	{
-		hspi_cs_pin_dis(HSPI_CSN_PA1);
-		hspi_cs_pin_en(HSPI_CSN_PB6);
-	}
-	else if (next_csn_pin == HSPI_CSN_PA1)
-	{
-		hspi_cs_pin_dis(HSPI_CSN_PB6);
-		hspi_cs_pin_en(HSPI_CSN_PA1);
-	}
-	return next_csn_pin;
+	gpio_function_en(pin);
 }
 
 /**
@@ -228,40 +214,16 @@ void pspi_cs_pin_en(pspi_csn_pin_def_e pin)
  */
 void pspi_cs_pin_dis(pspi_csn_pin_def_e pin)
 {
+	/**
+	 * Bug fix: Move the operation of gpio_function_en to the end of the function.
+	 * 		changed by chaofan.20210301.
+	 */
 	gpio_output_en(pin);
+	gpio_input_dis(pin);
 	gpio_set_high_level(pin);
 	gpio_function_en(pin);
-	gpio_input_dis(pin);
-
 }
 
-/**
- * @brief     	This function change pspi csn pin.
- * @param[in] 	next_csn_pin - the next csn pin.
- * @return 		next_csn_pin - the next csn pin.
- */
-pspi_csn_pin_def_e pspi_change_csn_pin(pspi_csn_pin_def_e next_csn_pin)
-{
-	if (next_csn_pin == PSPI_CSN_PC4)
-	{
-		pspi_cs_pin_dis(PSPI_CSN_PC0);
-		pspi_cs_pin_dis(PSPI_CSN_PD0);
-		pspi_cs_pin_en(PSPI_CSN_PC4);
-	}
-	else if (next_csn_pin == PSPI_CSN_PC0)
-	{
-		pspi_cs_pin_dis(PSPI_CSN_PC4);
-		pspi_cs_pin_dis(PSPI_CSN_PD0);
-		pspi_cs_pin_en(PSPI_CSN_PC0);
-	}
-	else if (next_csn_pin == PSPI_CSN_PD0)
-	{
-		pspi_cs_pin_dis(PSPI_CSN_PC4);
-		pspi_cs_pin_dis(PSPI_CSN_PC0);
-		pspi_cs_pin_en(PSPI_CSN_PD0);
-	}
-	return next_csn_pin;
-}
 /**
  * @brief     This function configures hspi pin.
  * @param[in] config - the pointer of pin config struct.
@@ -276,8 +238,6 @@ void hspi_set_pin(hspi_pin_config_t *config)
 	hspi_set_pin_mux(config->hspi_wp_io2_pin);
 	hspi_set_pin_mux(config->hspi_hold_io3_pin);
 }
-
-
 
 /**
  * @brief     	This function configures pspi pin.
@@ -298,8 +258,12 @@ void pspi_set_pin(pspi_pin_config_t *config)
  */
 void spi_slave_set_pin(void)
 {
-	reg_gpio_pa_fuc_l = (reg_gpio_pb_fuc_l & 0x03);//set PA1 as csn,PA2 as clk,PA3 as mosi_io0,
-	reg_gpio_pa_fuc_h = (reg_gpio_pb_fuc_l & 0xfc);//set PA4 slave miso_io1
+	/**
+	 * Bug fix: Replace the incorrectly used reg_gpio_pb_fuc_l with reg_gpio_pa_fuc_l.
+	 * 		changed by chaofan.20210301.
+	 */
+	reg_gpio_pa_fuc_l = (reg_gpio_pa_fuc_l & 0x03);//set PA1 as csn,PA2 as clk,PA3 as mosi_io0,
+	reg_gpio_pa_fuc_h = (reg_gpio_pa_fuc_l & 0xfc);//set PA4 slave miso_io1
 	gpio_function_dis(GPIO_PA1 | GPIO_PA2 | GPIO_PA3 | GPIO_PA4);
 	gpio_input_en(GPIO_PA1 | GPIO_PA2 | GPIO_PA3 | GPIO_PA4);
 }

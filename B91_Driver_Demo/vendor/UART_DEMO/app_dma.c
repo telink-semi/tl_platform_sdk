@@ -155,7 +155,7 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
     		uart_clr_irq_status(UART0,UART_CLR_RX);//it will clear rx_fifo and rx_err_status,rx_done_irq.
     	}
     	/************************get the length of receive data****************************/
-		rev_data_len = uart_get_dma_rev_data_len(UART_DMA_CHANNEL_RX);
+		rev_data_len = uart_get_dma_rev_data_len(UART0,UART_DMA_CHANNEL_RX);
     	/************************clr rx_irq****************************/
     	uart_clr_irq_status(UART0,UART_CLR_RX);
     	uart_send_dma(UART0, (unsigned char*)rec_buff, rev_data_len);

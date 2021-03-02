@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file	main.c
  *
- * @brief	This is the header file for B91
+ * @brief	This is the source file for B91
  *
  * @author	Driver Group
  * @date	2019
@@ -43,30 +43,52 @@
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *******************************************************************************************************/
-#pragma once
-#include "../../drivers.h"
-#include "app_spi_common.h"
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#include "app_config.h"
+#include <FreeRTOS.h>
+#include <task.h>
 
 
-/* Enable C linkage for C++ Compilers: */
-
-
-#define LED1            GPIO_PB4//do not use it when set PB4 set as spi mode
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6//do not use it when set PB6 set as spi mode
-#define LED4            GPIO_PB7
-
-
-#define SPI_NDMA_MODE              1
-#define SPI_DMA_MODE               2
-#define SPI_XIP_MODE               3
-
-#define SPI_MODE                   SPI_DMA_MODE
-#define	CCLK_96M_HCLK_48M_PCLK_24M	clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
-/* Disable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
+static void led_task(void *pvParameters){
+	reg_gpio_pb_oen &= ~ GPIO_PB7;
+	while(1){
+		reg_gpio_pb_out |= GPIO_PB7;
+		vTaskDelay(1000);
+		reg_gpio_pb_out &= ~GPIO_PB7;
+		vTaskDelay(1000);
+	}
+	(void)(pvParameters);
 }
-#endif
+
+static void led_task1(void *pvParameters){
+	reg_gpio_pb_oen &= ~ GPIO_PB4;
+	while(1){
+		reg_gpio_pb_out |= GPIO_PB4;
+		vTaskDelay(500);
+		reg_gpio_pb_out &= ~GPIO_PB4;
+		vTaskDelay(1000);
+	}
+	(void)(pvParameters);
+}
+
+extern void vPortRestoreTask();
+
+/**
+ * @brief		This is main function
+ * @return      none
+ */
+int main (void)
+{
+	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+
+	CCLK_24M_HCLK_24M_PCLK_24M;
+
+	if(0 ){						// deepRetWakeUp
+		vPortRestoreTask();
+	}else{
+		xTaskCreate( led_task, "tLed", configMINIMAL_STACK_SIZE, (void*)0, (tskIDLE_PRIORITY+1), 0 );
+		xTaskCreate( led_task1, "tLed1", configMINIMAL_STACK_SIZE, (void*)0, (tskIDLE_PRIORITY+1), 0 );
+		vTaskStartScheduler();
+	}
+
+	return 0;
+}

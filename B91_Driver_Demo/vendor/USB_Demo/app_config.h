@@ -74,7 +74,6 @@ extern "C" {
 #elif (USB_DEMO_TYPE == USB_MICROPHONE)
 	#define	  USB_MIC_ENABLE 		1
 #elif (USB_DEMO_TYPE == USB_SPEAKER)
-    #define	USB_MIC_ENABLE 			1
 	#define	USB_SPEAKER_ENABLE 		1
 #elif (USB_DEMO_TYPE == USB_CDC)
 	#define USB_CDC_ENABLE          1

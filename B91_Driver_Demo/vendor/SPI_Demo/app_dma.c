@@ -104,7 +104,7 @@
 *********************************************************************************************************************/
 #define SPI_CLK	    					  	 1000000
 /**********************************************************************************************************************
- *                                         SPI pin selection                                               	 	  *
+  	  	  	  	  SPI pin selection  just set for  hspi/pspi  master/slave mode  not include eagle spi slave                                            	 	  *
  *********************************************************************************************************************/
 volatile  unsigned char end_irq_flag = 0;
 #if (SPI_MODULE_SEL == PSPI_MODULE)
@@ -112,12 +112,12 @@ pspi_pin_config_t pspi_pin_config = {
 	.pspi_clk_pin 		= PSPI_CLK_PC5,
 	.pspi_csn_pin   	= PSPI_CSN_PC4,
 	.pspi_mosi_io0_pin  = PSPI_MOSI_IO0_PC7,
-	.pspi_miso_io1_pin  = PSPI_MISO_IO1_PC6,
+	.pspi_miso_io1_pin  = PSPI_MISO_IO1_PC6,//3line mode set none
 };
 #if (SPI_SLAVE_NUM == MULTI_SLAVE)
-#define SLAVE0_CSN_PIN PSPI_CSN_PC4
-#define SLAVE1_CSN_PIN PSPI_CSN_PC0
-#define SLAVE2_CSN_PIN PSPI_CSN_PD0
+#define CSN_PIN0 PSPI_CSN_PC4
+#define CSN_PIN1 PSPI_CSN_PC0
+#define CSN_PIN2 PSPI_CSN_PD0
 #endif
 #elif (SPI_MODULE_SEL == HSPI_MODULE)
 hspi_pin_config_t hspi_pin_config = {
@@ -129,8 +129,8 @@ hspi_pin_config_t hspi_pin_config = {
 	.hspi_hold_io3_pin  = HSPI_HOLD_IO3_PB0,//set quad mode otherwise set none
 };
 #if (SPI_SLAVE_NUM == MULTI_SLAVE)
-#define SLAVE0_CSN_PIN HSPI_CSN_PB6
-#define SLAVE1_CSN_PIN HSPI_CSN_PA1
+#define CSN_PIN0 HSPI_CSN_PB6
+#define CSN_PIN1 HSPI_CSN_PA1
 #endif
 #endif
 
@@ -142,7 +142,7 @@ hspi_pin_config_t hspi_pin_config = {
 
 #if(SPI_DEVICE == SPI_MASTER_DEVICE)
 /**********************************************************************************************************************
- *                          SPI pin selection  just set for  hspi/pspi  master/slave mode  			                                	 	  *
+ *                             			 SPI master setting 				                                	 	  *
  *********************************************************************************************************************/
 #define 	DATA_BYTE_LEN     16
 unsigned char spi_rx_buff[DATA_BYTE_LEN] __attribute__((aligned(4))) = {0x00};
@@ -241,15 +241,22 @@ void user_init()
 	
 	core_interrupt_enable();
 	spi_set_irq_mask(SPI_MODULE_SEL, SPI_END_INT_EN);//endint_en
+
 #if(SPI_MODULE_SEL == PSPI_MODULE)
-	pspi_set_pin(&pspi_pin_config);
 	spi_master_init(SPI_MODULE_SEL, sys_clk.pclk * 1000000 / (2 * SPI_CLK) - 1, SPI_MODE0);
+	pspi_set_pin(&pspi_pin_config);
+#if (SPI_SLAVE_NUM == MULTI_SLAVE)
+	pspi_cs_pin_dis(CSN_PIN1);
+#endif
 	plic_interrupt_enable(IRQ23_SPI_APB);
 	pspi_set_tx_dma_config(TX_DMA_CHN);
 	pspi_set_rx_dma_config(RX_DMA_CHN);
 #elif(SPI_MODULE_SEL == HSPI_MODULE)
-	hspi_set_pin(&hspi_pin_config);
 	spi_master_init(SPI_MODULE_SEL, sys_clk.hclk * 1000000 / (2 * SPI_CLK) - 1, SPI_MODE0);
+	hspi_set_pin(&hspi_pin_config);
+#if (SPI_SLAVE_NUM == MULTI_SLAVE)
+	hspi_cs_pin_dis(CSN_PIN1);
+#endif
 	plic_interrupt_enable(IRQ22_SPI_AHB);
 	hspi_set_tx_dma_config(TX_DMA_CHN);
 	hspi_set_rx_dma_config(RX_DMA_CHN);
@@ -350,22 +357,22 @@ void main_loop (void)
 #endif
 #if (SPI_SLAVE_NUM == MULTI_SLAVE)
 #if (SPI_MODULE_SEL == HSPI_MODULE)
-	if (hspi_pin_config.hspi_csn_pin == SLAVE0_CSN_PIN)
+	if (hspi_pin_config.hspi_csn_pin == CSN_PIN0)
 	{
-		hspi_pin_config.hspi_csn_pin = hspi_change_csn_pin(SLAVE1_CSN_PIN);
+		hspi_pin_config.hspi_csn_pin = hspi_change_csn_pin(CSN_PIN0,CSN_PIN1);
 	}
-	else if (hspi_pin_config.hspi_csn_pin == SLAVE1_CSN_PIN)
+	else if (hspi_pin_config.hspi_csn_pin == CSN_PIN1)
 	{
-		hspi_pin_config.hspi_csn_pin = hspi_change_csn_pin(SLAVE0_CSN_PIN);
+		hspi_pin_config.hspi_csn_pin = hspi_change_csn_pin(CSN_PIN1,CSN_PIN0);
 	}
 #elif (SPI_MODULE_SEL == PSPI_MODULE)
-	if (pspi_pin_config.pspi_csn_pin == SLAVE0_CSN_PIN)
+	if (pspi_pin_config.pspi_csn_pin == CSN_PIN0)
 	{
-		pspi_pin_config.pspi_csn_pin = pspi_change_csn_pin(SLAVE1_CSN_PIN);
+		pspi_pin_config.pspi_csn_pin = pspi_change_csn_pin(CSN_PIN0,CSN_PIN1);
 	}
-	else if (pspi_pin_config.pspi_csn_pin == SLAVE1_CSN_PIN)
+	else if (pspi_pin_config.pspi_csn_pin == CSN_PIN1)
 	{
-		pspi_pin_config.pspi_csn_pin = pspi_change_csn_pin(SLAVE0_CSN_PIN);
+		pspi_pin_config.pspi_csn_pin = pspi_change_csn_pin(CSN_PIN1,CSN_PIN0);
 	}
 #endif
 #endif

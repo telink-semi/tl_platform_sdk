@@ -226,10 +226,9 @@ _attribute_text_sec_ void flash_release_deep_powerdown(void);
  * @brief	  	This function serves to read MID of flash(MAC id). Before reading UID of flash,
  * 				you must read MID of flash. and then you can look up the related table to select
  * 				the idcmd and read UID of flash
- * @param[in] 	buf		- store MID of flash
- * @return    	none.
+ * @return    	MID of the flash(4 bytes).
  */
-_attribute_text_sec_ void flash_read_mid(unsigned char *buf);
+_attribute_text_sec_ unsigned int flash_read_mid(void);
 
 /**
  * @brief	  	This function serves to read UID of flash

@@ -63,7 +63,7 @@ dma_chain_config_t tx_dma_list_config[2];
 #define AUIDO_THD_SIZE    1024
  unsigned char flash_read_16K_buff[FLASH_16k_SIZE]__attribute__((aligned(4)));
  unsigned char flash_read_48K_buff[FLASH_48k_SIZE]__attribute__((aligned(4)));
- unsigned char aduio_buff [AUIDO_BUFF_SIZE] __attribute__((aligned(4)));
+ unsigned char audio_buff [AUIDO_BUFF_SIZE] __attribute__((aligned(4)));
 
 volatile unsigned int tx_rptr_out=0;
 volatile unsigned int tx_wptr_out=0;
@@ -109,7 +109,7 @@ void user_init()
 	flash_read_page(0x8000,FLASH_16k_SIZE,(unsigned char *)flash_read_16K_buff);
 	flash_read_page(0xe000,FLASH_48k_SIZE,(unsigned char *)flash_read_48K_buff);
 	audio_init(BUF_TO_LINE_OUT,AUDIO_48K,MONO_BIT_16);
-	audio_tx_dma_chain_init (DMA3,(unsigned short*)aduio_buff,AUIDO_BUFF_SIZE);
+	audio_tx_dma_chain_init (DMA3,(unsigned short*)audio_buff,AUIDO_BUFF_SIZE);
 #elif(AUDIO_MODE==EXT_CODEC_LINEIN_LINEOUT)
 	/* WM8731 for demo*/
 	audio_i2s_init(PWM_PWM0_PB4,I2C_GPIO_SDA_B3,I2C_GPIO_SCL_B2);
@@ -124,7 +124,7 @@ void user_init()
 _attribute_ram_code_sec_ void audio_data_fifo(unsigned char *pdata, unsigned int buff_len)
 {
 	unsigned short unused_buff;
-	tx_rptr_out = ((audio_get_tx_dma_rptr (DMA3)-(unsigned int)aduio_buff));
+	tx_rptr_out = ((audio_get_tx_dma_rptr (DMA3)-(unsigned int)audio_buff));
 	if((tx_wptr_out&(AUIDO_BUFF_SIZE - 1))>tx_rptr_out)
 	{
 		unused_buff=AUIDO_BUFF_SIZE-(tx_wptr_out&(AUIDO_BUFF_SIZE-1))+tx_rptr_out;
@@ -137,7 +137,7 @@ _attribute_ram_code_sec_ void audio_data_fifo(unsigned char *pdata, unsigned int
 	if(unused_buff>AUIDO_THD_SIZE)
 	{
 		gpio_toggle(LED3);
-		memcpy(aduio_buff+tx_wptr_out,pdata+flash_rptr,AUIDO_THD_SIZE);
+		memcpy(audio_buff+tx_wptr_out,pdata+flash_rptr,AUIDO_THD_SIZE);
 		tx_wptr_out=(tx_wptr_out+AUIDO_THD_SIZE)&(AUIDO_BUFF_SIZE-1);
 		flash_rptr=(flash_rptr+AUIDO_THD_SIZE);
 		if(flash_rptr>=(buff_len))
@@ -201,7 +201,7 @@ void main_loop (void)
 	{
 		audio_pause_out_path();
 		audio_change_sample_rate(AUDIO_16K);
-		memset(aduio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
+		memset(audio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
 		audio_resume_out_path();
 		swith=1;
 		flash_rptr=0;
@@ -210,7 +210,7 @@ void main_loop (void)
 	{
 		audio_pause_out_path();
 		audio_change_sample_rate(AUDIO_48K);
-		memset(aduio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
+		memset(audio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
 		audio_resume_out_path();
 		swith=0;
 		flash_rptr=0;

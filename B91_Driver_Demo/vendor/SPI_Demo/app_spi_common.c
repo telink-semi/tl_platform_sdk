@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file	app_spi_common.c
  *
- * @brief	This is the header file for B91
+ * @brief	This is the source file for B91
  *
  * @author	Driver Group
  * @date	2019
@@ -43,30 +43,31 @@
  *          SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *******************************************************************************************************/
-#pragma once
-#include "../../drivers.h"
-#include "app_spi_common.h"
-#if defined(__cplusplus)
-extern "C" {
-#endif
+#include "app_config.h"
 
+/**
+ * @brief     	This function change hspi csn pin.
+ * @param[in] 	next_csn_pin - the next csn pin.
+ * @return 		next_csn_pin - the next csn pin.
+ */
+hspi_csn_pin_def_e hspi_change_csn_pin(pspi_csn_pin_def_e last_csn_pin, hspi_csn_pin_def_e next_csn_pin)
+{
+	hspi_cs_pin_dis(last_csn_pin);
+	hspi_cs_pin_en(next_csn_pin);
 
-/* Enable C linkage for C++ Compilers: */
-
-
-#define LED1            GPIO_PB4//do not use it when set PB4 set as spi mode
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6//do not use it when set PB6 set as spi mode
-#define LED4            GPIO_PB7
-
-
-#define SPI_NDMA_MODE              1
-#define SPI_DMA_MODE               2
-#define SPI_XIP_MODE               3
-
-#define SPI_MODE                   SPI_DMA_MODE
-#define	CCLK_96M_HCLK_48M_PCLK_24M	clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
-/* Disable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
+	return next_csn_pin;
 }
-#endif
+
+/**
+ * @brief     	This function change pspi csn pin.
+ * @param[in] 	next_csn_pin - the next csn pin.
+ * @return 		next_csn_pin - the next csn pin.
+ */
+pspi_csn_pin_def_e pspi_change_csn_pin(pspi_csn_pin_def_e last_csn_pin, pspi_csn_pin_def_e next_csn_pin)
+{
+	pspi_cs_pin_dis(last_csn_pin);
+	pspi_cs_pin_en(next_csn_pin);
+
+	return next_csn_pin;
+}
+

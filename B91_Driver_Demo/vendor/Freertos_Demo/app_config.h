@@ -44,29 +44,15 @@
  *
  *******************************************************************************************************/
 #pragma once
+
 #include "../../drivers.h"
-#include "app_spi_common.h"
+
+/* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-
 /* Enable C linkage for C++ Compilers: */
-
-
-#define LED1            GPIO_PB4//do not use it when set PB4 set as spi mode
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6//do not use it when set PB6 set as spi mode
-#define LED4            GPIO_PB7
-
-
-#define SPI_NDMA_MODE              1
-#define SPI_DMA_MODE               2
-#define SPI_XIP_MODE               3
-
-#define SPI_MODE                   SPI_DMA_MODE
-#define	CCLK_96M_HCLK_48M_PCLK_24M	clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
-/* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }
 #endif
