@@ -1,8 +1,8 @@
-## V2.0.0-Beta
+## V2.0.0
 
 ### Version
 
-* SDK version: telink_b91_driver_sdk v2.0.0-Beta.
+* SDK version: telink_b91m_driver_sdk V2.0.0.
 * This version of the SDK supports B91 A0, A1 and A2 chips.
 
 ### BREAKING CHANGES
