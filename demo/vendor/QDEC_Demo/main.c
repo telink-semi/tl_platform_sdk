@@ -35,12 +35,12 @@ extern void main_loop (void);
 int main(void)
 {
 
-    sys_init();
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
 
-	//CCLK_24M_HCLK_24M_PCLK_24M;
+	CCLK_24M_HCLK_24M_PCLK_24M;
 
-
-    user_init();
+	user_init();
 
     while(1)
     {

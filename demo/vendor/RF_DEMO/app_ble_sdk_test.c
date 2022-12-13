@@ -203,8 +203,18 @@ void user_init(void)
 	ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
 	ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
 	ble_tx_packet[0] = rf_tx_dma_len&0xff;
-	gpio_function_en(LED1|LED2|LED3|LED4|LED5|LED6);
-	gpio_output_en(LED1|LED2|LED3|LED4|LED5|LED6);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 }
 
 void main_loop (void)
@@ -256,7 +266,7 @@ void ble_stx_test(void)
 		if(rf_get_irq_status(FLD_RF_IRQ_TX))
 		{
 			rf_clr_irq_status(FLD_RF_IRQ_TX);
-			gpio_toggle(LED6);
+			gpio_toggle(LED4);
 			DBG_CHN0_TOGGLE;
 		}
 
@@ -345,7 +355,8 @@ void ble_btx_tx_test()
 		{
 			rf_clr_irq_status(FLD_RF_IRQ_TX);
 			tx_cnt++;
-			gpio_toggle(LED4|LED5);
+			gpio_toggle(LED1);
+			gpio_toggle(LED2);
 			DBG_CHN0_TOGGLE;
 		}
 
@@ -416,7 +427,7 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 			DBG_CHN1_TOGGLE;
 			AA_rx_crc_ok_cnt ++;
 			rx_cnt++;
-			gpio_toggle(LED5);
+			gpio_toggle(LED2);
 			#if (TEST_MODE_SELECT == TEST_MODE_BRX_RX)
 				blt_timeStamp = reg_rf_timestamp;
 

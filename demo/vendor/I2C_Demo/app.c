@@ -32,6 +32,12 @@
 
 #define     I2C_DEVICE					I2C_MASTER_DEVICE
 
+#if(MCU_CORE_B92)
+#define I2C_STRECH_EN       0
+#define I2C_STRECH_DIS      1
+#define I2C_STRECH_MODE     I2C_STRECH_EN
+#endif
+
 
 #define     I2C_CLK_SPEED				400000 //i2c clock 400K.
 
@@ -55,8 +61,18 @@ volatile unsigned char  slave_rx_done_end_flag=0;
 
 void user_init(void)
 {
-    gpio_function_en(LED1|LED2|LED3|LED4);
-    gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1); 		//enable output
+	gpio_input_dis(LED1);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2); 		//enable output
+	gpio_input_dis(LED2);		//disable input
+	gpio_function_en(LED3);
+	gpio_output_en(LED3); 		//enable output
+	gpio_input_dis(LED3);		//disable input
+	gpio_function_en(LED4);
+	gpio_output_en(LED4); 		//enable output
+	gpio_input_dis(LED4);		//disable input
     i2c_set_pin(I2C_GPIO_SDA_PIN,I2C_GPIO_SCL_PIN);
 
 #if(I2C_DEVICE == I2C_MASTER_DEVICE)
@@ -64,6 +80,9 @@ void user_init(void)
 	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*I2C_CLK_SPEED)));
 #if(MCU_CORE_B92)
 	i2c_master_detect_nack_en();
+#if(I2C_STRECH_MODE == I2C_STRECH_EN)
+	i2c_master_strech_en();
+#endif
 #endif
 #elif(I2C_DEVICE == I2C_SLAVE_DEVICE)
     i2c_slave_init(0x5a);
@@ -72,6 +91,9 @@ void user_init(void)
     i2c_set_irq_mask(I2C_RX_BUF_MASK|I2C_RX_DONE_MASK);
 #elif(MCU_CORE_B92)
     i2c_set_irq_mask(I2C_RX_BUF_MASK|I2C_RX_END_MASK);
+#if(I2C_STRECH_MODE == I2C_STRECH_EN)
+    i2c_slave_strech_en();
+#endif
 #endif
     plic_interrupt_enable(IRQ21_I2C);
     core_interrupt_enable();
@@ -101,7 +123,7 @@ void main_loop(void)
 
 
 #if(I2C_DEVICE == I2C_SLAVE_DEVICE)
-#if(MCU_CORE_B91)
+#if(MCU_CORE_B91||(MCU_CORE_B92 &&(I2C_STRECH_MODE == I2C_STRECH_DIS)))
 	if( (slave_rx_done_end_flag==1)|| (slave_rx_end_flag==1))
 	{
 		i2c_slave_write((unsigned char*)i2c_rx_buff,BUFF_DATA_LEN_NO_DMA);
@@ -109,7 +131,7 @@ void main_loop(void)
 		slave_rx_end_flag=0;
 		gpio_toggle(LED4);
 	}
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||(I2C_STRECH_MODE == I2C_STRECH_EN))
 	//parsing to the read and write command sent by the master, the interrupt state set 1,
 	//judge whether it is a read command or not,the slave pull the clock line up,and fill in the data.
 	if(i2c_get_irq_status(I2C_SLAVE_WR_STATUS))
@@ -176,6 +198,7 @@ _attribute_ram_code_sec_noinline_ void i2c_irq_handler(void)
 			i2c_slave_read((unsigned char*)(i2c_rx_buff+i2c_read_flag),i2c_get_rx_buf_cnt());
 		}
 	   i2c_read_flag=0;
+	   slave_rx_done_end_flag=1;
 	}
 
 #endif

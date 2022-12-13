@@ -65,10 +65,15 @@ _attribute_ram_code_sec_ void pwm_irq_handler(void)
 
 void user_init(void)
 {
-
-	gpio_function_en(LED2|LED3|LED4);
-	gpio_output_en(LED2|LED3|LED4);
-	gpio_input_dis(LED2|LED3|LED4);
+	  gpio_function_en(LED2);
+	  gpio_set_output_en(LED2);
+	  gpio_set_input_dis(LED2);
+	  gpio_function_en(LED3);
+	  gpio_set_output_en(LED3);
+	  gpio_set_input_dis(LED3);
+	  gpio_function_en(LED4);
+	  gpio_set_output_en(LED4);
+	  gpio_set_input_dis(LED4);
 
 	delay_ms(2000);
 

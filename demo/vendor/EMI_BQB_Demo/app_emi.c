@@ -24,7 +24,7 @@
  *******************************************************************************************************/
 #include "app_config.h"
 #if (TEST_DEMO == EMI_DEMO)
-
+#include "calibration.h"
 /*
  * @brief 	this macro definition serve to open the setting to deal with problem of zigbee mode 2480Mhz
  * 			band edge can't pass the spec.only use it at the time of certification.
@@ -33,14 +33,7 @@
 /*
  * @brief 	this macro definition serve to close internal cap.
  * */
-#define	CLOSE_INTERNAL_CAP_EN	0
-
-#define CAP_SET_FLASH_ADDR_2M 		0x1fe000
-#define CAP_SET_FLASH_ADDR_1M 		0xfe000
-#define CAP_SET_FLASH_ADDR_512K 	0x7e000//B85m:0x77000 B91m:0x7e000
-#define CAP_SET_FLASH_ADDR_128K 	0x1e000
-#define CAP_SET_FLASH_ADDR_64K		0xe000
-
+#define	CLOSE_INTERNAL_CAP_EN	0//0:Internal capacitance,1:External capacitance
 
 #define TX_PACKET_MODE_ADDR 		     0x00000005
 #define RUN_STATUE_ADDR 			     0x00000006
@@ -130,10 +123,7 @@ test_list_t  ate_list[] = {
 		{0x0f,emitxf0}
 };
 
-//Add by pengcheng 20210401, for PA
 #define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
-#define check_pa_tx_hw(pin)	((pin == RF_RFFE_TX_PB0) || (pin == RF_RFFE_TX_PB6) || (pin == RF_RFFE_TX_PD7) || (pin == RF_RFFE_TX_PE5))
-#define check_pa_rx_hw(pin)	((pin == RF_RFFE_RX_PB1) || (pin == RF_RFFE_RX_PD6) || (pin == RF_RFFE_RX_PE4))
 
 unsigned char pa_hw_flag;
 void pa_init(unsigned short v)
@@ -146,23 +136,15 @@ void pa_init(unsigned short v)
 		return;
 	}
 
-	if(check_pa_tx_hw(tx_pin) && check_pa_rx_hw(rx_pin))
-	{
-		pa_hw_flag = 1;
-		rf_set_rffe_pin(tx_pin, rx_pin);
-	}
-	else
-	{
-		pa_hw_flag = 0;
-		gpio_function_en(tx_pin);
-		gpio_input_dis(tx_pin);
-		gpio_output_en(tx_pin);
-		gpio_set_low_level(tx_pin);
-		gpio_function_en(rx_pin);
-		gpio_input_dis(rx_pin);
-		gpio_output_en(rx_pin);
-		gpio_set_low_level(rx_pin);
-	}
+	pa_hw_flag = 0;
+	gpio_function_en(tx_pin);
+	gpio_input_dis(tx_pin);
+	gpio_output_en(tx_pin);
+	gpio_set_low_level(tx_pin);
+	gpio_function_en(rx_pin);
+	gpio_input_dis(rx_pin);
+	gpio_output_en(rx_pin);
+	gpio_set_low_level(rx_pin);
 }
 
 void pa_operation(unsigned short v, unsigned char s)
@@ -191,33 +173,32 @@ void pa_operation(unsigned short v, unsigned char s)
 
 void read_calibration_flash()
 {
-	unsigned char flash_mid = (flash_read_mid() >> 16) & 0x7f;
-	unsigned char chnidx = 0xff;
-	if(flash_mid == FLASH_SIZE_2M)
+#if (MCU_CORE_B91||MCU_CORE_B92) //Wait for the B92 calibration function to be added before changing here
+	unsigned char flash_type = (flash_read_mid() >> 16) & 0xff;
+	switch (flash_type)
 	{
-		flash_read_page(CAP_SET_FLASH_ADDR_2M, 1, &chnidx);
+		case FLASH_SIZE_64K:
+			user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_64K);
+			break;
+		case FLASH_SIZE_128K:
+			user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_128K);
+			break;
+		case FLASH_SIZE_512K:
+			user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_512K);
+			break;
+		case FLASH_SIZE_1M:
+			user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_1M);
+			break;
+		case FLASH_SIZE_2M:
+			user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_2M);
+			break;
+		case FLASH_SIZE_4M:
+			user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_4M);
+			break;
+		default:
+			break;
 	}
-	else if(flash_mid == FLASH_SIZE_1M)
-	{
-		flash_read_page(CAP_SET_FLASH_ADDR_1M, 1, &chnidx);
-	}
-	else if(flash_mid == FLASH_SIZE_512K)
-	{
-		flash_read_page(CAP_SET_FLASH_ADDR_512K, 1, &chnidx);
-	}
-	else if(flash_mid == FLASH_SIZE_128K || flash_mid == FLASH_SIZE_256K)
-	{
-		flash_read_page(CAP_SET_FLASH_ADDR_128K, 1, &chnidx);
-	}
-	else
-	{
-		flash_read_page(CAP_SET_FLASH_ADDR_64K, 1, &chnidx);
-	}
-
-	if(chnidx != 0xff)
-	{
-		rf_update_internal_cap(chnidx);
-	}
+#endif
 }
 
 /**

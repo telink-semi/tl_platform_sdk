@@ -26,20 +26,7 @@
 #define DRIVERS_B91_FLASH_TRIM_H_
 #include "driver.h"
 #include "compiler.h"
-/**
- * @brief 		This function serves to pull up wp.
- * @return 		none.
- */
-_attribute_ram_code_sec_ static inline void mspi_wp_low(void){
-	BM_CLR(reg_gpio_out(GPIO_PF5), BIT(5));
-}
-/**
- * @brief 		This function serves to pull down wp.
- * @return 		none.
- */
-_attribute_ram_code_sec_ static inline void mspi_wp_high(void){
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-}
+#include "puya_common.h"
 /**
  * @brief		This function serves to raise the flash reset voltage to 2.1V. If flash trim takes effect, the vbat voltage of chip can not be lower than 2.1V.
  * @return		0:OK; 1:fail to trim; 2: fail to enter test mode; 3:The chip mid is not 0x146085.

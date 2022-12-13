@@ -38,9 +38,18 @@ void user_init(void)
 	gpio_shutdown(GPIO_ALL);
 #else
 	// init the LED pin, for indication
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4); 		//enable output
-	gpio_input_dis(LED1|LED2|LED3|LED4);		//disable input
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 
 	gpio_set_high_level(LED1);
 	delay_ms(1000);

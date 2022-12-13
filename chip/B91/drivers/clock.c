@@ -277,6 +277,10 @@ unsigned int clock_get_32k_tick(void)
 							   the maximum speed needs to be tested at the highest and lowest voltage of the board,
 							   and the high and low temperature long-term stability test speed is no problem.
  * @return      none
+ * @note		Do not switch the clock during the DMA sending and receiving process;
+ * 			    because during the clock switching process, the system clock will be
+ * 			    suspended for a period of time, which may cause data loss
+
  */
 void clock_init(sys_pll_clk_e pll,
 		sys_clock_src_e src,

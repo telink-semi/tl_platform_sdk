@@ -126,14 +126,14 @@ unsigned int get_pkt_interval(unsigned char payload_len, unsigned char mode)
 
 	if(mode==1)//1m
 	{
-		preamble_len = read_reg8(0x140802) & 0x1f ;
+		preamble_len = reg_rf_preamble_trail & 0x1f ;
 		total_len = preamble_len + 4 + 2 + payload_len +3; // preamble + access_code + header + payload + crc
 		byte_time = 8;
 		return (((byte_time * total_len + 249  + 624)/625)*625);
 	}
 	else if(mode==2)//2m
 	{
-		preamble_len = read_reg8(0x140802) & 0x1f ;
+		preamble_len = reg_rf_preamble_trail & 0x1f ;
 		total_len = preamble_len + 4 + 2 + payload_len +3; // preamble + access_code + header + payload + crc
 		byte_time = 4;
 		return (((byte_time * total_len + 249  + 624)/625)*625);
@@ -337,8 +337,8 @@ void bqb_serviceloop (void)
 					rsp = BIT(0);//status EVENT Error
 				}
 
-				bqb_uart_send_byte((rsp>>8)&0x7f);
-				bqb_uart_send_byte(rsp&0xff);
+				uart_send_byte(uart_using,(rsp>>8)&0x7f);
+				uart_send_byte(uart_using,rsp&0xff);
 				test_state = SETUP_STATE;
 				pkt_cnt = 0;
 				break;
@@ -355,8 +355,8 @@ void bqb_serviceloop (void)
 				rf_set_ble_chn(freq);
 				rf_set_rx_dma(bqbtest_buffer, 0, 272);
 				rf_start_srx(reg_system_tick);
-				bqb_uart_send_byte((rsp>>8)&0xff);
-				bqb_uart_send_byte(rsp&0xff);
+				uart_send_byte(uart_using,(rsp>>8)&0xff);
+				uart_send_byte(uart_using,rsp&0xff);
 				test_state = RX_STATE;
 				pkt_cnt = 0;
 				break;
@@ -449,8 +449,8 @@ void bqb_serviceloop (void)
 				dma_chn_dis(DMA0);
 				rf_set_tx_dma(2,8);
 #endif
-				bqb_uart_send_byte((rsp>>8)&0xff);
-				bqb_uart_send_byte(rsp&0xff);
+				uart_send_byte(uart_using,(rsp>>8)&0xff);
+				uart_send_byte(uart_using,rsp&0xff);
 				test_state = TX_STATE;
 				pkt_cnt = 0;
 				break;
@@ -468,14 +468,14 @@ void bqb_serviceloop (void)
 				if((ctrl==0) && (para==0))
 				{
 					pkt_length.len =0;
-					bqb_uart_send_byte((BIT(7))|((pkt_cnt>>8)&0x7f));
-					bqb_uart_send_byte(pkt_cnt&0xff);
+					uart_send_byte(uart_using,(BIT(7))|((pkt_cnt>>8)&0x7f));
+					uart_send_byte(uart_using,pkt_cnt&0xff);
 				}
 #if BQB_PRIVATE_AGREEMENT
 				else if((ctrl==0x33) && ((cmd_pkt&0xff)==1))
 				{
-					bqb_uart_send_byte(BIT(7));
-					bqb_uart_send_byte(private_agreement_rssi&0xff);
+					uart_send_byte(uart_using,BIT(7));
+					uart_send_byte(uart_using,private_agreement_rssi&0xff);
 				}
 
 
@@ -499,7 +499,7 @@ void bqb_serviceloop (void)
 	{
 		if (rf_get_irq_status(FLD_RF_IRQ_RX))
 		{
-			if((REG_ADDR8(0x140840)&0xf0)==0)
+			if((reg_rf_dec_err&0xf0)==0)
 			{
 #if BQB_PRIVATE_AGREEMENT
 				unsigned short rssi_tmp = 0;
@@ -585,31 +585,6 @@ void  bqbtest_init()
 #if BQB_PRIVATE_AGREEMENT
 	uPrivateStatus.u32Status = 0;
 #endif
-}
-
-/**
- * @brief     uart send data function with not DMA method.
- *            variable uart_TxIndex,it must cycle the four registers 0x90 0x91 0x92 0x93 for the design of SOC.
- *            so we need variable to remember the index.
- * @param[in] uartData - the data to be send.
- * @return    none
- */
-void bqb_uart_send_byte(unsigned char uartData)
-{
-	int t;
-
-	t = 0;
-	while((!(reg_uart_status2(uart_using)&FLD_UART_TX_DONE)) && (t<0xfffff))
-	{
-		t++;
-	}
-	if(t >= 0xfffff)
-		return;
-
-	reg_uart_data_buf(uart_using, uart_tx_index) = uartData;
-
-	uart_tx_index++;
-	uart_tx_index &= 0x03;// cycle the four register 0x90 0x91 0x92 0x93.
 }
 
 

@@ -138,6 +138,8 @@ typedef enum{
 	UART1_TX_PC6 = GPIO_PC6,
 	UART1_TX_PD6 = GPIO_PD6,
 	UART1_TX_PE0 = GPIO_PE0,
+
+	UART_TX_NONE_PIN =0xfff,
 }uart_tx_pin_e;
 
 
@@ -152,6 +154,8 @@ typedef enum{
 	UART1_RX_PC7 = GPIO_PC7,
 	UART1_RX_PD7 = GPIO_PD7,
 	UART1_RX_PE2 = GPIO_PE2,
+
+	UART_RX_NONE_PIN =0xfff,
 }uart_rx_pin_e;
 
 /**
@@ -224,13 +228,14 @@ static inline void uart_reset(uart_num_e uart_num)
 	  out of the interrupt, and immediately in the interrupt, and so on loop, resulting in the feeling that the program did not go down.
 	 */
 	unsigned char tx_mask_flag=0;
-	if(reg_uart_rx_timeout1(uart_num)|FLD_UART_MASK_TXDONE)
+	if(reg_uart_rx_timeout1(uart_num)&FLD_UART_MASK_TXDONE)
 	{
 		tx_mask_flag=1;
 		reg_uart_rx_timeout1(uart_num)&=~FLD_UART_MASK_TXDONE;
 	}
 	reg_rst0 &= (~((uart_num)?FLD_RST0_UART1:FLD_RST0_UART0));
 	reg_rst0 |= ((uart_num)?FLD_RST0_UART1:FLD_RST0_UART0);
+	reg_uart_state(uart_num) |=FLD_UART_CLR_TXDONE;
 	if(tx_mask_flag==1){
 		reg_uart_rx_timeout1(uart_num)|=FLD_UART_MASK_TXDONE;
 	}
@@ -617,8 +622,13 @@ static inline void uart_rts_manual_mode(uart_num_e uart_num)
 
 
 /**
- * @brief     This function is used to set the 'uart_rx_byte_index' to 0.
- *			  after wakeup from power-saving mode or reset uart, you must call this function before receiving the data.
+ * @brief     This function interface needs to be called in two situations:
+ * 1.After calling the uart reset interface, uart_clr_tx_index and uart_clr_rx_index must be called to clear the read/write pointer,
+ * after the uart reset interface is invoked, the hardware read and write Pointers are cleared to zero.
+ * Therefore, the software read and write Pointers are cleared to ensure logical correctness.
+ * 2.After suspend wakes up, you must call uart_clr_tx_index and uart_clr_rx_index to clear read and write pointers,
+ * because after suspend wakes up, the chip is equivalent to performing a uart_reset,
+ * so the software read and write pointer also needs to be cleared to zero.
  * @param[in] uart_num
  * @return    none.
  */
@@ -628,8 +638,13 @@ static inline void uart_clr_rx_index(uart_num_e uart_num)
 }
 
 /**
- * @brief     This function is used to set the 'uart_tx_byte_index' to 0.
- *			  after wakeup from power-saving mode or reset uart, you must call this function before sending the data.
+ * @brief     This function interface needs to be called in two situations:
+ * 1.After calling the uart reset interface, uart_clr_tx_index and uart_clr_rx_index must be called to clear the read/write pointer,
+ * after the uart reset interface is invoked, the hardware read and write Pointers are cleared to zero.
+ * Therefore, the software read and write Pointers are cleared to ensure logical correctness.
+ * 2.After suspend wakes up, you must call uart_clr_tx_index and uart_clr_rx_index to clear read and write pointers,
+ * because after suspend wakes up, the chip is equivalent to performing a uart_reset,
+ * so the software read and write pointer also needs to be cleared to zero.
  * @param[in] uart_num
  * @return    none.
  */
@@ -645,7 +660,7 @@ static inline void uart_clr_tx_index(uart_num_e uart_num)
  */
 static inline void uart_clr_tx_done(uart_num_e uart_num)
 {
-	reg_uart_state(uart_num) |=BIT(7);
+	reg_uart_state(uart_num) |=FLD_UART_CLR_TXDONE;
 }
 
 /**

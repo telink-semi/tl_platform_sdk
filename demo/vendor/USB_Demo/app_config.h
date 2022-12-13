@@ -38,8 +38,14 @@ extern "C" {
 #elif(MCU_CORE_B92)
 #define LED1            GPIO_PD0
 #define LED2            GPIO_PD1
-#define LED3            GPIO_PD2
-#define LED4            GPIO_PD3
+#define LED3            GPIO_PE6
+#define LED4            GPIO_PE7
+/**
+ * @brief	The POWER_SUPPLY_MODE defaults to VBAT_POWER_SUPPLY.
+ */
+#define VBAT_POWER_SUPPLY   0
+#define VBUS_POWER_SUPPLY   1
+#define POWER_SUPPLY_MODE   VBAT_POWER_SUPPLY
 
 #define AISO              0
 #define INT               1
@@ -54,6 +60,7 @@ extern "C" {
 #define	 USB_SPEAKER		4
 #define	 USB_CDC	        5
 #define	 USB_MIC_SPEAKER    6
+#define	 USB_MASS_STORAGE   7
 
 #define	 USB_DEMO_TYPE		USB_MOUSE
 
@@ -61,6 +68,7 @@ extern "C" {
 
 #if	(USB_DEMO_TYPE == USB_MOUSE)
 	#define	USB_MOUSE_ENABLE 		1
+  #define	USB_KEYBOARD_ENABLE 	1
 #elif (USB_DEMO_TYPE == USB_KEYBOARD)
 	#define	USB_KEYBOARD_ENABLE 	1
 #elif (USB_DEMO_TYPE == USB_MICROPHONE)
@@ -73,6 +81,7 @@ extern "C" {
 	#define	USB_MIC_ENABLE 			1
 	#define	USB_SPEAKER_ENABLE 		1
 #endif
+
 
 
 

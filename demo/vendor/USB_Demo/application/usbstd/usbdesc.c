@@ -256,7 +256,7 @@ const USB_Descriptor_Device_t device_desc = { {
 		//0x0100, // .ReleaseNumber
 		USB_STRING_VENDOR, 	// .ManufacturerStrIndex
 		USB_STRING_PRODUCT, // .ProductStrIndex
-		USB_STRING_SERIAL, 	// .SerialNumStrIndex, iSerialNumber
+		0,//USB_STRING_SERIAL, 	// .SerialNumStrIndex, iSerialNumber
 		1 };
 
 const USB_Descriptor_Configuration_t
@@ -576,7 +576,7 @@ const USB_Descriptor_Configuration_t
 					     USB_EDP_SPEAKER,
 						EP_TYPE_ISOCHRONOUS | (EP_SYNC_TYPE_ADAPTIVE << 2) | (EP_USAGE_TYPE_DATA << 4), // Attributes ENDPOINT_ATTR_ASYNC
 						//0x0100, // EndpointSize USB_MIC_CHANNELS_LEN
-						0x00c0, // EndpointSize USB_MIC_CHANNELS_LEN
+						USB_SPK_CHANNELS_LEN, // EndpointSize USB_SPK_CHANNELS_LEN
 						0x01 // PollingIntervalMS
 					},
 					0, // Refresh

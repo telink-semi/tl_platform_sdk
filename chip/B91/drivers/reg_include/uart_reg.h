@@ -129,6 +129,8 @@ enum{
 enum{
 	FLD_UART_TSTATE_i   	=  BIT_RNG(0,2),//only for dma default 1.
 	FLD_UART_RSTATE_i   	=  BIT_RNG(4,7),
+	FLD_UART_CLR_TXDONE     =  BIT(7),
+
 };
 
 /*******************************      7816 registers: 0x1401f0     ******************************/

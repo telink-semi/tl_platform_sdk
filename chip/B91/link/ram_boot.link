@@ -69,7 +69,10 @@ SECTIONS
 	.sbss 	(NOLOAD)	: { *(.dynsbss ) *(.sbss .sbss.* .gnu.linkonce.sb.* ) *(.scommon .scommon.* ) }
 	.bss 	(NOLOAD)	: { *(.dynbss ) *(.bss .bss.* .gnu.linkonce.b.* ) *(COMMON ) . = ALIGN(8); }
 	PROVIDE (_BSS_VMA_END = .);
-			
+	
+	.sdk_version  	: AT(LOADADDR (.data) + SIZEOF (.data))
+		{ KEEP(*(.sdk_version )) }
+	
 	. = ALIGN(8);
 	/* end is the starting address of the heap, the heap grows upward */
 	_end = .;

@@ -28,15 +28,19 @@
 #include "application/usbstd/usb.h"
 #include <string.h>
 
-#if (MCU_CORE_B91)
-#define MIC_DMA_CHN             DMA2
-#define SPK_DMA_CHN             DMA3
+#define MIC_DMA_RX_CHN          DMA0
+#define SPK_DMA_TX_CHN          DMA3
+
 #define	MIC_BUFFER_SIZE			4096
 #define	SPK_BUFFER_SIZE			4096
 
+#define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
+#define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
+
 unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
 unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
-
+extern volatile unsigned int pm_top_reset_tick;
+extern volatile unsigned int charger_clear_vbus_detect_flag;
 int		iso_in_w = 0;
 int		iso_in_r = 0;
 
@@ -52,7 +56,7 @@ int		iso_out_r = 0;
 void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 {
 	unsigned char length = 0;
-	iso_in_w = ((audio_get_rx_dma_wptr(MIC_DMA_CHN) - (unsigned int)iso_in_buff) >> 1);
+	iso_in_w = ((audio_get_rx_dma_wptr(MIC_DMA_RX_CHN) - (unsigned int)iso_in_buff) >> 1);
 	 usbhw_reset_ep_ptr(USB_EDP_MIC);//reset pointer of Endpoint7's buf
 
 	switch(audio_rate)
@@ -113,7 +117,7 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	{
 		usbhw_clr_eps_irq(FLD_USB_EDP7_IRQ);	//clear interrupt flag of endpoint 7
 		/////// get MIC input data ///////////////////////////////
-		audio_tx_data_to_usb(AUDIO_16K);
+		audio_tx_data_to_usb(MIC_SAMPLING_RATE);
 		num_iso_in++;
 		if ((num_iso_in & 0x7f) == 0) gpio_toggle(LED2);
 	}
@@ -131,7 +135,7 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	}
 
 }
-
+#if (MCU_CORE_B91)
 
 void user_init(void)
 {
@@ -139,8 +143,14 @@ void user_init(void)
 #if(CHIP_VER_A0==CHIP_VER)
 	audio_set_codec_supply(CODEC_2P8V);
 #endif
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
 
 	reg_usb_ep6_buf_addr = 0x40;		// 192 max
 	reg_usb_ep7_buf_addr = 0x20;		// 32
@@ -158,9 +168,9 @@ void user_init(void)
 	/*1  "AUDIO_ADC_16K_DAC_48K" - mic sampling=16K,spk sampling=48K;"AUDIO_16K"-mic sampling=16K,spk sampling=16K,should match the setting  in usb_default.h
 	 *2  mic and spk  channel count should be the same (1 or 2 ) in usb_default.h
 	 *3  channel count =1,MONO_BIT_16;channel count =2  STEREO_BIT_16*/
-	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_16K,STEREO_BIT_16);
-	audio_rx_dma_chain_init(MIC_DMA_CHN,iso_in_buff,MIC_BUFFER_SIZE * 2);
-	audio_tx_dma_chain_init (SPK_DMA_CHN,iso_out_buff, SPK_BUFFER_SIZE * 2);
+	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,MIC_SAMPLING_RATE,STEREO_BIT_16);
+	audio_rx_dma_chain_init(MIC_DMA_RX_CHN,iso_in_buff,MIC_BUFFER_SIZE * 2);
+	audio_tx_dma_chain_init (SPK_DMA_TX_CHN,iso_out_buff, SPK_BUFFER_SIZE * 2);
 
 
 }
@@ -186,42 +196,131 @@ void main_loop (void)
 }
 #elif(MCU_CORE_B92)
 
-#define MIC_DMA_CHN             DMA2
-#define SPK_DMA_CHN             DMA3
-#define	MIC_BUFFER_SIZE			4096
-#define	SPK_BUFFER_SIZE			4096
-
-unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
-unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
+#define MIC_FIFO_NUM   		    FIFO0
+#define SPK_FIFO_NUM   		    FIFO1
+#define MIC_DMA_TX_CHN   		DMA2
+#define SPK_DMA_RX_CHN   		DMA3
 
 void user_init(void)
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
 
 	reg_usb_ep6_buf_addr = 0x40;		// 192 max
 	reg_usb_ep7_buf_addr = 0x20;		// 32
 	reg_usb_ep8_buf_addr = 0x00;
 	reg_usb_ep_max_size = (192 >> 3);
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
-
 	//1.enable USB DP pull up 1.5k
 	usb_set_pin_en();
 	//2.enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device)
 	usb_init_interrupt();
-	//3.enable global interrupt
-	core_interrupt_enable();
-#if(USB_MODE==AISO)
-	audio_data_fifo0_path_sel(USB_AISO_IN_FIFO,USB_AISO_OUT_FIFO);
-	audio_rx_dma_chain_init(DMA0,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-	while (audio_get_rx_wptr(FIFO0)<64);
-	audio_tx_dma_chain_init(DMA1,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
+	audio_codec_init();
+
+#if(USB_MODE==INT)
+
+	 audio_codec_stream0_input_t audio_codec_input = {
+	.input_src = LINE_STREAM0_STEREO,
+	.sample_rate = MIC_SAMPLING_RATE,
+	.fifo_num = MIC_FIFO_NUM,
+	.data_width = CODEC_BIT_16_DATA,
+	.dma_num = MIC_DMA_RX_CHN,
+	.data_buf = iso_in_buff,
+	.data_buf_size = sizeof(iso_in_buff),
+	};
+	 audio_codec_output_t audio_codec_output = {
+	.output_src = CODEC_DAC_STEREO,
+	.sample_rate = SPK_SAMPLING_RATE,
+	.fifo_num = SPK_FIFO_NUM,
+	.data_width = CODEC_BIT_16_DATA,
+	.dma_num = SPK_DMA_TX_CHN,
+	.mode = HP_MODE,
+	.data_buf = iso_out_buff,
+	.data_buf_size = sizeof(iso_out_buff),
+	};
+
+	core_interrupt_enable();//enable global interrupt
+	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
+	usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
+	/***mic***/
+	audio_codec_stream0_input_init(&audio_codec_input);
+	audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
+	/***spk***/
+	audio_codec_stream_output_init(&audio_codec_output);
+	audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
+	/***DMA enable***/
+	audio_rx_dma_en(audio_codec_input.dma_num);
+	audio_tx_dma_en(audio_codec_output.dma_num);
+#else
+
+
+#define AISO_TX_DMA_CHN            DMA4
+#define AISO_RX_DMA_CHN            DMA5
+	 audio_codec_stream0_input_t audio_codec_input = {
+	.input_src = LINE_STREAM0_STEREO,
+	.sample_rate = MIC_SAMPLING_RATE,
+	.fifo_num = MIC_FIFO_NUM,
+	.data_width = CODEC_BIT_16_DATA,
+	.dma_num = MIC_DMA_RX_CHN,
+	.data_buf = iso_in_buff,
+	.data_buf_size = sizeof(iso_in_buff),
+    };
+
+	 audio_codec_output_t audio_codec_output = {
+	.output_src = CODEC_DAC_STEREO,
+	.sample_rate = SPK_SAMPLING_RATE,
+	.fifo_num = SPK_FIFO_NUM,
+	.data_width = CODEC_BIT_16_DATA,
+	.dma_num = SPK_DMA_TX_CHN,
+	.mode = HP_MODE,
+	.data_buf = iso_out_buff,
+	.data_buf_size = sizeof(iso_out_buff),
+	};
+
+	/***mic***/
+	 audio_codec_init();
+	 audio_codec_stream0_input_init(&audio_codec_input);
+	 audio_data_fifo_output_path_sel(MIC_FIFO_NUM,USB_AISO_OUT_FIFO);
+	 audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
+	 audio_tx_dma_chain_init(MIC_FIFO_NUM,AISO_TX_DMA_CHN,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2);
+	 audio_rx_dma_en(audio_codec_input.dma_num);
+	 audio_tx_dma_en(AISO_TX_DMA_CHN);
+	 /***spk***/
+	 audio_codec_stream_output_init(&audio_codec_output);
+	 audio_data_fifo_input_path_sel(SPK_FIFO_NUM,USB_AISO_IN_FIFO);
+	 audio_rx_dma_chain_init(SPK_FIFO_NUM,AISO_RX_DMA_CHN,(unsigned short*)iso_out_buff,MIC_BUFFER_SIZE*2);
+	 audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
+	 audio_rx_dma_en(AISO_RX_DMA_CHN);
+	 audio_tx_dma_en(audio_codec_output.dma_num);
 #endif
 }
 void main_loop (void)
 {
+	/**
+	 * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+	 *              otherwise the MCU will be reset after 8s.
+	*/
+#if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+	if(charger_get_vbus_detect_status()){
+	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
+	   {
+		  charger_clear_vbus_detect_status();//clear reset
+		  charger_clear_vbus_detect_flag = 1;
+	   }
+    }
+#endif
+
 	usb_handle_irq();
 }
+
+
+
 #endif
 
 #endif

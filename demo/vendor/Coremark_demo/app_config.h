@@ -34,9 +34,6 @@ extern "C" {
 #define LED3            		GPIO_PB6
 #define LED4            		GPIO_PB7
 
-#define SW1      		       	GPIO_PA0
-#define SW2      		        GPIO_PA1
-
 
 
 #define TIMER_SYS_CLOCK_MODE 	1

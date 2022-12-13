@@ -23,6 +23,20 @@
  *
  *******************************************************************************************************/
  #ifdef MCU_STARTUP_FLASH
+ /**
+ * @brief	Set "DP_THROUGH_SWIRE_DIS" as "1" to disable the "dp_through_swire" function. Set "DP_THROUGH_SWIRE_DIS" as "0" to enable the "dp_through_swire" function.
+ *			Risk description:
+ *	        The "dp_through_swire" function is enabled by default.When DP and DM pin are used as GPIO function and trigger "dp_through_swire" timing,
+ *	        there may be a problem of miswriting the chip through swire to cause the chip to crash. Therefore, disable the "dp_through_swire" function in this startup file.(set "DP_THROUGH_SWIRE_DIS" as "1").
+ *	        If the chip has only dp pin but no sws pin, using the above scheme (set "DP_THROUGH_SWIRE_DIS" as "1") will cause the following problems.
+ *	        1. During fixture production, burning a firmware program that disables the "dp_through_swire"function into unprogrammed chip will cause the problem that chip can not be burned again due to swire communication failure.
+ *	        2. Burning a firmware program that disables the "dp_through_swire" function with BDT tool may result in failure of debugging due to swire communication failure.
+ *	        If developers evaluate that the above scheme (set "DP_THROUGH_SWIRE_DIS" as "1") cannot be used, they can only set "DP_THROUGH_SWIRE_DIS" to "0" to enable the "dp_through_swire" function. However, be careful not to make DP and DM pin trigger "dp_through_swire" timing.
+ */
+#ifndef DP_THROUGH_SWIRE_DIS
+#define DP_THROUGH_SWIRE_DIS      1
+#endif
+
     .section .vectors, "ax"
 
     //.org  and linker's relaxation (-flto) cannot be used at the same time
@@ -72,16 +86,12 @@ _START:
     la     gp, __global_pointer$
     .option pop
 
-/*
-* swire usb enable default.when dp and dm use as GPIO, it has a risk to trigger the swire through usb function
-* to do something unexcept when toggle dp pin
-*/
-_SWS_USB_DIS:
+#if DP_THROUGH_SWIRE_DIS
 	lui		t0, 0x80100
 	addi	t0 , t0 , 0x700
-	li		t1, 0x40
-	sb		t1, 0x501(t0)  //0x80100c01 -> 0x40  <7>: 0 swire_usb_dis
-
+	li		t1, 0x040
+	sb		t1, 0x501(t0)  //0x80100c01 -> 0x40  <7>: 0 swire_usb_dis <6>:read-only bit
+#endif
 	/* Initialize stack pointer */
     la     t0, _STACK_TOP
     mv     sp, t0

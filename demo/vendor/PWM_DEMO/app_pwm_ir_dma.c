@@ -103,11 +103,15 @@
 
 void user_init(void)
 {
-
-	 gpio_function_en(LED2|LED3|LED4);
-     gpio_output_en(LED2|LED3|LED4);
-     gpio_input_dis(LED2|LED3|LED4);
-
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 
 #if(MCU_CORE_B91)
         pwm_set_pin(PWM_PIN);

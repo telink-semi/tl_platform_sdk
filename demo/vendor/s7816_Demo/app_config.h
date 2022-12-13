@@ -29,10 +29,17 @@
 extern "C" {
 #endif
 
+#if(MCU_CORE_B92)
+#define LED1            GPIO_PD0
+#define LED2            GPIO_PD1
+#define LED3            GPIO_PE6
+#define LED4            GPIO_PE7
+#elif(MCU_CORE_B91)
 #define LED1            GPIO_PB4
 #define LED2            GPIO_PB5
 #define LED3            GPIO_PB6
 #define LED4            GPIO_PB7
+#endif
 
 #define S7816_UART0    0
 #define S7816_UART1    1
@@ -46,7 +53,7 @@ extern "C" {
 #define S7816_CLK_PIN    S7817_CLK_PA0
 #elif(MCU_CORE_B92)
 #define S7816_TRX_PIN    GPIO_PB3
-#define S7816_VCC_PIN    GPIO_PE0
+#define S7816_VCC_PIN    GPIO_PB4
 #define S7816_RST_PIN    GPIO_PB1
 #define S7816_CLK_PIN    GPIO_PA0
 #endif

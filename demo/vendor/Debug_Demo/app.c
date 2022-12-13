@@ -24,26 +24,20 @@
  *******************************************************************************************************/
 #include "printf.h"
 #include "app_config.h"
-#if(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-#elif(MCU_CORE_B92)
-
-#elif(MCU_CORE_B93)
-#define LED1            GPIO_PD3
-#define LED2            GPIO_PD2
-#define LED3            GPIO_PD1
-#define LED4            GPIO_PD5
-#define LED5            GPIO_PD0
-#define LED6            GPIO_PD4
-#endif
 void user_init()
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-	gpio_input_dis(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 #if(DEBUG_BUS==USB_PRINT_DEBUG_ENABLE)
 	usb_set_pin_en();
 	usbhw_set_printer_threshold(1);
@@ -66,7 +60,10 @@ void user_init()
 void main_loop (void)
 {
 	printf(" Hello world! \n");
-	gpio_toggle(LED1|LED2|LED3|LED4);
+	gpio_toggle(LED1);
+	gpio_toggle(LED2);
+	gpio_toggle(LED3);
+	gpio_toggle(LED4);
 	delay_ms(50);
 }
 

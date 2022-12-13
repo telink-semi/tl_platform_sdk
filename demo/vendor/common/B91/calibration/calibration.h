@@ -48,6 +48,10 @@
 #define FLASH_ADC_VREF_CALIB_ADDR_2M	0x1fe0c0
 #endif
 
+#ifndef FLASH_ADC_VREF_CALIB_ADDR_4M
+#define FLASH_ADC_VREF_CALIB_ADDR_4M	0x3fe0c0
+#endif
+
 #ifndef FLASH_CAP_VALUE_ADDR_64K
 #define FLASH_CAP_VALUE_ADDR_64K		0xe000
 #endif
@@ -68,6 +72,10 @@
 #define FLASH_CAP_VALUE_ADDR_2M			0x1fe000
 #endif
 
+#ifndef FLASH_CAP_VALUE_ADDR_4M
+#define FLASH_CAP_VALUE_ADDR_4M			0x3fe000
+#endif
+
 /**
  * @brief	flash voltage definition
  */
@@ -83,5 +91,21 @@ typedef enum {
  * @return		none.
  */
 void user_read_flash_value_calib(void);
+
+/**
+ * @brief      This function is used to calib ADC 1.2V vref.
+ * @param[in]  velfrom - the calibration value from flash or otp.
+ * @param[in]  addr - the calibration value address of flash or otp.
+ * @return 	   1 - the calibration value update, 0 - the calibration value is not update.
+ */
+unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr);
+
+/**
+ * @brief      This function serves to update rf frequency offset.
+ * @param[in]  velfrom - the calibration value from flash or otp.
+ * @param[in]  addr - the frequency offset value address of flash or otp.
+ * @return 	   1 - the frequency offset update, 0 - the frequency offset is not update.
+ */
+unsigned char user_calib_freq_offset(user_calib_from_e velfrom, unsigned int addr);
 
 #endif /* VENDOR_COMMON_CALIBRATION_H_ */

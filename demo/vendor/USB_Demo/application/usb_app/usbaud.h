@@ -22,7 +22,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#pragma once
+#ifndef USBAUD_H_
+#define USBAUD_H_
 #include "driver.h"
 #include "../usbstd/HIDClassCommon.h"
 #include "../usbstd/HIDReportData.h"
@@ -113,3 +114,4 @@ void usb_audio_irq_data_process(void);
 }
 #endif
 
+#endif

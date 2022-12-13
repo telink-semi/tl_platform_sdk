@@ -856,9 +856,8 @@ void usb_handle_irq(void)
 	usb_cdc_irq_data_process();
 #endif
 
-
 #if(USB_MIC_ENABLE&&(USB_MODE==AISO)&&MCU_CORE_B92)
-	reg_usb_ep_ptr(USB_EDP_MIC)=USB_MIC_CHANNELS_LEN;//16k stereo
+	reg_usb_ep_ptr(USB_EDP_MIC)=USB_MIC_CHANNELS_LEN;
 #endif
 
 
@@ -896,13 +895,17 @@ void usb_handle_irq(void)
 			reg_usb_ep_ctrl(i) = 0;
 			edp_toggle[i]=0;
 		}
-
 #if(USB_MIC_ENABLE&&(USB_MODE==AISO)&&MCU_CORE_B92)
 		reg_usb_ep_ctrl(USB_EDP_MIC) = FLD_USB_EP_EOF_ISO|FLD_USB_EP_BUSY;
 #endif
 #if(USB_SPEAKER_ENABLE&&(USB_MODE==AISO)&&MCU_CORE_B92)
 		reg_usb_ep_ctrl(USB_EDP_SPEAKER) =  FLD_USB_EP_EOF_ISO|FLD_USB_EP_BUSY;
+#elif(USB_SPEAKER_ENABLE)
+		reg_usb_ep_ctrl(USB_EDP_SPEAKER) = FLD_USB_EP_BUSY;
 #endif
+
+
+
 #if (USB_CDC_ENABLE)
 //must add ,if endpoint is reset and ack is not set,CDC out_irq will not be generated.
 //The packet capture phenomenon of the USB analyzer is: device does not return ack.(kaixin modify,2020-01-15)

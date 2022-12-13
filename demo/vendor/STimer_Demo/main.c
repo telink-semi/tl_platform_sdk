@@ -27,7 +27,9 @@
 
 extern void user_init(void);
 extern void main_loop (void);
+extern volatile unsigned int timer_up_32k_tick;
 
+#if (STIMER_MODE == STIMER_IRQ)
 _attribute_ram_code_sec_ void stimer_irq_handler()
 {
 	if(stimer_get_irq_status(FLD_SYSTEM_IRQ))
@@ -37,6 +39,30 @@ _attribute_ram_code_sec_ void stimer_irq_handler()
 		stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
 	}
 }
+
+#elif ((STIMER_MODE == STIMER_IRQ_D25) || (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
+_attribute_ram_code_sec_ void stimer_irq_handler()
+{
+	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
+	{
+		gpio_toggle(LED2);
+		stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F);
+		stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
+	}
+}
+
+#elif (STIMER_MODE == STIMER_SET_32K_TICK)
+_attribute_ram_code_sec_ void pm_irq_handler()
+{
+	if(analog_read_reg8(0x64)&(BIT(2)))
+	{
+		gpio_toggle(LED2);
+		timer_up_32k_tick = 1;
+	}
+	analog_write_reg8(0x64, 0xff);
+}
+
+#endif
 
 /**
  * @brief		This is main function
@@ -51,9 +77,9 @@ int main(void)
 	user_read_flash_value_calib();
 	CCLK_24M_HCLK_24M_PCLK_24M;
 #elif(MCU_CORE_B92)
-	sys_init();
-#elif(MCU_CORE_B93)
-	sys_init();
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
+	CCLK_24M_HCLK_24M_PCLK_24M;
 #endif
 
 	user_init();

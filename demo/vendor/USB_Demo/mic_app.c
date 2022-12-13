@@ -26,21 +26,21 @@
 #if(USB_DEMO_TYPE==USB_MICROPHONE)
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
+#define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
+
+#define	MIC_BUFFER_SIZE			2048
+
+
+unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
+extern volatile unsigned int pm_top_reset_tick;
+extern volatile unsigned int charger_clear_vbus_detect_flag;
 #if(MCU_CORE_B91)
 #define AUDIO_LINE_IN            0
 #define AUDIO_AMIC_IN            1
 #define AUDIO_DMIC_IN            2
 
 #define  AUDIO_IN_MODE          AUDIO_AMIC_IN
-
-#define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
 #define MIC_MONO_STEREO       ((MIC_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
-
-#define	MIC_BUFFER_SIZE			2048
-#define MIC_DMA_CHN             DMA2
-
-
-unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
 
 volatile unsigned int		iso_in_w = 0;
 volatile unsigned int  	     iso_in_r = 0;
@@ -109,8 +109,15 @@ void user_init(void)
 #if(CHIP_VER_A0==CHIP_VER)
 	audio_set_codec_supply(CODEC_2P8V);
 #endif
-	gpio_function_en(LED1|LED2|LED3|LED4);
-    gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+    gpio_output_en(LED1);
+    gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+
 	reg_usb_ep6_buf_addr = 0x40;		// 192 max
 	reg_usb_ep7_buf_addr = 0x20;		// 32
 	reg_usb_ep8_buf_addr = 0x00;
@@ -154,32 +161,21 @@ void main_loop (void)
 #elif(MCU_CORE_B92)
 #define AUDIO_LINE_IN            0
 #define AUDIO_AMIC_IN            1
-#define AUDIO_DMIC_IN            2
-
-#define  AUDIO_IN_MODE          AUDIO_DMIC_IN
-
-#define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
-#define MIC_MONO_STEREO       ((MIC_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
-
-#define	MIC_BUFFER_SIZE			2048
-#define MIC_DMA_CHN             DMA0
+#define AUDIO_DMIC0_IN           2
+#define DMIC0_DMIC1_IN           3
+#define AUDIO_IN_MODE          AUDIO_DMIC0_IN
 
 
-#define DMIC_DEC0              0//only dec0 stored in the buff
-#define DMIC_DEC1              1//only dec1 stored in the buff
-#define DMIC_2_DEC_FOR_DEC0    2//The data of dec0 and dec1 are stored in one buff,only process dec0 data( the second 4bytes in the buff).
-#define DMIC_2_DEC_FOR_DEC1    3//The data of dec0 and dec1 are stored in one buff,only process dec1 data( the  first 4bytes in the buff).
+#if(AUDIO_IN_MODE ==DMIC0_DMIC1_IN)
+#define TX_DATA_FOR_DMIC0        0 //The data of DMIC0 and DMIC1 are stored in one buff,only process DMIC0  data( the second 4bytes in the buff).
+#define TX_DATA_FOR_DMIC1        1 //The data of DMIC0 and DMIC1 are stored in one buff,only process DMIC1 data( the first 4bytes in the buff).
 
-#define DMIC_INPUT_MODE   DMIC_DEC0
-
-
+#define USB_TX_MODE             TX_DATA_FOR_DMIC0
+#endif
 
 
-unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
-unsigned short		iso_in_buff1[MIC_BUFFER_SIZE];
-volatile unsigned int		iso_in_w = 0;
 volatile unsigned int  	     iso_in_r = 0;
-unsigned int		num_iso_in = 0;
+unsigned int		         num_iso_in = 0;
 /**
  * @brief     This function serves to send data to USB. only adaptive mono 16bit
  * @param[in] audio_rate - audio rate. This value is matched with usb_default.h :MIC_SAMPLE_RATE.
@@ -194,13 +190,12 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 	{
 		case 	AUDIO_8K:	length = 8* MIC_CHANNLE_COUNT;break;
 		case	AUDIO_16K:	length = 16*MIC_CHANNLE_COUNT;break;
-		//case	AUDIO_24K:  length = 24*MIC_CHANNLE_COUNT;break;
 		case	AUDIO_32K:	length = 32*MIC_CHANNLE_COUNT;break;
 		case	AUDIO_48K:	length = 48*MIC_CHANNLE_COUNT;break;
 		default:			length = 16*MIC_CHANNLE_COUNT;break;
 	}
 
-#if (DMIC_INPUT_MODE==DMIC_2_DEC_FOR_DEC1)//dec1  codec fifo0 4 dmic
+#if ((AUDIO_IN_MODE==DMIC0_DMIC1_IN)&&(USB_TX_MODE==TX_DATA_FOR_DMIC1))//process DMIC1 data
 	for (unsigned char i=0; i<length ; i++)
 		{
 			short md=0;
@@ -225,7 +220,7 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 			reg_usb_ep7_dat = md >>8;
 		}
 
-#elif(DMIC_INPUT_MODE==DMIC_2_DEC_FOR_DEC0)//dec 0
+#elif(AUDIO_IN_MODE==DMIC0_DMIC1_IN&&(USB_TX_MODE==TX_DATA_FOR_AMIC))//process AMIC data
 
 		for (unsigned char i=0; i<length ; i++)
 		{
@@ -252,17 +247,17 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 			reg_usb_ep7_dat = md >>8;
 		}
 
-#endif
 
-#if (!((DMIC_INPUT_MODE==DMIC_2_DEC_FOR_DEC0)||((DMIC_INPUT_MODE==DMIC_2_DEC_FOR_DEC1))))
+
+#else
 	for (unsigned char i=0; i<length ; i++)
 		{
 			short md = iso_in_buff[iso_in_r++ &(MIC_BUFFER_SIZE-1)];
 			reg_usb_ep7_dat = md;
 			reg_usb_ep7_dat = md >>8;
 		}
-#endif
 
+#endif
 	 usbhw_data_ep_ack(USB_EDP_MIC);
 }
 
@@ -280,7 +275,7 @@ _attribute_ram_code_sec_noinline_ void  usb_endpoint_irq_handler (void)
 		/////// get MIC input data ///////////////////////////////
 		audio_tx_data_to_usb(MIC_SAMPLING_RATE);
 		num_iso_in++;
-		if ((num_iso_in & 0x7f) == 0)		gpio_toggle(LED1);
+		if ((num_iso_in & 0x7f) == 0)		gpio_toggle(LED2);
 	}
 }
 #endif
@@ -291,101 +286,184 @@ volatile signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)))
 
 void user_init(void)
 {
-	   reg_usb_ep7_buf_addr = 0x00;//must to trigger it
-	    reg_usb_ep_max_size = (192>> 3);
-	gpio_function_en(LED1|LED2|LED3|LED4);
-    gpio_output_en(LED1|LED2|LED3|LED4);
-   // usbhw_set_ep_addr(USB_EDP_MIC,0x3c0);
+    reg_usb_ep7_buf_addr = 0x00;//must to trigger it
+	reg_usb_ep_max_size = (192>> 3);
+	gpio_function_en(LED1);
+    gpio_output_en(LED1);
 	//1.enable USB DP pull up 1.5k
 	usb_set_pin_en();
 	//2.enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device)
 	usb_init_interrupt();
-	//3.enable global interrupt
 #if (USB_MODE==INT)
+#define FIFO_NUM          FIFO0
+#define MIC_DMA_CHN       DMA2
+
+	//3.enable global interrupt
 	core_interrupt_enable();
 	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
 
 #if(AUDIO_IN_MODE==AUDIO_LINE_IN)
-
+	audio_codec_stream0_input_t audio_codec_input =
+	{
+		.input_src = LINE_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+	audio_codec_init();
+	audio_codec_stream0_input_init(&audio_codec_input);
+	audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
+	audio_rx_dma_en(audio_codec_input.dma_num);
 #elif(AUDIO_IN_MODE==AUDIO_AMIC_IN)
+	audio_codec_stream0_input_t audio_codec_input =
+	{
+		.input_src = AMIC_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+    audio_codec_init();
+    audio_codec_stream0_input_init(&audio_codec_input);
+	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
+	audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
+	audio_rx_dma_en(audio_codec_input.dma_num);
 
-#elif(AUDIO_IN_MODE==AUDIO_DMIC_IN)
+#elif(AUDIO_IN_MODE==AUDIO_DMIC0_IN)
+	audio_codec_stream0_input_t audio_codec_dimc0_input =
+	{
+		.input_src	 = DMIC_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO0,
+		.data_width = CODEC_BIT_16_DATA,
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+		 /****dmic input ****/
+	audio_codec_init();
+	audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
+	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
+	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
+	audio_rx_dma_chain_init(audio_codec_dimc0_input.fifo_num,audio_codec_dimc0_input.dma_num,(unsigned short*)audio_codec_dimc0_input.data_buf,audio_codec_dimc0_input.data_buf_size);
+	audio_rx_dma_en(audio_codec_dimc0_input.dma_num);
+#elif(AUDIO_IN_MODE==DMIC0_DMIC1_IN)
+	audio_codec_stream0_input_t audio_codec_dimc0_input =
+	{
+		.input_src = DMIC_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,//msut 16 bit
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+	 audio_codec_stream1_input_t audio_codec_dimc1_input =
+	 {
+		.input_src	 = DMIC_STREAM0_STREAM1_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,//msut 16 bit
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
 
-
-#if (DMIC_INPUT_MODE==DMIC_DEC0)
-	audio_set_codec_clk(1,16);
-	reg_codec_adc_1m_clk_ctr|=FLD_AUDIO_CODEC_DMIC_CLK_MODE;
-	audio_set_codec_dec0_sample_rate(MIC_SAMPLING_RATE);
-    audio_set_codec_dec0_path(1,1,DMIC_INPUT);
-	audio_data_fifo0_path_sel(CODEC_DEC0_IN_FIFO,OUT_NO_USE);
-	audio_dec0_in_mux_config(CODEC_BIT_16_STEREO,CODEC_BIT_16_STEREO);
-	audio_set_dec0_vol(CODEC_IN_D_GAIN_42_DB);//dec0  codec vol
-	audio_set_dmic0_pin(GPIO_PA0,GPIO_PA1);
-	audio_rx_dma_chain_init(DMA0,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-#elif (DMIC_INPUT_MODE==DMIC_DEC1)
-	audio_set_codec_clk(1,16);
-	audio_set_codec_dec1_sample_rate(AUDIO_32K);
-    audio_set_codec_dec1_path(1,1);
-	audio_data_fifo0_path_sel(CODEC_DEC1_IN_FIFO,OUT_NO_USE);
-	audio_dec1_in_mux_config(CODEC_BIT_16_STEREO,CODEC_BIT_16_STEREO);
-	audio_set_dec1_vol(CODEC_IN_D_GAIN_42_DB);//dec1 codec vol
-	audio_set_dmic1_pin(GPIO_PA0,GPIO_PA1);
-	audio_rx_dma_chain_init(DMA0,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-#elif ((DMIC_INPUT_MODE==DMIC_2_DEC_FOR_DEC0)||(DMIC_INPUT_MODE==DMIC_2_DEC_FOR_DEC1))
-	audio_set_codec_clk(1,16);
-	reg_codec_adc_1m_clk_ctr|=FLD_AUDIO_CODEC_DMIC_CLK_MODE;
-	audio_set_codec_dec0_sample_rate(MIC_SAMPLING_RATE);
-    audio_set_codec_dec0_path(1,1,DMIC_INPUT);
-	audio_set_codec_dec1_sample_rate(MIC_SAMPLING_RATE);
-    audio_set_codec_dec1_path(1,1);
-	audio_data_fifo0_path_sel(CODEC_DEC1_IN_FIFO,OUT_NO_USE);
-	audio_dec0_in_mux_config(CODEC_BIT_16_STEREO,CODEC_BIT_16_STEREO);
-	audio_dec1_in_mux_config(CODEC_BIT_16_STEREO_DEC0_DEC1,CODEC_BIT_16_STEREO_DEC0_DEC1);
-	audio_set_dec0_vol(CODEC_IN_D_GAIN_42_DB);//dec0  codec vol
-	audio_set_dec1_vol(CODEC_IN_D_GAIN_42_DB);//dec1 codec vol
-	audio_set_dmic0_pin(GPIO_PA0,GPIO_PA1);
-	audio_set_dmic1_pin(GPIO_PA2,GPIO_PA3);
-	audio_rx_dma_chain_init(DMA0,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
+	audio_codec_init();
+	audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
+	audio_set_stream1_dmic_pin(GPIO_PD2,GPIO_PD7,GPIO_PD6);
+	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
+	audio_codec_stream1_input_init(&audio_codec_dimc1_input);
+	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
+	audio_set_stream1_dig_gain(CODEC_IN_D_GAIN1_30_DB);
+	audio_rx_dma_chain_init(audio_codec_dimc1_input.fifo_num,audio_codec_dimc1_input.dma_num,(unsigned short*)audio_codec_dimc1_input.data_buf,audio_codec_dimc1_input.data_buf_size);
+	audio_rx_dma_en(MIC_DMA_CHN);
 
 #endif
+#elif (USB_MODE==AISO)
+#define FIFO_NUM              FIFO0
+#define MIC_DMA_CHN             DMA2
+#define AISO_DMA_CHN            DMA3
+#if(AUDIO_IN_MODE==AUDIO_LINE_IN)
+	 audio_codec_stream0_input_t audio_codec_input =
+	 {
+		.input_src = LINE_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+	audio_codec_init();
+	audio_codec_stream0_input_init(&audio_codec_input);
+	audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
+#elif(AUDIO_IN_MODE==AUDIO_AMIC_IN)
+	 audio_codec_stream0_input_t audio_codec_input =
+	 {
+		.input_src = AMIC_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+	audio_codec_init();
+	audio_codec_stream0_input_init(&audio_codec_input);
+	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
+	audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
+#elif(AUDIO_IN_MODE==AUDIO_DMIC0_IN)
+	audio_codec_stream0_input_t audio_codec_dimc0_input =
+	{
+		.input_src	 = DMIC_STREAM0_STEREO,
+		.sample_rate = MIC_SAMPLING_RATE,
+		.fifo_num = FIFO_NUM,
+		.data_width = CODEC_BIT_16_DATA,
+		.dma_num = MIC_DMA_CHN,
+		.data_buf = iso_in_buff,
+		.data_buf_size = sizeof(iso_in_buff),
+	};
+	audio_codec_init();
+	audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
+	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
+	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
+	audio_rx_dma_chain_init(audio_codec_dimc0_input.fifo_num,audio_codec_dimc0_input.dma_num,(unsigned short*)audio_codec_dimc0_input.data_buf,audio_codec_dimc0_input.data_buf_size);
 #endif
-#else
-#if (DMIC_INPUT_MODE==DMIC_DEC0)
-	audio_set_codec_clk(1,16);
-    audio_set_codec_dec0_sample_rate(AUDIO_16K);
-    audio_set_codec_dec0_path(1,1,DMIC_INPUT);
-	audio_data_fifo0_path_sel(CODEC_DEC0_IN_FIFO,USB_AISO_OUT_FIFO);
-	audio_dec0_in_mux_config(CODEC_BIT_16_STEREO,CODEC_BIT_16_STEREO);
-	audio_set_dec0_vol(CODEC_IN_D_GAIN_42_DB);//dec0  codec vol
-	audio_set_dmic0_pin(GPIO_PA0,GPIO_PA1);
-	audio_rx_dma_chain_init(DMA0,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-	while (audio_get_rx_wptr(FIFO0)<64);
-	audio_tx_dma_chain_init(DMA1,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-#elif (DMIC_INPUT_MODE==DMIC_DEC1)
-	audio_set_codec_clk(1,16);
-	audio_set_codec_dec1_sample_rate(AUDIO_16K);
-    audio_set_codec_dec1_path(1,1);
-	audio_data_fifo0_path_sel(CODEC_DEC1_IN_FIFO,USB_AISO_OUT_FIFO);
-	audio_dec1_in_mux_config(CODEC_BIT_16_STEREO,CODEC_BIT_16_STEREO);
-	audio_set_dec1_vol(CODEC_IN_D_GAIN_42_DB);//dec1 codec vol
-	audio_set_dmic1_pin(GPIO_PA0,GPIO_PA1);
-	audio_rx_dma_chain_init(DMA0,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-	while (audio_get_rx_wptr(FIFO0)<64);
-	audio_tx_dma_chain_init(DMA1,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2,FIFO0);
-#endif
-
+	audio_data_fifo_output_path_sel(FIFO_NUM,USB_AISO_OUT_FIFO);
+	audio_tx_dma_chain_init(FIFO_NUM,AISO_DMA_CHN,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_rx_dma_en(MIC_DMA_CHN);
+	audio_tx_dma_en(AISO_DMA_CHN);
 #endif
 }
-unsigned int t=0;
+unsigned int t1=0;
 void main_loop (void)
 {
+	/**
+	 * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+	 *              otherwise the MCU will be reset after 8s.
+	*/
+#if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+	if(charger_get_vbus_detect_status()){
+	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
+	   {
+		  charger_clear_vbus_detect_status();//clear reset
+		  charger_clear_vbus_detect_flag = 1;
+	   }
+    }
+#endif
 	usb_handle_irq();
 
-	if(clock_time_exceed(t,500000))
+	if(clock_time_exceed(t1,500000))
 		{
-			  t = stimer_get_tick()|1;
-			 gpio_toggle(LED4);
+		t1 = stimer_get_tick()|1;
+			 gpio_toggle(LED1);
 
 		  }
 }

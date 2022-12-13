@@ -68,9 +68,12 @@ hspi_config_t hspi_xip_config = {
 _attribute_ram_code_sec_noinline_ void user_init()
 {
 	delay_ms(2000);	//must
-	gpio_function_en(LED2 | LED4);
-	gpio_output_en(LED2 | LED4); 		//enable output
-	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	gpio_set_high_level(LED4);              	    //LED1  On
 	gpio_set_low_level(LED2);
 
@@ -117,9 +120,12 @@ hspi_config_t hspi_xip_config = {
 _attribute_ram_code_sec_noinline_ void user_init()
 {
 	delay_ms(500);	//must
-	gpio_function_en(LED2 | LED4);
-	gpio_output_en(LED2 | LED4); 		//enable output
-	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	gpio_set_high_level(LED4);              	    //LED1  On
 	gpio_set_low_level(LED2);
 
@@ -166,9 +172,12 @@ hspi_config_t hspi_xip_config = {
 _attribute_ram_code_sec_noinline_ void user_init()
 {
 	delay_ms(500);	//must
-	gpio_function_en(LED2 | LED4);
-	gpio_output_en(LED2 | LED4); 		//enable output
-	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	gpio_set_high_level(LED4);              	    //LED1  On
 	gpio_set_low_level(LED2);
 
@@ -218,9 +227,12 @@ hspi_config_t hspi_xip_config = {
 _attribute_ram_code_sec_noinline_ void user_init()
 {
 	delay_ms(500);	//must
-	gpio_function_en(LED2 | LED4);
-	gpio_output_en(LED2 | LED4); 		//enable output
-	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	gpio_set_high_level(LED4);              	    //LED1  On
 	gpio_set_low_level(LED2);
 
@@ -273,9 +285,12 @@ hspi_config_t hspi_xip_config = {
 _attribute_ram_code_sec_noinline_ void user_init()
 {
 	delay_ms(500);	//must
-	gpio_function_en(LED2 | LED4);
-	gpio_output_en(LED2 | LED4); 		//enable output
-	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	gpio_set_high_level(LED4);              	    //LED1  On
 	gpio_set_low_level(LED2);
 
@@ -333,9 +348,12 @@ hspi_config_t hspi_xip_config = {
 _attribute_ram_code_sec_noinline_ void user_init()
 {
 	delay_ms(500);	//must
-	gpio_function_en(LED2 | LED4);
-	gpio_output_en(LED2 | LED4); 		//enable output
-	gpio_input_dis(LED2 | LED4);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	gpio_set_high_level(LED4);              	    //LED1  On
 	gpio_set_low_level(LED2);
 

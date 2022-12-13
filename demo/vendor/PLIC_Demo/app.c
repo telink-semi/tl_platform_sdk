@@ -35,9 +35,22 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 #define ACCESS_CODE        0x29417671//0xd6be898e// 0x898e898e//
 void user_init(void)
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-	gpio_set_low_level(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
+	gpio_set_low_level(LED1);
+	gpio_set_low_level(LED2);
+	gpio_set_low_level(LED3);
+	gpio_set_low_level(LED4);
 	plic_preempt_feature_en();
 	core_interrupt_enable();
 	plic_set_priority(IRQ1_SYSTIMER,IRQ_PRI_LEV3);
@@ -277,5 +290,61 @@ void main_loop(void)
 	delay_us(1000);//1ms
 	gpio_toggle(LED1);
 
+}
+
+
+#elif(PLIC_DEMO ==WFI_DEMO)
+#include "printf.h"
+/***
+1.The function of the demo: entry WFI mode and then awoken by 1s stimer interrupt.
+2*there are two awoken modes:
+  1).When the core is awoken by the taken stimer interrupt and global interrupts enable, it will resume and start to execute from the stimer interrupt service routine.
+  2).When the core is awoken by the pending stimer interrupt and global interrupts disable,it will resume and start to execute from the instruction after the WFI instruction.
+***/
+# define WFI_MODE_GLOBAL_INTR_EN    0
+# define WFI_MODE_GLOBAL_INTR_DIS   1
+# define WFI_AWOKEN_MODE   WFI_MODE_GLOBAL_INTR_EN
+volatile unsigned int current_pc=0;
+void user_init(void)
+{
+	core_interrupt_enable();
+#if	(WFI_AWOKEN_MODE== WFI_MODE_GLOBAL_INTR_DIS)
+	core_interrupt_disable();//global interrupts disable ,no interrupt
+#endif
+	plic_interrupt_enable(IRQ1_SYSTIMER);
+	stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
+	stimer_set_irq_mask(FLD_SYSTEM_IRQ);
+	current_pc=core_get_current_pc();//only for watch current_pc
+	printf("\r\ncurrent_pc=%4x\r\n",current_pc);
+	printf("\r\nentry wfi mode\r\n");
+
+	core_entry_wfi_mode();//WFI instruction enables the processor to enter the wait-for-interrupt (WFI) mode
+
+#if	(WFI_AWOKEN_MODE== WFI_MODE_GLOBAL_INTR_DIS)
+	/* resume and start to execute from the instruction after the WFI instruction after 1s.*/
+	current_pc=core_get_current_pc();//only for watch current_pc
+	printf("\r\ncurrent_pc=0x%4x\r\n",current_pc);
+	printf("\r\nleave wfi mode from after the WFI instruction \r\n");
+#endif
+}
+_attribute_ram_code_sec_  void stimer_irq_handler()
+{
+#if	(WFI_AWOKEN_MODE== WFI_MODE_GLOBAL_INTR_EN)
+	/* resume and start to execute from the corresponding interrupt service routine.*/
+	current_pc=core_get_current_pc();//only for watch current_pc
+	printf("\r\ncurrent_pc=0x%4x\r\n",current_pc);
+	printf("\r\nleave wfi mode from interrupt service routine \r\n");
+#endif
+	if(stimer_get_irq_status(FLD_SYSTEM_IRQ))
+	{
+		stimer_clr_irq_status(FLD_SYSTEM_IRQ);  //clr irq
+		stimer_set_irq_capture(stimer_get_tick() +SYSTEM_TIMER_TICK_1S);
+		gpio_toggle(LED2);
+	}
+}
+void main_loop(void)
+{
+	delay_ms(500);
+	gpio_toggle(LED1);
 }
 #endif

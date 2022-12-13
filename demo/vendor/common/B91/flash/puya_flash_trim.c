@@ -23,80 +23,13 @@
  *
  *******************************************************************************************************/
 #include "puya_flash_trim.h"
-/**
- * @brief 		This function set GPIO_PF5 as gpio function.
- * @return 		none.
- */
-_attribute_ram_code_sec_noinline_ static void mspi_as_gpio(){
+unsigned char enter_cmd_trim[3]={0xA8,0x8A,0x65};
 
-	gpio_set_high_level(GPIO_PF5);
-	gpio_output_en(GPIO_PF5);
-	gpio_function_en(GPIO_PF5);
-
-}
-/**
- * @brief 		This function set GPIO_PF5 as mspi function.
- * @return 		none.
- */
-_attribute_ram_code_sec_noinline_ static void mspi_as_mspi(){
-
-	gpio_set_low_level(GPIO_PF5);
-	gpio_output_dis(GPIO_PF5);
-	gpio_function_dis(GPIO_PF5);
-}
-/**
- * @brief 		This function serves to enter flash test mode.
- * @return 		none.
- */
-_attribute_ram_code_sec_noinline_ static void flash_enter_test_mode(void)
-{
-	////////////enter test mode//////////////////////////
-	mspi_fm_write_en();
-	mspi_high();
-	delay_us(1);
-	mspi_low();
-	mspi_write(0xA8);
-	mspi_wait();
-
-
-	mspi_high();
-	delay_us(1);
-	mspi_low();
-	mspi_write(0x8A);
-	mspi_wait();
-
-	mspi_high();
-	delay_us(1);
-	mspi_low();
-	mspi_write(0x65);
-	mspi_wait();
-	mspi_high();
-}
-/**
- * @brief 		This function serves to exit flash test mode.
- * @return 		none.
- */
-_attribute_ram_code_sec_noinline_ static void flash_exit_test_mode(void)
-{
-////////////////////////// Exit test mode //////////////////////////////
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-	delay_us(1);
-	BM_CLR(reg_gpio_out(GPIO_PF5), BIT(5));
-	mspi_write(0x66);
-	mspi_wait();
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-	delay_us(1);
-	BM_CLR(reg_gpio_out(GPIO_PF5), BIT(5));
-	mspi_write(0x99);
-	mspi_wait();
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-	mspi_high();
-}
 /**
  * @brief 		This function serves to judge whether flash is in test mode.
  * @return 		none.
  */
-_attribute_ram_code_sec_noinline_ static unsigned char flash_read_status_testmode(void)
+_attribute_ram_code_sec_noinline_ static unsigned char flash_read_status_trim_testmode(void)
 {
 ////////////////read status ///////////////////////////////
 	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
@@ -117,7 +50,7 @@ _attribute_ram_code_sec_noinline_ static unsigned char flash_read_status_testmod
  * @brief 		This function serves to erase 0x1200 in test mode.
  * @return 		none.
  */
-_attribute_ram_code_sec_noinline_ static void flash_erase_testmode(void)
+_attribute_ram_code_sec_noinline_ static void flash_erase_trim_testmode(void)
 {
 ////////////////////// erase //////////////////////////////////////////////////////
 	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
@@ -134,63 +67,22 @@ _attribute_ram_code_sec_noinline_ static void flash_erase_testmode(void)
 	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
 	delay_ms(25);
 }
+
 /**
  * @brief 		This function serves to read flash  in test mode.
  * @return 		none.
  */
-_attribute_ram_code_sec_noinline_ static void flash_read_testmode(unsigned int addr,unsigned long len, unsigned char *buf)
+_attribute_ram_code_sec_noinline_ static void flash_read_trim_testmode(unsigned int addr,unsigned long len, unsigned char *buf)
 {
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-	delay_us(1);
-	BM_CLR(reg_gpio_out(GPIO_PF5), BIT(5));
-	mspi_write(0xD7);
-	mspi_wait();
-	mspi_write(addr>>16);
-	mspi_wait();
-	mspi_write(addr>>8);
-	mspi_wait();
-	mspi_write(addr);
-	mspi_wait();
-
-	mspi_write(0x00);			/* dummy,  to issue clock */
-	mspi_wait();
-	mspi_fm_rd_trig_en();			/* auto mode, mspi_get() automatically triggers mspi_write(0x00) once. */
-	mspi_wait();
-	/* get data */
-	for(unsigned int i = 0; i < len; ++i){
-		*buf++ = mspi_get();
-		mspi_wait();
-	}
-	mspi_fm_rd_trig_dis();			/* off read auto mode */
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-	CLOCK_DLY_5_CYC;
+	flash_read_testmode(0xD7,addr,len,buf);
 }
 /**
  * @brief 		This function serves to write flash  in test mode.
  * @return 		none.
  */
-_attribute_ram_code_sec_noinline_ static void flash_program_testmode(unsigned int addr,unsigned long len, unsigned char *buf)
+_attribute_ram_code_sec_noinline_ static void flash_page_program_trim_testmode(unsigned int addr,unsigned long len, unsigned char *buf)
 {
-//////////////////////  program /////////////////////////////////////////////////////
-
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
-	delay_us(1);
-	BM_CLR(reg_gpio_out(GPIO_PF5), BIT(5));
-	mspi_write(0xD6);
-	mspi_wait();
-
-	mspi_write(addr>>16);
-	mspi_wait();
-	mspi_write(addr>>8);
-	mspi_wait();
-	mspi_write(addr);
-	mspi_wait();
-
-	for(unsigned int i = 0; i < len; ++i){
-		mspi_write(buf[i]);			/* write data */
-		mspi_wait();
-	}
-	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
+	flash_write_testmode(0xD6,addr,len,buf);
 	delay_ms(5);
 }
 _attribute_ram_code_sec_noinline_ static unsigned char flash_trim_ram(void)
@@ -198,15 +90,15 @@ _attribute_ram_code_sec_noinline_ static unsigned char flash_trim_ram(void)
 	unsigned char err_flag= 0;
 	mspi_as_gpio();
 	mspi_fm_data_line(MSPI_SINGLE_LINE);
-	flash_enter_test_mode();
-	unsigned char status = flash_read_status_testmode();
+	flash_enter_test_mode((unsigned char*)enter_cmd_trim);
+	unsigned char status = flash_read_status_trim_testmode();
 	if(status == 0x02)
 	{
 		unsigned char trim_buf[5]={0xEC, 0x9F, 0xEB, 0xFF ,0xCD} ;
 		unsigned char read_buff[5]={0} ;
-		flash_erase_testmode();
-		flash_program_testmode(0x001200,5,trim_buf);
-		flash_read_testmode(0x001200,5,read_buff);
+		flash_erase_trim_testmode();
+		flash_page_program_trim_testmode(0x001200,5,trim_buf);
+		flash_read_trim_testmode(0x001200,5,read_buff);
         for(int i=0;i<5;i++)
         {
         	if(trim_buf[i]!=read_buff[i])
@@ -235,13 +127,13 @@ _attribute_ram_code_sec_noinline_ static unsigned char flash_trim_check_ram(void
 	unsigned char err_flag= 0;
 	mspi_as_gpio();
 	mspi_fm_data_line(MSPI_SINGLE_LINE);
-	flash_enter_test_mode();
-	unsigned char status = flash_read_status_testmode();
+	flash_enter_test_mode((unsigned char *)enter_cmd_trim);
+	unsigned char status = flash_read_status_trim_testmode();
 	if(status == 0x02)
 	{
 		unsigned char trim_buf[5]={0xEC, 0x9F, 0xEB, 0xFF ,0xCD} ;
 		unsigned char read_buff[5]={0} ;
-		flash_read_testmode(0x001200,5,read_buff);
+		flash_read_trim_testmode(0x001200,5,read_buff);
         for(int i=0;i<5;i++)
         {
         	if(trim_buf[i]!=read_buff[i])

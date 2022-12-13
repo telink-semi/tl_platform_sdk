@@ -64,15 +64,13 @@ _attribute_ram_code_sec_noinline_  void dr_putchar(unsigned char byte){
 		gpio_set_high_level(DEBUG_INFO_TX_PIN);
 		init_flag = 0;
 	}
-#if(MCU_CORE_B93)
-	unsigned short tmp_bit0 = (DEBUG_INFO_TX_PIN & 0xff)<<8;
-	unsigned short tmp_bit1 = DEBUG_INFO_TX_PIN & 0xff;
-	unsigned short bit[10] = {0};
-#else
+
+#if(MCU_CORE_B91||MCU_CORE_B92)
 	unsigned char tmp_bit0 = TX_PIN_OUTPUT_REG & (~(DEBUG_INFO_TX_PIN & 0xff));
 	unsigned char tmp_bit1 = TX_PIN_OUTPUT_REG | (DEBUG_INFO_TX_PIN & 0xff);
-	unsigned char bit[10] = {0};
 #endif
+
+	unsigned char bit[10] = {0};
 
 	bit[0] = tmp_bit0;
 	bit[1] = (byte & 0x01)? tmp_bit1 : tmp_bit0;

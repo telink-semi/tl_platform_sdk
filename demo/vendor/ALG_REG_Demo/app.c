@@ -44,7 +44,9 @@ void user_init(void)
 	gpio_function_en(LED2);
 	gpio_output_en(LED1);
 	gpio_output_en(LED2);
+	gpio_set_low_level(LED1);
 	gpio_set_low_level(LED2);
+
 #if(ALG_MODE == ALG_BYTE_MODE)
 	gpio_toggle(LED2);
 	analog_write_reg8(0x38, 0x11);

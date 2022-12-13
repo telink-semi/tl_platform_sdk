@@ -51,13 +51,12 @@
 
 #elif (DEBUG_BUS==UART_PRINT_DEBUG_ENABLE)
 
-#define  PRINT_BAUD_RATE             		1000000//1M baud rate,should Not bigger than 1Mb/s
-#define  DEBUG_INFO_TX_PIN           		GPIO_PD0//uart tx pin
-#if(MCU_CORE_B93)
-#define  TX_PIN_OUTPUT_REG				    reg_gpio_out_set_clear(DEBUG_INFO_TX_PIN)
-#else
+#define  PRINT_BAUD_RATE             		115200//1M baud rate,should Not bigger than 1Mb/s
+#define  DEBUG_INFO_TX_PIN           		GPIO_PC4//uart tx pin
+#if(MCU_CORE_B91|| MCU_CORE_B92)
 #define  TX_PIN_OUTPUT_REG				    reg_gpio_out(DEBUG_INFO_TX_PIN)
 #endif
+
 #define	 BIT_INTERVAL	(SYSTEM_TIMER_TICK_1S/PRINT_BAUD_RATE)
 
 #endif

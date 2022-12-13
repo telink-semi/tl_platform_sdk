@@ -33,14 +33,14 @@
 #include "StdRequestType.h"
 #include "StdDescriptors.h"
 #include "../../../../vendor/USB_Demo/usb_default.h"
-
+#include "usbdesc.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 // interface id
-//typedef
+typedef
 enum {
 
 #if USB_CDC_ENABLE
@@ -102,6 +102,12 @@ enum {
 #if(USB_MIC_ENABLE)
 #define USB_MIC_CHANNELS_LEN   (MIC_CHANNLE_COUNT*(MIC_SAMPLE_RATE*MIC_RESOLUTION_BIT/1000/8))//=20
 #endif
+
+#if(USB_SPEAKER_ENABLE)
+#define USB_SPK_CHANNELS_LEN   (SPK_CHANNLE_COUNT*(SPEAKER_SAMPLE_RATE*SPK_RESOLUTION_BIT/1000/8))
+#endif
+
+
 
 enum {
 	USB_AUDIO_FORMAT_UNKNOWN = 0,

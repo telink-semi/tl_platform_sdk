@@ -228,5 +228,29 @@ static inline unsigned int core_get_mepc(void)
 {
 	return read_csr(NDS_MEPC);
 }
+/**
+ * @brief 	 This function serves to mcu entry wfi(Wait-For-Interrupt) mode similar to stall mcu.
+ * @return	 none
+ * @Note:	 there are two awoke modes by interrupt:
+ *           1).When the processor is awoken by a pending interrupt and global interrupts enable(mstatus.MIE is enabled),it will resume and start to execute from the corresponding interrupt service routine.
+ *           2).When the core is awoken by a pending interrupt and global interrupts enable (mstatus.MIE is disabled),it will resume and start to execute from the instruction after the WFI instruction.
+ */
+static inline void  core_entry_wfi_mode(void)
+{
+ /* Interrupts disabled by the mie CSR will not be able to wake up the processor.
+   However,the processor can be awoken by these interrupts regardless the value of the global interrupt enable bit (mstatus.MIE)*/
+   __asm__ __volatile__("wfi");
 
+}
+
+/**
+ * @brief     This function serves to get current pc.
+ * @return    current pc
+ */
+static inline  unsigned int core_get_current_pc(void)
+{
+	unsigned int current_pc=0;
+	__asm__ ("auipc %0, 0":"=r"(current_pc)::"a0");
+	return current_pc;
+}
 #endif

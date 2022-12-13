@@ -38,11 +38,15 @@
 
 void user_init(void)
 {
-	gpio_function_en(LED2|LED3|LED4);
-
-	gpio_output_en(LED2|LED3|LED4);
-
-	gpio_input_dis(LED2|LED3|LED4);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 
 	pwm_set_pin(PWM_PIN,PWM_FUNC);
 	pwm_set_pin(PWM_PIN1,PWM_FUNC1);
@@ -69,7 +73,7 @@ void user_init(void)
 
 	pwm_set_tmax(PWM_ID,50 * CLOCK_PWM_CLOCK_1US);
 
-	pwm_set_shift_time(PWM_ID1,PWM_PCLK_SPEED*(50 * CLOCK_PWM_CLOCK_1US/2));
+	pwm_set_shift_time(PWM_ID1,CLOCK_PWM_CLOCK_1US * 50/2);
 
 
 #endif

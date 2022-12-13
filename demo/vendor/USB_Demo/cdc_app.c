@@ -29,6 +29,8 @@
 
 extern unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];
 extern unsigned short usb_cdc_data_len;
+extern volatile unsigned int pm_top_reset_tick;
+extern volatile unsigned int charger_clear_vbus_detect_flag;
 void user_init(void)
 {
 	//1.enable USB DP pull up 1.5k
@@ -46,6 +48,20 @@ void user_init(void)
 
 void main_loop (void)
 {
+	/**
+	 * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+	 *              otherwise the MCU will be reset after 8s.
+	*/
+#if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+	if(charger_get_vbus_detect_status()){
+	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
+	   {
+		  charger_clear_vbus_detect_status();//clear reset
+		  charger_clear_vbus_detect_flag = 1;
+	   }
+    }
+#endif
+
 	usb_handle_irq();
 
 	if(usb_cdc_data_len!=0)

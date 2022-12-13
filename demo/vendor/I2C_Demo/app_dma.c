@@ -32,6 +32,16 @@
 #define     I2C_SLAVE_DEVICE			2   //i2c slave demo
 #define     I2C_DEVICE					I2C_MASTER_DEVICE
 
+#if(MCU_CORE_B92)
+/*
+ * If the slave supports stretch when tx_fifo is 0, and the master supports strech, then the slave can configure tx dma by referring to the demo with stretch enabled,
+ * otherwise, refer to the demo of stretch dis. when the master read, the slave needs to fill data in advance
+ */
+#define     I2C_STRECH_EN             1
+#define     I2C_STRECH_DIS            2
+#define     I2C_STRECH_MODE           I2C_STRECH_EN
+#endif
+
 
 #define     I2C_CLK_SPEED				200000 //i2c clock 200K.
 
@@ -47,23 +57,36 @@ volatile unsigned char i2c_tx_buff[BUFF_DATA_LEN_DMA] __attribute__((aligned(4))
 #if(MCU_CORE_B91)
 #define  DMA_REV_LEN    RX_BUFF_DATA_LEN_DMA
 #elif(MCU_CORE_B92)
+//In DMA mode, only one demo is provided where DMA_REV_LEN is 0xFFFFFC (maximum),If  want to set the length to less than 0XFFFFFC, can ask the driver to confirm how to use it.
 #define  DMA_REV_LEN    0xFFFFFC
 #endif
 
 
 //Note:In B91,the length of data received by the slave must be the same as the length of data sent by the master.
 //In B92,the length of data received by slave should not be greater than the length of i2c_rx_buff, otherwise it will be out of the i2c_rx_buff's address range.
+#if(MCU_CORE_B91)
 volatile unsigned char i2c_rx_buff[RX_BUFF_DATA_LEN_DMA] __attribute__((aligned(4)));
-
+#elif(MCU_CORE_B92)
+volatile unsigned char i2c_rx_buff[RX_BUFF_DATA_LEN_DMA+4] __attribute__((aligned(4)));
+#endif
 volatile unsigned char i2c_master_read_nack_cnt=0;
 volatile unsigned char i2c_master_write_nack_cnt=0;
 
 
 void user_init(void)
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-
+	gpio_function_en(LED1);
+	gpio_output_en(LED1); 		//enable output
+	gpio_input_dis(LED1);		//disable input
+	gpio_function_en(LED2);
+	gpio_output_en(LED2); 		//enable output
+	gpio_input_dis(LED2);		//disable input
+	gpio_function_en(LED3);
+	gpio_output_en(LED3); 		//enable output
+	gpio_input_dis(LED3);		//disable input
+	gpio_function_en(LED4);
+	gpio_output_en(LED4); 		//enable output
+	gpio_input_dis(LED4);		//disable input
 	i2c_set_pin(I2C_GPIO_SDA_PIN,I2C_GPIO_SCL_PIN);
 	i2c_set_rx_dma_config(I2C_RX_DMA_CHN);
 	i2c_set_tx_dma_config(I2C_TX_DMA_CHN);
@@ -73,13 +96,18 @@ void user_init(void)
 	i2c_master_init();
 	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*I2C_CLK_SPEED)));//set i2c frequency 200K.
 #if(MCU_CORE_B92)
+#if(I2C_STRECH_MODE == I2C_STRECH_EN)
+	i2c_master_strech_en();
+#endif
 	i2c_master_detect_nack_en();
 	i2c_set_irq_mask(I2C_MASTER_NAK_MASK);
 	plic_interrupt_enable(IRQ21_I2C);
 	core_interrupt_enable();
 #endif
 #elif(I2C_DEVICE == I2C_SLAVE_DEVICE)
-
+#if(I2C_STRECH_MODE == I2C_STRECH_EN)
+	i2c_slave_strech_en();
+#endif
 	i2c_slave_init(0x5a);
 #if(MCU_CORE_B91)
 	plic_interrupt_enable(IRQ5_DMA);
@@ -88,6 +116,10 @@ void user_init(void)
 	i2c_set_irq_mask(I2C_TX_DONE_MASK);
 #elif(MCU_CORE_B92)
 	i2c_set_irq_mask(I2C_RX_END_MASK|I2C_SLAVE_WR_MASK);
+#if(I2C_STRECH_MODE == I2C_STRECH_DIS)
+	dma_set_irq_mask(I2C_RX_DMA_CHN, TC_MASK);
+	plic_interrupt_enable(IRQ5_DMA);
+#endif
 #endif
 	core_interrupt_enable();
 	plic_interrupt_enable(IRQ21_I2C);
@@ -137,7 +169,7 @@ void main_loop(void)
 //when enabling dma transfers i2c receiving data, the internal working principle: when the i2c fifo each reach 4,
 //will send the dma requests, to move data from the fifo, if finally fifo data less than four,
 //through the i2c stop signal sends a request to the dma,move the fifo data away.
-#if(MCU_CORE_B91)
+#if(MCU_CORE_B91||(MCU_CORE_B92 &&(I2C_STRECH_MODE == I2C_STRECH_DIS)))
 void dma_irq_handler(void)
 {
 #if(I2C_DEVICE == I2C_SLAVE_DEVICE)
@@ -190,7 +222,7 @@ void dma_irq_handler(void)
 #endif
 #if(I2C_DEVICE == I2C_SLAVE_DEVICE)
 
-#if(MCU_CORE_B91)
+#if(MCU_CORE_B91||(MCU_CORE_B92&& (I2C_STRECH_MODE == I2C_STRECH_DIS)))
 	if(i2c_get_irq_status(I2C_TXDONE_STATUS))
 	{
 		i2c_clr_irq_status(I2C_TX_DONE_CLR);
@@ -198,7 +230,7 @@ void dma_irq_handler(void)
 		gpio_toggle(LED2);
 	}
 
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92&&(I2C_STRECH_MODE == I2C_STRECH_EN))
     if(i2c_get_irq_status(I2C_SLAVE_WR_STATUS))
     {
     	i2c_clr_irq_status(I2C_SLAVE_WR_CLR);

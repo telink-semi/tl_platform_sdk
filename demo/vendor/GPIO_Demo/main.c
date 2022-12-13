@@ -29,7 +29,7 @@ extern void user_init();
 extern void main_loop (void);
 volatile unsigned int gpio_irq_cnt=0,gpio_irq_rsic0_cnt=0,gpio_irq_rsic1_cnt=0;
 
-#if(MCU_CORE_B92|MCU_CORE_B93)
+#if(MCU_CORE_B92)
 volatile unsigned int gpio_src_irq0_cnt=0;
 volatile unsigned int gpio_src_irq1_cnt=0;
 volatile unsigned int gpio_src_irq2_cnt=0;
@@ -48,14 +48,14 @@ volatile unsigned int gpio_src_irq7_cnt=0;
 #if (GPIO_MODE == GPIO_IRQ )
 _attribute_ram_code_sec_noinline_ void gpio_irq_handler(void)
 {
-	gpio_toggle(LED2);
+	gpio_set_high_level(LED2);
 	gpio_irq_cnt++;
 	gpio_clr_irq_status(FLD_GPIO_IRQ_CLR);
 }
 #elif(GPIO_MODE == GPIO_IRQ_RSIC0)
 _attribute_ram_code_sec_noinline_ void gpio_risc0_irq_handler(void)
 {
-	gpio_toggle(LED3);
+	gpio_set_high_level(LED3);
 	gpio_irq_rsic0_cnt++;
 	gpio_clr_irq_status(FLD_GPIO_IRQ_GPIO2RISC0_CLR);
 }
@@ -63,52 +63,59 @@ _attribute_ram_code_sec_noinline_ void gpio_risc0_irq_handler(void)
 
 _attribute_ram_code_sec_noinline_ void gpio_risc1_irq_handler(void)
 {
-	gpio_toggle(LED4);
+	gpio_set_high_level(LED4);
 	gpio_irq_rsic1_cnt++;
 	gpio_clr_irq_status(FLD_GPIO_IRQ_GPIO2RISC1_CLR);
 }
 #endif
-#if(MCU_CORE_B92|MCU_CORE_B93)
+#if(MCU_CORE_B92)
 #if(GPIO_MODE == GPIO_SEL_IRQ_SRC)
 _attribute_ram_code_sec_noinline_ void gpio_src0_irq_handler(void)
 {
 	gpio_src_irq0_cnt++;
-	gpio_toggle(LED1);
+	gpio_set_high_level(LED1);
  	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ0);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src1_irq_handler(void)
 {
 	gpio_src_irq1_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ1);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src2_irq_handler(void)
 {
 	gpio_src_irq2_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ2);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src3_irq_handler(void)
 {
 	gpio_src_irq3_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ3);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src4_irq_handler(void)
 {
 	gpio_src_irq4_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ4);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src5_irq_handler(void)
 {
 	gpio_src_irq5_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ5);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src6_irq_handler(void)
 {
 	gpio_src_irq6_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ6);
 }
 _attribute_ram_code_sec_noinline_ void gpio_src7_irq_handler(void)
 {
 	gpio_src_irq7_cnt++;
+	gpio_set_high_level(LED1);
 	gpio_clr_group_irq_status(FLD_GPIO_GROUP_IRQ7);
 }
 #endif
@@ -128,9 +135,9 @@ int main (void)   //must on ramcode
 	user_read_flash_value_calib();
 	CCLK_24M_HCLK_24M_PCLK_24M;
 #elif(MCU_CORE_B92)
-	sys_init();
-#elif(MCU_CORE_B93)
-	sys_init();
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
+	CCLK_24M_HCLK_24M_PCLK_24M;
 #endif
 	//gpio_init(1);
 	user_init();

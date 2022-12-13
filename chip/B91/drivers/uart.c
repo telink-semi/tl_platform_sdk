@@ -458,12 +458,17 @@ void uart_set_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
 {
 	//When the pad is configured with mux input and a pull-up resistor is required, gpio_input_en needs to be placed before gpio_function_dis,
 	//otherwise first set gpio_input_disable and then call the mux function interface,the mux pad will misread the short low-level timing.confirmed by minghai.20210709.
-	gpio_input_en(tx_pin);
-	gpio_input_en(rx_pin);
-	gpio_set_up_down_res(tx_pin, GPIO_PIN_PULLUP_10K);
-	gpio_set_up_down_res(rx_pin, GPIO_PIN_PULLUP_10K);
+    if(tx_pin != UART_TX_NONE_PIN){
+    	gpio_input_en(tx_pin);
+    	gpio_set_up_down_res(tx_pin, GPIO_PIN_PULLUP_10K);
+    }
+	if(rx_pin != UART_RX_NONE_PIN){
+		gpio_input_en(rx_pin);
+		gpio_set_up_down_res(rx_pin, GPIO_PIN_PULLUP_10K);
+	}
 	uart_set_fuc_pin(tx_pin,rx_pin);//set tx and rx pin
 }
+
 
 /**
 * @brief      This function serves to set rx pin for UART module,
@@ -751,7 +756,10 @@ static void uart_set_fuc_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
  		mask = (unsigned char)~(BIT(1)|BIT(0));;
  		val = BIT(0);
  	}
- 	reg_gpio_func_mux(tx_pin)=(reg_gpio_func_mux(tx_pin)& mask)|val;
+ 	if(tx_pin != UART_TX_NONE_PIN){
+ 	   reg_gpio_func_mux(tx_pin)=(reg_gpio_func_mux(tx_pin)& mask)|val;
+ 	   gpio_function_dis(tx_pin);
+ 	}
 
 
  	if(rx_pin == UART0_RX_PA4)
@@ -788,8 +796,8 @@ static void uart_set_fuc_pin(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
  		val = BIT(4);
  	}
  	//note:  setting pad the function  must before  setting no_gpio function, cause it will lead to uart transmit extra one byte data at begin.(confirmed by minghai&sunpeng)
- 	reg_gpio_func_mux(rx_pin)=(reg_gpio_func_mux(rx_pin)& mask)|val;
-
- 	gpio_function_dis(tx_pin);
- 	gpio_function_dis(rx_pin);
+ 	if(rx_pin != UART_RX_NONE_PIN){
+ 	  reg_gpio_func_mux(rx_pin)=(reg_gpio_func_mux(rx_pin)& mask)|val;
+ 	  gpio_function_dis(rx_pin);
+ 	}
  }

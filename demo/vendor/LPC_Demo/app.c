@@ -23,40 +23,30 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-
-#define OUTPUT_PIN   GPIO_PB7
-
-unsigned char result = 0;
-
+#include "printf.h"
 
 void user_init(void)
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-	gpio_input_dis(LED1|LED2|LED3|LED4);
-	gpio_set_high_level(OUTPUT_PIN);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
 
-	lpc_power_on();
 	lpc_set_input_chn(LPC_INPUT_PB1);
+	//When the chip works in low power mode, the reference voltage can only be provided by UVLO or from PB0 and PB3.
 	lpc_set_input_ref(LPC_NORMAL,LPC_REF_872MV);
 	lpc_set_scaling_coeff(LPC_SCALING_PER50);
+	//LPC POWER must be turned on last.
+	lpc_power_on();
+	//The LPC sampling clock source is RC 32K. After turning on the LPC POWER, you must wait for two sampling periods to obtain the sampling value.
+	delay_us(64);
 }
 
 
 void main_loop(void)
 {
-	result = lpc_get_result();
+	printf("result = %d\r\n",lpc_get_result());
 
-	if(result)
-	{
-		gpio_set_high_level(OUTPUT_PIN);
-	}
-	else
-	{
-		gpio_set_low_level(OUTPUT_PIN);
-	}
-
-	gpio_toggle(LED1|LED3);
+	gpio_toggle(LED1);
 	delay_ms(200);
 }
 

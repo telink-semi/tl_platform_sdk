@@ -59,8 +59,14 @@ void user_init()
 #if(CHIP_VER_A0==CHIP_VER)
 	audio_set_codec_supply(CODEC_2P8V);
 #endif
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
 #if (AUDIO_MODE==LINEIN_TO_LINEOUT)
 	audio_init(LINE_IN_TO_BUF_TO_LINE_OUT,AUDIO_16K,MONO_BIT_16);
 	audio_rx_dma_chain_init(DMA2,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);

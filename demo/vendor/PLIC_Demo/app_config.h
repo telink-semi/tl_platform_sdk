@@ -29,18 +29,22 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#define LED1            		GPIO_PB4
-#define LED2            		GPIO_PB5
-#define LED3            		GPIO_PB6
-#define LED4            		GPIO_PB7
-
-#define SW1      		       	GPIO_PA0
-#define SW2      		        GPIO_PA1
-
+#if(MCU_CORE_B91)
+#define LED1            GPIO_PB4
+#define LED2            GPIO_PB5
+#define LED3            GPIO_PB6
+#define LED4            GPIO_PB7
+#elif(MCU_CORE_B92)
+#define LED1            GPIO_PD0
+#define LED2            GPIO_PD1
+#define LED3            GPIO_PE6
+#define LED4            GPIO_PE7
+#endif
 
 #define INTERRUPT_NESTED_DEMO				1
 #if(MCU_CORE_B91)
 #define HSP_DEMO				            2//Hardware Stack Protection
+#define WFI_DEMO				            3//(Wait-For-Interrupt Mode)
 #endif
 #define PLIC_DEMO                       INTERRUPT_NESTED_DEMO
 

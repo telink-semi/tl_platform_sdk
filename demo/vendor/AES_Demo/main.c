@@ -40,7 +40,7 @@ _attribute_ram_code_sec_ void rf_dm_irq_handler(void)
 {
 	if(aes_get_irq_status(FLD_CRYPT_IRQ))
 	{
-		gpio_toggle(LED1 | LED2 | LED3 | LED4);
+		gpio_toggle(LED1);
 		irq_flag = 1;
 	}
 	aes_clr_irq_status(FLD_CRYPT_IRQ);
@@ -50,7 +50,7 @@ _attribute_ram_code_sec_ void rf_bt_irq_handler(void)
 {
 	if(aes_get_irq_status(FLD_CRYPT_IRQ))
 	{
-		gpio_toggle(LED3 | LED4);
+		gpio_toggle(LED1);
 		irq_flag = 1;
 	}
 	aes_clr_irq_status(FLD_CRYPT_IRQ);
@@ -71,14 +71,11 @@ int main (void)   //must on ramcode
 	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
 	user_read_flash_value_calib();
 #elif(MCU_CORE_B92)
-    sys_init();
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
 #endif
 
-#if(MCU_CORE_B91)
 	CCLK_24M_HCLK_24M_PCLK_24M;
-#elif(MCU_CORE_B92)
-
-#endif
 
 	user_init();
 

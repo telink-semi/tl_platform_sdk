@@ -40,8 +40,10 @@ int main (void)
 	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
 	user_read_flash_value_calib();
 	CCLK_24M_HCLK_24M_PCLK_24M;
-#elif(MCU_CORE_B92 || MCU_CORE_B93)
-	sys_init();
+#elif(MCU_CORE_B92)
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
+	CCLK_24M_HCLK_24M_PCLK_24M;
 #endif
 			
 	user_init();

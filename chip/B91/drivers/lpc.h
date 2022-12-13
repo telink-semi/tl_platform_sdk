@@ -75,7 +75,7 @@ typedef enum{
  */
 static inline void lpc_power_down(void)
 {
-	analog_write_reg8(0x07,(analog_read_reg8(0x07))|0x08);
+	analog_write_reg8(0x06,(analog_read_reg8(0x06))|0x02);
 }
 
 /**

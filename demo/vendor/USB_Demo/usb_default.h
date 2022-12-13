@@ -74,22 +74,19 @@
 
 
 //////////////////// Audio /////////////////////////////////////
-#define MIC_RESOLUTION_BIT		16
-
-#define MIC_SAMPLE_RATE			16000//set sample for mic
-
-
-#define MIC_CHANNLE_COUNT		2  //1 or 2
-#define	MIC_ENOCDER_ENABLE		0
-
-
-#define SPK_CHANNLE_COUNT		2
-#define SPK_RESOLUTION_BIT		16
-
 
 #if(USB_MIC_ENABLE||USB_SPEAKER_ENABLE)
-	#define USB_MODE_AUDIO_EN				1
-	#define SPEAKER_SAMPLE_RATE				16000
+#define MIC_RESOLUTION_BIT		16
+#define MIC_SAMPLE_RATE			16000//set sample for mic
+#define MIC_CHANNLE_COUNT		2 //1 or 2
+
+#define	MIC_ENOCDER_ENABLE		0
+
+#define SPK_RESOLUTION_BIT		16
+#define SPK_CHANNLE_COUNT		2
+#define SPEAKER_SAMPLE_RATE		16000
+
+#define USB_MODE_AUDIO_EN		1
 #endif
 
 

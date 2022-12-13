@@ -49,6 +49,7 @@
 #define CALIBRATION_CAP_RAM_ADDR		0x06
 
 /* set flash address to set internal cap value and switch internal/external cap */
+#define CAP_SET_FLASH_ADDR_4M       0x3fe000
 #define CAP_SET_FLASH_ADDR_2M 		0x1fe000
 #define CAP_SET_FLASH_ADDR_1M 		0xfe000
 #define CAP_SET_FLASH_ADDR_512K 	0x7e000//B85m:0x77000 B91m:0x7e000
@@ -60,8 +61,13 @@
 #endif
 
 /* set uart port */
+#if(MCU_CORE_B91)
 #define BQB_UART_TX_PORT   	UART0_TX_PB2
 #define BQB_UART_RX_PORT   	UART0_RX_PB3
+#elif(MCU_CORE_B92)
+#define BQB_UART_TX_PORT   	GPIO_FC_PB1
+#define BQB_UART_RX_PORT   	GPIO_FC_PB2
+#endif
 #define BQB_UART_BUAD	   	115200
 
 /* set pa port */

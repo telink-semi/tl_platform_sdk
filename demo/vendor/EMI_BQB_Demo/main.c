@@ -34,6 +34,26 @@ extern void main_loop (void);
 extern void rd_usr_definition(unsigned char _s);
 #endif
 
+#if(MCU_CORE_B91)
+#define POWER_MODE_LDO1V4_LDO1V8		0
+#define POWER_MODE_DCDC1V4_DCDC1V8		1
+#define POWER_MODE_DCDC1V4_LDO1V8		2
+
+/**
+ * @brief		This is macro used to set the initialize power mode.
+ */
+#define POWER_MODE_SELECT		POWER_MODE_LDO1V4_LDO1V8
+#elif(MCU_CORE_B92)
+#define POWER_MODE_LDO1V2_LDO2V0		0
+#define POWER_MODE_DCDC1V2_LDO2V0		1
+#define POWER_MODE_DCDC1V2_DCDC2V0		2
+
+/**
+ * @brief		This is macro used to set the initialize power mode.
+ */
+#define POWER_MODE_SELECT		POWER_MODE_LDO1V2_LDO2V0
+#endif
+
 /**
  * @brief		This is main function
  * @param[in]	none
@@ -46,25 +66,72 @@ int main(void)
 		rd_usr_definition(1);
 		if(usr_config.power_mode == 0)
 		{
+#if(MCU_CORE_B91)
 			sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif(MCU_CORE_B92)
+			sys_init(LDO_1P2_LDO_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
+		}
+		else if(usr_config.power_mode == 1)
+		{
+#if(MCU_CORE_B91)
+			sys_init(DCDC_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif(MCU_CORE_B92)
+			sys_init(DCDC_1P2_LDO_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
 		}
 		else
 		{
+#if(MCU_CORE_B91)
 			sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif(MCU_CORE_B92)
+			sys_init(DCDC_1P2_DCDC_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
 		}
 	#else
 		#if SWITCH_POWER_MODE
+#if(MCU_CORE_B91)
 			sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif(MCU_CORE_B92)
+			sys_init(LDO_1P2_LDO_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
 		#else
+#if(MCU_CORE_B91)
 			sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif(MCU_CORE_B92)
+			sys_init(DCDC_1P2_DCDC_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
 		#endif
 	#endif
+#if(MCU_CORE_B92)
+			wd_32k_stop();
+#endif	
 #else
+#if(MCU_CORE_B91)
+#if POWER_MODE_SELECT == POWER_MODE_LDO1V4_LDO1V8
 	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V4_DCDC1V8
+	sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V4_LDO1V8
+	sys_init(DCDC_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
 #endif
 	//Note: This function can improve the performance of some modules, which is described in the function comments.
 	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
 	user_read_flash_value_calib();
+#elif(MCU_CORE_B92)
+#if POWER_MODE_SELECT == POWER_MODE_LDO1V2_LDO2V0
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V2_LDO2V0
+	sys_init(DCDC_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V2_DCDC2V0
+	sys_init(DCDC_1P2_DCDC_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
+#if(MCU_CORE_B92)
+	wd_32k_stop();
+#endif
+#endif
+#endif
+
 	CCLK_24M_HCLK_24M_PCLK_24M;
 
     user_init();

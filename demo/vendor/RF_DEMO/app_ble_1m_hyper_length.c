@@ -83,14 +83,14 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 		if(rf_ble_packet_crc_ok(raw_pkt))
 		{
 					rx_cnt++;
-					gpio_toggle(LED5);
+					gpio_toggle(LED2);
 		}
 		rf_start_srx(stimer_get_tick());
 #else
 		if(rf_ble_packet_crc_ok(rx_packet))
 		{
 			rx_cnt++;
-			gpio_toggle(LED5);
+			gpio_toggle(LED2);
 		}
 #endif
 
@@ -165,8 +165,18 @@ void user_init(void)
 
 #endif
 #endif
-	gpio_function_en(LED1|LED2|LED3|LED4|LED5|LED6);
-	gpio_output_en(LED1|LED2|LED3|LED4|LED5|LED6);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 
 }
 
@@ -285,7 +295,9 @@ void main_loop(void)
 		while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
 		rf_clr_irq_status(FLD_RF_IRQ_TX);
 		rf_start_stx(ble_tx_packet,stimer_get_tick());
-		gpio_toggle(LED4|LED5|LED1);
+		gpio_toggle(LED1);
+		gpio_toggle(LED2);
+		gpio_toggle(LED3);
 		delay_ms(100);
 		tx_cnt++;
 	}
@@ -301,7 +313,8 @@ void main_loop(void)
 		{
 			if(!rf_get_crc_err())
 			{
-				gpio_toggle(LED4|LED1);
+				gpio_toggle(LED1);
+				gpio_toggle(LED3);
 				rx_cnt++;
 			}
 				rf_clr_irq_status(FLD_RF_IRQ_RX);
@@ -313,7 +326,7 @@ void main_loop(void)
 	}
 #endif
 #endif
-	gpio_toggle(LED6);
+	gpio_toggle(LED4);
 	delay_ms(100);
 }
 
@@ -376,8 +389,18 @@ void user_init(void)
 	delay_us(85);  //Wait for calibration to stabilize
 #endif
 #endif
-	gpio_function_en(LED1|LED2|LED3|LED4|LED5|LED6);
-	gpio_output_en(LED1|LED2|LED3|LED4|LED5|LED6);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 
 }
 
@@ -523,7 +546,7 @@ void main_loop(void)
 #endif
 #endif
 
-	gpio_toggle(LED6);
+	gpio_toggle(LED4);
 	delay_ms(100);
 }
 

@@ -55,18 +55,27 @@ void rd_usr_definition(unsigned char _s)
 	}
 	else
 	{
-		usr_config.flash = (flash_read_mid() >> 16) & 0x7f;
+		usr_config.flash = (flash_read_mid() >> 16) & 0xff;
 	}
 }
-
+#if(MCU_CORE_B91)
 void get_uart_port(uart_tx_pin_e* bqb_uart_tx_port, uart_rx_pin_e* bqb_uart_rx_port)
 {
 	if(usr_config.uart_tx == usr_config.uart_rx) return;
 	*bqb_uart_tx_port = get_pin(usr_config.uart_tx);
 	*bqb_uart_rx_port = get_pin(usr_config.uart_rx);
 }
+#elif(MCU_CORE_B92)
+void get_uart_port(gpio_func_pin_e* bqb_uart_tx_port, gpio_func_pin_e* bqb_uart_rx_port)
+{
+	if(usr_config.uart_tx == usr_config.uart_rx) return;
+	*bqb_uart_tx_port = get_pin(usr_config.uart_tx);
+	*bqb_uart_rx_port = get_pin(usr_config.uart_rx);
+}
+#endif
 #endif
 
+#if	(MCU_CORE_B91)
 uart_num_redef_e get_uart_num(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
 {
 	uart_num_redef_e tx_flag = UART_NONE, rx_flag = UART_NONE;
@@ -126,6 +135,23 @@ uart_num_redef_e uart_setup(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin,
 
 	return uart_num;
 }
+#elif(MCU_CORE_B92)
+uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin,gpio_func_pin_e rx_pin,
+			unsigned int boardrate, unsigned int pclk,
+			uart_parity_e parity, uart_stop_bit_e stop_bit)
+{
+	unsigned short div = 0;
+	unsigned char bwpc = 0;
+	uart_num_redef_e uart_num = UART0;
+	uart_set_pin(uart_num,tx_pin, rx_pin);
+	uart_reset(uart_num);
+	uart_cal_div_and_bwpc(boardrate, pclk, &div, &bwpc);
+	uart_set_rx_timeout(uart_num, bwpc, 12, UART_BW_MUL1);
+	uart_init(uart_num, div, bwpc, parity, stop_bit);
+
+	return uart_num;
+}
+#endif
 
 void read_bqb_calibration()
 {
@@ -148,7 +174,11 @@ void read_bqb_calibration()
 		else
 		{
 			//FLASH
-			if(usr_config.flash == FLASH_SIZE_2M)
+			if(usr_config.flash == FLASH_SIZE_4M)
+			{
+				flash_read_page(CAP_SET_FLASH_ADDR_4M, 1, &chnidx);
+			}
+			else if(usr_config.flash == FLASH_SIZE_2M)
 			{
 				flash_read_page(CAP_SET_FLASH_ADDR_2M, 1, &chnidx);
 			}
@@ -196,8 +226,13 @@ void read_bqb_calibration()
 
 void user_init(void)
 {
+#if	(MCU_CORE_B91)
 	uart_tx_pin_e bqb_uart_tx_port = BQB_UART_TX_PORT;
 	uart_rx_pin_e bqb_uart_rx_port = BQB_UART_RX_PORT;
+#elif(MCU_CORE_B92)
+	gpio_func_pin_e bqb_uart_tx_port = BQB_UART_TX_PORT;
+	gpio_func_pin_e bqb_uart_rx_port = BQB_UART_RX_PORT;
+#endif
 #if SUPPORT_CONFIGURATION
 	if(usr_config.cal_pos == 0)
 	{

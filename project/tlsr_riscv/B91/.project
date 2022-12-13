@@ -75,34 +75,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/AUDIO_Demo/AUDIO_V1.0/AUDIO_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/AXON_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/AXON_Demo</locationURI>
-		</link>
-		<link>
-			<name>vendor/Auto_Test_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Auto_Test_Demo</locationURI>
-		</link>
-		<link>
-			<name>vendor/BT_AutoTest_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/BT_AutoTest_Demo</locationURI>
-		</link>
-		<link>
-			<name>vendor/BT_EMI_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/BT_EMI_Demo</locationURI>
-		</link>
-		<link>
 			<name>vendor/Coremark_demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Coremark_demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/DUT_Test_Demo</name>
+			<name>vendor/DUT_Demo</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/DUT_Test_Demo</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/DUT_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/Debug_Demo</name>
@@ -135,11 +115,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/GPIO_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/HTOL_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/HTOL_Demo</locationURI>
-		</link>
-		<link>
 			<name>vendor/I2C_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo</locationURI>
@@ -153,11 +128,6 @@
 			<name>vendor/MDEC_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/MDEC_Demo</locationURI>
-		</link>
-		<link>
-			<name>vendor/NPE_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/NPE_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/PKE_Demo</name>
@@ -195,19 +165,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/STimer_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/Swire_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Swire_Demo</locationURI>
-		</link>
-		<link>
 			<name>vendor/TRNG_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/TRNG_Demo</locationURI>
-		</link>
-		<link>
-			<name>vendor/Test_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Test_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/Timer_Demo</name>
@@ -225,11 +185,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/USB_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/VCD_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/VCD_Demo</locationURI>
-		</link>
-		<link>
 			<name>vendor/common</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/common</locationURI>
@@ -240,16 +195,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/s7816_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/BT_EMI_Demo/BT</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/BT_AutoTest_Demo/BT</locationURI>
-		</link>
-		<link>
-			<name>vendor/Test_Demo/BT</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/BT_AutoTest_Demo/BT</locationURI>
-		</link>
-		<link>
 			<name>vendor/common/calibration</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/B91/calibration</locationURI>
@@ -258,6 +203,11 @@
 			<name>vendor/common/flash</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/B91/flash</locationURI>
+		</link>
+		<link>
+			<name>vendor/common/plic_isr.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/B91/plic_isr.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

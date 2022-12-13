@@ -39,7 +39,18 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 
 #define TX_DELAY_US             10
 
+#if(MCU_CORE_B91)
+#define PTA_NONE				0
+#define PTA_2WIRE				1
+#define PTA_3WIRE				2
+#define PTA_MODE				PTA_3WIRE
+#define WLAN_ACTIVE_PIN			GPIO_PE0
 
+#define BLE_PRIORITY_PIN		PTA_BLE_PRIORITY_PE3
+#define BLE_ACTIVE_PIN			PTA_BLE_ACTIVE_PE3
+#define BLE_STATUS_PIN			PTA_BLE_STATUS_PE4
+#define WLAN_DENY_PIN			PTA_WLAN_DENY_PE5
+#endif
 
 #define TX_PKT_PAYLOAD		15
 
@@ -63,27 +74,27 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 	if(rf_get_irq_status(FLD_RF_IRQ_TX))
 		{
 			tx_state = 1;
-			gpio_toggle(LED4);
+			gpio_toggle(LED1);
 			rf_clr_irq_status(FLD_RF_IRQ_TX);
 		}
 
 	if(rf_get_irq_status(FLD_RF_IRQ_RX))
 		{
 			rx_state = 1;
-			gpio_toggle(LED5);
+			gpio_toggle(LED2);
 			rf_clr_irq_status(FLD_RF_IRQ_RX);
 		}
 
 	if(rf_get_irq_status(FLD_RF_IRQ_RX_TIMEOUT))
 		{
 			timeout_state = 1;
-			gpio_toggle(LED6);
+			gpio_toggle(LED4);
 			rf_clr_irq_status(FLD_RF_IRQ_RX_TIMEOUT);
 		}
 	 if(rf_get_irq_status(FLD_RF_IRQ_FIRST_TIMEOUT))
 		{
 			timeout_state = 1;
-			gpio_toggle(LED6);
+			gpio_toggle(LED4);
 			rf_clr_irq_status(FLD_RF_IRQ_FIRST_TIMEOUT);
 		}
 
@@ -94,8 +105,18 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 
 void user_init()
 {
-	gpio_function_en(LED1|LED2|LED3|LED4|LED5|LED6);
-	gpio_output_en(LED1|LED2|LED3|LED4|LED5|LED6);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	rf_set_power_level (RF_POWER);
 	rf_access_code_comm(ACCESS_CODE);
 	rf_set_ble_chn(RF_FREQ);
@@ -110,7 +131,13 @@ void user_init()
 	ble_tx_packet[0] = rf_tx_dma_len&0xff;
 	rf_set_rx_dma(rx_packet,RX_FIFO_NUM-1,RX_FIFO_DEP);
 	rf_set_tx_dma(2,128);
-
+#if(MCU_CORE_B91)
+#if (PTA_MODE == PTA_2WIRE)
+	rf_2wire_pta_init(BLE_PRIORITY_PIN,WLAN_ACTIVE_PIN,PTA_BLE_PRIORITY_TRX);
+#elif(PTA_MODE == PTA_3WIRE)
+	rf_3wire_pta_init(BLE_ACTIVE_PIN,BLE_STATUS_PIN,WLAN_DENY_PIN,PTA_BLE_STATUS_TX);
+#endif
+#endif
 #if(RF_STRX_MODE==TX_FIRST)
 	core_interrupt_enable();
 	plic_interrupt_enable(IRQ15_ZB_RT);
@@ -129,6 +156,11 @@ void main_loop (void)
 	rf_set_rx_timeout(0xffff);
 	while(1)
 	{
+#if(MCU_CORE_B91)
+#if (PTA_MODE == PTA_2WIRE)
+		while(gpio_get_level(WLAN_ACTIVE_PIN));
+#endif
+#endif
 		tx_state=0;
 		rx_state=0;
 		timeout_state=0;
@@ -153,6 +185,15 @@ void main_loop (void)
 				timeout_cnt++;
 				break;
 			}
+#if(MCU_CORE_B91)
+#if (PTA_MODE == PTA_3WIRE)
+			else if(rf_get_irq_status(FLD_RF_IRQ_WIFI_DENY))
+			{
+				rf_clr_irq_status(FLD_RF_IRQ_WIFI_DENY);
+				break;
+			}
+#endif
+#endif
 		}
 	}
 
@@ -161,6 +202,11 @@ void main_loop (void)
 
 	while(1)
 	{
+#if(MCU_CORE_B91)
+#if (PTA_MODE == PTA_2WIRE)
+		while(gpio_get_level(WLAN_ACTIVE_PIN));
+#endif
+#endif
 		tx_state=0;
 		rx_state=0;
 		timeout_state=0;
@@ -185,6 +231,15 @@ void main_loop (void)
 				timeout_cnt++;
 				break;
 			}
+#if(MCU_CORE_B91)
+#if (PTA_MODE == PTA_3WIRE)
+			else if(rf_get_irq_status( FLD_RF_IRQ_WIFI_DENY))
+			{
+				rf_clr_irq_status(FLD_RF_IRQ_WIFI_DENY);
+				break;
+			}
+#endif
+#endif
 		}
 	}
 #endif

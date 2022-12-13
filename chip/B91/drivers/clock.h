@@ -194,6 +194,9 @@ extern clk_32k_type_e g_clk_32k_src;
  * @param[in]	pclk_div - the pclk divide from hclk.pclk max is 24M.
  * @param[in]	mspi_clk_div - mspi_clk has two source. pll div and hclk.mspi max is 64M.
  * @return      none
+ * @note		Do not switch the clock during the DMA sending and receiving process;
+ * 			    because during the clock switching process, the system clock will be
+ * 			    suspended for a period of time, which may cause data loss
  */
 _attribute_ram_code_sec_noinline_ void clock_init(sys_pll_clk_e pll,
 		sys_clock_src_e src,

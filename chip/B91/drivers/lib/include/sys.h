@@ -83,7 +83,9 @@ typedef enum{
  * 			The voltage of the GPIO pin is the voltage of vbat.
  * 			When the vbat power supply voltage may be higher than 3.6V, it is configured as VBAT_MAX_VALUE_GREATER_THAN_3V6 mode,
  * 			the bypass is closed, and the vbat voltage passes through an LDO to supply power to the chip.
- * 			The voltage of the GPIO pin is the voltage after vbat passes through the LDO, about 3.3V floating 10%.
+ * 			The voltage of the GPIO pin (V_ioh) is the voltage after Vbat passes through the LDO (V_ldo),
+ * 			and the maximum value is about 3.3V floating 10% (V_ldoh).
+ * 			When Vbat > V_ldoh, V_ioh = V_ldo = V_ldoh. When Vbat < V_ldoh, V_ioh = V_ldo = Vbat.
  */
 typedef enum{
 	VBAT_MAX_VALUE_GREATER_THAN_3V6	= 0x00,		/*VBAT may be greater than 3.6V. */
@@ -115,7 +117,7 @@ extern unsigned int g_chip_version;
  */
 static inline void sys_reboot(void)
 {
-	write_reg8(0x1401ef, 0x20);
+	reg_pwdn_en = 0x20;
 }
 /**
  * @brief   	This function serves to initialize system.

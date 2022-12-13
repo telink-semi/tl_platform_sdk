@@ -46,8 +46,10 @@ int main (void)   //must on ramcode
 	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
 	user_read_flash_value_calib();
 #elif(MCU_CORE_B92)
-	sys_init();
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
 #endif
+
 	CCLK_24M_HCLK_24M_PCLK_24M;
 
 	user_init();

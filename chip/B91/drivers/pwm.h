@@ -317,11 +317,11 @@ static inline void pwm_clr_irq_mask(pwm_irq_e mask){
 
 	if(mask==FLD_PWM0_IR_FIFO_IRQ)
 	{
-		BM_SET(reg_pwm_irq_mask(1), BIT(0));
+		BM_CLR(reg_pwm_irq_mask(1), BIT(0));
 	}
 	else
 	{
-		BM_SET(reg_pwm_irq_mask(0), mask);
+		BM_CLR(reg_pwm_irq_mask(0), mask);
 	}
 
 }
@@ -355,11 +355,11 @@ static inline void pwm_clr_irq_status(pwm_irq_e status){
 
 	if(status==FLD_PWM0_IR_FIFO_IRQ)
 	{
-		BM_SET(reg_pwm_irq_sta(1), BIT(0));
+		reg_pwm_irq_sta(1) = status;
 	}
 	else
 	{
-		BM_SET(reg_pwm_irq_sta(0), status);
+		reg_pwm_irq_sta(0) = status;
 	}
 
 }

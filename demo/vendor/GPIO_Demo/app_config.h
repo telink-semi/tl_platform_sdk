@@ -34,30 +34,38 @@ extern "C" {
 #define LED2            		GPIO_PB5
 #define LED3            		GPIO_PB6
 #define LED4            		GPIO_PB7
+/*
+ * Button matrix table:
+ * 			KEY3	KEY4
+ * 	KEY1	SW2		SW3
+ * 	KEY2	SW4		SW5
+ */
+#define KEY1           			GPIO_PC2
+#define KEY2           			GPIO_PC0
+#define KEY3           			GPIO_PC3
+#define KEY4           			GPIO_PC1
 #elif(MCU_CORE_B92)
-#define LED1            		GPIO_PD0
-#define LED2            		GPIO_PD1
-#define LED3            		GPIO_PD2
-#define LED4            		GPIO_PD3
-#define LED5           		    GPIO_PD4
-#define LED6            		GPIO_PD5
-#elif(MCU_CORE_B93)
-#define LED1           		 	GPIO_PD0
-#define LED2            		GPIO_PD1
-#define LED3            		GPIO_PD2
-#define LED4            		GPIO_PD3
-#define LED5            		GPIO_PD4
-#define LED6            		GPIO_PD5
+#define LED3                    GPIO_PD0
+#define LED4                    GPIO_PD1
+#define LED1                    GPIO_PE6
+#define LED2                    GPIO_PE7
+/*
+ * Button matrix table:
+ * 			KEY3	KEY4
+ * 	KEY1	SW2		SW3
+ * 	KEY2	SW4		SW5
+ */
+#define KEY1           			GPIO_PE2
+#define KEY2           			GPIO_PE3
+#define KEY3           			GPIO_PE4
+#define KEY4           			GPIO_PF0
 #endif
-
-#define SW1      		        GPIO_PA0
-#define SW2      		        GPIO_PA1
 
 #define GPIO_IRQ				1
 #define GPIO_IRQ_RSIC0			2
 #define GPIO_IRQ_RSIC1			3
 #define GPIO_HIGH_RESISTOR		4
-#if(MCU_CORE_B92|MCU_CORE_B93)
+#if(MCU_CORE_B92)
 #define GPIO_SEL_IRQ_SRC        5
 #endif
 #define GPIO_MODE 				GPIO_IRQ

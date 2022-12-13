@@ -29,11 +29,17 @@
 extern "C" {
 #endif
 
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-
+#if(MCU_CORE_B91)
+#define LED1           			GPIO_PB4
+#define LED2            		GPIO_PB5
+#define LED3          			GPIO_PB6
+#define LED4           			GPIO_PB7
+#elif(MCU_CORE_B92)
+#define LED3                    GPIO_PD0
+#define LED4                    GPIO_PD1
+#define LED1                    GPIO_PE6
+#define LED2                    GPIO_PE7
+#endif
 #define ADC_DMA_MODE				1
 #define ADC_NDMA_MODE				2
 
@@ -49,7 +55,10 @@ extern "C" {
 	*	--1.2V Vref,
 	*	--1/4 Scale
 	*	--Sampling frequence below 48K.
-	*	add by chaofan.20201230.
+	*	add by chaofan.20201230 for B91.
+**/
+/**
+	* 	B92 supports Vbat channel battery voltage sample, and the range is 1.8~4.2V
 **/
 #define ADC_VBAT_SAMPLE			2	//Vbat channel Battery Voltage with low accuracy.
 #define ADC_TEMP_SENSOR_SAMPLE	3	//Temp test

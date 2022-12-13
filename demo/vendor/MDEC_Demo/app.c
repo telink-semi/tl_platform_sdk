@@ -42,8 +42,12 @@ _attribute_ram_code_sec_noinline_ void pm_irq_handler(void)
 
 void user_init(void)
 {
-	gpio_function_en(LED1|LED2);
-	gpio_output_en(LED1|LED2);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED2);
 	clock_cal_32k_rc();
 	mdec_init(FLD_SELE_PE0);
 	//need to clear interrupt state:FLD_WKUP_TIMER,FLD_WKUP_DIG,avoid MDEC interrupt misjudgment,

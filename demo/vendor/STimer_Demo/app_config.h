@@ -38,20 +38,20 @@ extern "C" {
 #elif(MCU_CORE_B92)
 #define LED1            		GPIO_PD0
 #define LED2            		GPIO_PD1
-#define LED3            		GPIO_PD2
-#define LED4            		GPIO_PD3
-
-#elif(MCU_CORE_B93)
-#define LED1            		GPIO_PD0
-#define LED2            		GPIO_PD1
-#define LED3            		GPIO_PD2
-#define LED4            		GPIO_PD3
-#define LED5            		GPIO_PD4
-#define LED6            		GPIO_PD5
-
+#define LED3            		GPIO_PE6
+#define LED4            		GPIO_PE7
 #endif
 
 
+#define STIMER_DELAY				1
+#if (MCU_CORE_B91)||(MCU_CORE_B92)
+#define STIMER_IRQ					2
+#endif
+#define STIMER_GET_32K_TICK			5
+#define STIMER_SET_32K_TICK			6
+#define STIMER_TRACK_32K_TICK		7
+#define STIMER_GET_TICK				8
+#define STIMER_MODE					STIMER_DELAY
 
 
 

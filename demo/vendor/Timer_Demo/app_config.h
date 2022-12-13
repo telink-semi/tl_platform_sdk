@@ -34,25 +34,15 @@ extern "C" {
 #define LED2            		GPIO_PB5
 #define LED3            		GPIO_PB6
 #define LED4            		GPIO_PB7
+#define TIMER_GPIO_1    		GPIO_PA0
+#define TIMER_GPIO_2     		GPIO_PA1
 
 #elif(MCU_CORE_B92)
 #define LED1            		GPIO_PD0
 #define LED2            		GPIO_PD1
-#define LED3            		GPIO_PD2
-#define LED4            		GPIO_PD3
-
-#elif(MCU_CORE_B93)
-#define LED1            		GPIO_PD0
-#define LED2            		GPIO_PD1
-#define LED3            		GPIO_PD2
-#define LED4            		GPIO_PD3
-#define LED5            		GPIO_PD4
-#define LED6            		GPIO_PD5
-
+#define LED3            		GPIO_PE6
+#define LED4            		GPIO_PE7
 #endif
-
-#define SW1      		       	GPIO_PA0
-#define SW2      		        GPIO_PA1
 
 
 #define TIMER_SYS_CLOCK_MODE 	1
@@ -60,7 +50,7 @@ extern "C" {
 #define TIMER_GPIO_WIDTH_MODE 	3
 #define TIMER_TICK_MODE 		4
 #define TIMER_WATCHDOG_MODE 	5
-#if(MCU_CORE_B92 || MCU_CORE_B93)
+#if(MCU_CORE_B92)
 #define TIMER_32K_WATCHDOG_MODE 6
 #endif
 

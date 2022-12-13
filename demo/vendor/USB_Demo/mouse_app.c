@@ -28,6 +28,8 @@
 #include "application/usb_app/usbmouse.h"
 
 char  mouse[4];
+extern volatile unsigned int pm_top_reset_tick;
+extern volatile unsigned int charger_clear_vbus_detect_flag;
 
 void user_init(void)
 {
@@ -42,12 +44,27 @@ void user_init(void)
 #endif
 
 	//initiate LED for indication
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_input_dis(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-	gpio_set_high_level(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_output_en(LED1);
+	gpio_set_high_level(LED1);
+	gpio_function_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_output_en(LED2);
+	gpio_set_high_level(LED2);
+	gpio_function_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_output_en(LED3);
+	gpio_set_high_level(LED3);
+	gpio_function_en(LED4);
+	gpio_input_dis(LED4);
+	gpio_output_en(LED4);
+	gpio_set_high_level(LED4);
 	delay_us(100000);
-	gpio_set_low_level(LED1|LED2|LED3|LED4);
+	gpio_set_low_level(LED1);
+	gpio_set_low_level(LED2);
+	gpio_set_low_level(LED3);
+	gpio_set_low_level(LED4);
 
 	//initiate Button for Mouse input
 	gpio_function_en(GPIO_PC1);
@@ -64,6 +81,20 @@ void user_init(void)
 /* enum to USB input device and simulate the left click and right click of mouse */
 void main_loop (void)
 {
+/**
+ * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+ *              otherwise the MCU will be reset after 8s.
+*/
+#if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+	if(charger_get_vbus_detect_status()){
+	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
+	   {
+		  charger_clear_vbus_detect_status();//clear reset
+		  charger_clear_vbus_detect_flag = 1;
+	   }
+    }
+#endif
+
 	usb_handle_irq();
 	if(g_usb_config != 0 )
 	{

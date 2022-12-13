@@ -30,19 +30,15 @@
 extern "C" {
 #endif
 #if(MCU_CORE_B91)
-	
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-
-#elif(MCU_CORE_B92 || MCU_CORE_B93)
-	
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PD2
-#define LED4            GPIO_PD3
-
+#define LED1           			GPIO_PB4
+#define LED2            		GPIO_PB5
+#define LED3          			GPIO_PB6
+#define LED4           			GPIO_PB7
+#elif(MCU_CORE_B92)
+#define LED3                    GPIO_PD0
+#define LED4                    GPIO_PD1
+#define LED1                    GPIO_PE6
+#define LED2                    GPIO_PE7
 #endif
 
 

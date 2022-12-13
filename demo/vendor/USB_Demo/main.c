@@ -27,8 +27,8 @@
 
 extern void user_init();
 extern void main_loop (void);
-
-
+volatile unsigned int pm_top_reset_tick = 0;
+volatile unsigned int charger_clear_vbus_detect_flag = 0;
 /**
  * @brief		This is main function
  * @param[in]	none
@@ -45,8 +45,10 @@ int main (void)
     CCLK_24M_HCLK_24M_PCLK_24M;
 
 #elif(MCU_CORE_B92)
-    sys_init();
-    write_reg8(0x1401fb, 192/48);
+	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	wd_32k_stop();
+	CCLK_24M_HCLK_24M_PCLK_24M;
+
 #endif
 
 

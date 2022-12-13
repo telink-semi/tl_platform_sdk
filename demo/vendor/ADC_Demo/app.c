@@ -47,7 +47,12 @@ void user_init()
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);
 #if (ADC_MODE == ADC_DMA_MODE)
+#if(MCU_CORE_B91)
 	adc_set_dma_config(ADC_DMA_CHN);
+#elif(MCU_CORE_B92)
+	//audio and adc share the audio fifo, and the same fifo cannot be configured for audio and adc at the same time.
+	adc_set_dma_config(ADC_DMA_CHN, FIFO1);
+#endif
 #endif
 
 #if (ADC_SAMPLE_MODE == ADC_GPIO_SAMPLE)

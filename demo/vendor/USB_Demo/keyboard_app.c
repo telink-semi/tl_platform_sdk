@@ -27,6 +27,8 @@
 #include "application/usb_app/usbkb.h"
 #include "application/usbstd/usb.h"
 unsigned char  kb_data[6];
+extern volatile unsigned int pm_top_reset_tick;
+extern volatile unsigned int charger_clear_vbus_detect_flag;
 
 // BYTE0: special key(Ctrl/shift ...);
 // BYTE1: reserved;
@@ -46,10 +48,23 @@ void user_init()
 #endif
 
 	//initiate LED for indication
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_input_dis(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-	gpio_set_high_level(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_input_dis(LED1);
+	gpio_output_en(LED1);
+	gpio_set_high_level(LED1);
+	gpio_function_en(LED2);
+	gpio_input_dis(LED2);
+	gpio_output_en(LED2);
+	gpio_set_high_level(LED2);
+	gpio_function_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_output_en(LED3);
+	gpio_set_high_level(LED3);
+	gpio_function_en(LED4);
+	gpio_input_dis(LED4);
+	gpio_output_en(LED4);
+	gpio_set_high_level(LED4);
+
 	gpio_function_en(GPIO_PC1);
 	gpio_input_en(GPIO_PC1);
 	gpio_output_dis(GPIO_PC1);
@@ -64,6 +79,20 @@ void user_init()
 
 void main_loop (void)
 {
+	/**
+	 * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+	 *              otherwise the MCU will be reset after 8s.
+	*/
+#if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+	if(charger_get_vbus_detect_status()){
+	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
+	   {
+		  charger_clear_vbus_detect_status();//clear reset
+		  charger_clear_vbus_detect_flag = 1;
+	   }
+    }
+#endif
+
 	usb_handle_irq();
 	if(g_usb_config != 0 )
 	{
@@ -78,12 +107,11 @@ void main_loop (void)
 			    kb_data[0] = 0;
 				kb_data[1] = 0;
 				kb_data[2] = 0x59;	// number key: 1
-				kb_data[3] = 0;  // number key: 2
+				kb_data[3] = 0;     // number key: 2
 				kb_data[4] = 0;
 				kb_data[5] = 0;
 
 				usbkb_hid_report_normal(0x00,kb_data);
-
 			}
 		}
 
@@ -93,6 +121,7 @@ void main_loop (void)
 			if(gpio_get_level(GPIO_PC2)==0)
 			{
 				while(gpio_get_level(GPIO_PC2)==0);
+				gpio_set_low_level(LED1);
 			{
 					for(int i=0;i<6;i++)
 					{
@@ -100,7 +129,7 @@ void main_loop (void)
 					}
 				}
 
-				usbkb_hid_report_normal(0x00,kb_data);
+				usbkb_hid_report_normal(0,kb_data);
 			}
 		}
 	}

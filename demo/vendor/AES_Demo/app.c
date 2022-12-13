@@ -44,7 +44,7 @@ unsigned char cipher[16] __attribute__((aligned(4))) = {0x69, 0xc4, 0xe0, 0xd8, 
 volatile unsigned char irq_flag = 0;
 
 volatile unsigned char irk_value = 0;
-_attribute_aes_data_sec_ unsigned char ppp[112] __attribute__((aligned(4))) = {
+unsigned char rpa_data[112] __attribute__((aligned(4))) = {
 													0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
 										 	 	 	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
 													0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
@@ -56,9 +56,14 @@ _attribute_aes_data_sec_ unsigned char ppp[112] __attribute__((aligned(4))) = {
 
 void user_init()
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-	gpio_input_dis(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED1);
+	gpio_output_en(LED2);
+	gpio_input_dis(LED1);
+	gpio_input_dis(LED2);
+	gpio_set_low_level(LED1);
+	gpio_set_low_level(LED2);
 
 #if(AES_MODE == INTERRUPT_MODE)
 
@@ -90,7 +95,7 @@ void main_loop (void)
 	{
 		if(ciphertext[i] != cipher[i])
 		{
-			gpio_toggle(LED1|LED2|LED3|LED4);
+			gpio_toggle(LED2);
 			while(1);
 		}
 	}
@@ -101,11 +106,11 @@ void main_loop (void)
 	{
 		if(plaintext[i] != deciphertext[i])
 		{
-			gpio_toggle(LED1|LED2|LED3|LED4);
+			gpio_toggle(LED2);
 			while(1);
 		}
 	}
-	gpio_toggle(LED1 | LED2);
+	gpio_toggle(LED1);
 	delay_ms(500);
 
 #elif(AES_MODE == AES_IRQ_MODE)
@@ -123,7 +128,7 @@ void main_loop (void)
 	{
 		if(ciphertext[i] != cipher[i])
 		{
-			gpio_toggle(LED1|LED2|LED3|LED4);
+			gpio_toggle(LED2);
 			while(1);
 		}
 	}
@@ -142,24 +147,25 @@ void main_loop (void)
 	{
 		if(plaintext[i] != deciphertext[i])
 		{
-			gpio_toggle(LED1|LED2|LED3|LED4);
+			gpio_toggle(LED2);
 			while(1);
 		}
 	}
+	gpio_toggle(LED1);
 	delay_ms(500);
 #endif
 
 #elif(AES_MODE == AES_RPA_MODE)
 	unsigned char rpa[6] = {0x3b, 0x3f, 0xfb, 0xeb, 0x1e, 0x78};
 
-	irk_value = aes_rpa_match(ppp, 7, rpa);
+	irk_value = aes_rpa_match(rpa_data, 7, rpa);
 
 	if(0xff == irk_value)
 	{
-		gpio_toggle(LED1|LED2|LED3|LED4);
+		gpio_toggle(LED2);
 		while(1);
 	}
-	gpio_toggle(LED1 | LED2);
+	gpio_toggle(LED1);
 	delay_ms(500);
 #endif
 

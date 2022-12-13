@@ -268,7 +268,7 @@ _attribute_ram_code_sec_noinline_ void pm_stimer_recover(void);
  * @param[in]	wakeup_tick			- the time of short sleep, which means MCU can sleep for less than 5 minutes.
  * @return		indicate whether the cpu is wake up successful.
  */
-_attribute_ram_code_sec_noinline_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode,  pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int  wakeup_tick);
+_attribute_text_sec_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode,  pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int  wakeup_tick);
 
 /**
  * @brief		Calculate the offset value based on the difference of 16M tick.

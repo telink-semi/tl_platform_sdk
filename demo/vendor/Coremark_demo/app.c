@@ -31,9 +31,14 @@ void user_init(void)
 	reg_usb_ep8_send_thre = 0x40;
 	reg_usb_ep8_fifo_mode = 1;
 
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
-
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
 }
 
 void main_loop(void)

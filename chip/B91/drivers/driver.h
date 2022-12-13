@@ -23,15 +23,11 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "lib/include/axon/axon_api.h"
-#include "lib/include/axon/axon_dep.h"
 #include "lib/include/pke/pke.h"
 #include "lib/include/emi.h"
 #include "lib/include/plic.h"
 #include "lib/include/pm.h"
 #include "lib/include/rf.h"
-#include "lib/include/swire.h"
 #include "lib/include/sys.h"
 #include "lib/include/trng.h"
 
@@ -61,3 +57,4 @@
 #include "mspi.h"
 #include "adc.h"
 #include "flash/flash_type.h"
+#include "sdk_version.h"

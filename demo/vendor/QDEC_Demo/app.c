@@ -55,10 +55,10 @@ void main_loop (void)
 		total_count -= (pol-qdec_count);
 	else
 		total_count += qdec_count;
-	printf(" total_count: %d \t", total_count);
-	printf(" qdec_count: %d \r\n", qdec_count);
+	printf("  \n");								// caution: The first byte will be error
+	printf("total_count: %d \t", total_count);
+	printf("qdec_count: %d \n", qdec_count);
 	delay_ms(1000);
-	gpio_toggle(LED1);
 }
 
 

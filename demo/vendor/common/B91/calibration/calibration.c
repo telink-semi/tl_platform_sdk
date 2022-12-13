@@ -160,6 +160,10 @@ void user_read_flash_value_calib(void)
 				user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_2M);
 				user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_2M);
 				break;
+			case FLASH_SIZE_4M:
+				user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_4M);
+				user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_4M);
+				break;
 			default:
 				user_calib_adc_vref(USER_CALIB_FROM_FLASH, 0);
 				break;

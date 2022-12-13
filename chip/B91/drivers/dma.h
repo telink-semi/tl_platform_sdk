@@ -132,13 +132,15 @@ typedef struct {
 	unsigned int auto_en:1;/*/*auto_en : 31*/
 }dma_config_t;
 
-
+/*
+ * If volatile is not added, the compiler optimization will affect the configuration of the chain, which will lead to the abnormal work of pwm/audio(when using the chain function).
+ */
 typedef struct {
-	unsigned int dma_chain_ctl;
-	unsigned int dma_chain_src_addr;
-	unsigned int dma_chain_dst_addr;
-	unsigned int dma_chain_data_len;
-	unsigned int dma_chain_llp_ptr;
+	volatile unsigned int dma_chain_ctl;
+	volatile unsigned int dma_chain_src_addr;
+	volatile unsigned int dma_chain_dst_addr;
+	volatile unsigned int dma_chain_data_len;
+	volatile unsigned int dma_chain_llp_ptr;
 }dma_chain_config_t ;
 
 

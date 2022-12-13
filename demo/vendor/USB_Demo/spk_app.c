@@ -27,12 +27,18 @@
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
 #include <string.h>
-#if(MCU_CORE_B91)
+
 #define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
-#define SPK_MONO_STEREO       ((SPK_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
 #define SPK_DMA_CHN    DMA3
 #define	SPK_BUFFER_SIZE			2048
-unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
+unsigned short		iso_out_buff [SPK_BUFFER_SIZE]__attribute__((aligned(4)));
+extern volatile unsigned int pm_top_reset_tick;
+extern volatile unsigned int charger_clear_vbus_detect_flag;
+#if(MCU_CORE_B91)
+#define SPK_MONO_STEREO       ((SPK_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
+
+
+
 
 volatile unsigned int		iso_out_w = 0;
 volatile unsigned int  	     iso_out_r = 0;
@@ -48,8 +54,14 @@ void user_init(void)
 #if(CHIP_VER_A0==CHIP_VER)
 	audio_set_codec_supply(CODEC_2P8V);
 #endif
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
 
 	reg_usb_ep6_buf_addr = 0x40;		// 192 max
 	reg_usb_ep7_buf_addr = 0x20;		// 32
@@ -173,23 +185,35 @@ void main_loop (void)
 	}
 }
 #elif(MCU_CORE_B92)
-#define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
-#define SPK_DMA_CHN    DMA3
-#define	SPK_BUFFER_SIZE			2048
-unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
 
 volatile unsigned int		iso_out_w = 0;
-volatile unsigned int  	     iso_out_r = 0;
-volatile unsigned int  	     iso_out_w_r = 0;
-
-unsigned int		            num_iso_out = 0;
+unsigned int		        num_iso_out = 0;
 
 
+#define FIFO_NUM                FIFO0
+#define SPK_DMA_CHN             DMA2
+#define AISO_DMA_CHN            DMA3
+audio_codec_output_t audio_codec_output = {
+	.output_src = CODEC_DAC_STEREO,
+	.sample_rate = SPK_SAMPLING_RATE,
+	.fifo_num = FIFO_NUM,
+	.data_width = CODEC_BIT_16_DATA,
+	.dma_num = SPK_DMA_CHN,
+	.mode = HP_MODE,
+	.data_buf = iso_out_buff,
+	.data_buf_size = sizeof(iso_out_buff),
+};
 
 void user_init(void)
 {
-	gpio_function_en(LED1|LED2|LED3|LED4);
-	gpio_output_en(LED1|LED2|LED3|LED4);
+	gpio_function_en(LED1);
+	gpio_output_en(LED1);
+	gpio_function_en(LED2);
+	gpio_output_en(LED2);
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
 
 	reg_usb_ep6_buf_addr = 0x40;		// 192 max
 	reg_usb_ep7_buf_addr = 0x20;		// 32
@@ -200,17 +224,28 @@ void user_init(void)
 	usb_set_pin_en();
 	//2.enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device)
 	usb_init_interrupt();
-	//3.enable global interrupt
-	core_interrupt_enable();
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	audio_codec_init();
+#if(USB_MODE==INT)
+	core_interrupt_enable();//	enable global interrupt
+	plic_interrupt_enable(IRQ11_USB_ENDPOINT);// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
+	audio_codec_stream_output_init(&audio_codec_output);
+	audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
+	audio_tx_dma_en(audio_codec_output.dma_num);
+#else
+	audio_data_fifo_input_path_sel(FIFO_NUM,USB_AISO_IN_FIFO);
+	audio_codec_stream_output_init(&audio_codec_output);
+	audio_rx_dma_chain_init(FIFO_NUM,AISO_DMA_CHN,(unsigned short*)iso_out_buff,sizeof(iso_out_buff));
+	audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
+	audio_rx_dma_en(AISO_DMA_CHN);
+	audio_tx_dma_en(audio_codec_output.dma_num);
+#endif
 
-	//audio_init(BUF_TO_LINE_OUT ,SPK_SAMPLING_RATE,MONO_BIT_16);
-	audio_tx_dma_chain_init(SPK_DMA_CHN,(unsigned short*)&iso_out_buff,SPK_BUFFER_SIZE*2,FIFO0);
 
+#endif
 }
 
-
+#if (USB_MODE==INT)
 /**
  * @brief     This function servers to set USB Input.
  * @param[in] none
@@ -229,8 +264,6 @@ void  audio_rx_data_from_usb ()
 
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d0;
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d1;
-
-		iso_out_w_r=((iso_out_w&(SPK_BUFFER_SIZE - 1))- iso_out_r)&(SPK_BUFFER_SIZE - 1);
 
 	}
 	usbhw_data_ep_ack(USB_EDP_SPEAKER);
@@ -252,14 +285,29 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	}
 
 }
-
+#endif
 
 void main_loop (void)
 {
+	/**
+	 * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+	 *              otherwise the MCU will be reset after 8s.
+	*/
+#if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+	if(charger_get_vbus_detect_status()){
+	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
+	   {
+		  charger_clear_vbus_detect_status();//clear reset
+		  charger_clear_vbus_detect_flag = 1;
+	   }
+    }
+#endif
+
 	usb_handle_irq();
+
+
 }
 
-#endif
 #endif
 
 
