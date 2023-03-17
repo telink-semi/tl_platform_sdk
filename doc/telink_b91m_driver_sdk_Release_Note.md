@@ -1,3 +1,83 @@
+## V2.1.1-Beta
+
+### Version
+
+* SDK version: telink_b91m_driver_sdk V2.1.1-Beta.
+* This version of the SDK supports B91(A0,A1,A2),B92(A1) chips.
+* B92(added) supports USB/AUDIO/I2C/s7816//UART/QDEC/PWM/Timer/Stimer/PLIC/GPIO/SPI/PKE/AES/ANALOG/TRNG
+* The default configuration of LEDs and KEYs match the following hardware revisions:
+*   B91	 	C1T213A20_V1_3_20200727
+*   B92	 	C1T266A20_V1_3_20220722
+
+### BREAKING CHANGES
+
+* N/A
+
+### Bug Fixes
+
+* N/A
+
+### Features
+
+* N/A
+
+### Refactoring
+
+* **rf**
+  * (B91/B92)Normalizes the naming of content related to private schemas
+
+
+### Performance Improvements
+
+* N/A
+
+### Note
+
+* (B92) There is a problem with PB0,A1 does not work  
+* (B92) watchdoge for 32K is turned on by default and can be turned off by calling wd_32k_stop()  
+* (B92) Vbus power supply (not Vbat), there will be muc reset after 8s, USB demo call charger_clear_vbus_detect_status() can be turned off 
+
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### 版本
+
+* SDK版本: telink_b91m_driver_sdk V2.1.1-Beta。
+* 此版本SDK支持 B91(A0,A1,A2),B92(A1) 芯片。
+* B92(新增) 支持 USB/AUDIO/I2C/s7816//UART/QDEC/PWM/Timer/Stimer/PLIC/GPIO/SPI/PKE/AES/ANALOG/TRNG
+* LED和KEY的默认配置匹配以下硬件版本:
+*   B91	 	C1T213A20_V1_3_20200727
+*   B92	 	C1T266A20_V1_3_20220722
+
+### BREAKING CHANGES
+
+* N/A
+
+### Bug Fixes
+
+* N/A
+
+### Features
+
+* N/A
+
+### Refactoring
+
+* **rf**
+  * (B91/B92)规范化与私有模式相关内容的命名
+  
+### Performance Improvements
+
+* N/A
+
+### Note
+
+* (B92) PB0有问题,A1不能用
+* (B92) 32K的watchdoge默认打开，调用wd_32k_stop()可以将其关掉
+* (B92) Vbus供电(不是Vbat),8s后会有muc reset ，USB demo中调用charger_clear_vbus_detect_status()可以关掉
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
 ## V2.1.0-Beta
 
 ### Version
@@ -307,7 +387,7 @@
 * **project**
     * The suffix of Debug file is uniformly revised to elf.
 * **rf**
-    * Modify the keyword nordic to private.
+    * Normalizes the private schema keyword name.
     * Modify the internal implementation of rf_set_rx_timeout.
     * Separate the rx settle time setting from the rf_start_srx function and use it as the rf_set_rx_settle_time function.
 * **audio**
@@ -470,7 +550,7 @@
 * **project**
     * Debug文件后缀统一修改为elf。
 * **rf**
-    * 将关键字nordic修改为private。
+    * 规范化private模式关键字名称。
     * 修改rf_set_rx_timeout内部实现方式。
     * 将rx settle时间设置从rf_start_srx函数中分离出来作为 rf_set_rx_settle_time函数使用。
 * **audio**

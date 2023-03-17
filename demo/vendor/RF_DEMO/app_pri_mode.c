@@ -27,7 +27,7 @@
 
 
 unsigned char  rx_packet[128*4]  __attribute__ ((aligned (4)));
-unsigned char  Private_ESB_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xa,0xb,0xc,0xd,0xc,0xf};
+unsigned char  Private_TPLL_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xa,0xb,0xc,0xd,0xc,0xf};
 unsigned char  Private_SB_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,20,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
 #define TX					1
@@ -38,7 +38,7 @@ unsigned char  Private_SB_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,
 #define MANUAL				2
 #define RF_AUTO_MODE 		MANUAL
 
-#define ESB_MODE  			1
+#define TPLL_MODE  			1
 #define SB_MODE   			2
 #define PRI_MODE			SB_MODE
 
@@ -65,8 +65,8 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 	{
 #if(RF_AUTO_MODE == AUTO)
 		unsigned char* raw_pkt = rf_get_rx_packet_addr(RX_FIFO_NUM,RX_FIFO_DEP,rx_packet);
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-		if(rf_pri_esb_packet_crc_ok(raw_pkt))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+		if(rf_pri_tpll_packet_crc_ok(raw_pkt))
 		{
 			rx_cnt++;
 			gpio_toggle(LED2);
@@ -81,8 +81,8 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 		rf_start_srx(stimer_get_tick());
 #endif
 #else
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-		if(rf_pri_esb_packet_crc_ok(rx_packet))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+		if(rf_pri_tpll_packet_crc_ok(rx_packet))
 		{
 			rx_cnt++;
 			gpio_toggle(LED2);
@@ -114,7 +114,7 @@ void user_init(void)
 	rf_set_power_level(RF_POWER);
 	rf_set_chn(RF_FREQ);
 	rf_access_code_comm(ACCESS_CODE);
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
 
 #elif(PRI_MODE==SB_MODE)
 	rf_private_sb_en();
@@ -155,14 +155,14 @@ void main_loop(void)
 
 
 #if(RF_TRX_MODE==TX)
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
 	unsigned char rf_data_len = TX_PKT_PAYLOAD+1;
-	Private_ESB_tx_packet[4]=TX_PKT_PAYLOAD;
+	Private_TPLL_tx_packet[4]=TX_PKT_PAYLOAD;
 	unsigned int rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
-	Private_ESB_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
-	Private_ESB_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
-	Private_ESB_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
-	Private_ESB_tx_packet[0] = rf_tx_dma_len&0xff;
+	Private_TPLL_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
+	Private_TPLL_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
+	Private_TPLL_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
+	Private_TPLL_tx_packet[0] = rf_tx_dma_len&0xff;
 #elif(PRI_MODE==SB_MODE)
 	unsigned char rf_data_len = TX_PKT_PAYLOAD;
 //	Private_SB_tx_packet[4]=0x20;
@@ -173,8 +173,8 @@ void main_loop(void)
 	Private_SB_tx_packet[0] = rf_tx_dma_len&0xff;
 #endif
 
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-	rf_start_stx(Private_ESB_tx_packet, stimer_get_tick());
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+	rf_start_stx(Private_TPLL_tx_packet, stimer_get_tick());
 #elif(PRI_MODE== SB_MODE)
 	rf_start_stx(Private_SB_tx_packet, stimer_get_tick());
 #endif
@@ -184,8 +184,8 @@ void main_loop(void)
 		delay_ms(1);
 		while(!(rf_get_irq_status(FLD_RF_IRQ_TX )));
 		rf_clr_irq_status(FLD_RF_IRQ_TX );
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-		rf_start_stx(Private_ESB_tx_packet, stimer_get_tick());
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+		rf_start_stx(Private_TPLL_tx_packet, stimer_get_tick());
 #elif(PRI_MODE== SB_MODE)
 		rf_start_stx(Private_SB_tx_packet, stimer_get_tick());
 #endif
@@ -204,8 +204,8 @@ void main_loop(void)
 		if(rf_get_irq_status(FLD_RF_IRQ_RX ))
 		{
 			unsigned char* raw_pkt = rf_get_rx_packet_addr(RX_FIFO_NUM,RX_FIFO_DEP,rx_packet);
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-			if(rf_pri_esb_packet_crc_ok(raw_pkt))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+			if(rf_pri_tpll_packet_crc_ok(raw_pkt))
 #elif(PRI_MODE==SB_MODE)
 			if(rf_pri_sb_packet_crc_ok(raw_pkt))
 #endif
@@ -234,7 +234,7 @@ void user_init(void)
 {
 	rf_set_power_level(RF_POWER);
 	rf_set_chn(RF_FREQ);
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
 
 #elif(PRI_MODE==SB_MODE)
 	rf_private_sb_en();
@@ -277,17 +277,17 @@ void user_init(void)
 void main_loop(void)
 {
 #if(RF_TRX_MODE==TX)
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
 	unsigned char rf_data_len = TX_PKT_PAYLOAD+1;
-	Private_ESB_tx_packet[4]=TX_PKT_PAYLOAD;
+	Private_TPLL_tx_packet[4]=TX_PKT_PAYLOAD;
 	unsigned int rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
-	Private_ESB_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
-	Private_ESB_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
-	Private_ESB_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
-	Private_ESB_tx_packet[0] = rf_tx_dma_len&0xff;
+	Private_TPLL_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
+	Private_TPLL_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
+	Private_TPLL_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
+	Private_TPLL_tx_packet[0] = rf_tx_dma_len&0xff;
 #elif(PRI_MODE==SB_MODE)
 	unsigned char rf_data_len = TX_PKT_PAYLOAD;
-//	Private_ESB_tx_packet[4]=0x20;
+//	Private_TPLL_tx_packet[4]=0x20;
 	unsigned int rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
 	Private_SB_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
 	Private_SB_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
@@ -301,8 +301,8 @@ void main_loop(void)
 	while(1)
 	{
 		delay_ms(1);
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-		rf_tx_pkt(Private_ESB_tx_packet);
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+		rf_tx_pkt(Private_TPLL_tx_packet);
 #elif(PRI_MODE== SB_MODE)
 		rf_tx_pkt(Private_SB_tx_packet);
 #endif
@@ -324,8 +324,8 @@ void main_loop(void)
 	{
 		if(rf_get_irq_status(FLD_RF_IRQ_RX ))
 		{
-#if(PRI_MODE==ESB_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
-			if(rf_pri_esb_packet_crc_ok(rx_packet))
+#if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
+			if(rf_pri_tpll_packet_crc_ok(rx_packet))
 #elif(PRI_MODE==SB_MODE)
 			if(rf_pri_sb_packet_crc_ok(rx_packet))
 #endif
