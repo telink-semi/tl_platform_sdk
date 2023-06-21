@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    sys_norflash.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,47 +21,15 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#pragma once
+#ifndef  __SYS_NORFLASH_H__
+#define  __SYS_NORFLASH_H__
 
-#include "driver.h"
-/* Enable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-extern "C" {
-#endif
-#if(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-#elif(MCU_CORE_B92)
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
-#endif
+#include "../../../app_config.h"
+#include <stdio.h>
+#define SYS_NORFLASH_DISK_ADDRESS 	0x80000
+#define SYS_NORFLASH_DISK_SIZE 		400*1024//400k  Must be greater than or equal to 32K
 
-#define INTERRUPT_NESTED_DEMO				1
-#if(MCU_CORE_B91)
-#define HSP_DEMO				            2//Hardware Stack Protection
-#define WFI_DEMO				            3//(Wait-For-Interrupt Mode)
-#endif
-#define PLIC_DEMO                       INTERRUPT_NESTED_DEMO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Disable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-}
+void sys_norflash_write_lba(unsigned char * buffer, unsigned int lba, unsigned int count);
+void sys_norflash_read_lba(unsigned char * buffer, unsigned int lba, unsigned int count);
+void sys_norflash_erase_lba(unsigned int lba, unsigned int total_bytes);
 #endif

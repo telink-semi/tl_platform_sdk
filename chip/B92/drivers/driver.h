@@ -32,7 +32,6 @@
 #include "lib/include/sys.h"
 #include "lib/include/trng.h"
 #include "lib/include/flash_base.h"
-#include "lib/include/hadm.h"
 
 #include "lib/include/pke/pke.h"
 #include "lib/include/pke/pke_algorithm.h"

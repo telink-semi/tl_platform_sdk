@@ -39,16 +39,6 @@ _attribute_ram_code_sec_ void stimer_irq_handler()
 	}
 }
 
-#elif ((STIMER_MODE == STIMER_IRQ_D25) || (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
-_attribute_ram_code_sec_ void stimer_irq_handler()
-{
-	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
-	{
-		gpio_toggle(LED2);
-		stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F);
-		stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
-	}
-}
 
 #elif (STIMER_MODE == STIMER_SET_32K_TICK)
 _attribute_ram_code_sec_ void pm_irq_handler()

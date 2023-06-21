@@ -208,15 +208,6 @@ typedef struct{
 extern _attribute_aligned_(4) pm_status_info_s g_pm_status_info;
 extern _attribute_data_retention_sec_ unsigned char g_pm_vbat_v;
 
-/**
- * @brief		This function servers to set the match value for MDEC wakeup.
- * @param[in]	value - the MDEC match value for wakeup.
- * @return		none.
- */
-static inline void pm_set_mdec_value_wakeup(unsigned char value)
-{
-	analog_write_reg8(mdec_ctrl,((analog_read_reg8(mdec_ctrl) & (~0x0f)) | value));
-}
 
 /**
  * @brief		This function serves to get deep retention flag.

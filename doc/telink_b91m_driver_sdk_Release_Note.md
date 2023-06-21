@@ -1,82 +1,397 @@
-## V2.1.1-Beta
+## V2.2.0
 
 ### Version
 
-* SDK version: telink_b91m_driver_sdk V2.1.1-Beta.
-* This version of the SDK supports B91(A0,A1,A2),B92(A1) chips.
-* B92(added) supports USB/AUDIO/I2C/s7816//UART/QDEC/PWM/Timer/Stimer/PLIC/GPIO/SPI/PKE/AES/ANALOG/TRNG
+* SDK version: telink_b91m_driver_sdk V2.2.0.
+* This version of the SDK supports B91(A0/A1/A2),B92(A1/A2) chips.
 * The default configuration of LEDs and KEYs match the following hardware revisions:
 *   B91	 	C1T213A20_V1_3_20200727
 *   B92	 	C1T266A20_V1_3_20220722
 
+### Note
+
+* telink_b91m_driver_sdk v2.0, this version corrects spelling errors and resolves compilation warnings, so there are some CHANGES that affect compatibility, please read the BREAKING CHANGES section for more information that affects compatibility.
+
 ### BREAKING CHANGES
 
-* N/A
+* **watchdog**
+  * (B92)charger_clear_vbus_detect_status()/charger_get_vbus_detect_status() were renamed wd_turn_off_vbus_timer()/usb_get_vbus_detect_status().
+* **audio**
+  * (B92)audio_set_codec_stream0_path()/audio_set_codec_stream1_path()/audio_codec_swap_stream0_data()/audio_codec_swap_stream1_d ata() has all new sampling rate parameters.
+  * (B91)The structure aduio_i2s_clk_config_t change to audio_i2s_clk_config_t.
+  * (B92)The interface aduio_i2s_set_mclk change to audio_i2s_set_mclk.
+* **sys**
+  * (B92)gpio_voltage_e added to sys_init function to configure the gpio voltage type(GPIO_VOLTAGE_3V3/GPIO_VOLTAGE_1V8).
+  * (B92)Modify 1P2 to 1P4 in the enumeration type power_mode_e.
+* **i2c** 
+  * (B91)The register reg_i2c_slave_strech_en change it to reg_i2c_slave_stretch_en.
+  * (B92)The interface i2c_slave_strech_en/i2c_slave_strech_dis/i2c_master_strech_en/i2c_master_strech_dis change them to i2c_slave_stretch_en/i2c_slave_stretch_dis/i2c_master_stretch_en/i2c_master_stretch_dis separately.
+  * (B92)The enumeration member FLD_I2C_MASTER_STRECH_EN/FLD_I2C_SLAVE_STRECH_EN change them FLD_I2C_MASTER_STRETCH_EN/FLD_I2C_SLAVE_STRETCH_EN separately.
+* **spi**
+  * (B91)The enumeration spi_nomal_3line_mode_e and the enumeration member SPI_NOMAL change them spi_normal_3line_mode_e and SPI_NORMAL(the spi_master_config interface is associated with this enumeration).
+  * (B92)Remove the spi_pin_config_t structure，add gspi_pin_config_t and lspi_pin_config_t,
+     change the parameter of gspi_set_pin function to gspi_pin_config_t pointer type, and change the parameter of lspi_set_pin function to gspi_pin_config_t pointer type.
+* **rf**
+   * (B91)(B92)The enumeration member FLD_RF_R_NOACK_RECNT_EN/FLD_RF_R_CMD_SCHDULE_EN change them FLD_RF_R_NOACK_RETRY_CNT_EN/FLD_RF_R_CMD_SCHEDULE_EN separately.
+   * (B91)(B92)The register reg_rf_modem_sync_thre_ble change to reg_rf_modem_sync_thres_ble.
+   * (B92)The rf_set_channel_fpga frequency setting function in FPGA verification phase was deleted and the rf_set_chn interface was used instead.
+   * (B92)Updated rf energy meters for the latest supply voltage configurations.
+   * (B91/B92)Removed the const keyword from the rf_power_Level_list table.
+* **flash**
+  * (B92)The interface flash_quad_page_pragram_encrypt change to flash_quad_page_program_encrypt.
+* **usb**
+  * (B91)(B92)The register reg_usb_ep8_send_thre change to reg_usb_ep8_send_thres.
+* **calibration**
+  * (B92)The calibration value interface user_read_flash_value_calib() is changed to calibration_func().
+* **pm**  
+  * (B92)Occupies PM_ANA_REG_POWER_ON_CLR_BUF0[bit1] (0x3a[1]) to mark whether restart caused by abnormal start-up has occurred, the customer cannot use this bit.
+* **uart**
+  * (B92)uart_get_rx_buff_cnt is changed to uart_get_rxfifo_rem_cnt.
+  * (B92)Delete the uart_rts_auto_mode/uart_rts_manual_mode interface.
+* **ide**
+  * (B91)The IDE for B91 is changed to TelinkIoTStudio, and the toolchain remains GCC7.
 
+  
 ### Bug Fixes
 
-* N/A
-
+* **gpio**
+  * (B92)The digital Pull-up resistor of PF [5:0] and PG [5:0] is not available, and these pins are prohibited in the interface of gpio_set_pullup_res_30k(). [ad91c3e5](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/566/diffs?commit_id=ad91c3e57719db168a95846f8022a0c7c9bf8ec5)
+* **rf**
+  * (B92)Fixed the issue that the RSSI value did not match the actual received energy. [435541cf](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/444/diffs?commit_id=435541cf3d9776581b57883579b54cb4421f08fd)
+  *	(B91/B92)Fixed the problem of incorrect setting of ctrim at some frequency points of rf_set_chn, and reduced the tx energy difference at different frequency points. [8ead48a7](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/541/diffs?commit_id=8ead48a7e05d90ee0cd64d68ef475f8275974b9f)
+  *	(B91/B92)The SETTLE_Time setting error caused by 4bit settle_time not taking effect when the rf_set_tx_settle_time interface is set, the SETTLE_time setting range is extended to 0xfff. [8ead48a7](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/541/diffs?commit_id=8ead48a7e05d90ee0cd64d68ef475f8275974b9f)
+* **emi**
+  * (B91/B92)Fixed inconsistency between rx packet length and dma fifo size causing FIFO data overflow to overwrite other RAM information. [95a0c226](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/450/diffs?commit_id=95a0c22606473f33a8f5032cf0eeb7660bd94a16)
+* **audio**
+  * (B92)The channel data exchange problem is solved when the sampling rate of DMIC is 44.1k and 48k. [2928be92](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/453/diffs?commit_id=2928be92d4f9dbd3b52f2633ae13356b3e100c43) 
+* **spi**
+  * (B92)Fixed the slave gpsi rx dma receiving the first data error. [03fdb77b](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/452/diffs?commit_id=03fdb77bfb4840573ff6bad797a1deea9ebb32ed)
+* **mspi**
+  * (B92)The related function is modified with ramcode, to avoid the risk that the mspi-related function may be compiled into the text segment and cause crash. [7ce63726](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/465/diffs?commit_id=7ce63726d14f7135e8efd37d7b183a6e52577bd2)
+* **sys**
+  * (B92)sys_reboot: the definition of sys_reboot is changed to sys.c, and the sys_reboot_ram interface is added. the processing of sys_reboot is stored in ram to avoid incorrect operations on flash when sys_reboot is called. [7ce63726](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/465/diffs?commit_id=7ce63726d14f7135e8efd37d7b183a6e52577bd2)
+  * (B91/B92)The sys_reboot interface was rewritten to avoid crash due to prefetch and interruption. [1cd3cc0e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/479/diffs?commit_id=1cd3cc0e1c14780aad3f729d8db6917ba44c66c9)
+  * (B92)The power supply of sram is about 1.2V. Adjusting the voltage to the ram in different states can be maintained at 1.2V. [1cd3cc0e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/479/diffs?commit_id=1cd3cc0e1c14780aad3f729d8db6917ba44c66c9)
+  * (B92)Solve the problem that the crystal oscillator stability flag fails to cause the crash. If the start-up is abnormal, it will restart. Use PM_ANA_REG_POWER_ON_CLR_BUF0[bit1] to check whether the restart caused by the abnormal start-up has occurred. (It has been implemented in the driver layer, and does not require special calls from the application layer.) [406f518d](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/540/diffs?commit_id=406f518d43f134209d4dc9c81bc40523208a93ad)
+  * (B92)The clock sources for configuring cclk, hclk, pclk, and mspiclk during initialization are all from 24M rc. [2b85e90e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/551/diffs?commit_id=2b85e90e6f30097f0f400212951fca7712666936)
+  * (B92)The risk of digital core voltages greater than the maximum operating voltage of 1.32V is avoided. The digital core voltage is configured at 1.2V. [cb5916dc](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/573/diffs?commit_id=cb5916dc4b5503b19cc92744e4a7471c3b88205c)
+* **clock**
+  * (B91)clock_init: added clock_init_ram interface to store the processing of clock_init in the ram to avoid possible machine crashes caused by improper operations during clock configuration. [7ce63726](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/465/diffs?commit_id=7ce63726d14f7135e8efd37d7b183a6e52577bd2)
+* **uart**
+  * (B92)uart_receive_dma interface directly uses UART0 instead of parameter uart_num, modify it. [f7cebf4e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/516/diffs?commit_id=f7cebf4e152151ca130c1c3861eff0f856985b10)
+* **gpio**
+  * (B92)Modify the gpio_set_src_irq() configuration to resolved the problem that the group src level interrupt could not work properly.[e9581b0a](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/511/commits?commit_id=e9581b0a098b9230269a5389a98a82c9e4a90bb3)
+* **dma** 
+  * (B92/B91) Fix the problem that if the buff parameter in audio_rx/tx_dma_chain_init interface is in IRAM area(DRAM is not affected), then calling audio_get_rx_dma_wptr/audio_get_tx_dma_rptr interface will cause error.  Reason: The return value of convert_ram_addr_cpu2bus is written to the dma-related register,The value of the register is read out as input parameter of convert_ram_addr_bus2cpu,it will be calculated incorrectly. [cfcb91ef](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/543/diffs?commit_id=cfcb91ef95289d327a78c014a401705c53d7118a)
+* **pwm**
+  * (B91)In the pwm_clr_irq_status interface, fix the problem that the FLD_PWM0_IR_FIFO_IRQ interrupt flag bit is not cleared correctly. [e0dfb211](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/532/diffs?commit_id=e0dfb21137f0e1396618ac246e10626d941093e0)
+* **pm**
+  * (B92)Solved the problem of high current in suspend sleep caused by leakage caused by the failure to connect the up and down pull of sws. [eb6c0261](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/466/diffs?commit_id=eb6c0261101c513f228a1a9dbf02dc9832f088d6)
+* **I2C_Demo**
+  * (B92)The received packet data is abnormal due to a code logic error. [106435f3](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/443/diffs?commit_id=106435f316711e1b27c9b7a095969ec2e1fca7aa)
+* **USB_Demo**
+  * (B92)Fixed the problem of not turn off the 8s vbus timer after unplugging and reinserting the vbus while the power is on(Vbat supply). [b36d04e1](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/451/diffs?commit_id=b36d04e10302fd0eb09c30d9a5e41fb1bc533096)
+  * (B91/B92)Fixed an issue that may enter an unexpected endpoint interrupt due to the endpoint interrupt mask being fully turned on by default.[2a22e068](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/454/diffs?commit_id=2a22e0684b524a11c22db86fe932164d56642ed6)
+  * (B91)Fixed mic_demo MIC_DMA_CHN undefined and spk_demo #ifdef #endif not used in pairs bug. [a2efbbb2](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/498/diffs?commit_id=a2efbbb2853f979e84fc2dc0464ff0b55c827cbb)
 ### Features
 
-* N/A
+* **usb**
+  * (B92)Add set config and get config support when disable auto config.
+* **flash**
+  * (B92)Add 2M flash(GD25LQ16E).
+* **pm**
+  * (B92)Add the function of clearing the pm interrupt flag bit.
+* **audio**
+  * (B91)Added audio adc/dac 24k sampling rate configuration option to the audio_set_i2s_clock() function interface..
+* **rf**
+  * (B91/B92) Added interfaces rf_ldot_ldo_rxtxlf_bypass_en(), rf_ldot_ldo_rxtxlf_bypass_dis(), rf_set_rxpara() related to improving the sensitivity performance of the emi/bqb program at 24M multiplier frequency points.
+  * (B92) Update the energy meter to support energy setting when the GPIO output voltage is 1.8V.
+* **aes**
+  * (B91/B92) Added interfaces to prevent conflicting AES encryption and decryption - aes_encrypt_bt_en and aes_decrypt_bt_en.
+* **clock**
+  * (B91/B92)Added the configuration of CCLK to 96M. 
+  * (B92)When the PLL is 192M, add the function interface cclk_hclk_pclk_config() for adjusting the CCLK/HCLK/PCLK frequency and the corresponding enumeration pll_div_cclk_hclk_pclk_e. 
+* **flash**
+  * (B91/B92)In each flash, add the interface flash_get_lock_block_midxxx to return which area is currently locked in flash (also in midxxx_lock_block_e, Note When flash write protection is used, only the midxxx_lock_block_e enumeration value can be selected, so that the values returned by the flash_get_lock_block_midxxx interface are in midxxx_lock_block_e).
+  * (B91/B92)In flash.h, the enumeration flash_mid_e is added,can use the enumeration value instead of flash_mid to increase readability.
+  * (B91/B92)flash.h, add FLASH_SIZE_16M to flash_capacity_e.
+* **efuse**
+  * (B92)Add the interface efuse_calib_adc_vref() to read adc calibration values from efuse.
+* **adc**
+  * (B92)Add adc calibration value configuration interfaces adc_set_gpio_calib_vref()、 adc_set_gpio_two_point_calib_offset()、adc_set_vbat_calib_vref()和adc_set_vbat_two_point_calib_offset(), and optimize some comments.
+* **all**
+  * (B92)Add calibration_func() for all demo.
+* **i2c**
+  * (B91)Add interfaces related to slave/matser stretch:i2c_slave_stretch_en/i2c_slave_stretch_dis/i2c_slave_manual_stretch_en/i2c_slave_manual_stretch_clr/i2c_master_stretch_en/i2c_master_stretch_dis.
+  * (B91)In i2c_master_init, the master stretch function is enabled by default (i2c_master_stretch_en), no matter whether the slave is stretch or not, the master side will not be abnormal.
+  * (B92)In i2c_master_init, the master stretch function is enabled by default (i2c_master_stretch_en), no matter whether the slave is stretch or not, the master side will not be abnormal.
+  * (B92)In i2c_master_init, the i2c_master_detect_nack_en function is turned on by default,no matter whether the slave sends an nack, the master is normal.
+* **PM_Demo**
+  * (B92)Add PM demo.
+* **USB_Demo**
+  * (B91)Add msc demo based on tinyusb.
+* **EMI_BQB_Demo**
+  * (B91)Added EMI_Demo initial configuration function and PA configuration method.
+  * (B92)Added EMI_BQB_Demo, and support RF current test function.
+* **Flash_Demo**
+  * (B91/B92)Maintain flash_lock/flash_unlock interfaces(to determine whether the flash is locked or unlocked), and list all flash interfaces to avoid omissions at the application layer due to subsequent flash additions.
+* **TRAP_Demo**
+  * (B92)Add machine timer interrupt, software interrupt and add corresponding demo to TRAP_Demo.
 
 ### Refactoring
 
+* **aes**
+  * (B91/B92)Update the comment of the function interface aes_set_em_base_addr.
+* **dma**
+  * (B91/B92)Add a note for peripherals using dma: the src and dst addresses of dma must be four-byte aligned,otherwise the program will enter an exception.
+  * (B91/B92)Add comments about peripherals used in conjunction with dma.
 * **rf**
-  * (B91/B92)Normalizes the naming of content related to private schemas
+  * (B91/B92)Set the rf_set_chn function to the _attribute_ram_code_sec_noinline_ type according to the application requirements.
+  * (B91/B92)Simplified the implementation of rf_update_internal_cap.
+  * (B91/B92)Define rf_set_power_level_index in ram.
+* **all**
+* (B91/B92)Normalizes the naming of content related to private schemas.
+* (B92)Clear all warning errors from DriverSDK.
+* **adc**
+  * (B91/B92)Add comments to g_adc_vref and corrected some interface comments.
+* **gpio**
+* (B92)Peripheral some functions pin is not used and not set to GPIO_NONE_PIN, resulting in pin set to PA0 by mistake, modify GPIO_NONE_PIN to 0 to optimize the problem.
+* **audio**
+* (B92)Audio_set_codec_stream0/1_path interface internal optimization.
+* **project**
+  * (B92)Add related warning options in Telink IoT Studio: -Wall,-Wextra,-Wshadow,-Werror, and clear related warnings and errors.Clear coding warnings, 
+  * (B92)Add functions, jump configurations for various data structures.
+  * (B91/B92)Remove compilation options: -Wno-gnu-zero-variadic-macro-arguments(gcc7 and gcc10 no longer support this option).
+* **uart**
+  *  (B92)uart_get_dma_rev_data_len:simplify the function logic while ensuring the function remains unchanged.
+* **adc**
+  * (B91)Adjust the position of adc_set_gpio_two_point_calib_offset(), and optimize some comments.
+* **gpio/i2c/spi/stimer/pm**
+  * (B91/B92):The gpio.h,i2c.h,spi.h,stimer.h add stdbool header files,modified for pm_wakeup_status_e pm_get_wakeup_src function returns. 
+* * **keyscan/stimer/watchdog/aes/irlearn/adc/lpc/ctb/charger/pwm/timer/gpio**
+  * (B91/B92)Correct spelling errors.
+* **pm**
+  * (B92)Add comments on some gpio pins that cannot be used as a pm wake source.
+* **PLIC_Demo**
+  * (B91/B92)PLIC_demo merge to TRAP_Demo and delete PLIC_Demo.
 
 
 ### Performance Improvements
 
-* N/A
-
+* **rf**
+  * (B92)Optimize the sensitivity of BLE2M, Private 2M, zigbee, hybee mode.
+* **sys**
+  * (B92)Adjust each ldo inside the chip to set it to normal voltage gear.
+  * (B92)Adjust the VDDO3 output to 1.8V or 3.3V.
+* **pm**
+  * (B91)Modify the pm_sleep_wakeup function to make suspend sleep time more accurate during long sleep.
+* **adc**
+  * (B91) Stricter determination of illegal values for ADC calibration values.
+* **EMI_BQB_Demo**
+  * (B91/B92) Use rf_ldot_ldo_rxtxlf_bypass_en(), rf_ldot_ldo_rxtxlf_bypass_dis(), rf_set_rxpara()
+interfaces to improve the sensitivity performance of emi/bqb programs at 24M multiplier frequency points.
 ### Note
 
-* (B92) There is a problem with PB0,A1 does not work  
-* (B92) watchdoge for 32K is turned on by default and can be turned off by calling wd_32k_stop()  
-* (B92) Vbus power supply (not Vbat), there will be muc reset after 8s, USB demo call charger_clear_vbus_detect_status() can be turned off 
-
+* N/A
 
 <hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
 
+
 ### 版本
 
-* SDK版本: telink_b91m_driver_sdk V2.1.1-Beta。
-* 此版本SDK支持 B91(A0,A1,A2),B92(A1) 芯片。
-* B92(新增) 支持 USB/AUDIO/I2C/s7816//UART/QDEC/PWM/Timer/Stimer/PLIC/GPIO/SPI/PKE/AES/ANALOG/TRNG
+* SDK版本: telink_b91m_driver_sdk V2.2.0。
+* 此版本SDK支持 B91(A0/A1/A2),B92(A1/A2) 芯片。
 * LED和KEY的默认配置匹配以下硬件版本:
 *   B91	 	C1T213A20_V1_3_20200727
 *   B92	 	C1T266A20_V1_3_20220722
 
-### BREAKING CHANGES
+### Note
 
-* N/A
+* telink_b91m_driver_sdk V2.2.0,该版本会纠正拼写错误并解决编译警告，因此会有一些影响兼容性的修改，影响兼容性的部分，请详细阅读BREAKING CHANGES部分。
+
+### BREAKING CHANGES
+* **watchdog**
+  * (B92)charger_clear_vbus_detect_status()/charger_get_vbus_detect_status()分别改名为wd_turn_off_vbus_timer()/usb_get_vbus_detect_status()。
+* **audio**
+  * (B92)audio_set_codec_stream0_path()/audio_set_codec_stream1_path()/audio_codec_swap_stream0_data()/audio_codec_swap_stream1_data()全部新增加了采样率的形参。
+  * (B91)结构体aduio_i2s_clk_config_t改为audio_i2s_clk_config_t。
+  * (B92)接口aduio_i2s_set_mclk改为audio_i2s_set_mclk。
+* **sys**
+  * (B92)sys_init函数新增gpio_voltage_e参数，用于配置gpio电压类型（GPIO_VOLTAGE_3V3/GPIO_VOLTAGE_1V8）。
+  * (B92)将枚举类型power_mode_e中的1P2修改为1P4
+* **i2c** 
+  * (B91)寄存器reg_i2c_slave_strech_en改为reg_i2c_slave_stretch_en。
+  * (B92)接口i2c_slave_strech_en/i2c_slave_strech_dis/i2c_master_strech_en/i2c_master_strech_dis分别改为 i2c_slave_stretch_en/i2c_slave_stretch_dis/i2c_master_stretch_en/i2c_master_stretch_dis。
+  * (B92)枚举成员FLD_I2C_MASTER_STRECH_EN/FLD_I2C_SLAVE_STRECH_EN分别改为FLD_I2C_MASTER_STRETCH_EN/FLD_I2C_SLAVE_STRETCH_EN。
+* **spi**
+  * (B91)枚举名spi_nomal_3line_mode_e以及枚举成员SPI_NOMAL分别改为spi_normal_3line_mode_e和SPI_NORMAL(spi_master_config接口和该枚举有关)。
+  * (B92)去除spi_pin_config_t结构体,新增gspi_pin_config_t，lspi_pin_config_t，
+    将gspi_set_pin函数形参改为gspi_pin_config_t指针类型，将lspi_set_pin函数形参改为gspi_pin_config_t指针类型。  
+* **rf**
+   * (B91)(B92)枚举成员FLD_RF_R_NOACK_RECNT_EN/FLD_RF_R_CMD_SCHDULE_EN分别改为FLD_RF_R_NOACK_RETRY_CNT_EN/FLD_RF_R_CMD_SCHEDULE_EN。
+   * (B91)(B92)寄存器reg_rf_modem_sync_thre_ble改为reg_rf_modem_sync_thres_ble。
+   * (B92)删除FPGA验证阶段的频点设置函数rf_set_channel_fpga，改为使用rf_set_chn接口。
+   * (B92)针对最新的供电电压配置，更新rf能量表。
+   * (B91/B92)删除了rf_power_Level_list表的const关键字。
+* **flash**
+  * (B92)接口flash_quad_page_pragram_encrypt改为flash_quad_page_program_encrypt。
+* **usb**
+  * (B91)(B92)寄存器reg_usb_ep8_send_thre改为reg_usb_ep8_send_thres。
+* **calibration**
+  * (B92)校准值接口user_read_flash_value_calib()改为calibration_func()。
+* **pm**
+  * (B92)占用PM_ANA_REG_POWER_ON_CLR_BUF0[bit1]（0x3a[1]）标志是否发生过起振异常导致的重启，客户不能使用这个bit。  
+* **uart**
+  * (B92)uart_get_rx_buff_cnt改为uart_get_rxfifo_rem_cnt。
+  * (B92)(B92)删除接口uart_rts_auto_mode/uart_rts_manual_mode。
+* **ide**
+  * (B91)B91的IDE更改为TelinkIoTStudio，工具链仍然为GCC7。
+  
 
 ### Bug Fixes
 
-* N/A
+* **gpio**
+  * (B92)PF[5:0]和PG[5:0]的数字上拉电阻不可用，这些引脚在接口gpio_set_pullup_res_30k()中被禁止。 [ad91c3e5](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/566/diffs?commit_id=ad91c3e57719db168a95846f8022a0c7c9bf8ec5)
+
+* **rf**
+  * (B92)修复了rssi值与实际接收能量不符的问题。[435541cf](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/444/diffs?commit_id=435541cf3d9776581b57883579b54cb4421f08fd)
+  * (B91/B92)修复了rf_set_chn部分频点ctrim设置错误的问题，减小不同频点上tx能量差异。[8ead48a7](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/541/diffs?commit_id=8ead48a7e05d90ee0cd64d68ef475f8275974b9f)
+  * (B91/B92)解决rf_set_tx_settle_time接口设置settle时间时高4bit未生效导致settle time设置错误的问题，将settle时间的设置范围扩展到0xfff。[8ead48a7](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/541/diffs?commit_id=8ead48a7e05d90ee0cd64d68ef475f8275974b9f)
+* **emi**
+  * (B91/B92)修复了rx包长度和dma fifo大小之间不一致导致FIFO数据溢出覆盖其他RAM信息。[95a0c226](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/450/diffs?commit_id=95a0c22606473f33a8f5032cf0eeb7660bd94a16)
+* **audio**
+  * (B92)解决了DMIC在采样率为44.1k,48k时通道数据相互调换的问题。[2928be92](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/453/diffs?commit_id=2928be92d4f9dbd3b52f2633ae13356b3e100c43) 
+* **spi**
+  * (B92)修复slave端 gpsi rx dma接收第一笔数据会出错问题。[03fdb77b](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/452/diffs?commit_id=03fdb77bfb4840573ff6bad797a1deea9ebb32ed)
+* **mspi**
+  * (B92)mspi相关的函数增加ramcode修饰，避免了mspi相关函数可能编译到text段，造成死机的风险。[7ce63726](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/465/diffs?commit_id=7ce63726d14f7135e8efd37d7b183a6e52577bd2)
+* **sys**
+  * (B92)sys_reboot:将sys_reboot的定义改到sys.c中，并新增sys_reboot_ram接口，将sys_reboot的处理放在ram中，避免调用sys_reboot时引发对flash错误操作。[7ce63726](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/465/diffs?commit_id=7ce63726d14f7135e8efd37d7b183a6e52577bd2)
+  * (B91/B92)重新写了sys_reboot接口，避免了因预取址和中断等因素引发死机的隐患。[1cd3cc0e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/479/diffs?commit_id=1cd3cc0e1c14780aad3f729d8db6917ba44c66c9)
+  * (B92)sram供电要求1.2V左右。调整不同状态下给ram供电的电压都可以保持在1.2V。[1cd3cc0e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/479/diffs?commit_id=1cd3cc0e1c14780aad3f729d8db6917ba44c66c9)
+  * (B92)解决晶振稳定标志位失灵导致死机的问题。 起振异常则重启，占用PM_ANA_REG_POWER_ON_CLR_BUF0[bit1]查询是否发生过起振异常导致的重启。（已在驱动层实现，不需要应用层特殊调用。）[406f518d](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/540/diffs?commit_id=406f518d43f134209d4dc9c81bc40523208a93ad)
+  * (B92)初始化时配置cclk/hclk/pclk/mspiclk的时钟源都来源于24M rc。[2b85e90e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/551/diffs?commit_id=2b85e90e6f30097f0f400212951fca7712666936)
+  * (B92)避免了digital core电压大于最高工作电压1.32V的可能带来的风险。digital core电压配置为1.2V。[cb5916dc](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/573/diffs?commit_id=cb5916dc4b5503b19cc92744e4a7471c3b88205c)
+* **clock**
+  * (B91)clock_init:新增clock_init_ram接口，将clock_init的处理放在ram中，避免配置clock时不当操作引起死机隐患。[7ce63726](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/465/diffs?commit_id=7ce63726d14f7135e8efd37d7b183a6e52577bd2)
+* **uart**
+  * (B92)uart_receive_dma接口中有直接使用UART0,而不是参数uart_num，将其修改。[f7cebf4e](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/516/diffs?commit_id=f7cebf4e152151ca130c1c3861eff0f856985b10)
+* **gpio**
+  * (B92)修改gpio_set_src_irq()配置，解决了group src level中断无法正常工作的问题。[e9581b0a](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/511/commits?commit_id=e9581b0a098b9230269a5389a98a82c9e4a90bb3)
+* **dma** 
+  * (B92/B91)修复audio_rx/tx_dma_chain_init接口中传入的buff参数分配在IRAM时(DRAM不受影响)，再调用audio_get_rx_dma_wptr/audio_get_tx_dma_rptr接口会出错问题，原因：先调用convert_ram_addr_cpu2bus，其返回值写到dma相关寄存器后，再读出寄存器的值输入到convert_ram_addr_bus2cpu 其计算结果会出错。[cfcb91ef](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/543/diffs?commit_id=cfcb91ef95289d327a78c014a401705c53d7118a)
+* **pwm**
+  * (B91)在pwm_clr_irq_status接口中，修复FLD_PWM0_IR_FIFO_IRQ中断标志位不能正确清除问题。[e0dfb211](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/532/diffs?commit_id=e0dfb21137f0e1396618ac246e10626d941093e0)
+* **pm**
+  * (B92)解决了因sws未接模拟上下拉而漏电导致的suspend睡眠电流大的问题。[eb6c0261](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/466/diffs?commit_id=eb6c0261101c513f228a1a9dbf02dc9832f088d6)
+* **I2C_Demo**
+  * (B92)代码逻辑错误导致收包数据异常。[106435f3](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/443/diffs?commit_id=106435f316711e1b27c9b7a095969ec2e1fca7aa)
+* **USB_Demo**
+  * (B92)修复了在不断电的情况下(Vbat供电),重复拔插Vbus，vbus 8s复位定时器无法再次清除的问题。[b36d04e1](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/451/diffs?commit_id=b36d04e10302fd0eb09c30d9a5e41fb1bc533096)
+  * (B91/B92)修复端点中断mask默认全部打开，可能导致进入非预期端点中断问题。[2a22e068](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/454/diffs?commit_id=2a22e0684b524a11c22db86fe932164d56642ed6)
+  * (B91)(B91)修复了 mic_demo MIC_DMA_CHN 未定义和 spk_demo #ifdef #endif未成对使用的错误。[a2efbbb2](http://192.168.48.36/src/driver/telink_b91m_driver_src/merge_requests/498/diffs?commit_id=a2efbbb2853f979e84fc2dc0464ff0b55c827cbb)
+  
 
 ### Features
 
-* N/A
+* **usb**
+  * (B92)USB 手动配置模式下，支持获取配置命令和设置配置命令。  
+* **flash**
+  * (B92)增加2M flash(GD25LQ16E)。
+* **pm**
+  * (B92)增加清除pm中断标志位的函数接口。
+* **audio**
+  * (B91)在audio_set_i2s_clock()函数接口里增加audio adc/dac 24k采样率配置选项。
+* **rf**
+  * (B91/B92)添加了提升emi/bqb程序在24M倍数频点的sensitivity性能的相关接口rf_ldot_ldo_rxtxlf_bypass_en()、rf_ldot_ldo_rxtxlf_bypass_dis()、rf_set_rxpara()。
+  * (B92)更新能量表以支持GPIO 输出电压为1.8V时的能量设置。
+* **aes**
+  * (B91/B92)新增防止冲突的AES加密和解密的接口-aes_encrypt_bt_en和aes_decrypt_bt_en。
+* **clock**
+  * (B91/B92)新增把CCLK为96M的配置。
+  * (B92)PLL为192M时，增加调节CCLK/HCLK/PCLK频率的函数接口cclk_hclk_pclk_config() 和对应的枚举pll_div_cclk_hclk_pclk_e。  
+* **flash**
+  * (B91/B92)在每款flash中，添加接口flash_get_lock_block_midxxx，返回flash当前锁的是哪一块区域（同时在midxxx_lock_block_e中，添加注释说明flash写保护时只能选择。midxxx_lock_block_e的枚举值，使得flash_get_lock_block_midxxx接口返回的值都在midxxx_lock_block_e中）。
+  * (B91/B92)flash.h中，新增枚举flash_mid_e，可以使用枚举值代替直接使用flash_mid，增加可读性。
+  * (B91/B92)flash.h中，在flash_capacity_e中添加FLASH_SIZE_16M。
+* **efuse**
+  * (B92)新增从efuse读取adc校准值接口efuse_calib_adc_vref()。
+* **adc**
+  * (B92)新增adc校准值配置接口adc_set_gpio_calib_vref()、 adc_set_gpio_two_point_calib_offset()、adc_set_vbat_calib_vref()和adc_set_vbat_two_point_calib_offset()，并优化了部分注释。
+* **all**
+  * (B92)为所有demo添加calibration_func()功能。
+* **i2c**
+  * (B91) 新增slave/matser stretch功能相关接口:i2c_slave_stretch_en/i2c_slave_stretch_dis/i2c_slave_manual_stretch_en/i2c_slave_manual_stretch_clr/i2c_master_stretch_en/i2c_master_stretch_dis。
+  * (B91) 在i2c_master_init中，默认将master stretch功能打开(i2c_master_stretch_en),无论对方slave是否stretch,master端都不会异常。
+  * (B92) 在i2c_master_init中，默认将master stretch功能打开(i2c_master_stretch_en),无论对方slave是否stretch,master端都不会异常。
+  * (B92) 在i2c_master_init中，默认打开i2c_master_detect_nack_en功能,无论对方slave是否发送nack,master端都不会异常。
+* **PM_Demo**
+  * (B92)添加 PM demo. 
+* **USB_Demo**
+  * (B91)基于 tinyusb 添加 U 盘 Demo。
+* **EMI_BQB_Demo**
+  * (B91)增加了EMI_Demo初始配置功能和PA配置方法。
+  * (B92)增加了EMI_BQB_Demo,并支持RF电流测试功能。
+* **Flash_Demo**
+  * (B91/B92)给应用层维护两个接口flash_lock/flash_unlock（判断flash是否上锁还是解锁），将所有的flash列举出来，避免由于后续新增flash，应用层有遗漏。
+* **TRAP_Demo**
+  * (B92)添加 mtime 中断, 软件中断并在 TRAP_Demo 中添加相应的示例.
 
 ### Refactoring
 
+* **aes**
+  * (B91/B92)更新函数接口aes_set_em_base_addr的注释。
+* **dma**
+  * (B91/B92)添加使用dma的外设注释: dma的src和dst地址必须四字节对齐，否则程序进入异常。
+  * (B91/B92)补充外设与dma结合使用的相关注释。
 * **rf**
-  * (B91/B92)规范化与私有模式相关内容的命名
-  
+  * (B91/B92)根据应用需求将rf_set_chn函数设置为_attribute_ram_code_sec_noinline_类型。
+  * (B91/B92)简化rf_update_internal_cap内部分实现。
+  * (B91/B92)将rf_set_power_level_index定义在ram中。 
+* **all**
+  * (B91/B92)规范化与私有模式相关内容的命名。 
+  * (B92)清除DriverSDK所有警告报错。
+* **adc**
+* (B91/B92)对g_adc_vref添加注释，并修正部分接口注释。
+* **gpio**
+* (B92)外设某些功能pin不用且未设为GPIO_NONE_PIN,导致pin误设置到PA0，修改GPIO_NONE_PIN为0优化该问题。
+* **audio**
+* (B92)audio_set_codec_stream0/1_path接口内部优化。
+* **project**
+  * (B92)工程配置下添加如下编译选项：-Wall,-Wextra,-Wshadow,-Werror，并清除警告报错。
+  * (B92)解决特殊文件不能跳转问题。
+  * (B91/B92)去除编译选项：-Wno-gnu-zero-variadic-macro-arguments(gcc7和gcc10已经不支持该选项)。
+* **uart** 
+  * (B92)uart_get_dma_rev_data_len:保证功能不变的情况下，简化功能逻辑。
+* **adc**
+  * (B91)调整adc_set_gpio_two_point_calib_offset()的位置，并优化了部分注释。
+* **gpio/i2c/spi/stimer/pm**
+  * (B91/B92)将gpio.h,i2c.h,spi.h,stimer.h添加stdbool头文件，pm_get_wakeup_src函数返回修改为pm_wakeup_status_e。
+* **keyscan/stimer/watchdog/aes/irlearn/adc/lpc/ctb/charger/pwm/timer/gpio**
+  * (B91/B92)纠正拼写错误。
+* **pm**
+  * (B92)添加注释说明不能用作pm唤醒源的一些gpio引脚
+* **PLIC_Demo**
+  * (B91/B92)将 PLIC_Demo 合并到 TRAP_Demo 并删除 PLIC_Demo。
+
 ### Performance Improvements
 
-* N/A
+* **rf**
+  * (B92)优化 BLE2M，Private 2M，zigbee，hybee模式的sensitivity。
+* **sys**
+  * (B92)调节芯片内部各个ldo，使其设置成正常电压档位。
+  * (B92)调节VDDO3输出1.8V或者3.3V。
+* **pm**
+  * (B91)修改pm_sleep_wakeup函数，使长睡眠时suspend睡眠时间更准确。
+* **adc**
+  * (B91) 加严了ADC校准值的非法值判断。
+* **EMI_BQB_Demo**
+  * (B91/B92)使用rf_ldot_ldo_rxtxlf_bypass_en()、rf_ldot_ldo_rxtxlf_bypass_dis()、rf_set_rxpara()
+接口，提升emi/bqb程序在24M倍数频点的sensitivity性能。
 
-### Note
-
-* (B92) PB0有问题,A1不能用
-* (B92) 32K的watchdoge默认打开，调用wd_32k_stop()可以将其关掉
-* (B92) Vbus供电(不是Vbat),8s后会有muc reset ，USB demo中调用charger_clear_vbus_detect_status()可以关掉
 
 <hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
 
 ## V2.1.0-Beta
 
@@ -619,7 +934,7 @@
 * **usb**
   * Fix the problem that usb_spk could not work when only USB_SPEAKER_ENABLE is turned on in USB_SPK Demo.
 * **audio**
-  * Corrct spelling errors in "audio_buff" in AUDIO Demo.
+  * Correct spelling errors in "audio_buff" in AUDIO Demo.
   * Correct the data type definition error in the app_sin_data.h file in AUDIO_Demo.
 * **spi**
   * Interface hspi_change_csn_pin()/pspi_change_csn_pin() have logic error, would configure the unused csn pin, the error has been fixed.And hspi_change_csn_pin()/pspi_change_csn_pin() has been deleted from the driver and moved to SPI_Demo.
@@ -694,7 +1009,7 @@
 ### Bug Fixes
 
 * **pm**
-  * solve the problem that pragrem can not run when VBAT power supply is greater than 4.1V,and sys_int configer power mode as DCDC mode.
+  * solve the problem that pragrem can not run when VBAT power supply is greater than 4.1V,and sys_int configure power mode as DCDC mode.
   * During the stability test, the program freezes after running for a period of time.
 * **spi** 
   * spi enum SPI_MODE1、SPI_MODE2 definition as error value, fixed as correct value.

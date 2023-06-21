@@ -57,7 +57,7 @@
 		<link>
 			<name>config/secure_boot_tool_cfg.ini</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/tools/telink_post_tool/config/B92/tl_secure_boot_post_tool_cfg.ini</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/tools/secure_boot_tool/config/B92/secure_boot_tool_cfg.ini</locationURI>
 		</link>
 		<link>
 			<name>vendor/ADC_Demo</name>
@@ -80,11 +80,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/AUDIO_Demo/AUDIO_V1.1/AUDIO_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/CTB_Demo</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/CTB_Demo</locationURI>
-		</link>
-		<link>
 			<name>vendor/Debug_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Debug_Demo</locationURI>
@@ -93,6 +88,11 @@
 			<name>vendor/Display_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Display_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/EMI_BQB_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/EMI_BQB_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/Flash_Demo</name>
@@ -183,11 +183,6 @@
 			<name>vendor/s7816_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/s7816_Demo</locationURI>
-		</link>
-		<link>
-			<name>vendor/common/auto_test</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/auto_test</locationURI>
 		</link>
 		<link>
 			<name>vendor/common/calibration</name>

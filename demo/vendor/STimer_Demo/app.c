@@ -76,20 +76,6 @@ void main_loop(void)
 	delay_ms(500);
 	gpio_toggle(LED1);
 
-#elif (STIMER_MODE == STIMER_IRQ_D25_N22_DSP)
-	delay_ms(20);
-	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_N22))
-	{
-		gpio_toggle(LED3);
-		stimer_clr_irq_status(FLD_SYSTEM_IRQ_N22);
-		stimer_set_irq_capture_n22(stimer_get_tick() + (500*SYSTEM_TIMER_TICK_1MS));
-	}
-	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_DSP))
-	{
-		gpio_toggle(LED4);
-		stimer_clr_irq_status(FLD_SYSTEM_IRQ_DSP);
-		stimer_set_irq_capture_dsp(stimer_get_tick() + (200*SYSTEM_TIMER_TICK_1MS));
-	}
 
 #elif (STIMER_MODE == STIMER_GET_32K_TICK)
 	cur_32k_tick[0] = clock_get_32k_tick();
