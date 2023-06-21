@@ -168,7 +168,7 @@
   * (B91)Adjust the position of adc_set_gpio_two_point_calib_offset(), and optimize some comments.
 * **gpio/i2c/spi/stimer/pm**
   * (B91/B92):The gpio.h,i2c.h,spi.h,stimer.h add stdbool header files,modified for pm_wakeup_status_e pm_get_wakeup_src function returns. 
-* * **keyscan/stimer/watchdog/aes/irlearn/adc/lpc/ctb/charger/pwm/timer/gpio**
+* **keyscan/stimer/watchdog/aes/irlearn/adc/lpc/ctb/charger/pwm/timer/gpio**
   * (B91/B92)Correct spelling errors.
 * **pm**
   * (B92)Add comments on some gpio pins that cannot be used as a pm wake source.
@@ -321,7 +321,7 @@ interfaces to improve the sensitivity performance of emi/bqb programs at 24M mul
 * **all**
   * (B92)为所有demo添加calibration_func()功能。
 * **i2c**
-  * (B91) 新增slave/matser stretch功能相关接口:i2c_slave_stretch_en/i2c_slave_stretch_dis/i2c_slave_manual_stretch_en/i2c_slave_manual_stretch_clr/i2c_master_stretch_en/i2c_master_stretch_dis。
+  * (B91) 新增slave/matser stretch功能相关接口 ：i2c_slave_stretch_en/i2c_slave_stretch_dis/i2c_slave_manual_stretch_en/i2c_slave_manual_stretch_clr/i2c_master_stretch_en/i2c_master_stretch_dis。
   * (B91) 在i2c_master_init中，默认将master stretch功能打开(i2c_master_stretch_en),无论对方slave是否stretch,master端都不会异常。
   * (B92) 在i2c_master_init中，默认将master stretch功能打开(i2c_master_stretch_en),无论对方slave是否stretch,master端都不会异常。
   * (B92) 在i2c_master_init中，默认打开i2c_master_detect_nack_en功能,无论对方slave是否发送nack,master端都不会异常。
