@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	soc.h
+ * @file    soc.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -64,10 +63,10 @@
 #define TCMD_WAREG					0x8
 //#if 1 //optimize
 /*
- * IRAM area:0x00000~0x1FFFF BIT(19) is 0,BIT(16~0) 128K is address offset
- * DRAM area:0x80000~0x9FFFF BIT(19) is 1,BIT(16~0) 128K is address offset
- * ILM area:0xc0000000~0xc0020000 BIT(31~19) is 3,BIT(21) is 0, BIT(20~17) do not care  BIT(16~0) 128K is address offset 128K is address offset
- * DLM area:0xc0200000~0xc0220000 BIT(31~19) is 3,BIT(21) is 1, BIT(20~17) do not care  BIT(16~0) 128K is address offset 128K is address offset
+ * IRAM area:0x00000~0x3FFFF BIT(19) is 0,BIT(17~0) 256K is address offset
+ * DRAM area:0x80000~0xBFFFF BIT(19) is 1,BIT(17~0) 256K is address offset
+ * ILM area:0xc0000000~0xc0040000 BIT(31~30) is 3,BIT(21) is 0, BIT(20~18) do not care  BIT(17~0) 256K is address offset 256K is address offset
+ * DLM area:0xc0200000~0xc0240000 BIT(31~30) is 3,BIT(21) is 1, BIT(20~18) do not care  BIT(17~0) 256K is address offset 256K is address offset
  * BIT(19) is used to distinguish from IRAM to DRAM, BIT(21) is used to distinguish from ILM to DLM.
  * so we can write it as follow
  * #define  convert_ram_addr_cpu2bus  (((((addr))&0x80000)? ((addr)| 0xc0200000) : ((addr)|0xc0000000)))
@@ -82,8 +81,8 @@
 //#endif
 // go further, if the source and destination  address is not in the sram(IRAM/DRAM)  interval, no address translation
 #define convert_ram_addr_cpu2bus(addr)  (unsigned int)(addr) < 0xc0000 ? ((unsigned int)(addr)+0xc0180000): (unsigned int)(addr)
-
-#define convert_ram_addr_bus2cpu(addr)  (((((unsigned int)(addr)) >=0xc0200000)?(((unsigned int)(addr)) + 0x80000-0xc0200000) : (((unsigned int)(addr)) - 0xc0000000)))
+//When using convert_ram_addr_cpu2bus(addr) formula to write to the register, BIT(20~18) may not be zero,  need to clear the corresponding bit to zero
+#define convert_ram_addr_bus2cpu(addr)  (((((unsigned int)(addr)) >=0xc0200000)?(((unsigned int)(addr)) + 0x80000-0xc0200000) : (((unsigned int)(addr)&(~0x1c0000))-0xc0000000)))
 
 
 #define LM_BASE                        0x80000000
@@ -258,6 +257,8 @@ enum{
 	FLD_DMIC_SEL        =	BIT(15),
 };
 
+#define reg_pwdn_en					REG_ADDR8(SC_BASE_ADDR+0x2f)
+
 #define reg_dmic_mod				REG_ADDR16(SC_BASE_ADDR+0x36)
 
 #define reg_probe_clk_sel		    REG_ADDR8(SC_BASE_ADDR+0x1a)
@@ -275,12 +276,14 @@ enum{
 
 #define reg_wakeup_status			0x64
 typedef enum{
-	FLD_WKUP_CMP			=	BIT(0),
-	FLD_WKUP_TIMER			=	BIT(1),
-	FLD_WKUP_DIG			=	BIT(2),
-	FLD_WKUP_PAD			=	BIT(3),
+	FLD_WKUP_PAD			=	BIT(0),
+	FLD_WKUP_DIG			=	BIT(1),
+	FLD_WKUP_TIMER			=	BIT(2),
+	FLD_WKUP_CMP			=	BIT(3),
 	FLD_WKUP_MDEC			=	BIT(4),
-	FLD_MDEC_RSVD			=	BIT_RNG(5,7),
+	FLD_WKUP_CTB			=	BIT(5),
+	FLD_WKUP_VAD			=	BIT(6),
+	FLD_VBUS_ON				=	BIT(7),
 }wakeup_status_e;
 
 

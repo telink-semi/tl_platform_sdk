@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	core_list_join.c
+ * @file    core_list_join.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -104,8 +103,10 @@ ee_s16 calc_func(ee_s16 *pdata, core_results *res) {
 	Can be used by mergesort.
 */
 ee_s32 cmp_complex(list_data *a, list_data *b, core_results *res) {
+
 	ee_s16 val1=calc_func(&(a->data16),res);
 	ee_s16 val2=calc_func(&(b->data16),res);
+
 	return val1 - val2;
 }
 
@@ -141,7 +142,7 @@ ee_u16 core_bench_list(core_results *res, ee_s16 finder_idx) {
 	ee_s16 find_num=res->seed3;
 	list_head *this_find;
 	list_head *finder, *remover;
-	list_data info;
+	list_data info = {0,0};
 	ee_s16 i;
 
 	info.idx=finder_idx;

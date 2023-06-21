@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	rf.h
+ * @file    rf.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -127,42 +126,6 @@ typedef enum{
 	RF_ADV2_HYPER_LENGTH_PACKET = 3
 }rf_pkt_len_mode_e;
 
-typedef enum{
-	RF_RX_ACL_AOA_AOD_EN  = BIT(0),
-	RF_RX_ADV_AOA_AOD_EN  = BIT(1),
-	RF_TX_ACL_AOA_AOD_EN  = BIT(2),
-	RF_TX_ADV_AOA_AOD_EN  = BIT(3),
-	RF_AOA_AOD_OFF        = 0
-}rf_aoa_aod_mode_e;
-
-/*
- * @brief  Data length type of AOA/AOD sampling.
- * @note   Attention:When the iq data is 20bit, it cannot be used with the 0.25us mode, which will cause the sampling data to overflow.
- */
-typedef enum{
-	IQ_8_BIT_MODE   		= 0,
-	IQ_16_BIT_MODE  		= 1,
-	IQ_16_BIT_LOW_MODE		= 2,
-	IQ_16_BIT_HIGH_MODE		= 3,
-	IQ_20_BIT_MODE			= 4
-}rf_aoa_aod_iq_data_mode_e;
-
-
-
-/*
- * @brief  AOA/AOD sample interval time type enumeration.
- * @note   Attention:When the time is 0.25us, it cannot be used with the 20bit iq data type, which will cause the sampling data to overflow.
- *		   In normal mode, the sampling interval of AOA is 4us, and AOD will judge whether the sampling interval is 4us or 2us according to
- *		   CTE info.
- */
-typedef enum{
-	SAMPLE_NORMAL_INTERVAL   	= 0,//In this case sample interval of aoa is 4us, and aod will judge sample interval is 4us or 2us according to CTE info.
-	SAMPLE_2US_INTERVAL   		= 3,
-	SAMPLE_1US_INTERVAL  		= 4,
-	SAMPLE_0P5US_INTERVAL 		= 5,
-	SAMPLE_0P25US_INTERVAL 		= 6
-}rf_aoa_aod_sample_interval_time_e;
-
 
 /**
  *  @brief  set the modulation index.
@@ -192,72 +155,161 @@ typedef enum {
 	RF_MODE_OFF =3		/**<  TXRX OFF mode */
 } rf_status_e;
 
+
 /**
  *  @brief  Define power list of RF.
+ *  @note	The energy value with the 1.8V keyword is the energy value when the GPIO output voltage is 1.8V
+ *          (i.e. when the GPIO voltage in sys_init is configured to GPIO_VOLTAGE_1V8)
+ *          Since the GPIO output voltage is set to 1.8V, the VDDO3 voltage supplying the RF is 1.8V, which will cause the energy to drop.
+ *          Therefore, when the GPIO output voltage is set to 1.8V, the energy setting with the 1.8V keyword should be selected.
  */
 typedef enum {
 	 /*VBAT*/
-	 RF_POWER_P9p11dBm = 63,  /**<  9.1 dbm */
-	 RF_POWER_P8p57dBm  = 52, /**<  8.6 dbm */
-	 RF_POWER_P8p05dBm  = 49, /**<  8.1 dbm */
-	 RF_POWER_P7p45dBm  = 45, /**<  7.5 dbm */
-	 RF_POWER_P6p98dBm  = 42, /**<  7.0 dbm */
-	 RF_POWER_P5p68dBm  = 36, /**<  6.0 dbm */
+	 RF_POWER_P9p90dBm  = 63, /**<  9.9 dbm */
+	 RF_POWER_P9p61dBm  = 59, /**<  9.6 dbm */
+	 RF_POWER_P9p15dBm  = 54, /**<  9.1 dbm */
+	 RF_POWER_P8p82dBm  = 51, /**<  8.8 dbm */
+	 RF_POWER_P8p25dBm  = 48, /**<  8.2 dbm */
+	 RF_POWER_P7p72dBm  = 44, /**<  7.7 dbm */
+	 RF_POWER_P7p00dBm  = 40, /**<  7.0 dbm */
+	 RF_POWER_P6p32dBm  = 36, /**<  6.3 dbm */
+	 RF_POWER_P5p21dBm  = 32, /**<  5.2 dbm */
+
 	 /*VANT*/
-	 RF_POWER_P4p35dBm  = BIT(7) | 63,   /**<   4.4 dbm */
-	 RF_POWER_P3p83dBm  = BIT(7) | 55,   /**<   3.8 dbm */
-	 RF_POWER_P3p25dBm  = BIT(7) | 49,   /**<   3.3 dbm */
-	 RF_POWER_P2p79dBm  = BIT(7) | 45,   /**<   2.8 dbm */
-	 RF_POWER_P2p32dBm  = BIT(7) | 41,   /**<   2.3 dbm */
-	 RF_POWER_P1p72dBm  = BIT(7) | 38,   /**<   1.7 dbm */
-	 RF_POWER_P0p80dBm  = BIT(7) | 33,   /**<   0.8 dbm */
-	 RF_POWER_P0p01dBm  = BIT(7) | 29,   /**<   0.0 dbm */
-	 RF_POWER_N0p53dBm  = BIT(7) | 27,   /**<  -0.5 dbm */
-	 RF_POWER_N1p37dBm  = BIT(7) | 24,   /**<  -1.4 dbm */
-	 RF_POWER_N2p01dBm  = BIT(7) | 22,   /**<  -2.0 dbm */
-	 RF_POWER_N3p37dBm  = BIT(7) | 19,   /**<  -3.4 dbm */
-	 RF_POWER_N4p77dBm  = BIT(7) | 16,   /**<  -4.8 dbm */
-	 RF_POWER_N6p54dBm = BIT(7) | 13,     /**<  -6.5 dbm */
-	 RF_POWER_N8p78dBm = BIT(7) | 10,     /**<  -8.8 dbm */
-	 RF_POWER_N12p06dBm = BIT(7) | 6,    /**<  -12.1 dbm */
-	 RF_POWER_N17p83dBm = BIT(7) | 4,    /**<  -17.8 dbm */
-	 RF_POWER_N23p54dBm = BIT(7) | 2,    /**<  -23.5 dbm */
+	 RF_POWER_P4p61dBm  = BIT(7) | 63,   /**<   4.6 dbm */
+	 RF_POWER_P4p02dBm  = BIT(7) | 55,   /**<   4.0 dbm */
+	 RF_POWER_P3p51dBm  = BIT(7) | 49,   /**<   3.5 dbm */
+	 RF_POWER_P3p00dBm  = BIT(7) | 45,   /**<   3.0 dbm */
+	 RF_POWER_P2p51dBm  = BIT(7) | 41,   /**<   2.5 dbm */
+	 RF_POWER_P2p01dBm  = BIT(7) | 38,   /**<   2.0 dbm */
+	 RF_POWER_P1p62dBm  = BIT(7) | 35,   /**<   1.6 dbm */
+	 RF_POWER_P1p03dBm  = BIT(7) | 33,   /**<   1.0 dbm */
+	 RF_POWER_P0p31dBm  = BIT(7) | 29,   /**<   0.3 dbm */
+	 RF_POWER_P0p01dBm  = BIT(7) | 28,   /**<   0.0 dbm */
+	 RF_POWER_N0p43dBm  = BIT(7) | 26,   /**<  -0.4 dbm */
+	 RF_POWER_N1p15dBm  = BIT(7) | 24,   /**<  -1.0 dbm */
+	 RF_POWER_N1p52dBm  = BIT(7) | 23,   /**<  -1.5 dbm */
+	 RF_POWER_N2p51dBm  = BIT(7) | 20,   /**<  -2.5 dbm */
+	 RF_POWER_N3p95dBm  = BIT(7) | 17,   /**<  -3.9 dbm */
+	 RF_POWER_N5p94dBm  = BIT(7) | 13,   /**<  -5.9 dbm */
+	 RF_POWER_N9p03dBm  = BIT(7) | 9,    /**<  -9.0 dbm */
+	 RF_POWER_N13p42dBm = BIT(7) | 5,    /**<  -13.4 dbm */
+	 RF_POWER_N22p53dBm = BIT(7) | 2,    /**<  -22.5 dbm */
 
 	 RF_POWER_N30dBm    = 0xff,          /**<  -30 dbm */
 	 RF_POWER_N50dBm    = BIT(7) | 0,    /**<  -50 dbm */
 
+	 /*VBAT*/
+	 RF_1V8_POWER_P6p32dBm = 63, /**<  6.3 dbm */
+	 RF_1V8_POWER_P5p81dBm = 56, /**<  5.8 dbm */
+	 RF_1V8_POWER_P5p00dBm = 50, /**<  5.0 dbm */
+	 RF_1V8_POWER_P4p50dBm = 45, /**<  4.5 dbm */
+
+	 /*VANT*/
+	 RF_1V8_POWER_P4p23dBm  = BIT(7) | 63,   /**<   4.2 dbm */
+	 RF_1V8_POWER_P3p91dBm  = BIT(7) | 55,   /**<   3.9 dbm */
+	 RF_1V8_POWER_P3p43dBm  = BIT(7) | 50,   /**<   3.4 dbm */
+	 RF_1V8_POWER_P2p94dBm  = BIT(7) | 45,   /**<   2.9 dbm */
+	 RF_1V8_POWER_P2p42dBm  = BIT(7) | 41,   /**<   2.4 dbm */
+	 RF_1V8_POWER_P1p95dBm  = BIT(7) | 38,   /**<   1.9 dbm */
+	 RF_1V8_POWER_P1p21dBm  = BIT(7) | 34,   /**<   1.2 dbm */
+	 RF_1V8_POWER_P0p82dBm  = BIT(7) | 31,   /**<   0.8 dbm */
+	 RF_1V8_POWER_P0p21dBm  = BIT(7) | 29,   /**<   0.0 dbm */
+	 RF_1V8_POWER_N0p34dBm  = BIT(7) | 27,   /**<  -0.3 dbm */
+	 RF_1V8_POWER_N1p33dBm  = BIT(7) | 23,   /**<  -1.3 dbm */
+	 RF_1V8_POWER_N1p80dBm  = BIT(7) | 22,   /**<  -1.8 dbm */
+	 RF_1V8_POWER_N2p53dBm  = BIT(7) | 20,   /**<  -2.5 dbm */
+	 RF_1V8_POWER_N3p31dBm  = BIT(7) | 18,   /**<  -3.3 dbm */
+	 RF_1V8_POWER_N5p32dBm  = BIT(7) | 14,   /**<  -5.3 dbm */
+	 RF_1V8_POWER_N7p32dBm  = BIT(7) | 11,   /**<  -7.3 dbm */
+	 RF_1V8_POWER_N9p81dBm  = BIT(7) | 9,     /**<  -9.8 dbm */
+	 RF_1V8_POWER_N12p42dBm = BIT(7) | 6,    /**<  -12.4 dbm */
+	 RF_1V8_POWER_N16p01dBm = BIT(7) | 4,    /**<  -16.0 dbm */
+	 RF_1V8_POWER_N27p51dBm = BIT(7) | 1,    /**<  -27.5 dbm */
+
+
+	 RF_1V8_POWER_N30p00dBm    = 0xff,          /**<  -30 dbm */
+	 RF_1V8_POWER_N50p00dBm    = BIT(7) | 0,    /**<  -50 dbm */
 } rf_power_level_e;
 
 /**
  *  @brief  Define power index list of RF.
+ *  @note	The energy value with the 1.8V keyword is the energy value when the GPIO output voltage is 1.8V
+ *          (i.e. when the GPIO voltage in sys_init is configured to GPIO_VOLTAGE_1V8)
+ *          Since the GPIO output voltage is set to 1.8V, the VDDO3 voltage supplying the RF is 1.8V, which will cause the energy to drop.
+ *          Therefore, when the GPIO output voltage is set to 1.8V, the energy setting with the 1.8V keyword should be selected.
  */
+
 typedef enum {
+
 	 /*VBAT*/
-	 RF_POWER_INDEX_P9p11dBm,	/**< power index of 9.1 dbm */
-	 RF_POWER_INDEX_P8p57dBm,	/**< power index of 8.6 dbm */
-	 RF_POWER_INDEX_P8p05dBm,	/**< power index of 8.1 dbm */
-	 RF_POWER_INDEX_P7p45dBm,	/**< power index of 7.5 dbm */
-	 RF_POWER_INDEX_P6p98dBm,	/**< power index of 7.0 dbm */
-	 RF_POWER_INDEX_P5p68dBm,	/**< power index of 6.0 dbm */
+	 RF_POWER_INDEX_P9p90dBm,    /**<  power index of 9.9 dbm */
+	 RF_POWER_INDEX_P9p61dBm,    /**<  power index of 9.6 dbm */
+	 RF_POWER_INDEX_P9p15dBm,    /**<  power index of 9.1 dbm */
+	 RF_POWER_INDEX_P8p82dBm,    /**<  power index of 8.8 dbm */
+	 RF_POWER_INDEX_P8p25dBm,    /**<  power index of 8.2 dbm */
+	 RF_POWER_INDEX_P7p72dBm,    /**<  power index of 7.7 dbm */
+	 RF_POWER_INDEX_P7p00dBm,    /**<  power index of 7.0 dbm */
+	 RF_POWER_INDEX_P6p32dBm,    /**<  power index of 6.3 dbm */
+	 RF_POWER_INDEX_P5p21dBm,    /**<  power index of 5.2 dbm */
+
 	 /*VANT*/
-	 RF_POWER_INDEX_P4p35dBm,	/**< power index of 4.4 dbm */
-	 RF_POWER_INDEX_P3p83dBm,	/**< power index of 3.8 dbm */
-	 RF_POWER_INDEX_P3p25dBm,	/**< power index of 3.3 dbm */
-	 RF_POWER_INDEX_P2p79dBm,	/**< power index of 2.8 dbm */
-	 RF_POWER_INDEX_P2p32dBm,	/**< power index of 2.3 dbm */
-	 RF_POWER_INDEX_P1p72dBm,	/**< power index of 1.7 dbm */
-	 RF_POWER_INDEX_P0p80dBm,	/**< power index of 0.8 dbm */
-	 RF_POWER_INDEX_P0p01dBm,	/**< power index of 0.0 dbm */
-	 RF_POWER_INDEX_N0p53dBm,	/**< power index of -0.5 dbm */
-	 RF_POWER_INDEX_N1p37dBm,	/**< power index of -1.4 dbm */
-	 RF_POWER_INDEX_N2p01dBm,	/**< power index of -2.0 dbm */
-	 RF_POWER_INDEX_N3p37dBm,	/**< power index of -3.4 dbm */
-	 RF_POWER_INDEX_N4p77dBm,	/**< power index of -4.8 dbm */
-	 RF_POWER_INDEX_N6p54dBm,	/**< power index of -6.5 dbm */
-	 RF_POWER_INDEX_N8p78dBm,	/**< power index of -8.8 dbm */
-	 RF_POWER_INDEX_N12p06dBm,	/**< power index of -12.1 dbm */
-	 RF_POWER_INDEX_N17p83dBm,	/**< power index of -17.8 dbm */
-	 RF_POWER_INDEX_N23p54dBm,	/**< power index of -23.5 dbm */
+	 RF_POWER_INDEX_P4p61dBm,    /**<  power index of 4.6 dbm */
+	 RF_POWER_INDEX_P4p02dBm,    /**<  power index of 4.0 dbm */
+	 RF_POWER_INDEX_P3p51dBm,    /**<  power index of 3.5 dbm */
+	 RF_POWER_INDEX_P3p00dBm,    /**<  power index of 3.0 dbm */
+	 RF_POWER_INDEX_P2p51dBm,    /**<  power index of 2.5 dbm */
+	 RF_POWER_INDEX_P2p01dBm,    /**<  power index of 2.0 dbm */
+	 RF_POWER_INDEX_P1p62dBm,    /**<  power index of 1.6 dbm */
+	 RF_POWER_INDEX_P1p03dBm,    /**<  power index of 1.0 dbm */
+	 RF_POWER_INDEX_P0p31dBm,    /**<  power index of 0.3 dbm */
+	 RF_POWER_INDEX_P0p01dBm,    /**<  power index of 0.0 dbm */
+	 RF_POWER_INDEX_N0p43dBm,    /**<  power index of -0.4 dbm */
+	 RF_POWER_INDEX_N1p15dBm,    /**<  power index of -1.0 dbm */
+	 RF_POWER_INDEX_N1p52dBm,    /**<  power index of -1.5 dbm */
+	 RF_POWER_INDEX_N2p51dBm,    /**<  power index of -2.5 dbm */
+	 RF_POWER_INDEX_N3p95dBm,    /**<  power index of -3.9 dbm */
+	 RF_POWER_INDEX_N5p94dBm,    /**<  power index of -5.9 dbm */
+	 RF_POWER_INDEX_N9p03dBm,    /**<  power index of -9.0 dbm */
+	 RF_POWER_INDEX_N13p42dBm,   /**<  power index of -13.4 dbm */
+	 RF_POWER_INDEX_N22p53dBm,   /**<  power index of -22.5 dbm */
+
+	 RF_POWER_INDEX_N30dBm,      /**<  power index of -30 dbm */
+	 RF_POWER_INDEX_N50dBm,      /**<  power index of -50 dbm */
+
+	 /*VBAT*/
+	 RF_1V8_POWER_INDEX_P6p32dBm,    /**<  power index of 6.3 dbm */
+	 RF_1V8_POWER_INDEX_P5p81dBm,    /**<  power index of 5.8 dbm */
+	 RF_1V8_POWER_INDEX_P5p00dBm,    /**<  power index of 5.0 dbm */
+	 RF_1V8_POWER_INDEX_P4p50dBm,    /**<  power index of 4.5 dbm */
+
+	 /*VANT*/
+	 RF_1V8_POWER_INDEX_P4p23dBm,    /**<  power index of 4.2 dbm */
+	 RF_1V8_POWER_INDEX_P3p91dBm,    /**<  power index of 3.9 dbm */
+	 RF_1V8_POWER_INDEX_P3p43dBm,    /**<  power index of 3.4 dbm */
+	 RF_1V8_POWER_INDEX_P2p94dBm,    /**<  power index of 2.9 dbm */
+	 RF_1V8_POWER_INDEX_P2p42dBm,    /**<  power index of 2.4 dbm */
+	 RF_1V8_POWER_INDEX_P1p95dBm,    /**<  power index of 1.9 dbm */
+	 RF_1V8_POWER_INDEX_P1p21dBm,    /**<  power index of 1.2 dbm */
+	 RF_1V8_POWER_INDEX_P0p82dBm,    /**<  power index of 0.8 dbm */
+	 RF_1V8_POWER_INDEX_P0p21dBm,    /**<  power index of 0.0 dbm */
+	 RF_1V8_POWER_INDEX_N0p34dBm,    /**<  power index of -0.3 dbm */
+	 RF_1V8_POWER_INDEX_N1p33dBm,    /**<  power index of -1.3 dbm */
+	 RF_1V8_POWER_INDEX_N1p80dBm,    /**<  power index of -1.8 dbm */
+	 RF_1V8_POWER_INDEX_N2p53dBm,    /**<  power index of -2.5 dbm */
+	 RF_1V8_POWER_INDEX_N3p31dBm,    /**<  power index of -3.3 dbm */
+	 RF_1V8_POWER_INDEX_N5p32dBm,    /**<  power index of -5.3 dbm */
+	 RF_1V8_POWER_INDEX_N7p32dBm,    /**<  power index of -7.3 dbm */
+	 RF_1V8_POWER_INDEX_N9p81dBm,    /**<  power index of -9.8 dbm */
+	 RF_1V8_POWER_INDEX_N12p42dBm,   /**<  power index of -12.4 dbm */
+	 RF_1V8_POWER_INDEX_N16p01dBm,   /**<  power index of -16.0 dbm */
+	 RF_1V8_POWER_INDEX_N27p51dBm,   /**<  power index of -27.5 dbm */
+
+
+	 RF_1V8_POWER_INDEX_N30p00dBm,   /**<  power index of -30 dbm */
+	 RF_1V8_POWER_INDEX_N50p00dBm,   /**<  power index of -50 dbm */
+
+
 } rf_power_level_index_e;
 
 
@@ -304,12 +356,63 @@ typedef enum {
 /**********************************************************************************************************************
  *                                         RF global constants                                                        *
  *********************************************************************************************************************/
-extern const rf_power_level_e rf_power_Level_list[30];
+extern rf_power_level_e rf_power_Level_list[60];
 
 
 /**********************************************************************************************************************
  *                                         RF function declaration                                                    *
  *********************************************************************************************************************/
+/**
+ * @brief	    This function is used to enable the ldo rxtxlf bypass function, and the calibration value
+ * 				written by the software will take effect after enabling.
+ * @param[in]	none.
+ * @return	 	none.
+ */
+static inline void rf_ldot_ldo_rxtxlf_bypass_en(void)
+{
+	write_reg8(0x17074e,0x45);//CBPF_TRIM_I && CBPF_TRIM_Q
+	write_reg8(0x17074c,0x02);//LNA_ITRIM=0x01(default)(change to 0x02[TBD])
+	write_reg8(0x1706e4,read_reg8(0x1706e4)|BIT(1));
+}
+
+/**
+ * @brief	    This function is used to close the ldo rxtxlf bypass function, and the hardware will
+ * 				automatically perform the calibration function after closing.
+ * @param[in]	none.
+ * @return	 	none.
+ */
+static inline void rf_ldot_ldo_rxtxlf_bypass_dis(void)
+{
+	write_reg8(0x17074e,0x40);//CBPF_TRIM_I && CBPF_TRIM_Q
+	write_reg8(0x17074c,0x11);//LNA_ITRIM=0x01(default)(change to 0x02[TBD])
+	write_reg8(0x1706e4,read_reg8(0x1706e4)&(~BIT(1)));
+}
+
+/**
+ * @brief      This function serves to optimize RF performance
+ * 			   This function must be called every time rx is turned on,
+ * 			   and is called by an internal function.
+ * 			   If there are other requirements that need to be called,
+ * 			   turn off rx first, then call it again to make sure the Settings take effect
+ * @param[in]  none
+ * @return     none
+ * @note	   1.Call this function after turning on rx 30us, and the calibration value set by the function
+ * 			      will take effect after calling rf_ldot_ldo_rxtxlf_bypass_en;if automatic calibration is
+ * 			      required, you can use rf_ldot_ldo_rxtxlf_bypass_dis to turn off the bypass function; how to
+ * 			      use it can refer to bqb.c file or rf_emi_rx in emi.c
+ *			   2. After using rf_ldot_ldo_rxtxlf_bypass_dis to turn off the bypass function and enter tx/rx
+ *			      automatic calibration, to use this function again, you need to call the rf_set_rxpara function
+ *			      again after entering rx 30us.
+ *
+ */
+
+static inline void rf_set_rxpara(void)
+{
+	unsigned char reg_calibration=0;
+	reg_calibration = ((read_reg8(0x1706ed)&0xf)<<2)|((read_reg8(0x1706ec)&0xc0)>>6);
+	if(reg_calibration>10)	reg_calibration -= 10;
+	write_reg8(0x1706e5,(read_reg8(0x1706e5)&0xc0)|reg_calibration);
+}
 
 
 /**
@@ -499,22 +602,23 @@ static inline void rf_set_rx_maxlen(unsigned int byte_len)
 
 /**
  * @brief		This function serve to rx dma fifo size.
- * @param[in]	fifo_byte_size - the size of each fifo.
+ * @param[in]	fifo_byte_size - The length of one dma fifo,the range is 1~0xffff(the corresponding number of fifo bytes is fifo_byte_size).
  * @return		none
  */
 static inline void rf_set_rx_dma_fifo_size(unsigned short fifo_byte_size)
 {
-	reg_rf_bb_rx_size = fifo_byte_size&0xff;//rx_idx_addr = {rx_wptr*bb_rx_size,4'h0}// in this setting the max data in one dma buffer is 0x20<<4.
+	reg_rf_bb_rx_size = fifo_byte_size&0xff;
 	reg_rf_bb_rx_size_h = fifo_byte_size>>8;
 }
 /**
  * @brief		This function serve to set rx dma wptr.
- * @param[in]	wptr	-rx_wptr_real=rx_wptr & mask:After receiving 4 packets,the address returns to original address.mask value must in (0x01,0x03,0x07,0x0f).
+ * @param[in]	fifo_num	-This parameter is used to set the mask value for the number of enabled FIFOs. The value of the mask must (0x00,0x01,0x03,0x07,0x0f,0x1f).
+ * 						 	 The number of FIFOs enabled is the value of wptr_mask plus 1.(0x01,0x02,0x04,0x08,0x10,0x20)
  * @return 		none
  */
 static inline void rf_set_rx_dma_fifo_num(unsigned char fifo_num)
 {
-	reg_rf_rx_wptr_mask = fifo_num; //rx_wptr_real=rx_wptr & mask:After receiving 4 packets,the address returns to original address.mask value must in (0x01,0x03,0x07,0x0f).
+	reg_rf_rx_wptr_mask = fifo_num;
 }
 
 
@@ -525,6 +629,7 @@ static inline void rf_set_rx_dma_fifo_num(unsigned char fifo_num)
  *	            Before setting, call the function "rf_set_rx_dma" to clear DMA fifo mask value(set 0)
  * @param[in]	rx_addr   - The address store receive packet.
  * @return	 	none
+ * @note		rx_addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 static inline void rf_set_rx_buffer(unsigned char *rx_addr)
 {
@@ -561,7 +666,7 @@ static inline void rf_set_tx_dma_fifo_size(unsigned short fifo_byte_size)
 static inline void rf_set_tx_settle_time(unsigned short tx_stl_us )
 {
 	tx_stl_us &= 0x0fff;
-	write_reg16(0x170204, (read_reg8(0x170204)& 0xf000) |(tx_stl_us - 1));
+	write_reg16(0x170204, (read_reg16(0x170204)& 0xf000) |(tx_stl_us - 1));
 }
 /**
  * @brief   This function serves to set RF tx settle time and rx settle time.
@@ -573,7 +678,7 @@ static inline void rf_set_tx_settle_time(unsigned short tx_stl_us )
 static inline void rf_set_rx_settle_time( unsigned short rx_stl_us )
 {
 	 rx_stl_us &= 0x0fff;
-	 write_reg16(0x17020c, (read_reg8(0x17020c)& 0xf000) |(rx_stl_us - 1));
+	 write_reg16(0x17020c, (read_reg16(0x17020c)& 0xf000) |(rx_stl_us - 1));
 }
 
 /**
@@ -798,19 +903,26 @@ void rf_set_ant_mode(void);
 void rf_set_tx_dma_config(void);
 /**
  * @brief     This function serves to set RF tx DMA setting.
- * @param[in] fifo_depth  		- tx chn deep.
- * @param[in] fifo_byte_size    - tx_idx_addr = {tx_chn_adr*bb_tx_size,4'b0}.
+ * @param[in] fifo_depth 		- tx chn deep,fifo_depth range: 0~5,Number of fifo=2^fifo_depth.
+ * @param[in] fifo_byte_size 	- The length of one dma fifo,the range is 1~0xffff(the corresponding number of fifo bytes is fifo_byte_size).
  * @return	  none.
  */
 void rf_set_tx_dma(unsigned char fifo_depth,unsigned short fifo_byte_size);
 
 
 /**
- * @brief     This function serves to rx dma setting.
- * @param[in] buff 		 	  - The buffer that store received packet.
- * @param[in] wptr_mask  	  - DMA fifo mask value (0~fif0_num-1).
- * @param[in] fifo_byte_size  - The length of one dma fifo.
- * @return	  none.
+ * @brief      This function serves to rx dma setting.
+ * @param[in]  buff - This parameter is the first address of the received data buffer, which must be 4 bytes aligned, otherwise the program will enter an exception.
+ * @attention  The first four bytes in the buffer of the received data are the length of the received data.
+ *             The actual buffer size that the user needs to set needs to be noted on two points:
+ *			   -# you need to leave 4bytes of space for the length information.
+ *			   -# dma is transmitted in accordance with 4bytes, so the length of the buffer needs to be a multiple of 4. Otherwise, there may be an out-of-bounds problem
+ *			   For example, the actual received data length is 5bytes, the minimum value of the actual buffer size that the user needs to set is 12bytes, and the calculation of 12bytes is explained as follows::
+ *			   4bytes (length information) + 5bytes (data) + 3bytes (the number of additional bytes to prevent out-of-bounds)
+ * @param[in]  wptr_mask  	   - This parameter is used to set the mask value for the number of enabled FIFOs. The value of the mask must (0x00,0x01,0x03,0x07,0x0f,0x1f).
+ * 								 The number of FIFOs enabled is the value of wptr_mask plus 1.(0x01,0x02,0x04,0x08,0x10,0x20)
+ * @param[in]  fifo_byte_size  - The length of one dma fifo,the range is 1~0xffff(the corresponding number of fifo bytes is fifo_byte_size).
+ * @return     none.
  */
 void rf_set_rx_dma(unsigned char *buff,unsigned char wptr_mask,unsigned short fifo_byte_size);
 
@@ -857,6 +969,7 @@ void rf_set_txmode(void);
  * @brief	  	This function serves to set RF Tx packet address to DMA src_addr.
  * @param[in]	addr   - The packet address which to send.
  * @return	 	none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_ void rf_tx_pkt(void* addr);
 
@@ -875,7 +988,7 @@ int rf_set_trx_state(rf_status_e rf_status, signed char rf_channel);
  * @param[in]   chn   - That you want to set the channel as 2400+chn.
  * @return  	none.
  */
-void rf_set_chn(signed char chn);
+_attribute_ram_code_sec_noinline_ void rf_set_chn(signed char chn);
 
 
 /**
@@ -906,6 +1019,7 @@ void rf_pn_disable(void);
  * @param[in]   fifo_dep   - deepth of each fifo set in dma.
  * @param[in]   addr       - address of rx packet.
  * @return  	the next rx_packet address.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 unsigned char* rf_get_rx_packet_addr(int fifo_num,int fifo_dep,void* addr);
 
@@ -923,7 +1037,7 @@ void rf_set_power_level (rf_power_level_e level);
  * @param[in]   idx 	 - The index of power level which you want to set.
  * @return  	none.
  */
-void rf_set_power_level_index(rf_power_level_index_e idx);
+_attribute_ram_code_sec_ void rf_set_power_level_index(rf_power_level_index_e idx);
 
 
 /**
@@ -990,13 +1104,13 @@ static inline void rf_set_rx_timeout(unsigned short timeout_us)
 }
 
 /**
- * @brief	This function serve to initial the ptx seeting.
+ * @brief	This function serve to initial the ptx setting.
  * @return	none.
  */
 void rf_ptx_config(void);
 
 /**
- * @brief	This function serve to initial the prx seeting.
+ * @brief	This function serve to initial the prx setting.
  * @return	none.
  */
 void rf_prx_config(void);
@@ -1006,6 +1120,7 @@ void rf_prx_config(void);
  * @param[in]	addr	-	The address of tx_packet.
  * @param[in]	tick	-	Trigger ptx after (tick-current tick),If the difference is less than 0, trigger immediately.
  * @return  none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void rf_start_ptx  (void* addr,  unsigned int tick);
 
@@ -1041,6 +1156,7 @@ unsigned char rf_is_rx_fifo_empty(unsigned char pipe_id);
  * @param[in] 	addr  	- DMA tx buffer.
  * @param[in] 	tick  	- Send after tick delay.
  * @return	   	none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_stx(void* addr, unsigned int tick);
 
@@ -1050,6 +1166,7 @@ _attribute_ram_code_sec_noinline_ void rf_start_stx(void* addr, unsigned int tic
  * @param[in] 	addr  	- DMA tx buffer.
  * @param[in] 	tick  	- Send after tick delay.
  * @return	    none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_stx2rx  (void* addr, unsigned int tick);
 
@@ -1077,6 +1194,7 @@ _attribute_ram_code_sec_noinline_ void rf_set_rxmode(void);
  * @param[in]	addr   - The address to store received data.
  * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215)
  * @return	 	none
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_brx  (void* addr, unsigned int tick);
 
@@ -1089,6 +1207,7 @@ _attribute_ram_code_sec_noinline_ void rf_start_brx  (void* addr, unsigned int t
  * @param[in]	addr   - The address to store send data.
  * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215)
  * @return	 	none
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_btx (void* addr, unsigned int tick);
 
@@ -1098,15 +1217,9 @@ _attribute_ram_code_sec_noinline_ void rf_start_btx (void* addr, unsigned int ti
  * @param[in] 	addr  - DMA tx buffer.
  * @param[in] 	tick  - Trigger rx receive packet after tick delay.
  * @return	    none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_srx2tx  (void* addr, unsigned int tick);
-
-/**
- * @brief   	This function serves to set RF baseband channel.This function is suitable for fpga.
- * @param[in]   chn_num  - Bluetooth channel set according to Bluetooth protocol standard.
- * @return  	none.
- */
-void rf_set_channel_fpga(signed char chn);
 
 
 /**
@@ -1126,6 +1239,13 @@ void rf_set_baseband_trans_unit(rf_trans_unit_e size);
  * @return	 	none.
  */
 unsigned char rf_get_crc_err(void);
+
+/**
+ * @brief	  	This function is mainly used to set the energy when sending a single carrier.
+ * @param[in]	level		- The slice corresponding to the energy value.
+ * @return	 	none.
+ */
+void rf_set_power_level_singletone(rf_power_level_e level);
 
 /**
  * @brief	  	This function is used to  set the modulation index of the receiver.
@@ -1266,89 +1386,6 @@ static inline void rf_set_bis_cis_en(void)
 static inline void rf_set_bis_cis_dis(void)
 {
 	BM_CLR(reg_rf_rxtmaxlen1,FLD_RF_RX_ISO_PDU);
-}
-
-
-/****************************************************************************************************************************************
- *                                         RF : AOA/AOD related functions                          		 			  					*
- ****************************************************************************************************************************************/
-
-/**
- * @brief		This function enables the sending and receiving functions of AOA/AOD in ordinary format packets or ADV format packets.
- * 				After configuring the RF function, if you want to send or receive a packet with AOA/AOD information, you can call this
- * 				function to make the chip enter the corresponding mode to receive or send the packet. The default state is a normal
- * 				package without AOA/AOD information.
- * @param[in]	mode - AOA/AOD broadcast package or normal package trx mode.
- * @return		none.
- */
-static inline void rf_aoa_aod_set_trx_mode(rf_aoa_aod_mode_e mode)
-{
-	reg_rf_rxsupp = ((reg_rf_rxsupp & 0xf0) | mode);
-}
-
-/**
- * @brief		This function is used to calibrate AOA, AOD sampling frequency offset.This function is mainly used to set the position
- * 				of iq data sampling point in sampleslot to optimize the sampling data result. By default, sampling is performed at the
- * 				middle position of iqsampleslot, and the sampling point is 0.125us ahead of time for each decrease of 1 code.
- * 				Each additional code will move the sampling point back by 0.125us
- * @param[in]	samp_locate:Compare the parameter with the default value, reduce one code to advance 0.125us, increase or decrease 1 to move
- * 							back 0.125us.
- * @return		none.
- */
-static inline void rf_aoa_aod_sample_point_adjust(unsigned char samp_locate)
-{
-	reg_rf_samp_offset = samp_locate;
-}
-
-
-/**
- * @brief		This function is used to set the position of the first antenna switch after the reference.The default is in the middle of the
- * 				first switch_slot; and the switch point is 0.125us ahead of time for each decrease of 1 code.
- * 				Each additional code will move the switch point back by 0.125us
- * @param[in]	swt_offset : Compare the parameter with the default value, reduce 1 to advance 0.125us, increase or decrease 1 to move
- * 							back 0.125us.
- * @return		none.
- */
-void rf_aoa_rx_ant_switch_point_adjust(unsigned short swt_offset);
-
-
-/**
- * @brief		This function is used to set the position of the first antenna switch after the AOD transmitter reference.The default is in the middle of the
- * 				first switch_slot; and the switch point is 0.125us ahead of time for each decrease of 1 code. Each additional code will move
- * 				the switch point back by 0.125us
- * @param[in]	swt_offset : Compare the parameter with the default value, reduce 1 to advance 0.125us, increase or decrease 1 to move
- * 							back 0.125us.
- * @return		none.
- */
-void rf_aod_tx_ant_switch_point_adjust(unsigned short swt_offset);
-
-
-/**
- * @brief		This function is mainly used to set the IQ data sample interval time. In normal mode, the sampling interval of AOA is 4us, and AOD will judge whether
- * 				the sampling interval is 4us or 2us according to CTE info.The 4us/2us sampling interval corresponds to the 2us/1us slot mode stipulated in the protocol.
- * 				Since the current hardware only supports the antenna switching interval of 4us/2us, setting the sampling interval to 1us or less will cause multiple
- * 				sampling at the interval of one antenna switching. Therefore, the sampling data needs to be processed by the upper layer according to the needs, and
- * 				currently it is mostly used Used in the debug process.
- * 				After configuring RF, you can call this function to configure slot time.
- * @param[in]	time_us	- AOA or AOD slot time mode.
- * @return		none.
- * @note	    Attention:(1)When the time is 0.25us, it cannot be used with the 20bit iq data type, which will cause the sampling data to overflow.
- * 						  (2)Since only the antenna switching interval of 4us/2us is supported, the sampling interval of 1us and shorter time intervals
- * 						      will be sampled multiple times in one antenna switching interval. Suggestions can be used according to specific needs.
- */
-void rf_aoa_aod_sample_interval_time(rf_aoa_aod_sample_interval_time_e time_us);
-
-
-/**
- * @brief		This function is mainly used to set the type of AOA/AODiq data. The default data type is 8bit. This configuration can be done before starting to receive
- * 				the package.
- * @param[in]	mode	- The length of each I or Q data.
- * @return		none.
- * @note		Attention :When the iq data is 20bit, it cannot be used with the 0.25us mode, which will cause the sampling data to overflow.
- */
-static inline void rf_aoa_aod_iq_data_mode(rf_aoa_aod_iq_data_mode_e mode)
-{
-	reg_rf_sof_offset = ((reg_rf_sof_offset & (~FLD_RF_SUPP_MODE))|(mode << 4));
 }
 
 #endif

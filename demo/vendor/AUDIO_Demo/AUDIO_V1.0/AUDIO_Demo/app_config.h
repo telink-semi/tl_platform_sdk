@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    app_config.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -48,7 +47,7 @@ extern "C" {
 #define FLASH_TO_LINEOUT                6
 
 
-#define AUDIO_MODE     BUFFER_TO_LINEOUT
+#define AUDIO_MODE     DMIC_TO_LINEOUT
 
 #define CHIP_VER_A0              0
 #define CHIP_VER_A1              1

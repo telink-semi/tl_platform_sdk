@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	core.h
+ * @file    core.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -46,7 +45,7 @@ typedef enum
 /*
  * Inline nested interrupt entry/exit macros
  */
-/* Svae/Restore macro */
+/* Save/Restore macro */
 #define save_csr(r)             long __##r = read_csr(r);
 #define restore_csr(r)           write_csr(r, __##r);
 /* Support PowerBrake (Performance Throttling) feature */
@@ -55,14 +54,29 @@ typedef enum
 #define save_mxstatus()         save_csr(NDS_MXSTATUS)
 #define restore_mxstatus()      restore_csr(NDS_MXSTATUS)
 
- /* Nested IRQ entry macro : Save CSRs and enable global interrupt. */
+/* Nested external IRQ entry macro : Save CSRs and enable global interrupt.
+ * - If mei does not want to be interrupted by msi and mti, can do the following
+ *     save_csr(NDS_MIE)                                 \
+ *     save_csr(NDS_MEPC)                                \
+ *     save_csr(NDS_MSTATUS)                             \
+ *     save_mxstatus()                                   \
+ *     clear_csr(NDS_MIE, FLD_MIE_MTIE | FLD_MIE_MSIE);  \
+ *     set_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);
+ */
 #define core_save_nested_context()                              \
 	 save_csr(NDS_MEPC)                              \
 	 save_csr(NDS_MSTATUS)                           \
 	 save_mxstatus()                                 \
 	 set_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);
 
-/* Nested IRQ exit macro : Restore CSRs */
+/* Nested external IRQ exit macro : Restore CSRs
+ * - If closed mti and msi in mei, can restore with the following
+ *     clear_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);        \
+ *     restore_csr(NDS_MSTATUS)                        \
+ *     restore_csr(NDS_MEPC)                           \
+ *     restore_mxstatus()                              \
+ *     restore_csr(NDS_MIE);
+ */
 #define core_restore_nested_context()                               \
 	 clear_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);            \
 	 restore_csr(NDS_MSTATUS)                        \

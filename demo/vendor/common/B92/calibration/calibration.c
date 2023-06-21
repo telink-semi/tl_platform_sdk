@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	calibration.c
+ * @file    calibration.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -33,14 +32,14 @@
  */
 unsigned char user_calib_freq_offset(user_calib_from_e velfrom, unsigned int addr)
 {
-	unsigned char freqency_offset_value = 0xff;
+	unsigned char frequency_offset_value = 0xff;
 	if(velfrom == USER_CALIB_FROM_FLASH)
 	{
-		flash_read_page(addr, 1, &freqency_offset_value);
+		flash_read_page(addr, 1, &frequency_offset_value);
 	}
-	if(0xff != freqency_offset_value)
+	if(0xff != frequency_offset_value)
 	{
-		rf_update_internal_cap(freqency_offset_value);
+		rf_update_internal_cap(frequency_offset_value);
 		return 1;
 	}
 
@@ -49,16 +48,20 @@ unsigned char user_calib_freq_offset(user_calib_from_e velfrom, unsigned int add
 
 /**
  * @brief		This function is used to calibrate the user's parameters.
- * 				This function is to read the calibration value stored in flash,
+ * 				This function is to read the calibration value stored in efuse and flash,
  * 				and use the calibration value to configure the chip to improve chip performance.
  * 				(reduce adc measurement error, reduce frequency offset, etc.)
+ * @param[in]   gpio_type - enum variable of the GPIO voltage.
  * @return		none.
  */
-void user_read_flash_value_calib(void)
+void calibration_func(gpio_voltage_e gpio_type)
 {
 	unsigned char flash_mid[4];
 	unsigned char flash_uid[16];
 	unsigned char flash_mid_sure = 0;
+
+	/******get adc calibration value from EFUSE********/
+	efuse_calib_adc_vref(gpio_type);
 
 	/******check for flash mid********/
 	flash_mid_sure = flash_read_mid_uid_with_check((unsigned int *)flash_mid, flash_uid);

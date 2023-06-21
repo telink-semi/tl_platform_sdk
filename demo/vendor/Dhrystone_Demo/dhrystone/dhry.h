@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	dhry.h
+ * @file    dhry.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -77,25 +76,24 @@ typedef char    Str_30 [31];
 typedef int     Arr_1_Dim [50];
 typedef int     Arr_2_Dim [50] [50];
 
-typedef struct record
-    {
-    struct record *Ptr_Comp;
-    Enumeration    Discr;
-    union {
-          struct {
-                  Enumeration Enum_Comp;
-                  int         Int_Comp;
-                  char        Str_Comp [31];
-                  } var_1;
-          struct {
-                  Enumeration E_Comp_2;
-                  char        Str_2_Comp [31];
-                  } var_2;
-          struct {
-                  char        Ch_1_Comp;
-                  char        Ch_2_Comp;
-                  } var_3;
-          } variant;
-      } Rec_Type, *Rec_Pointer;
-
+typedef struct record {
+	struct record *Ptr_Comp;
+	Enumeration Discr;
+	char rsvd[3];
+	union {
+		struct {
+			Enumeration Enum_Comp;
+			int __attribute__ ((aligned(4))) Int_Comp;
+			char Str_Comp[31];
+		} __attribute__ ((packed,aligned(4))) var_1;
+		struct {
+			Enumeration E_Comp_2;
+			char Str_2_Comp[31];
+		} var_2;
+		struct {
+			char Ch_1_Comp;
+			char Ch_2_Comp;
+		} var_3;
+	} __attribute__ ((packed,aligned(4))) variant;
+} __attribute__ ((packed,aligned(4))) Rec_Type, *Rec_Pointer;
 

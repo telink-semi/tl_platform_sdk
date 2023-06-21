@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usbdesc.c
+ * @file    usbdesc.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -252,11 +251,11 @@ const USB_Descriptor_Device_t device_desc = { {
 		ID_VENDOR, // VendorID
         ID_PRODUCT, // ProductID
 
-        ID_VERDION,
+        ID_VERSION,
 		//0x0100, // .ReleaseNumber
 		USB_STRING_VENDOR, 	// .ManufacturerStrIndex
 		USB_STRING_PRODUCT, // .ProductStrIndex
-		0,//USB_STRING_SERIAL, 	// .SerialNumStrIndex, iSerialNumber
+		USB_STRING_SERIAL, // .SerialNumStrIndex, iSerialNumber  attention: when HCK test if iSerialNumber not zero need two device for test
 		1 };
 
 const USB_Descriptor_Configuration_t
@@ -561,7 +560,7 @@ const USB_Descriptor_Configuration_t
 						+ sizeof(USB_Audio_SampleFreq_t), DTYPE_CSInterface},
 					AUDIO_DSUBTYPE_CSInterface_FormatType,
 					USB_AUDIO_FORMAT_PCM,
-					SPK_CHANNLE_COUNT,   // audio channels
+					SPK_CHANNEL_COUNT,   // audio channels
 					2, // // Two bytes per audio sub-frame.
 					SPK_RESOLUTION_BIT, // BitsResolution 16 bits per sample.
 					1   // One sample rate provided
@@ -626,7 +625,7 @@ const USB_Descriptor_Configuration_t
 						+ sizeof(USB_Audio_SampleFreq_t), DTYPE_CSInterface},
 					AUDIO_DSUBTYPE_CSInterface_FormatType, USB_AUDIO_FORMAT_PCM, // FormatType
 
-				     MIC_CHANNLE_COUNT, // Channels
+				     MIC_CHANNEL_COUNT, // Channels
 					2, // SubFrameSize
 					MIC_RESOLUTION_BIT, //todo  BitsResolution  driver 16 bit
 					1 // TotalDiscreteSampleRates

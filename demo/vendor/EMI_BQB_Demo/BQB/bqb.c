@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	bqb.c
+ * @file    bqb.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -27,7 +26,7 @@
 #if(TEST_DEMO==BQB_DEMO)
 
 /* Set to 1, the program includes a non-standard BQB protocol part, which adds new functions for factory testing (single tone, rssi, sending fixed packets)*/
-#define BQB_PRIVATE_AGREEMENT		0 
+#define BQB_PRIVATE_AGREEMENT		0
 
 #if SUPPORT_CONFIGURATION
 usr_def_t usr_config;
@@ -40,7 +39,7 @@ static unsigned int pkt_interval;
 static unsigned int tick_rx = 0;
 volatile unsigned int t0,tick_tx;
 Test_Status_e test_state;
-
+static unsigned char rxpara_flag  = 1;
 
 unsigned char	bqbtest_buffer[272] __attribute__ ((aligned (4)));
 unsigned char __attribute__ ((aligned (4))) bqbtest_pkt [264] = {
@@ -154,7 +153,7 @@ unsigned int get_pkt_interval(unsigned char payload_len, unsigned char mode)
 }
 
 /**
- * @brief   This function serves to read the usrt data and execute BQB program
+ * @brief   This function serves to read the uart data and execute BQB program
  * @param   Pointer to uart data
  * @return  1:  2 bytes data is received.
  * 			0:  no data is received.
@@ -337,8 +336,8 @@ void bqb_serviceloop (void)
 					rsp = BIT(0);//status EVENT Error
 				}
 
-				uart_send_byte(uart_using,(rsp>>8)&0x7f);
-				uart_send_byte(uart_using,rsp&0xff);
+				uart_send_byte((uart_num_e)uart_using,(rsp>>8)&0x7f);
+				uart_send_byte((uart_num_e)uart_using,rsp&0xff);
 				test_state = SETUP_STATE;
 				pkt_cnt = 0;
 				break;
@@ -355,8 +354,25 @@ void bqb_serviceloop (void)
 				rf_set_ble_chn(freq);
 				rf_set_rx_dma(bqbtest_buffer, 0, 272);
 				rf_start_srx(reg_system_tick);
-				uart_send_byte(uart_using,(rsp>>8)&0xff);
-				uart_send_byte(uart_using,rsp&0xff);
+
+				delay_us(30);
+				if(rxpara_flag == 1)
+				{
+					rf_set_rxpara();
+					rxpara_flag = 0;
+				}
+
+				if(freq == 10 || freq == 21 || freq == 33)
+				{
+					rf_ldot_ldo_rxtxlf_bypass_en();
+				}
+				else
+				{
+					rf_ldot_ldo_rxtxlf_bypass_dis();
+				}
+
+				uart_send_byte((uart_num_e)uart_using,(rsp>>8)&0xff);
+				uart_send_byte((uart_num_e)uart_using,rsp&0xff);
 				test_state = RX_STATE;
 				pkt_cnt = 0;
 				break;
@@ -449,8 +465,8 @@ void bqb_serviceloop (void)
 				dma_chn_dis(DMA0);
 				rf_set_tx_dma(2,8);
 #endif
-				uart_send_byte(uart_using,(rsp>>8)&0xff);
-				uart_send_byte(uart_using,rsp&0xff);
+				uart_send_byte((uart_num_e)uart_using,(rsp>>8)&0xff);
+				uart_send_byte((uart_num_e)uart_using,rsp&0xff);
 				test_state = TX_STATE;
 				pkt_cnt = 0;
 				break;
@@ -468,14 +484,14 @@ void bqb_serviceloop (void)
 				if((ctrl==0) && (para==0))
 				{
 					pkt_length.len =0;
-					uart_send_byte(uart_using,(BIT(7))|((pkt_cnt>>8)&0x7f));
-					uart_send_byte(uart_using,pkt_cnt&0xff);
+					uart_send_byte((uart_num_e)uart_using,(BIT(7))|((pkt_cnt>>8)&0x7f));
+					uart_send_byte((uart_num_e)uart_using,pkt_cnt&0xff);
 				}
 #if BQB_PRIVATE_AGREEMENT
 				else if((ctrl==0x33) && ((cmd_pkt&0xff)==1))
 				{
-					uart_send_byte(uart_using,BIT(7));
-					uart_send_byte(uart_using,private_agreement_rssi&0xff);
+					uart_send_byte((uart_num_e)uart_using,BIT(7));
+					uart_send_byte((uart_num_e)uart_using,private_agreement_rssi&0xff);
 				}
 
 

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	compiler.h
+ * @file    compiler.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -35,6 +34,8 @@
 #define _attribute_data_retention_sec_   		__attribute__((section(".retention_data")))
 
 #define _attribute_aligned_(s)					__attribute__((aligned(s)))
+
+#define _always_inline                          inline __attribute__((always_inline))
 
 /// Pack a structure field
 #define __PACKED __attribute__ ((__packed__))

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	rf_reg.h
+ * @file    rf_reg.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -119,7 +118,6 @@ enum{
 };
 
 
-//#define    reg_rf_acclen			    REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x05)
 #define  reg_rf_acc_len			        REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x05)
 enum{
 	FLD_RF_ACC_LEN			    =   BIT_RNG(0,2),
@@ -152,6 +150,7 @@ enum{
 enum{
 	FLD_RF_PN_INIT 			    =	BIT_RNG(0,5),
 };
+#define		reg_rf_iq_samp_num		REG_ADDR16(REG_BASEBAND_BASE_ADDR+0x0e)
 #define		reg_rf_iq_samp_num0		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x0e)
 #define		reg_rf_iq_samp_num1		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x0f)
 
@@ -351,7 +350,7 @@ enum{
 enum{
 	FLD_RF_R_TSTAMP3             =	BIT_RNG(0,7),
 };
-
+#define	   reg_rf_iqstart_tstamp	         REG_ADDR32(REG_BASEBAND_BASE_ADDR+0x54)
 #define    reg_rf_iqstart_tstamp0	         REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x54)
 enum{
 	FLD_RF_IQSTART_TSTAMP0            =	BIT_RNG(0,7),
@@ -503,12 +502,14 @@ enum{
 #define	reg_rf_hpm_neg_time3	       REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x8f)
 
 #define	reg_rf_tr_turnaround_pos_time_addr	0x170090
+#define	reg_rf_tr_turnaround_pos_time		REG_ADDR32(REG_BASEBAND_BASE_ADDR+0x90)
 #define	reg_rf_tr_turnaround_pos_time0		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x90)
 #define	reg_rf_tr_turnaround_pos_time1		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x91)
 #define	reg_rf_tr_turnaround_pos_time2		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x92)
 #define	reg_rf_tr_turnaround_pos_time3		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x93)
 
 #define	reg_rf_tr_turnaround_neg_time_addr	0x170094
+#define	reg_rf_tr_turnaround_neg_time		REG_ADDR32(REG_BASEBAND_BASE_ADDR+0x94)
 #define	reg_rf_tr_turnaround_neg_time0		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x94)
 #define	reg_rf_tr_turnaround_neg_time1		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x95)
 #define	reg_rf_tr_turnaround_neg_time2		REG_ADDR8(REG_BASEBAND_BASE_ADDR+0x96)
@@ -661,7 +662,7 @@ enum{
 #define    reg_rf_ll_ctrl2          REG_ADDR8(REG_BB_LL_BASE_ADDR+0x15)
 enum{
 	FLD_RF_R_TXCHN_MAN            =	BIT_RNG(0,2),
-	FLD_RF_R_NOACK_RECNT_EN       =	BIT(3),
+	FLD_RF_R_NOACK_RETRY_CNT_EN       =	BIT(3),
 	FLD_RF_R_TXCHN_MAN_EN         =	BIT(4),
 	FLD_RF_R_NOACK_REV_EN         =	BIT(5),
 	FLD_RF_R_RXIRQ_REPORT_ALL     =	BIT(6),
@@ -673,7 +674,7 @@ enum{
 enum{
 	FLD_RF_R_TX_EN_DLY_EN         =	BIT(0),
 	FLD_RF_R_PLL_RESET_EN         =	BIT(1),
-	FLD_RF_R_CMD_SCHDULE_EN       =	BIT(2),
+	FLD_RF_R_CMD_SCHEDULE_EN       =	BIT(2),
 	FLD_RF_R_PLL_EN_MAN           =	BIT(3),
 	FLD_RF_R_T_TX_EN_DLY          =	BIT_RNG(4,7),
 };
@@ -861,7 +862,7 @@ enum
 	FLD_RF_LR_MAN_SEL				  = BIT(7),
 };
 
-#define		reg_rf_modem_sync_thre_ble		REG_ADDR8(REG_TL_MODEM_BASE_ADDR+0x4e)
+#define		reg_rf_modem_sync_thres_ble		REG_ADDR8(REG_TL_MODEM_BASE_ADDR+0x4e)
 #define		reg_rf_modem_fdc_dbg_lat		REG_ADDR16(REG_TL_MODEM_BASE_ADDR+0x58)
 #define		reg_rf_modem_gain_lat0			REG_ADDR8(REG_TL_MODEM_BASE_ADDR+0x5c)
 
@@ -983,6 +984,27 @@ enum
 	FLD_RF_NORM_PKT_FAST_STL_EN			= BIT(5),
 	FLD_RF_NON_ID_FAST_STL_EN			= BIT(6),
 	FLD_RF_FAST_STL_EN					= BIT(7),
+};
+
+#define		reg_rf_radio_txrx_dbg1_0	REG_ADDR8(REG_TL_RADIO_BASE_ADDR+0x40)
+enum
+{
+	FLD_RF_AGC_DISABLE					= BIT(1),
+	FLD_RF_RX_GAIN						= BIT_RNG(2,4),
+	FLD_RF_ADC_IQ_SWAP					= BIT(5),
+	FLD_RF_INVERT_CLK_DSM				= BIT(6),
+	FLD_RF_DSM_FRAC_LSW_L				= BIT(7),
+};
+
+#define		reg_rf_radio_txrx_dbg1_1	REG_ADDR8(REG_TL_RADIO_BASE_ADDR+0x41)
+enum
+{
+	FLD_RF_DSM_FRAC_LSW_H				= BIT_RNG(0,1),
+	FLD_RF_SPARE_1						= BIT(2),
+	FLD_RF_AM_OVERRIDE_EN				= BIT(3),
+	FLD_RF_AM_OVERRIDE_VAL				= BIT(4),
+	FLD_RF_LOAD_PREV_GAIN				= BIT(5),
+	FLD_RF_ADC_CLIP_EN					= BIT(6),
 };
 
 

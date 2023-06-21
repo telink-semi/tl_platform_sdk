@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_emi.c
+ * @file    app_emi.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -25,15 +24,28 @@
 #include "app_config.h"
 #if (TEST_DEMO == EMI_DEMO)
 #include "calibration.h"
+#include "PA/pa.h"
+
+
 /*
  * @brief 	this macro definition serve to open the setting to deal with problem of zigbee mode 2480Mhz
  * 			band edge can't pass the spec.only use it at the time of certification.
  * */
-#define	FIX_ZIGBEE_BANDEAGE_EN	0
+#define	FIX_ZIGBEE_BANDEDGE_EN	0
+
+#if !EMI_SUPPORT_SETTING
+
 /*
  * @brief 	this macro definition serve to close internal cap.
  * */
 #define	CLOSE_INTERNAL_CAP_EN	0//0:Internal capacitance,1:External capacitance
+
+/*
+ * @brief 	this macro definition serve to enable function of swire-through-usb.
+ * */
+#define	SWIRE_THROUGH_USB_EN	0//0:disable swire-through-usb,1:enable swire-through-usb.
+
+#endif
 
 #define TX_PACKET_MODE_ADDR 		     0x00000005
 #define RUN_STATUE_ADDR 			     0x00000006
@@ -44,7 +56,6 @@
 #define CD_MODE_HOPPING_CHN			     0x0000000b
 #define RSSI_ADDR                        0x00000004
 #define RX_PACKET_NUM_ADDR               0x0000000c
-#define PA_TX_RX_SETTING				 0x00000014 //2bytes
 
 #define MAX_RF_CHANNEL                   40
 
@@ -92,8 +103,15 @@ unsigned char  g_cmd_now = 1;      // 1
 unsigned char  g_run = 1;          // 1
 unsigned char  g_hop = 0;          // 0
 unsigned char  g_tx_cnt = 0;       // 0
-unsigned short g_pa_setting = 0;   // 0
 emi_rf_mode_e  g_mode = ble1m;     // 1
+
+#if EMI_SUPPORT_SETTING
+/**
+* @brief global variable to save EMI initial setting
+*/
+volatile emi_setting_t g_emi_setting;
+
+#endif
 
 void emi_init(void);
 void emicarrieronly(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
@@ -106,7 +124,10 @@ void emi_con_tx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
 void emi_con_tx0f(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
 void emitxaa(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
 void emitxf0(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
-
+#if(MCU_CORE_B92)
+void rf_emi_tx_current_test(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
+void rf_emi_rx_current_test(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn);
+#endif
 /**
  * @brief   Init the structure of the emi test command and function
  */
@@ -120,56 +141,55 @@ test_list_t  ate_list[] = {
 		{0x07,emi_con_tx55},
 		{0x08,emi_con_tx0f},
 		{0x0d,emitxaa},
-		{0x0f,emitxf0}
+		{0x0f,emitxf0},
+#if(MCU_CORE_B92)
+		{0x10,rf_emi_tx_current_test},
+		{0x11,rf_emi_rx_current_test}
+#endif
 };
 
-#define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
-
-unsigned char pa_hw_flag;
-void pa_init(unsigned short v)
+#if(MCU_CORE_B92)
+/**
+ * @brief      This function serves to test RF tx current
+ * @param[in]  rf_mode     - mode of RF.
+ * @param[in]  pwr         - power level of RF.
+ * @param[in]  rf_chn      - channel of RF.
+ * @return     none
+ */
+void rf_emi_tx_current_test(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	unsigned short tx_pin = get_pin(v&0xff);
-	unsigned short rx_pin = get_pin((v&0xff00) >> 8);
-	if(tx_pin == rx_pin)
-	{
-		pa_hw_flag = 2;
-		return;
-	}
-
-	pa_hw_flag = 0;
-	gpio_function_en(tx_pin);
-	gpio_input_dis(tx_pin);
-	gpio_output_en(tx_pin);
-	gpio_set_low_level(tx_pin);
-	gpio_function_en(rx_pin);
-	gpio_input_dis(rx_pin);
-	gpio_output_en(rx_pin);
-	gpio_set_low_level(rx_pin);
+	(void)(rf_mode);
+	extern void rf_set_power_level_index_singletone (rf_power_level_e level);
+	extern unsigned char g_single_tong_freqoffset;
+	rf_mode_init();
+	rf_power_level_e  power = rf_power_Level_list[pwr];
+	g_single_tong_freqoffset = 1;
+	rf_set_chn(rf_chn);
+	g_single_tong_freqoffset = 0;
+	rf_set_power_level_index_singletone(power);
+	rf_set_txmode();
+	gpio_shutdown(GPIO_ALL);
+	rf_current_test_cfg();
+	while(1);
 }
 
-void pa_operation(unsigned short v, unsigned char s)
+/**
+ * @brief      This function serves to test RF rx current
+ * @param[in]  rf_mode     - mode of RF.
+ * @param[in]  pwr         - power level of RF.
+ * @param[in]  rf_chn      - channel of RF.
+ * @return     none
+ */
+void rf_emi_rx_current_test(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	if(pa_hw_flag == 0)
-	{
-		unsigned short tx_pin = get_pin(v&0xff);
-		unsigned short rx_pin = get_pin((v&0xff00) >> 8);
-		if(s == 0) //close
-		{
-			gpio_set_low_level(tx_pin);
-			gpio_set_low_level(rx_pin);
-		}
-		else if(s == 1) //tx
-		{
-			gpio_set_high_level(tx_pin);
-			gpio_set_low_level(rx_pin);
-		}
-		else //rx
-		{
-			gpio_set_low_level(tx_pin);
-			gpio_set_high_level(rx_pin);
-		}
-	}
+	(void)rf_mode;
+	(void)pwr;
+	rf_emi_rx_setup(RF_MODE_BLE_1M_NO_PN, rf_chn);
+	gpio_shutdown(GPIO_ALL);
+	rf_current_test_cfg();
+	while(1);
 }
+#endif
 
 void read_calibration_flash()
 {
@@ -209,8 +229,18 @@ void read_calibration_flash()
 void emi_init(void)
 {
 	read_calibration_flash();
+
+#if EMI_SUPPORT_SETTING
+	if(g_emi_setting.general_setting.cap)
+	{
+		rf_turn_off_internal_cap();
+	}
+#else
+
 #if CLOSE_INTERNAL_CAP_EN
 	rf_turn_off_internal_cap();
+#endif
+
 #endif
 
 	rf_access_code_comm(EMI_ACCESS_CODE);             // access code
@@ -222,7 +252,6 @@ void emi_init(void)
     write_sram8(CHANNEL_ADDR,g_chn);                  // chn
     write_sram8(RF_MODE_ADDR,g_mode);                 // mode
     write_sram8(CD_MODE_HOPPING_CHN,g_hop);           // hop
-    write_sram16(PA_TX_RX_SETTING, g_pa_setting);
     write_sram8(RSSI_ADDR,0);                         // rssi
     write_sram32(RX_PACKET_NUM_ADDR,0);               // rx_packet_num
 }
@@ -237,13 +266,14 @@ void emi_init(void)
 
 void emicarrieronly(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+
+	pa_operation(PA_SETTING_STATE_TX);
 	(void)(rf_mode);
-	rf_mode_e  power = rf_power_Level_list[pwr];
+	rf_power_level_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_single_tone(power,rf_chn);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting));
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode));
 	rf_emi_stop();
 }
 
@@ -256,16 +286,16 @@ void emicarrieronly(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emi_con_prbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	unsigned int t0 = reg_system_tick,chnidx = 1;
 	rf_power_level_e power = rf_power_Level_list[pwr];
 	g_hop = read_sram8(CD_MODE_HOPPING_CHN);
 	rf_emi_tx_continue_update_data(rf_mode,power,rf_chn,0);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
-#if FIX_ZIGBEE_BANDEAGE_EN
+#if FIX_ZIGBEE_BANDEDGE_EN
 		if(rf_mode == RF_MODE_ZIGBEE_250K)
 		{
 			if (rf_chn == 80)
@@ -306,14 +336,14 @@ void emi_con_prbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emirx(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 2);
+	pa_operation(PA_SETTING_STATE_RX);
 	(void)(pwr);
 	rf_emi_rx_setup(rf_mode,rf_chn);
 	write_sram8(RSSI_ADDR,0);
 	write_sram32(RX_PACKET_NUM_ADDR,0);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode)  && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_emi_rx_loop();
 		if(rf_emi_get_rxpkt_cnt() != read_sram32(RX_PACKET_NUM_ADDR))
@@ -335,13 +365,13 @@ void emirx(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 
 void emitxprbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	unsigned int tx_num = 0;
 	rf_power_level_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_burst_setup(rf_mode,power,rf_chn,1);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_emi_tx_burst_loop(rf_mode,0);
 		if(g_tx_cnt)
@@ -364,13 +394,13 @@ void emitxprbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 
 void emitx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	unsigned int tx_num = 0;
 	rf_power_level_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_burst_setup(rf_mode,power,rf_chn,2);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_emi_tx_burst_loop(rf_mode,2);
 		if(g_tx_cnt)
@@ -392,13 +422,13 @@ void emitx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emitx0f(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	unsigned int tx_num = 0;
 	rf_power_level_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_burst_setup(rf_mode,power,rf_chn,1);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_emi_tx_burst_loop(rf_mode,1);
 		if(g_tx_cnt)
@@ -419,13 +449,13 @@ void emitx0f(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emitxaa(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	unsigned int tx_num = 0;
 	rf_power_level_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_burst_setup(rf_mode,power,rf_chn,3);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_emi_tx_burst_loop(rf_mode,3);
 		if(g_tx_cnt)
@@ -447,13 +477,13 @@ void emitxaa(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emitxf0(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	unsigned int tx_num = 0;
 	rf_power_level_e  power = rf_power_Level_list[pwr];
 	rf_emi_tx_burst_setup(rf_mode,power,rf_chn,4);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_emi_tx_burst_loop(rf_mode,4);
 		if(g_tx_cnt)
@@ -477,12 +507,12 @@ void emitxf0(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emi_con_tx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	rf_power_level_e power = rf_power_Level_list[pwr];
 	rf_emi_tx_continue_update_data(rf_mode,power,rf_chn,2);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode) && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_continue_mode_run();
 	}
@@ -498,12 +528,12 @@ void emi_con_tx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
  */
 void emi_con_tx0f(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
-	pa_operation(g_pa_setting, 1);
+	pa_operation(PA_SETTING_STATE_TX);
 	rf_power_level_e power = rf_power_Level_list[pwr];
 	rf_emi_tx_continue_update_data(rf_mode,power,rf_chn,1);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode)  && ((read_sram16(PA_TX_RX_SETTING)) == g_pa_setting))
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
 	{
 		rf_continue_mode_run();
 	}
@@ -529,8 +559,7 @@ void emi_serviceloop(void)
 		   g_cmd_now = read_sram8(TEST_COMMAND_ADDR);  // get the command!
 		   g_tx_cnt = read_sram8(TX_PACKET_MODE_ADDR);
 		   g_hop = read_sram8(CD_MODE_HOPPING_CHN);
-		   g_pa_setting = read_sram16(PA_TX_RX_SETTING);
-		   pa_init(g_pa_setting);
+		   pa_operation(PA_SETTING_STATE_INIT);
 
 		   for (i = 0;i < sizeof(ate_list)/sizeof(test_list_t);i++)
 		   {
@@ -570,12 +599,27 @@ void emi_serviceloop(void)
 					}
 				}
 		   }
-		   pa_operation(g_pa_setting, 0);
 		   g_run = 0;
 		   write_sram8(RUN_STATUE_ADDR,g_run);
 	   }
    }
 }
+
+#if EMI_SUPPORT_SETTING
+
+/**
+ * @brief		This function serves to read EMI initial setting.
+ * @return 		none
+ */
+
+void emi_setting_init(void)
+{
+	g_emi_setting.general_setting.ptr[0] = read_data8(GENERAL_SETTING_ADDR);
+	g_emi_setting.pa_setting_pos = read_data32(PA_SETTING_ADDR);
+}
+
+#endif
+
 
 /**
  * @brief		This function serves to User Init
@@ -584,6 +628,23 @@ void emi_serviceloop(void)
 
 void user_init(void)
 {
+
+#if EMI_SUPPORT_SETTING
+	pa_setting_init(g_emi_setting.pa_setting_pos, g_emi_setting.general_setting.pa_bypass_en);
+	if(g_emi_setting.general_setting.swire_through_usb_en)
+	{
+		usb_set_pin_en();
+		gpio_set_up_down_res(GPIO_DM, GPIO_PIN_PULLUP_10K);
+	}
+#else
+
+#if SWIRE_THROUGH_USB_EN
+	usb_set_pin_en();
+	gpio_set_up_down_res(GPIO_DM, GPIO_PIN_PULLUP_10K);
+#endif
+
+#endif
+
 	emi_init();
 }
 

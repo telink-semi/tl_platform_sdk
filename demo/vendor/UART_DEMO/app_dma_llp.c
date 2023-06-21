@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_dma_llp.c
+ * @file    app_dma_llp.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,6 +21,21 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+/**
+   @verbatim
+   ===============================================================================
+                        ##### how to test demo #####
+   ===============================================================================
+   (+) DMA_LLP_MODE == DMA_LLP_SINGLE_CHAIN
+       Hardware connection: the tx of the board<->the rx of serial port tool, the rx of the board<->the tx of serial port tool,the ground <-> the ground;
+       Data stream: the serial port sends data to the rx. rx_done is used to check whether the data is received. Then the receive length hardware automatically writes back to the first four bytes of rec_buff and send the data to the serial port;
+   (+) DMA_LLP_MODE == DMA_LLP_PINGPONG
+       Hardware connection: the tx of the board<->the rx of serial port tool, the rx of the board<->the tx of serial port tool,the ground <-> the ground;
+       Data stream: the serial port sends data to the rx. rx_done is used to check whether the data is received. rec_buff/rec_buff1 alternately receive,Then the receive length hardware automatically writes back to the first four bytes of rec_buff/rec_buff1 and send the data to the serial port;
+   @endverbatim
+ */
+
+
 #include "app_config.h"
 //only the slave can support llp mode, the master cannot.
 #if (UART_MODE==UART_DMA_LLP)

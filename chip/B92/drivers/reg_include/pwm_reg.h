@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	pwm_reg.h
+ * @file    pwm_reg.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -263,7 +262,7 @@ typedef enum{
  */
 #define reg_pwm_ir_fifo_irq_trig_level	REG_ADDR8(REG_PWM_BASE+0x4c)
 enum{
-	FLD_PWM0_FIFO_NUM_OF_TRIGGLE_LEVEL 	=		BIT_RNG(0,3),
+	FLD_PWM0_FIFO_NUM_OF_TRIGGER_LEVEL 	=		BIT_RNG(0,3),
 };
 
 

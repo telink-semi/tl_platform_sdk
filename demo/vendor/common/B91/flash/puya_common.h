@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	puya_common.h
+ * @file    puya_common.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -26,7 +25,7 @@
 #define VENDOR_COMMON_FLASH_PUYA_COMMON_H_
 #include "driver.h"
 #include "compiler.h"
-void aduio_set_chn_wl(audio_channel_wl_mode_e chn_wl);
+void audio_set_chn_wl(audio_channel_wl_mode_e chn_wl);
 void audio_mux_config(audio_flow_e audio_flow, audio_in_mode_e ain0_mode , audio_in_mode_e ain1_mode,audio_out_mode_e i2s_aout_mode);
 void audio_i2s_config(i2s_mode_select_e i2s_format,i2s_data_select_e wl,  i2s_codec_m_s_mode_e m_s , audio_i2s_invert_config_t * i2s_config_t);
 /**

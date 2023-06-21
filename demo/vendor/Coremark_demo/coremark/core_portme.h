@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	core_portme.h
+ * @file    core_portme.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -90,7 +89,7 @@
 #define ITERATIONS 1000
 
 /* Data Types :
-	To avoid compiler issues, define the data types that need ot be used for 8b, 16b and 32b in <core_portme.h>.
+	To avoid compiler issues, define the data types that need to be used for 8b, 16b and 32b in <core_portme.h>.
 
 	*Imprtant* :
 	ee_ptr_int needs to be the data type used to hold pointers, otherwise coremark may fail!!!

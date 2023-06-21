@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_user_define_pkt.c
+ * @file    app_user_define_pkt.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -30,8 +29,8 @@
  * ble_tx_packet_format={DMA length(4byte),preamble(1~2byte),access code(4byte),Payload(2~258 byte),CRC(3byte:crc0,crc1,crc2)};
  * about crc calculate:
  * crc_init_val = reverse_32bit(0x555555);
- * crc_init_ture =( crc_init_val >> 8)& 0xffffff;
- * crc_value = crc24(unsigned char * p,len,crc_init_ture);//p:the address of Payload;len = n (payload length:2~258);crc_init_ture
+ * crc_init_true =( crc_init_val >> 8)& 0xffffff;
+ * crc_value = crc24(unsigned char * p,len,crc_init_true);//p:the address of Payload;len = n (payload length:2~258);crc_init_true
  * crc0 = crc_value & 0xff;
  * crc1 = (crc_value>>8) & 0xff;
  * crc2 = (crc_value>>16) & 0xff;
@@ -40,14 +39,14 @@
 
 unsigned char  rx_packet[128*4]  __attribute__ ((aligned (4)));
 /*
- * @brief The preamble length in this custom package is 2 Byete.
+ * @brief The preamble length in this custom package is 2 Bytes.
  */
 unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0xaa,0xaa,0x8e,0x89,0xbe,0xd6,0x00,0x0a,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0xb0,0x39,0x93};
 
 /*
- * @brief The preamble length in this custom package is 1 Byete.
+ * @brief The preamble length in this custom package is 1 Byte.
  */
-unsigned char  ble_tx_packet_1preable[48] __attribute__ ((aligned (4))) ={3,0,0,0,0xaa,0x8e,0x89,0xbe,0xd6,0x00,0x0a,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0xb0,0x39,0x93};
+unsigned char  ble_tx_packet_1_preamble[48] __attribute__ ((aligned (4))) ={3,0,0,0,0xaa,0x8e,0x89,0xbe,0xd6,0x00,0x0a,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0xb0,0x39,0x93};
 
 /*
  * @brief Custom single carrier package structure.
@@ -76,13 +75,12 @@ unsigned char  ble_tx_packet_1preable[48] __attribute__ ((aligned (4))) ={3,0,0,
 #define RX_FIFO_DEP			128
 
 #define RF_FREQ				17
-#define RF_POWER			RF_POWER_P9p11dBm
 #define ACCESS_CODE         0x8e89bed6//0x29417671//
 volatile unsigned int rx_cnt=0;
 volatile unsigned int tx_cnt=0;
 volatile unsigned int crc_value;
 volatile unsigned int crc_init_val;
-volatile unsigned int crc_init_ture;
+volatile unsigned int crc_init_true;
 
 #if(RF_RX_IRQ_EN)
 _attribute_ram_code_sec_ void rf_irq_handler(void)
@@ -167,11 +165,10 @@ unsigned int crc24 (unsigned char *p, unsigned int len, unsigned int crc_init)
 void user_init(void)
 {
 	rf_set_power_level(RF_POWER);
-//	rf_set_chn(RF_FREQ);
-	rf_set_channel_fpga(19);
+	rf_set_chn(RF_FREQ);
 	crc_init_val = reverse_32bit(0x555555);
-	crc_init_ture =( crc_init_val >> 8)& 0xffffff;
-	crc_value = crc24(&ble_tx_packet[10],12,crc_init_ture);
+	crc_init_true =( crc_init_val >> 8)& 0xffffff;
+	crc_value = crc24(&ble_tx_packet[10],12,crc_init_true);
 #if(RF_TRX_MODE==TX)
 	rf_ble1m_no_pn_tx_customer_mode_en();
 	rf_set_tx_dma(2,128);
@@ -266,11 +263,10 @@ void main_loop(void)
 void user_init(void)
 {
 	rf_set_power_level(RF_POWER);
-//	rf_set_chn(RF_FREQ);
-	rf_set_channel_fpga(19);
+	rf_set_chn(RF_FREQ);
 	crc_init_val = reverse_32bit(0x555555);
-	crc_init_ture =( crc_init_val >> 8)& 0xffffff;
-	crc_value = crc24(&ble_tx_packet[10],12,crc_init_ture);
+	crc_init_true =( crc_init_val >> 8)& 0xffffff;
+	crc_value = crc24(&ble_tx_packet[10],12,crc_init_true);
 
 #if(RF_TRX_MODE==TX)
 	rf_ble1m_no_pn_tx_customer_mode_en();

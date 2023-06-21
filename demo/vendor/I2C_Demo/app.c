@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file    app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -33,9 +32,9 @@
 #define     I2C_DEVICE					I2C_MASTER_DEVICE
 
 #if(MCU_CORE_B92)
-#define I2C_STRECH_EN       0
-#define I2C_STRECH_DIS      1
-#define I2C_STRECH_MODE     I2C_STRECH_EN
+#define I2C_STRETCH_EN       0
+#define I2C_STRETCH_DIS      1
+#define I2C_STRETCH_MODE     I2C_STRETCH_EN
 #endif
 
 
@@ -80,8 +79,8 @@ void user_init(void)
 	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*I2C_CLK_SPEED)));
 #if(MCU_CORE_B92)
 	i2c_master_detect_nack_en();
-#if(I2C_STRECH_MODE == I2C_STRECH_EN)
-	i2c_master_strech_en();
+#if(I2C_STRETCH_MODE == I2C_STRETCH_EN)
+	i2c_master_stretch_en();
 #endif
 #endif
 #elif(I2C_DEVICE == I2C_SLAVE_DEVICE)
@@ -91,8 +90,8 @@ void user_init(void)
     i2c_set_irq_mask(I2C_RX_BUF_MASK|I2C_RX_DONE_MASK);
 #elif(MCU_CORE_B92)
     i2c_set_irq_mask(I2C_RX_BUF_MASK|I2C_RX_END_MASK);
-#if(I2C_STRECH_MODE == I2C_STRECH_EN)
-    i2c_slave_strech_en();
+#if(I2C_STRETCH_MODE == I2C_STRETCH_EN)
+    i2c_slave_stretch_en();
 #endif
 #endif
     plic_interrupt_enable(IRQ21_I2C);
@@ -123,7 +122,7 @@ void main_loop(void)
 
 
 #if(I2C_DEVICE == I2C_SLAVE_DEVICE)
-#if(MCU_CORE_B91||(MCU_CORE_B92 &&(I2C_STRECH_MODE == I2C_STRECH_DIS)))
+#if(MCU_CORE_B91||(MCU_CORE_B92 &&(I2C_STRETCH_MODE == I2C_STRETCH_DIS)))
 	if( (slave_rx_done_end_flag==1)|| (slave_rx_end_flag==1))
 	{
 		i2c_slave_write((unsigned char*)i2c_rx_buff,BUFF_DATA_LEN_NO_DMA);
@@ -131,7 +130,7 @@ void main_loop(void)
 		slave_rx_end_flag=0;
 		gpio_toggle(LED4);
 	}
-#elif(MCU_CORE_B92||(I2C_STRECH_MODE == I2C_STRECH_EN))
+#elif(MCU_CORE_B92||(I2C_STRETCH_MODE == I2C_STRETCH_EN))
 	//parsing to the read and write command sent by the master, the interrupt state set 1,
 	//judge whether it is a read command or not,the slave pull the clock line up,and fill in the data.
 	if(i2c_get_irq_status(I2C_SLAVE_WR_STATUS))

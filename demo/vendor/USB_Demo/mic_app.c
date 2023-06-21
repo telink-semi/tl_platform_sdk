@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	mic_app.c
+ * @file    mic_app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -32,15 +31,18 @@
 
 
 unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
-extern volatile unsigned int pm_top_reset_tick;
-extern volatile unsigned int charger_clear_vbus_detect_flag;
+#if(MCU_CORE_B92)
+extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
+extern volatile unsigned int g_vbus_timer_turn_off_flag;
+#endif
 #if(MCU_CORE_B91)
 #define AUDIO_LINE_IN            0
 #define AUDIO_AMIC_IN            1
 #define AUDIO_DMIC_IN            2
 
 #define  AUDIO_IN_MODE          AUDIO_AMIC_IN
-#define MIC_MONO_STEREO       ((MIC_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
+#define MIC_MONO_STEREO       ((MIC_CHANNEL_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
+#define MIC_DMA_CHN             DMA2
 
 volatile unsigned int		iso_in_w = 0;
 volatile unsigned int  	     iso_in_r = 0;
@@ -58,11 +60,11 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 	 usbhw_reset_ep_ptr(USB_EDP_MIC);//reset pointer of Endpoint7's buf
 	switch(audio_rate)
 	{
-		case 	AUDIO_8K:	length = 8* MIC_CHANNLE_COUNT;break;
-		case	AUDIO_16K:	length = 16*MIC_CHANNLE_COUNT;break;
-		case	AUDIO_32K:	length = 32*MIC_CHANNLE_COUNT;break;
-		case	AUDIO_48K:	length = 48*MIC_CHANNLE_COUNT;break;
-		default:			length = 16*MIC_CHANNLE_COUNT;break;
+		case 	AUDIO_8K:	length = 8* MIC_CHANNEL_COUNT;break;
+		case	AUDIO_16K:	length = 16*MIC_CHANNEL_COUNT;break;
+		case	AUDIO_32K:	length = 32*MIC_CHANNEL_COUNT;break;
+		case	AUDIO_48K:	length = 48*MIC_CHANNEL_COUNT;break;
+		default:			length = 16*MIC_CHANNEL_COUNT;break;
 	}
 
 	if (0 &&(iso_in_w - (iso_in_r&(MIC_BUFFER_SIZE-1)))< length)
@@ -137,18 +139,18 @@ void user_init(void)
    // set in path digital and analog gain, must be set before audio_init();
 	audio_set_codec_in_path_a_d_gain(CODEC_IN_D_GAIN_12_DB,CODEC_IN_A_GAIN_20_DB);
 	audio_init(LINE_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
-	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_rx_dma_chain_init(MIC_DMA_CHN,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #elif(AUDIO_IN_MODE==AUDIO_DMIC_IN)
 	audio_set_dmic_pin(DMIC_GROUPD_D4_DAT_D5_D6_CLK);
 	// set in path digital gain,analog gain does not work, must be set before audio_init(),;
 	audio_set_codec_in_path_a_d_gain(CODEC_IN_D_GAIN_12_DB,CODEC_IN_A_GAIN_0_DB);
 	audio_init(DMIC_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
-	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_rx_dma_chain_init(MIC_DMA_CHN,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #elif(AUDIO_IN_MODE==AUDIO_AMIC_IN)
 	// set in path digital and analog gain, must be set before audio_init();
 	audio_set_codec_in_path_a_d_gain(CODEC_IN_D_GAIN_12_DB,CODEC_IN_A_GAIN_20_DB);
 	audio_init(AMIC_IN_TO_BUF ,MIC_SAMPLING_RATE,MIC_MONO_STEREO);
-	audio_rx_dma_chain_init(DMA2,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
+	audio_rx_dma_chain_init(MIC_DMA_CHN,(unsigned short*)&iso_in_buff,MIC_BUFFER_SIZE*2);
 #endif
 
 }
@@ -188,11 +190,11 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 	 usbhw_reset_ep_ptr(USB_EDP_MIC);//reset pointer of Endpoint7's buf
 	switch(audio_rate)
 	{
-		case 	AUDIO_8K:	length = 8* MIC_CHANNLE_COUNT;break;
-		case	AUDIO_16K:	length = 16*MIC_CHANNLE_COUNT;break;
-		case	AUDIO_32K:	length = 32*MIC_CHANNLE_COUNT;break;
-		case	AUDIO_48K:	length = 48*MIC_CHANNLE_COUNT;break;
-		default:			length = 16*MIC_CHANNLE_COUNT;break;
+		case 	AUDIO_8K:	length = 8* MIC_CHANNEL_COUNT;break;
+		case	AUDIO_16K:	length = 16*MIC_CHANNEL_COUNT;break;
+		case	AUDIO_32K:	length = 32*MIC_CHANNEL_COUNT;break;
+		case	AUDIO_48K:	length = 48*MIC_CHANNEL_COUNT;break;
+		default:			length = 16*MIC_CHANNEL_COUNT;break;
 	}
 
 #if ((AUDIO_IN_MODE==DMIC0_DMIC1_IN)&&(USB_TX_MODE==TX_DATA_FOR_DMIC1))//process DMIC1 data
@@ -336,7 +338,7 @@ void user_init(void)
 	audio_rx_dma_en(audio_codec_input.dma_num);
 
 #elif(AUDIO_IN_MODE==AUDIO_DMIC0_IN)
-	audio_codec_stream0_input_t audio_codec_dimc0_input =
+	audio_codec_stream0_input_t audio_codec_dmic0_input =
 	{
 		.input_src	 = DMIC_STREAM0_STEREO,
 		.sample_rate = MIC_SAMPLING_RATE,
@@ -348,41 +350,41 @@ void user_init(void)
 	};
 		 /****dmic input ****/
 	audio_codec_init();
-	audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
-	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
+		audio_set_stream0_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
+	audio_codec_stream0_input_init(&audio_codec_dmic0_input);
 	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
-	audio_rx_dma_chain_init(audio_codec_dimc0_input.fifo_num,audio_codec_dimc0_input.dma_num,(unsigned short*)audio_codec_dimc0_input.data_buf,audio_codec_dimc0_input.data_buf_size);
-	audio_rx_dma_en(audio_codec_dimc0_input.dma_num);
+	audio_rx_dma_chain_init(audio_codec_dmic0_input.fifo_num,audio_codec_dmic0_input.dma_num,(unsigned short*)audio_codec_dmic0_input.data_buf,audio_codec_dmic0_input.data_buf_size);
+	audio_rx_dma_en(audio_codec_dmic0_input.dma_num);
 #elif(AUDIO_IN_MODE==DMIC0_DMIC1_IN)
-	audio_codec_stream0_input_t audio_codec_dimc0_input =
+	audio_codec_stream0_input_t audio_codec_dmic0_input =
 	{
 		.input_src = DMIC_STREAM0_STEREO,
 		.sample_rate = MIC_SAMPLING_RATE,
 		.fifo_num = FIFO_NUM,
-		.data_width = CODEC_BIT_16_DATA,//msut 16 bit
+		.data_width = CODEC_BIT_16_DATA,//must 16 bit
 		.dma_num = MIC_DMA_CHN,
 		.data_buf = iso_in_buff,
 		.data_buf_size = sizeof(iso_in_buff),
 	};
-	 audio_codec_stream1_input_t audio_codec_dimc1_input =
+	 audio_codec_stream1_input_t audio_codec_dmic1_input =
 	 {
 		.input_src	 = DMIC_STREAM0_STREAM1_STEREO,
 		.sample_rate = MIC_SAMPLING_RATE,
 		.fifo_num = FIFO_NUM,
-		.data_width = CODEC_BIT_16_DATA,//msut 16 bit
+		.data_width = CODEC_BIT_16_DATA,//must 16 bit
 		.dma_num = MIC_DMA_CHN,
 		.data_buf = iso_in_buff,
 		.data_buf_size = sizeof(iso_in_buff),
 	};
 
 	audio_codec_init();
-	audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
-	audio_set_stream1_dmic_pin(GPIO_PD2,GPIO_PD7,GPIO_PD6);
-	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
-	audio_codec_stream1_input_init(&audio_codec_dimc1_input);
+	audio_set_stream0_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
+	audio_set_stream1_dmic_pin(GPIO_FC_PD2,GPIO_FC_PD7,GPIO_FC_PD6);
+	audio_codec_stream0_input_init(&audio_codec_dmic0_input);
+	audio_codec_stream1_input_init(&audio_codec_dmic1_input);
 	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
 	audio_set_stream1_dig_gain(CODEC_IN_D_GAIN1_30_DB);
-	audio_rx_dma_chain_init(audio_codec_dimc1_input.fifo_num,audio_codec_dimc1_input.dma_num,(unsigned short*)audio_codec_dimc1_input.data_buf,audio_codec_dimc1_input.data_buf_size);
+	audio_rx_dma_chain_init(audio_codec_dmic1_input.fifo_num,audio_codec_dmic1_input.dma_num,(unsigned short*)audio_codec_dmic1_input.data_buf,audio_codec_dmic1_input.data_buf_size);
 	audio_rx_dma_en(MIC_DMA_CHN);
 
 #endif
@@ -420,7 +422,7 @@ void user_init(void)
 	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
 	audio_rx_dma_chain_init(audio_codec_input.fifo_num,audio_codec_input.dma_num,(unsigned short*)audio_codec_input.data_buf,audio_codec_input.data_buf_size);
 #elif(AUDIO_IN_MODE==AUDIO_DMIC0_IN)
-	audio_codec_stream0_input_t audio_codec_dimc0_input =
+	audio_codec_stream0_input_t audio_codec_dmic0_input =
 	{
 		.input_src	 = DMIC_STREAM0_STEREO,
 		.sample_rate = MIC_SAMPLING_RATE,
@@ -431,10 +433,10 @@ void user_init(void)
 		.data_buf_size = sizeof(iso_in_buff),
 	};
 	audio_codec_init();
-	audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
-	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
+	audio_set_stream0_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
+	audio_codec_stream0_input_init(&audio_codec_dmic0_input);
 	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
-	audio_rx_dma_chain_init(audio_codec_dimc0_input.fifo_num,audio_codec_dimc0_input.dma_num,(unsigned short*)audio_codec_dimc0_input.data_buf,audio_codec_dimc0_input.data_buf_size);
+	audio_rx_dma_chain_init(audio_codec_dmic0_input.fifo_num,audio_codec_dmic0_input.dma_num,(unsigned short*)audio_codec_dmic0_input.data_buf,audio_codec_dmic0_input.data_buf_size);
 #endif
 	audio_data_fifo_output_path_sel(FIFO_NUM,USB_AISO_OUT_FIFO);
 	audio_tx_dma_chain_init(FIFO_NUM,AISO_DMA_CHN,(unsigned short*)iso_in_buff,MIC_BUFFER_SIZE*2);
@@ -450,13 +452,26 @@ void main_loop (void)
 	 *              otherwise the MCU will be reset after 8s.
 	*/
 #if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
-	if(charger_get_vbus_detect_status()){
-	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
-	   {
-		  charger_clear_vbus_detect_status();//clear reset
-		  charger_clear_vbus_detect_flag = 1;
-	   }
-    }
+	/**
+     *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
+     */
+if(usb_get_vbus_detect_status())
+{
+	if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
+	{
+		/**
+		 * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
+		 * The vbus detect status will not be clear to 0.
+		 */
+		wd_turn_off_vbus_timer();
+		g_vbus_timer_turn_off_flag = 1;
+	}
+}
+else
+{
+	g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+	g_vbus_timer_turn_off_flag = 0;
+}
 #endif
 	usb_handle_irq();
 

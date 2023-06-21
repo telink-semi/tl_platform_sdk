@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	uart_reg.h
+ * @file    uart_reg.h
  *
- * @brief	This is the header file for B91
+ * @brief   This is the header file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -127,7 +126,7 @@ enum{
 //state machine use for IC debug
 #define reg_uart_state(i)       REG_ADDR8(0x14008f+0x40*(i))
 enum{
-	FLD_UART_TSTATE_i   	=  BIT_RNG(0,2),//only for dma default 1.
+	FLD_UART_TSTATE_i   	=  BIT_RNG(0,2),
 	FLD_UART_RSTATE_i   	=  BIT_RNG(4,7),
 	FLD_UART_CLR_TXDONE     =  BIT(7),
 

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usb_default.h
+ * @file    usb_default.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -78,12 +77,12 @@
 #if(USB_MIC_ENABLE||USB_SPEAKER_ENABLE)
 #define MIC_RESOLUTION_BIT		16
 #define MIC_SAMPLE_RATE			16000//set sample for mic
-#define MIC_CHANNLE_COUNT		2 //1 or 2
+#define MIC_CHANNEL_COUNT		2 //1 or 2
 
-#define	MIC_ENOCDER_ENABLE		0
+#define	MIC_ENCODER_ENABLE		0
 
 #define SPK_RESOLUTION_BIT		16
-#define SPK_CHANNLE_COUNT		2
+#define SPK_CHANNEL_COUNT		2
 #define SPEAKER_SAMPLE_RATE		16000
 
 #define USB_MODE_AUDIO_EN		1
@@ -98,7 +97,7 @@
 #define ID_PRODUCT			    0x8006
 #endif
 
-#define  ID_VERDION             0x0100
+#define  ID_VERSION             0x0100
 
 #if(USB_MODE_CDC_EN)
 #define STRING_VENDOR				L"Telink Semi-conductor Ltd, Co"
@@ -188,12 +187,12 @@
 #define USB_MASS_STORAGE_ENABLE  	0
 #endif
 
-#ifndef MIC_CHANNLE_COUNT
-#define MIC_CHANNLE_COUNT  			1
+#ifndef MIC_CHANNEL_COUNT
+#define MIC_CHANNEL_COUNT  			1
 #endif
 
-#ifndef USB_DESCRIPTER_CONFIGURATION_FOR_KM_DONGLE
-#define USB_DESCRIPTER_CONFIGURATION_FOR_KM_DONGLE  			0
+#ifndef USB_DESCRIPTOR_CONFIGURATION_FOR_KM_DONGLE
+#define USB_DESCRIPTOR_CONFIGURATION_FOR_KM_DONGLE  			0
 #endif
 
 #ifndef USB_ID_AND_STRING_CUSTOM

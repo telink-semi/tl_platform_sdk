@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	core_portme.c
+ * @file    core_portme.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -125,7 +124,7 @@ ee_u32 default_num_contexts=1;
 	Test for some common mistakes.
 */
 void SystemInit (void);
-void portable_init(core_portable *p, int *argc, char *argv[])
+void portable_init(core_portable *p, int *argc __attribute__((unused)), char *argv[] __attribute__((unused)))
 {
 	//#error "Call board initialization routines in portable init (if needed), in particular initialize UART!\r\n"
 	if (sizeof(ee_ptr_int) != sizeof(ee_u8 *)) {

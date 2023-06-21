@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usbcdc.c
+ * @file    usbcdc.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -30,7 +29,7 @@ unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];
 unsigned short usb_cdc_data_len;
 unsigned int usb_cdc_tx_cnt;
 unsigned char LineCoding[7]={0x00,0xC2,0x01,0x00,0x00,0x00,0x08};
-unsigned char g_cdc_lenth=0;
+unsigned char g_cdc_length=0;
 
 void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len)
 {
@@ -44,7 +43,7 @@ void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len)
 	if(data_len >CDC_TXRX_EPSIZE) {
 		data_len = CDC_TXRX_EPSIZE;
 	}
-	g_cdc_lenth=data_len;
+	g_cdc_length=data_len;
 	usbhw_reset_ep_ptr(USB_EDP_CDC_IN);
 
 	while(data_len-- > 0) {
@@ -57,7 +56,7 @@ void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len)
 	/*If the length of the data sent is equal to the wMaxPacketSize (CDC_TXRX_EPSIZE),
 	 the device must return a zero-length packet to indicate the end of the data stage,
 	 The following is the process of sending zero-length packet*/
-	if(g_cdc_lenth%CDC_TXRX_EPSIZE==0)
+	if(g_cdc_length%CDC_TXRX_EPSIZE==0)
 	{
 		delay_us(64);//delay for the actual data transfer to complete
 		usbhw_reset_ep_ptr(USB_EDP_CDC_IN);

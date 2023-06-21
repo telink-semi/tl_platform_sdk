@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	flash_boot_ramcode.link
+ * @file    flash_boot_ramcode.link
  *
- * @brief	This is the link file for B91
+ * @brief   This is the link file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -37,7 +36,8 @@ SECTIONS
 	PROVIDE (_RETENTION_RESET_LMA_START = LOADADDR(.retention_reset));
 	PROVIDE (_RETENTION_RESET_VMA_END = .); 
 	/* By default,the aes_data section can only be used in the first 64K of IRAM, */
-	/* please do not change the position of this section,unless you know the correct way to use */ 
+	/* please do not change the position of this section,unless you know the correct way to use */
+	/* For more details, see the aes_set_em_base_addr() function*/	
 	. = ALIGN(8);
 	PROVIDE (_AES_VMA_START = .);
 	.aes_data 	(NOLOAD)	: { KEEP(*(.aes_data )) }

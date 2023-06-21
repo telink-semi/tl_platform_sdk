@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	i2c.c
+ * @file    i2c.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -156,20 +155,20 @@ void i2c_set_pin(i2c_sda_pin_e sda_pin,i2c_scl_pin_e scl_pin)
 
 /**
  * @brief      This function serves to enable i2c master function.
- * @param[in]  none.
  * @return     none.
  */
 void i2c_master_init(void)
 {
 	reg_i2c_sct0  |=  FLD_I2C_MASTER;       //i2c master enable.
+	i2c_master_stretch_en();
 }
 
 
 
 /**
- * @brief      This function serves to set the i2c clock frequency.The i2c clock is consistent with the system clock.
- * @param[in]  clock - the division factor of I2C clock,
- *             I2C frequency = System_clock / (4*DivClock).
+ * @brief      This function serves to set the i2c clock frequency.The i2c clock is consistent with the pclk.
+ * @param[in]  clock - the division factor of I2C clock,the i2c frequency can meet 1M, and the maximum limit is not confirmed,
+ *             I2C frequency = pclk/ (4*DivClock).
  * @return     none
  */
 void i2c_set_master_clk(unsigned char clock)
@@ -193,7 +192,7 @@ void i2c_slave_init(unsigned char id)
 {
 	reg_i2c_sct0 &= (~FLD_I2C_MASTER); //enable slave mode.
 
-	reg_i2c_id	  = id;                   //defaul eagle slave ID is 0x5a
+	reg_i2c_id	  = id;                   //default eagle slave ID is 0x5a
 }
 
 
@@ -201,7 +200,7 @@ void i2c_slave_init(unsigned char id)
  *  @brief      The function of this API is to ensure that the data can be successfully sent out.
  *              can choose whether to send stop,if i2c stop is not configured, the next time a start signal is sent, it will be a restart signal,
  *              but if a nack exception is received after sending out the id, during exception handling, a stop signal will be sent.
- *  @param[in]  id - to set the slave ID.for kite slave ID=0x5c,for eagle slave ID=0x5a.
+ *  @param[in]  id - to set the slave ID.
  *  @param[in]  data - The data to be sent, The first three bytes can be set as the RAM address of the slave.
  *  @param[in]  len - This length is the total length, including both the length of the slave RAM address and the length of the data to be sent.
  *  @return     0 : the master receive NACK after sending out the id and then send stop.  1: the master sent the data successfully,(master does not detect NACK in data phase)
@@ -244,7 +243,7 @@ unsigned char  i2c_master_write(unsigned char id, unsigned char *data, unsigned 
  * @brief      This function serves to read a packet of data from the specified address of slave device.
  *             can choose whether to send stop,if i2c stop is not configured, the next time a start signal is sent, it will be a restart signal,
  *             but if a nack exception is received after sending out the id, during exception handling, a stop signal will be sent.
- * @param[in]  id - to set the slave ID.for kite slave ID=0x5c,for eagle slave ID=0x5a.
+ * @param[in]  id - to set the slave ID.
  * @param[in]  data - Store the read data
  * @param[in]  len - The total length of the data read back.
  * @return     0 : the master receive NACK after sending out the id and then send stop.  1: the master receive the data successfully.
@@ -283,7 +282,7 @@ unsigned char  i2c_master_read(unsigned char id, unsigned char *data, unsigned c
  * @brief      This function serves to write data and restart read data.
  *             can choose whether to send stop or not,If i2c stop is not configured, the next time a start signal is sent, it will be a restart signal,
  *             but if a nack exception signal is received after sending out the id, during exception handling, a stop signal will be sent.
- * @param[in]  id - to set the slave ID.for kite slave ID=0x5c,for eagle slave ID=0x5a.
+ * @param[in]  id - to set the slave ID.
  * @param[in]  wr_data - The data to be sent, The first three bytes can be set as the RAM address of the slave.
  * @param[in]  wr_len -  This length is the total length, including both the length of the slave RAM address and the length of the data to be sent.
  * @param[in]  rd_data - Store the read data
@@ -322,10 +321,12 @@ unsigned char i2c_master_write_read(unsigned char id, unsigned char *wr_data, un
  * @brief      The function of this API is just to write data to the i2c tx_fifo by DMA.
  *             can choose whether to send stop,if i2c stop is not configured, the next time a start signal is sent, it will be a restart signal,
  *             but in B91,in dma mode,there is no way to detect the abnormal phenomenon,so there is no corresponding exception handling method in case of abnormal phenomenon.
- * @param[in]  id - to set the slave ID.for kite slave ID=0x5c,for eagle slave ID=0x5a.
+ * @param[in]  id - to set the slave ID.
  * @param[in]  data - The data to be sent, The first three bytes represent the RAM address of the slave.
- * @param[in]  len - This length is the total length, including both the length of the slave RAM address and the length of the data to be sent.
+ * @param[in]  len - This length is the total length, including both the length of the slave RAM address and the length of the data to be sent,
+ *                   the maximum transmission length of i2c is 0xff bytes, so dont'n over this length.
  * @return     none.
+ * @note       data: must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void i2c_master_write_dma(unsigned char id, unsigned char *data, unsigned char len)
 {
@@ -344,10 +345,11 @@ void i2c_master_write_dma(unsigned char id, unsigned char *data, unsigned char l
 
 /**
  * @brief      This function serves to read a packet of data from the specified address of slave device.
- * @param[in]  id - to set the slave ID.for kite slave ID=0x5c,for eagle slave ID=0x5a.
- * @param[in]  rx_data - Store the read data
- * @param[in]  len - The total length of the data read back.
+ * @param[in]  id - to set the slave ID.
+ * @param[in]  rx_data - Store the read data.
+ * @param[in]  len - The total length of the data read back,the maximum transmission length of i2c is 0xFF bytes, so dont'n over this length.
  * @return     none.
+ * @note       data: must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void i2c_master_read_dma(unsigned char id, unsigned char *rx_data, unsigned char len)
 {
@@ -369,8 +371,9 @@ void i2c_master_read_dma(unsigned char id, unsigned char *rx_data, unsigned char
 /**
  * @brief      This function serves to send a packet of data to master device.It will trigger after the master sends the read sequence.
  * @param[in]  data - the pointer of tx_buff.
- * @param[in]  len - The total length of the data .
+ * @param[in]  len - The total length of the data,the maximum transmission length of DMA is 0xFFFFFC bytes, so dont'n over this length.
  * @return     none.
+ * @note       data: must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void i2c_slave_set_tx_dma( unsigned char *data, unsigned char len)
 {
@@ -382,9 +385,10 @@ void i2c_slave_set_tx_dma( unsigned char *data, unsigned char len)
 
 /**
  * @brief      This function serves to receive a packet of data from master device,It will trigger after the master sends the write sequence.
- * @param[in]  data - the pointer of rx_buff.
- * @param[in]  len  - The total length of the data.
- * @return     none.
+ * @param[in]  data - This parameter is the first address of the received data buffer, which must be 4 bytes aligned, otherwise the program will enter an exception.
+ *                    and the actual buffer size defined by the user needs to be not smaller than the len, otherwise there may be an out-of-bounds problem.
+ * @param[in]  len  - This parameter is used to set the size of the received dma and must be set to a multiple of 4. The maximum value that can be set is 0xFFFFFC.
+ * @return 	   none
  */
 void i2c_slave_set_rx_dma(unsigned char *data, unsigned char len)
 {
@@ -437,7 +441,7 @@ void i2c_slave_write(unsigned char* data , unsigned char len)
 
 
 /**
- * @brief     This function serves to set i2c tx_dam channel and config dma tx default.
+ * @brief     This function serves to set i2c tx_dma channel and config dma tx default.
  * @param[in] chn: dma channel.
  * @return    none
  * @note      In the case that the DMA transfer is not completed(bit 0 of reg_dma_ctr0(chn): 1-the transmission has not been completed,0-the transmission is completed), re-calling the DMA-related functions may cause problems.
@@ -451,7 +455,7 @@ void i2c_set_tx_dma_config(dma_chn_e chn)
 }
 
 /**
- * @brief     This function serves to set i2c rx_dam channel and config dma rx default.
+ * @brief     This function serves to set i2c rx_dma channel and config dma rx default.
  * @param[in] chn: dma channel.
  * @return    none
  * @note      In the case that the DMA transfer is not completed(bit 0 of reg_dma_ctr0(chn): 1-the transmission has not been completed,0-the transmission is completed), re-calling the DMA-related functions may cause problems.

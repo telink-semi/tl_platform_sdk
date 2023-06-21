@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usb_reg.h
+ * @file    usb_reg.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -197,7 +196,7 @@ typedef enum{
 
 
 #define reg_usb_ep8_send_max	REG_ADDR8(REG_USB_BASE+0x43)
-#define reg_usb_ep8_send_thre	REG_ADDR8(REG_USB_BASE+0x44)
+#define reg_usb_ep8_send_thres	REG_ADDR8(REG_USB_BASE+0x44)
 #define reg_usb_ep8_fifo_mode	REG_ADDR8(REG_USB_BASE+0x45)
 enum{
 	FLD_USB_ENP8_FIFO_MODE =	BIT(0),

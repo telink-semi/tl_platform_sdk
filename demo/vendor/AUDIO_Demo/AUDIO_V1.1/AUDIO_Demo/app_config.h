@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    app_config.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -50,10 +49,11 @@ extern "C" {
 /**
  * there has 2 i2s
  */
-#define    I2S_TO_EXT_CODEC_WM                 9  //I2S input->buff->I2S out for WM8731 external codec
-#define    TWO_I2S_ALIGN                       10 //Two I2S align function share a fifo and buff
-#define    I2S_OUPUT_DOUBLE_BUFF               11 /*I2S(I2S0 or I2S1) outputs double buff data: buff_L-->fifo0-->I2S0_L/I2S1_L,buff_R-->fifo1-->I2S0_R/I2S1_R*/
-#define    AUDIO_FIFO_IRQ_Test                 12 //fifo threshold irq
+#define    TWO_I2S_ALIGN                       9 //Two I2S align function share a fifo and buff
+#define    I2S_OUTPUT_DOUBLE_BUFF               10 /*I2S(I2S0 or I2S1) outputs double buff data: buff_L-->fifo0-->I2S0_L/I2S1_L,buff_R-->fifo1-->I2S0_R/I2S1_R*/
+#define    AUDIO_FIFO_IRQ_Test                 11 //fifo threshold irq
+#define    I2S_TO_EXT_CODEC_WM                 12 //I2S input->buff->I2S out for WM8731 external codec
+
 #define    AUDIO_MODE                    BUFFER_TO_LINEOUT
 
 /* Disable C linkage for C++ Compilers: */

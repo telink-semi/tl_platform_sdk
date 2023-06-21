@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file    app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -78,7 +77,7 @@
 *                                         SPI pin set                                            	 	  *
 *********************************************************************************************************************/
 #if (SPI_MODULE_SEL == GSPI_MODULE)
-spi_pin_config_t gspi_pin_config = {
+gspi_pin_config_t gspi_pin_config = {
 	.spi_csn_pin 		= GPIO_FC_PA0,
 	.spi_clk_pin		= GPIO_FC_PA3,
 	.spi_mosi_io0_pin   = GPIO_FC_PB3,
@@ -93,7 +92,7 @@ gpio_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, /*GPIO_FC_PA1, GPIO_
  		/*GPIO_FC_PB0, GPIO_FC_PB1, */GPIO_FC_PB2, GPIO_FC_PB3, GPIO_FC_PB4, GPIO_FC_PB5, GPIO_FC_PB6, GPIO_FC_PB7};
 #endif
 #elif (SPI_MODULE_SEL == LSPI_MODULE)
-spi_pin_config_t lspi_pin_config = {
+lspi_pin_config_t lspi_pin_config = {
 	.spi_csn_pin 		= LSPI_CSN_PE0_PIN,
 	.spi_clk_pin		= LSPI_CLK_PE1_PIN,
 	.spi_mosi_io0_pin   = LSPI_MOSI_IO0_PE2_PIN,

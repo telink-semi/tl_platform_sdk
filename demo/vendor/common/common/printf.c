@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	printf.c
+ * @file    printf.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -46,7 +45,7 @@ __attribute__((used)) int _write(int fd, const unsigned char *buf, int size)
 #elif (DEBUG_BUS==UART_PRINT_DEBUG_ENABLE)
 
 /**
- * @brief      This function serves to foramt string by GPIO simulate uart.
+ * @brief      This function serves to format string by GPIO simulate uart.
  * @param[in]  byte  -  a byte need to print
  * @return     none.
  */
@@ -68,9 +67,10 @@ _attribute_ram_code_sec_noinline_  void dr_putchar(unsigned char byte){
 #if(MCU_CORE_B91||MCU_CORE_B92)
 	unsigned char tmp_bit0 = TX_PIN_OUTPUT_REG & (~(DEBUG_INFO_TX_PIN & 0xff));
 	unsigned char tmp_bit1 = TX_PIN_OUTPUT_REG | (DEBUG_INFO_TX_PIN & 0xff);
+	unsigned char bit[10] = {0};
 #endif
 
-	unsigned char bit[10] = {0};
+
 
 	bit[0] = tmp_bit0;
 	bit[1] = (byte & 0x01)? tmp_bit1 : tmp_bit0;

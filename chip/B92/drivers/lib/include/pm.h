@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	pm.h
+ * @file    pm.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -48,22 +47,23 @@
 
 
 /**
- * @brief these analog register can store data in deepsleep mode or deepsleep with SRAM retention mode.
- * 	      Reset these analog registers by watchdog, chip reset, RESET Pin, power cycle
+ * @brief these analog register can store data in deep sleep mode or deep sleep with SRAM retention mode.
+ * 	      Reset these analog registers by watchdog, chip reset, RESET Pin, power cycle, 32k watchdog.
  */
-#define PM_ANA_REG_WD_CLR_BUF0 			0x38 // initial value 0xff. [Bit0] is already occupied. The customer cannot change!
+#define PM_ANA_REG_WD_CLR_BUF0			0x35 // initial value 0xff. [Bit0] is already occupied. The customer cannot change!
+#define PM_ANA_REG_WD_CLR_BUF1			0x36 // initial value 0x00.
+#define PM_ANA_REG_WD_CLR_BUF2			0x37 // initial value 0x00
+#define PM_ANA_REG_WD_CLR_BUF3			0x38 // initial value 0x00
+#define PM_ANA_REG_WD_CLR_BUF4			0x39 // initial value 0x00
 
 /**
- * @brief analog register below can store information when MCU in deepsleep mode or deepsleep with SRAM retention mode.
- * 	      Reset these analog registers only by power cycle
+ * @brief analog register below can store information when MCU in deep sleep mode or deep sleep with SRAM retention mode.
+ * 	      Reset these analog registers by power cycle, 32k watchdog.
  */
-#define PM_ANA_REG_POWER_ON_CLR_BUF0 	0x39 // initial value 0x00. [Bit0] is already occupied. The customer cannot change!
-#define PM_ANA_REG_POWER_ON_CLR_BUF1 	0x3a // initial value 0x00
-#define PM_ANA_REG_POWER_ON_CLR_BUF2 	0x3b // initial value 0x00
-#define PM_ANA_REG_POWER_ON_CLR_BUF3 	0x3c // initial value 0x00
-#define PM_ANA_REG_POWER_ON_CLR_BUF4 	0x3d // initial value 0x00
-#define PM_ANA_REG_POWER_ON_CLR_BUF5 	0x3e // initial value 0x00
-#define PM_ANA_REG_POWER_ON_CLR_BUF6	0x3f // initial value 0x0f
+#define PM_ANA_REG_POWER_ON_CLR_BUF0	0x3a // initial value 0x00 [Bit0] is already occupied. The customer cannot change!
+											 //[Bit1] The crystal oscillator failed to start normally.The customer cannot change!
+#define PM_ANA_REG_POWER_ON_CLR_BUF1	0x3b // initial value 0x00
+#define PM_ANA_REG_POWER_ON_CLR_BUF2	0x3c // initial value 0xff
 
 /**
  * @brief	gpio wakeup level definition
@@ -77,7 +77,7 @@ typedef enum{
  * @brief	wakeup tick type definition
  */
 typedef enum {
-	 PM_TICK_STIMER_16M		= 0,
+	 PM_TICK_STIMER			= 0,	// 24M
 	 PM_TICK_32K			= 1,
 }pm_wakeup_tick_type_e;
 
@@ -85,9 +85,9 @@ typedef enum {
  * @brief	suspend power weather to power down definition
  */
 typedef enum {
-	 PM_POWER_BASEBAND  	= BIT(0),	//weather to power on the BASEBAND before suspend.
+	 PM_POWER_BASEBAND  = BIT(0),	//weather to power on the BASEBAND before suspend.
 	 PM_POWER_USB  		= BIT(1),	//weather to power on the USB before suspend.
-	 PM_POWER_NPE 		= BIT(2),	//weather to power on the NPE before suspend.
+	 PM_POWER_AUDIO 	= BIT(2),	//weather to power on the AUDIO before suspend.
 }pm_suspend_power_cfg_e;
 
 /**
@@ -95,12 +95,13 @@ typedef enum {
  */
 typedef enum {
 	//available mode for customer
-	SUSPEND_MODE						= 0x00, //The A0 version of the suspend execution process is abnormal and the program restarts.
-	DEEPSLEEP_MODE						= 0x30,	//when use deep mode pad wakeup(low or high level), if the high(low) level always in
-												//the pad, system will not enter sleep and go to below of pm API, will reboot by core_6f = 0x20
+	SUSPEND_MODE						= 0x00,
+	DEEPSLEEP_MODE						= 0x70,	//when use deep mode pad wakeup(low or high level), if the high(low) level always in the pad,
+												//system will not enter sleep and go to below of pm API, will reboot by core_6f = 0x20.
 												//deep retention also had this issue, but not to reboot.
-	DEEPSLEEP_MODE_RET_SRAM_LOW32K  	= 0x21, //for boot from sram
-	DEEPSLEEP_MODE_RET_SRAM_LOW64K  	= 0x03, //for boot from sram
+	DEEPSLEEP_MODE_RET_SRAM_LOW32K  	= 0x61, //for boot from sram
+	DEEPSLEEP_MODE_RET_SRAM_LOW64K  	= 0x43, //for boot from sram
+	DEEPSLEEP_MODE_RET_SRAM_LOW96K  	= 0x07, //for boot from sram
 	//not available mode
 	DEEPSLEEP_RETENTION_FLAG			= 0x0F,
 }pm_sleep_mode_e;
@@ -109,25 +110,30 @@ typedef enum {
  * @brief	available wake-up source for customer
  */
 typedef enum {
-	 PM_WAKEUP_PAD   		= BIT(3),
-	 PM_WAKEUP_CORE  		= BIT(4),
-	 PM_WAKEUP_TIMER 		= BIT(5),
-	 PM_WAKEUP_COMPARATOR 	= BIT(6),
-	 PM_WAKEUP_MDEC		 	= BIT(7),
+	 PM_WAKEUP_PAD   		= BIT(0),
+	 PM_WAKEUP_CORE  		= BIT(1),
+	 PM_WAKEUP_TIMER 		= BIT(2),
+	 PM_WAKEUP_COMPARATOR 	= BIT(3),
+//	 PM_WAKEUP_MDEC		 	= BIT(4),
+//	 PM_WAKEUP_CTB 			= BIT(5),
+//	 PM_WAKEUP_VAD 			= BIT(6),
+//	 PM_WAKEUP_SHUTDOWN		= BIT(7),
 }pm_sleep_wakeup_src_e;
 
 /**
  * @brief	wakeup status
  */
 typedef enum {
-	 WAKEUP_STATUS_COMPARATOR  		= BIT(0),
-	 WAKEUP_STATUS_TIMER  			= BIT(1),
-	 WAKEUP_STATUS_CORE 			= BIT(2),
-	 WAKEUP_STATUS_PAD    			= BIT(3),
-	 WAKEUP_STATUS_MDEC    			= BIT(4),
+	WAKEUP_STATUS_PAD  				= BIT(0),
+	WAKEUP_STATUS_CORE  			= BIT(1),
+	WAKEUP_STATUS_TIMER 			= BIT(2),
+	WAKEUP_STATUS_COMPARATOR    	= BIT(3),
+//	WAKEUP_STATUS_MDEC    			= BIT(4),
+//	WAKEUP_STATUS_CTB    			= BIT(5),
+//	WAKEUP_STATUS_VAD   			= BIT(6),
 
-	 STATUS_GPIO_ERR_NO_ENTER_PM	= BIT(7),
-	 STATUS_ENTER_SUSPEND  			= BIT(30),
+	STATUS_GPIO_ERR_NO_ENTER_PM		= BIT(8),
+	STATUS_ENTER_SUSPEND  			= BIT(30),
 }pm_wakeup_status_e;
 
 /**
@@ -145,12 +151,17 @@ typedef enum {
 }pm_zb_voltage_e;
 
 /**
- * @brief   	core voltage definition.
+ * @brief	digital core voltage definition.
+ * @note	CORE_1V2 has the advantage of supporting higher system clock frequencies.
+ * 			CORE_1V has the advantage of saving power.
  */
 typedef enum {
-	CORE_1V1875     =0x1F,
-	CORE_1V         =0x10,
-}pm_core_voltage_e;
+/*
+ * The naming of CORE_1V2 is to harmonize with the data sheet and actually corresponds to 1.1875V in the register table.
+ */
+	CORE_1V2    =0x1F,
+	CORE_1V     =0x10,
+}pm_digital_core_voltage_e;
 
 /**
  * @brief	mcu status
@@ -172,6 +183,7 @@ typedef struct {
 	unsigned short  sleep_min_time_us;				/**< sleep_min_time_us = suspend_early_wakeup_time_us + 200*/
 }pm_early_wakeup_time_us_s;
 
+extern volatile pm_early_wakeup_time_us_s g_pm_early_wakeup_time_us;
 /**
  * @brief	hardware delay time
  */
@@ -181,8 +193,9 @@ typedef struct {
 
 }pm_r_delay_cycle_s;
 
+extern volatile pm_r_delay_cycle_s g_pm_r_delay_cycle;
 /**
- * @brief   deepsleep wakeup status
+ * @brief   deep sleep wakeup status
  */
 typedef struct{
 	unsigned char is_pad_wakeup;
@@ -191,27 +204,7 @@ typedef struct{
 	unsigned char rsvd;
 }pm_status_info_s;
 
-/**
- * @brief   pm 32k rc calibration algorithm.
- */
-typedef struct  pm_clock_drift
-{
-	unsigned int	ref_tick;
-	unsigned int	ref_tick_32k;
-	int				offset;
-	int				offset_dc;
-	int				offset_cur;
-	int				tc;
-	int				rc32;
-	int				rc32_wakeup;
-	int				rc32_rt;
-	int				s0;
-	unsigned char	calib;
 
-} pm_clock_drift_t;
-
-
-extern pm_clock_drift_t	pmcd;
 extern _attribute_aligned_(4) pm_status_info_s g_pm_status_info;
 extern _attribute_data_retention_sec_ unsigned char g_pm_vbat_v;
 
@@ -240,12 +233,22 @@ static inline unsigned char pm_get_deep_retention_flag(void)
  */
 static inline pm_wakeup_status_e pm_get_wakeup_src(void)
 {
-	return analog_read_reg8(0x64);
+	return (pm_wakeup_status_e)analog_read_reg8(0x64);
+}
+
+/**
+ * @brief		This function serves to clear the wakeup bit.
+ * @param[in]	status	- the interrupt status that needs to be cleared.
+ * @return		none.
+ */
+static inline void pm_clr_irq_status(pm_wakeup_status_e status)
+{
+	analog_write_reg8(0x64, (analog_read_reg8(0x64) | status));
 }
 
 /**
  * @brief		This function configures a GPIO pin as the wakeup pin.
- * @param[in]	pin	- the pin needs to be configured as wakeup pin.
+ * @param[in]	pin	- the pins can be set to all GPIO except PB0/PC5 and GPIOG groups.
  * @param[in]	pol - the wakeup polarity of the pad pin(0: low-level wakeup, 1: high-level wakeup).
  * @param[in]	en  - enable or disable the wakeup function for the pan pin(1: enable, 0: disable).
  * @return		none.
@@ -254,11 +257,23 @@ void pm_set_gpio_wakeup (gpio_pin_e pin, pm_gpio_wakeup_level_e pol, int en);
 
 /**
  * @brief		This function configures pm wakeup time parameter.
- * @param[in]	param - pm wakeup time parameter.
+ * @param[in]	param - deep/suspend/deep_retention r_delay time.(default value: suspend/deep_ret=3, deep=11)
  * @return		none.
  */
 void pm_set_wakeup_time_param(pm_r_delay_cycle_s param);
 
+/**
+ * @brief		This function is used in applications where the crystal oscillator is relatively slow to start.
+ * 				When the start-up time is very slow, you can call this function to avoid restarting caused
+ * 				by insufficient crystal oscillator time (it is recommended to leave a certain margin when setting).
+ * @param[in]	delay_us - This time setting is related to the parameter nopnum, which is about the execution time of the for loop
+ * 							in the ramcode(default value: 200).
+ * @param[in]	loopnum - The time for the crystal oscillator to stabilize is approximately: loopnum*40us(default value: 10).
+ * @param[in]	nopnum - The number of for loops used to wait for the crystal oscillator to stabilize after suspend wakes up.
+ * 						 for(i = 0; i < nopnum; i++){ asm("tnop"); }(default value: Flash=250).
+ * @return		none.
+ */
+void pm_set_xtal_stable_timer_param(unsigned int delay_us, unsigned int loopnum, unsigned int nopnum);
 /**
  * @brief		this function servers to wait bbpll clock lock.
  * @return		none.
@@ -273,37 +288,22 @@ _attribute_ram_code_sec_noinline_ void pm_wait_bbpll_done(void);
 _attribute_ram_code_sec_noinline_ void pm_stimer_recover(void);
 
 /**
- * @brief		This function serves to set the working mode of MCU based on 32k crystal,e.g. suspend mode, deepsleep mode, deepsleep with SRAM retention mode and shutdown mode.
+ * @brief		This function serves to set the working mode of MCU based on 32k crystal,e.g. suspend mode, deep sleep mode, deep sleep with SRAM retention mode and shutdown mode.
  * @param[in]	sleep_mode 			- sleep mode type select.
  * @param[in]	wakeup_src 			- wake up source select.
- * 		A0	   	note: The reference current values under different configurations are as followsUnit (uA):
- * 					|	pad		|	32k rc	|	32k xtal	|	mdec	|	lpc	 	|
- * 	deep			|	0.7		|	1.3		|	1.7			|	1.4		|	1.6		|
- * 	deep ret 32k	|	1.8		|	2.4		|	2.8			|	2.6		|	2.8		|
- * 	deep ret 64k	|	2.7		|	3.2		|	3.7			|	3.4		|	3.7		|
- * 				A0 chip, the retention current will float up.
- * @param[in]	wakeup_tick_type	- tick type select. For long timer sleep.currently only 16M is supported(PM_TICK_STIMER_16M).
- * @param[in]	wakeup_tick			- the time of short sleep, which means MCU can sleep for less than 5 minutes.
+ * @param[in]	wakeup_tick_type	- tick type select. Use 32K tick count for long-time sleep or 24M tick count for short-time sleep.
+ * @param[in]	wakeup_tick			- The tick value at the time of wake-up.
+									  If the wakeup_tick_type is PM_TICK_STIMER, then wakeup_tick is converted to 24M. The range of tick that can be set is approximately:
+									  current tick value + (18352~0xe0000000), and the corresponding sleep time is approximately: 2ms~234.88s.It cannot go to sleep normally when it exceeds this range.
+									  If the wakeup_tick_type is PM_TICK_32K, then wakeup_tick is converted to 32K. The range of tick that can be set is approximately:
+									  64~0xffffffff, and the corresponding sleep time is approximately: 2ms~37hours.It cannot go to sleep normally when it exceeds this range.
  * @return		indicate whether the cpu is wake up successful.
  */
-_attribute_ram_code_sec_noinline_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode,  pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int  wakeup_tick);
-
-/**
- * @brief		Calculate the offset value based on the difference of 16M tick.
- * @param[in]	offset_tick	- the 16M tick difference between the standard clock and the expected clock.
- * @return		none.
- */
-_attribute_ram_code_sec_noinline_ void pm_cal_32k_rc_offset (int offset_tick);
-
-/**
- * @brief		When 32k rc sleeps, the calibration function is initialized.
- * @return		none.
- */
-_attribute_ram_code_sec_noinline_ void pm_32k_rc_offset_init(void);
+_attribute_text_sec_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode,  pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int  wakeup_tick);
 
 /**
  * @brief		This function serves to set baseband/usb/npe power on/off before suspend sleep,If power
- * 				on this module,the suspend curent will increase;power down this module will save current,
+ * 				on this module,the suspend current will increase;power down this module will save current,
  * 				but you need to re-init this module after suspend wakeup.All module is power down default
  * 				to save current.
  * @param[in]	value - weather to power on/off the baseband/usb/npe.
@@ -323,11 +323,41 @@ static inline void pm_set_zb_voltage(pm_zb_voltage_e zb_voltage)
 }
 
 /**
- * @brief  This function serves to set the core voltage.
- * @param  core_voltage - enum variable of core voltage.
+ * @brief  This function serves to set the digital core voltage.
+ * @param  dcore_voltage - enum variable of digital core voltage.
  * @return none.
  */
-static inline void pm_set_core_voltage(pm_core_voltage_e core_voltage)
-{
-	analog_write_reg8(0x1d, (analog_read_reg8(0x1d) & 0xe0) | core_voltage);
-}
+//static inline void pm_set_digital_core_voltage(pm_digital_core_voltage_e dcore_voltage)
+//{
+///*    The supported frequencies for cclk, hclk, pclk, mspi and clkzbmst under different digital core voltages are as follows:
+// *
+// *	        digital_core      cclk      hclk      pclk      mspi      clkzbmst(BT)
+// *	            1.2V          96M       48M       48M       64M          32M
+// *	            1.0V          48M       24M       24M       24M          24M
+// *
+// *	  1.The highest frequency for BT group to use clkzbmst is 8M,
+// *	  and currently they are not concerned about the impact of digital core voltage on clkzbmst.(confirmed by junwei, 20230516)
+// *
+// *	  2.The built-in flash can support the maximum operating frequency of the mspi in the table above.
+// *	  (Because when selecting flash chips, the TCLQV indicators of Flash will be controlled
+// *	  according to the chip design requirements to ensure compliance with the requirements)(confirmed by junwen/shenyan, 20230516)
+// *
+// *	  3.The maximum operating frequency of the mspi that can be supported by the external Flash is
+// *	  related to the actual development board and the TCLQV indicator of the Flash.(confirmed by junwen/shenyan, 20230516)
+// *
+// */
+//
+//	analog_write_reg8(0x1d, (analog_read_reg8(0x1d) & 0xe0) | dcore_voltage);
+//}
+/**
+ * @brief   	This function is used to determine the stability of the crystal oscillator.
+ * 				To judge the stability of the crystal oscillator, xo_ready_ana is invalid, and use an alternative solution to judge.
+ * 				Alternative principle: Because the clock source of the stimer is the crystal oscillator,
+ * 				if the crystal oscillator does not vibrate, the tick value of the stimer does not increase or increases very slowly (when there is interference).
+ * 				So first use 24M RC to run the program and wait for a fixed time, calculate the number of ticks that the stimer should increase during this time,
+ * 				and then read the tick value actually increased by the stimer.
+ * 				When it reaches 50% of the calculated value, it proves that the crystal oscillator has started.
+ * 				If it is not reached for a long time, the system will reboot.
+ * @return  	none.
+ */
+_attribute_ram_code_sec_noinline_ void pm_wait_xtal_ready(void);

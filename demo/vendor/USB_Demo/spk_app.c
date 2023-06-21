@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	spk_app.c
+ * @file    spk_app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -32,10 +31,12 @@
 #define SPK_DMA_CHN    DMA3
 #define	SPK_BUFFER_SIZE			2048
 unsigned short		iso_out_buff [SPK_BUFFER_SIZE]__attribute__((aligned(4)));
-extern volatile unsigned int pm_top_reset_tick;
-extern volatile unsigned int charger_clear_vbus_detect_flag;
+#if(MCU_CORE_B92)
+extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
+extern volatile unsigned int g_vbus_timer_turn_off_flag;
+#endif
 #if(MCU_CORE_B91)
-#define SPK_MONO_STEREO       ((SPK_CHANNLE_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
+#define SPK_MONO_STEREO       ((SPK_CHANNEL_COUNT==1) ?  MONO_BIT_16 :STEREO_BIT_16 )
 
 
 
@@ -191,7 +192,6 @@ unsigned int		        num_iso_out = 0;
 
 
 #define FIFO_NUM                FIFO0
-#define SPK_DMA_CHN             DMA2
 #define AISO_DMA_CHN            DMA3
 audio_codec_output_t audio_codec_output = {
 	.output_src = CODEC_DAC_STEREO,
@@ -239,9 +239,6 @@ void user_init(void)
 	audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
 	audio_rx_dma_en(AISO_DMA_CHN);
 	audio_tx_dma_en(audio_codec_output.dma_num);
-#endif
-
-
 #endif
 }
 
@@ -294,13 +291,26 @@ void main_loop (void)
 	 *              otherwise the MCU will be reset after 8s.
 	*/
 #if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
-	if(charger_get_vbus_detect_status()){
-	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
-	   {
-		  charger_clear_vbus_detect_status();//clear reset
-		  charger_clear_vbus_detect_flag = 1;
-	   }
-    }
+	/**
+     *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
+     */
+if(usb_get_vbus_detect_status())
+{
+	if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
+	{
+		/**
+		 * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
+		 * The vbus detect status will not be clear to 0.
+		 */
+		wd_turn_off_vbus_timer();
+		g_vbus_timer_turn_off_flag = 1;
+	}
+}
+else
+{
+	g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+	g_vbus_timer_turn_off_flag = 0;
+}
 #endif
 
 	usb_handle_irq();
@@ -309,5 +319,7 @@ void main_loop (void)
 }
 
 #endif
+
+#endif /* end of USB_DEMO_TYPE==USB_SPEAKER */
 
 

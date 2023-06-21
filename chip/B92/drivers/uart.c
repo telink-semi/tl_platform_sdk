@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	uart.c
+ * @file    uart.c
  *
- * @brief	This is the source file for B92
+ * @brief   This is the source file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -113,8 +112,8 @@ dma_config_t uart_rx_dma_config[2]={
  *                                          local function prototype                                               *
  *********************************************************************************************************************/
  /**
-  * @brief     This function is used to look for the prime.if the prime is finded,it will return 1, or return 0.
-  * @param[in] n - the calue to judge.
+  * @brief     This function is used to look for the prime.if the prime is found,it will return 1, or return 0.
+  * @param[in] n - the value to judge.
   * @return    0 or 1
   */
  static unsigned char uart_is_prime(unsigned int n);
@@ -123,32 +122,38 @@ dma_config_t uart_rx_dma_config[2]={
  *                                         global function implementation                                             *
  *********************************************************************************************************************/
 
-/**
- * @brief      This function initializes the UART module.
- * @param[in]  uart_num    - UART0 or UART1.
- * @param[in]  div         - uart clock divider.
- * @param[in]  bwpc        - bitwidth, should be set to larger than 2.
- * @param[in]  parity      - selected parity type for UART interface.
- * @param[in]  stop_bit    - selected length of stop bit for UART interface.
- * @return     none
- * @note 	   sys_clk      baudrate   g_uart_div         g_bwpc
- *
- *  	       16Mhz        9600          118   			 13
- *                          19200         118     			  6
- *          	            115200          9       		 13
- *
- * 	           24Mhz        9600          249       		  9
- *           	 	    	19200		  124                 9
- *          	 	    	115200         12    			 15
- *
- *   	       32Mhz        9600          235       		 13
- *          	 	        19200		  235                 6
- *           	 	 	    115200         17    			 13
- *
- *   	       48Mhz        9600          499       		  9
- *          	 	 	    19200		  249                 9
- *           	 	 	    115200         25    			 15
-*/
+ /**
+   * @brief      Initializes the UART module.
+   * @param[in]  uart_num    - UART0 or UART1.
+   * @param[in]  div         - uart clock divider.
+   * @param[in]  bwpc        - bitwidth, should be set to larger than 2.
+   * @param[in]  parity      - selected parity type for UART interface.
+   * @param[in]  stop_bit    - selected length of stop bit for UART interface.
+   * @return     none
+   * @note
+   * -# A few simple examples of sys_clk/baud rate/div/bwpc correspondence:
+    @verbatim
+                sys_clk      baudrate   g_uart_div         g_bwpc
+
+                16Mhz        9600          118                13
+                             19200         118                 6
+                             115200          9                13
+
+                24Mhz        9600          249                 9
+                             19200         124                 9
+                             115200         12                15
+
+                32Mhz        9600          235                13
+                             19200         235                 6
+                             115200         17                13
+
+                48Mhz        9600          499                 9
+                             19200         249                 9
+                             115200         25                15
+    @endverbatim
+     -# uart_init() set the baud rate by the div and bwpc of the uart_cal_div_and_bwpc, some applications have higher timing requirements,
+        can first calculate the div and bwpc, and then just call uart_init.
+  */
 void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_parity_e parity, uart_stop_bit_e stop_bit)
 {
 	reg_uart_ctrl0(uart_num) = ((reg_uart_ctrl0(uart_num) & (~FLD_UART_BPWC_O))| bwpc);//set bwpc
@@ -174,16 +179,23 @@ void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_
     uart_rxdone_rts_dis(uart_num);
 }
 
-/***********************************************************
- * @brief  		This function serves to calculate the best bwpc(bit width) .i.e reg0x96.
- * @param[in]	baudrate - baut rate of UART.
- * @param[in]	pclk     - p-clock.
- * @param[out]	div      - uart clock divider. range[0-127]
- * @param[out]	bwpc     - bitwidth, should be set to larger than 2. range[3-15]
+/**
+ * @brief  		Calculate the best bwpc(bit width),bwpc range from 3 to 15,loop and get the minimum one decimal point(BaudRate*(div+1)*(bwpc+1) = pclk).
+ * @param[in]	baudrate - baud rate of UART.
+ * @param[in]	pclk   -   pclk.
+ * @param[out]	div      - uart clock divider.
+ * @param[out]	bwpc     - bitwidth, should be set to larger than 2,range[3-15].
  * @return 		none
- * @note        BaudRate*(div+1)*(bwpc+1) = p-clock
- *  		    simplify the expression: div*bwpc =  constant(z)
- * 		        bwpc range from 3 to 15.so loop and get the minimum one decimal point
+ * @note
+   @verbatim
+	   The maximum baud rate depends on the hardware environment (such as cable length, etc.) and pclk/cclk/hclk:
+	   -# pclk is the main factor affecting the upper baud rate of uart
+	   -# cclk and pclk affect interrupt processing times
+	   Using the jaguar development board, the test results:
+	   -# CCLK_16M_HCLK_16M_PCLK_16M:in nodma,the maximum speed is 750k; in dma,the maximum speed is 2M;
+	   -# CCLK_24M_HCLK_24M_PCLK_24M:in nodma,the maximum speed is 2m(this is not a garbled code, interrupt processing can not come over);
+                                     in dma,3m can be met, the maximum limit of non-garbled codes has not been confirmed;
+   @endverbatim
  */
 void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned short* div, unsigned char *bwpc)
 {
@@ -209,9 +221,9 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned sh
 	}
 
 	for(i=3;i<=15;i++){
-		D_intdec[i-3] = (10*primeInt)/(i+1);////get the LSB
-		D_dec[i-3] = D_intdec[i-3] - 10*(D_intdec[i-3]/10);///get the decimal section
-		D_int[i-3] = D_intdec[i-3]/10;///get the integer section
+		D_intdec[i-3] = (10*primeInt)/(i+1);//get the LSB
+		D_dec[i-3] = D_intdec[i-3] - 10*(D_intdec[i-3]/10);//get the decimal section
+		D_int[i-3] = D_intdec[i-3]/10;//get the integer section
 	}
 
 	//find the max and min one decimation point
@@ -249,14 +261,20 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned sh
 }
 
 /**
- * @brief  		This function serves to set r_rxtimeout. this setting is transfer one bytes need cycles base on uart_clk.
- * 				For example, if  transfer one bytes (1start bit+8bits data+1 priority bit+2stop bits) total 12 bits,
- * 				this register setting should be (bpwc+1)*12.
- * @param[in]	uart_num - UART0 or UART1.
- * @param[in]	bwpc     - bitwidth, should be set to larger than 2.
- * @param[in]	bit_cnt  - bit number.
- * @param[in]	mul	     - rx_timeout config,it decide the time of a packet.
- * @return 		none
+ * @brief  	 Set rx_timeout.
+   @verbatim
+       The effect:
+         -# when no data is received within the rx_timeout period, that is rx timeout, the UART_RXDONE_IRQ_STATUS interrupt is generated.
+         -# the UART_RXDONE_IRQ_STATUS interrupt is required to process the remaining data below the threshold(the DMA Operation threshold is fixed at 4,
+            the NDMA threshold can be configured through uart_rx_irq_trig_level)
+       How to set:
+         rx_timeout = ((bwpc+1) * bit_cnt)* mul ((bwpc+1) * bit_cnt:the maximum can be set to 0xff).
+   @endverbatim
+ * @param[in] uart_num - UART0 or UART1.
+ * @param[in] bwpc     - bitwidth.
+ * @param[in] bit_cnt  - bit number(for example, if transfer one bytes (1start bit+8bits data+1 priority bit+2stop bits) total 12 bits,then set it to at least 12).
+ * @param[in] mul	   - mul.
+ * @return 	  none
  */
 void uart_set_rx_timeout(uart_num_e uart_num,unsigned char bwpc, unsigned char bit_cnt, uart_timeout_mul_e mul)
 {
@@ -265,12 +283,12 @@ void uart_set_rx_timeout(uart_num_e uart_num,unsigned char bwpc, unsigned char b
 }
 
  unsigned char uart_tx_byte_index[2] = {0};
-/**
- * @brief     This function serves to send data by byte with not DMA method.
- * @param[in] uart_num - UART0 or UART1.
- * @param[in] tx_data  - the data to be send.
- * @return    none
- */
+ /**
+   * @brief     Send uart data by byte in no_dma mode.
+   * @param[in] uart_num - UART0 or UART1.
+   * @param[in] tx_data  - the data to be send.
+   * @return    none
+   */
 void uart_send_byte(uart_num_e uart_num, unsigned char tx_data)
 {
 	while(uart_get_txfifo_num(uart_num)>7);
@@ -282,7 +300,7 @@ void uart_send_byte(uart_num_e uart_num, unsigned char tx_data)
 
 unsigned char uart_rx_byte_index[2]={0};
 /**
- * @brief     This function serves to receive uart data by byte with not DMA method.
+ * @brief     Receive uart data by byte in no_dma mode.
  * @param[in] uart_num - UART0 or UART1.
  * @return    none
  */
@@ -295,10 +313,9 @@ unsigned char uart_read_byte(uart_num_e uart_num)
 }
 
 /**
- * @brief     This function serves to judge if the transmission of uart is done.
+ * @brief     Judge if the transmission of uart is done.
  * @param[in] uart_num - UART0 or UART1.
- * @return    return the tx status.
- * -          0:tx is done     1:tx isn't done
+ * @return    0:tx is done     1:tx isn't done
  */
 unsigned char uart_tx_is_busy(uart_num_e uart_num)
 {
@@ -306,7 +323,7 @@ unsigned char uart_tx_is_busy(uart_num_e uart_num)
 }
 
 /**
- * @brief     This function serves to send uart0 data by halfword with not DMA method.
+ * @brief     Send uart data by halfword in no_dma mode.
  * @param[in] uart_num - UART0 or UART1.
  * @param[in] data  - the data to be send.
  * @return    none
@@ -323,7 +340,7 @@ void uart_send_hword(uart_num_e uart_num, unsigned short data)
 }
 
 /**
- * @brief     This function serves to send data by word with not DMA method.
+ * @brief     Send uart data by word in no_dma mode.
  * @param[in] uart_num - UART0 or UART1.
  * @param[in] data - the data to be send.
  * @return    none
@@ -336,9 +353,9 @@ void uart_send_word(uart_num_e uart_num, unsigned int data)
 }
 
 /**
- * @brief     This function serves to set the RTS pin's level manually.
+ * @brief     Sets the RTS pin's output level manually.
  * @param[in] uart_num - UART0 or UART1.
- * @param[in] polarity - set the output of RTS pin(only for manual mode).
+ * @param[in] polarity - 0: RTS pin outputs a low level  1: RTS pin outputs a high level .
  * @return    none
  */
 void uart_set_rts_level(uart_num_e uart_num, unsigned char polarity)
@@ -352,7 +369,7 @@ void uart_set_rts_level(uart_num_e uart_num, unsigned char polarity)
 }
 
 /**
- *	@brief		This function serves to set pin for UART cts function.
+ *	@brief		Set pin for UART cts function,the pin connection mode:CTS<->RTS.
  *	@param[in]  uart_num - UART0 or UART1.
  *	@param[in]  cts_pin -To set cts pin.
  *	@return		none
@@ -367,11 +384,11 @@ void uart_set_cts_pin(uart_num_e uart_num,gpio_func_pin_e cts_pin)
 	{
 		gpio_set_mux_function(cts_pin,UART1_CTS_I);
 	}
-	gpio_function_dis(cts_pin);
+	gpio_function_dis((gpio_pin_e)cts_pin);
 }
 
 /**
- *	@brief		This function serves to set pin for UART rts function.
+ *	@brief		Set pin for UART rts function,the pin connection mode:RTS<->CTS.
  *	@param[in]  uart_num - UART0 or UART1.
  *	@param[in]  rts_pin - To set rts pin.
  *	@return		none
@@ -386,13 +403,14 @@ void uart_set_rts_pin(uart_num_e uart_num,gpio_func_pin_e rts_pin)
 	{
 		gpio_set_mux_function(rts_pin,UART1_RTS);
 	}
-	gpio_function_dis(rts_pin);
+	gpio_function_dis((gpio_pin_e)rts_pin);
 }
 
 /**
-* @brief      This function serves to select pin for UART module.
-* @param[in]  tx_pin  - the pin to send data.
-* @param[in]  rx_pin  - the pin to receive data.
+* @brief      Select pin for UART module,the pin connection mode:TX<->RX RX<->TX.
+* @param[in]  uart_num - UART0 or UART1.
+* @param[in]  tx_pin   - the pin to send data.
+* @param[in]  rx_pin   - the pin to receive data.
 * @return     none
 */
 void uart_set_pin(uart_num_e uart_num,gpio_func_pin_e tx_pin,gpio_func_pin_e rx_pin)
@@ -400,31 +418,36 @@ void uart_set_pin(uart_num_e uart_num,gpio_func_pin_e tx_pin,gpio_func_pin_e rx_
 	//When the pad is configured with mux input and a pull-up resistor is required, gpio_input_en needs to be placed before gpio_function_dis,
 	//otherwise first set gpio_input_disable and then call the mux function interface,the mux pad will misread the short low-level timing.confirmed by minghai.20210709.
 	if(tx_pin != GPIO_NONE_PIN){
-		gpio_input_en(tx_pin);
-		gpio_set_up_down_res(tx_pin, GPIO_PIN_PULLUP_10K);
+		gpio_input_en((gpio_pin_e)tx_pin);
+		gpio_set_up_down_res((gpio_pin_e)tx_pin, GPIO_PIN_PULLUP_10K);
 		if (0 == uart_num) {
 			gpio_set_mux_function(tx_pin, UART0_TX);
 		} else {
 			gpio_set_mux_function(tx_pin, UART1_TX);
 		}
-		gpio_function_dis(tx_pin);
+		gpio_function_dis((gpio_pin_e)tx_pin);
 	}
 	if(rx_pin != GPIO_NONE_PIN){
-		gpio_input_en(rx_pin);
-		gpio_set_up_down_res(rx_pin, GPIO_PIN_PULLUP_10K);
+		gpio_input_en((gpio_pin_e)rx_pin);
+		gpio_set_up_down_res((gpio_pin_e)rx_pin, GPIO_PIN_PULLUP_10K);
 		if (0 == uart_num) {
 			gpio_set_mux_function(rx_pin, UART0_RTX_IO);
 		} else {
 			gpio_set_mux_function(rx_pin, UART1_RTX);
 		}
-		gpio_function_dis(rx_pin);
+		gpio_function_dis((gpio_pin_e)rx_pin);
 	}
 }
 
 
 /**
-* @brief      This function serves to set rtx pin for UART module.
-*             this pin can be used as either tx or rx. this pin is only used as tx when there is a sending action, but it is used as an rx at all times.
+* @brief      Set rtx pin for UART module,this pin can be used as either tx or rx,it is the rx function by default,
+*             How do rx->tx:
+*             -# there is data in tx_fifo,in nodma:fill txfifo by calling the interface uart_read_byte, which cannot be larger than 8 bytes before the second step,
+*                in dma,uart_send_dma.
+*             -# the interface uart_rtx_pin_tx_trig is called,if do not call this interface, the data cannot be sent out.
+*             -# After converting to tx, if tx_fifo has no data, then the hardware automatically converts to rx function.
+* @param[in]  uart_num - UART0 or UART1.
 * @param[in]  rtx_pin  - the rtx pin need to set.
 * @return     none
 */
@@ -432,8 +455,8 @@ void uart_set_rtx_pin(uart_num_e uart_num,gpio_func_pin_e rtx_pin)
 {
 	//When the pad is configured with mux input and a pull-up resistor is required, gpio_input_en needs to be placed before gpio_function_dis,
 	//otherwise first set gpio_input_disable and then call the mux function interface,the mux pad will misread the short low-level timing.confirmed by minghai.20210709.
-	gpio_input_en(rtx_pin);
-	gpio_set_up_down_res(rtx_pin, GPIO_PIN_PULLUP_10K);
+	gpio_input_en((gpio_pin_e)rtx_pin);
+	gpio_set_up_down_res((gpio_pin_e)rtx_pin, GPIO_PIN_PULLUP_10K);
 	if(0==uart_num){
     	gpio_set_mux_function(rtx_pin,UART0_RTX_IO);
 	}
@@ -441,13 +464,12 @@ void uart_set_rtx_pin(uart_num_e uart_num,gpio_func_pin_e rtx_pin)
 	{
 		gpio_set_mux_function(rtx_pin,UART1_RTX);
 	}
-	gpio_function_dis(rtx_pin);
+	gpio_function_dis((gpio_pin_e)rtx_pin);
 }
-
 /**
-* @brief     This function serves to send data with not DMA method.
+* @brief     Send an amount of data in NODMA mode
 * @param[in] uart_num - UART0 or UART1.
-* @param[in] addr     - pointer to the buffer containing data need to send.
+* @param[in] addr     - pointer to the buffer.
 * @param[in] len      - NDMA transmission length.
 * @return    1
 */
@@ -460,16 +482,21 @@ unsigned char uart_send(uart_num_e uart_num, unsigned char * addr, unsigned char
 	return 1;
 }
 
+
 /**
- * @brief     	This function serves to send data by DMA, this function tell the DMA to get data from the RAM and start.
- * @param[in]  	uart_num - UART0 or UART1.
- * @param[in] 	addr     - pointer to the buffer containing data need to send.
- * @param[in] 	len      - DMA transmission length.The maximum transmission length of DMA is 0xFFFFFC bytes, so dont'n over this length.
- * @return      1  dma start send.
+ * @brief     	Send an amount of data in DMA mode.
+ * @param[in]  	uart_num - uart channel
+ * @param[in] 	addr     - Pointer to data buffer. It must be 4-bytes aligned address
+ * @param[in] 	len      - Amount of data to be sent in bytes, range from 1 to 0xFFFFFC
+ * @return      1  DMA start send.
  *              0  the length is error.
+ * @note
+ *              -# After the dma transfer is complete, the interface needs to be re-invoked to send the next batch of data.
+ *              -# If the dma transfer has not been completed when enter low-power suspend, after suspend, the interface needs to be re-invoked to send the next batch of data.
  */
 unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned int len )
 {
+	dma_chn_dis(uart_dma_tx_chn[uart_num]);
 	if(len!=0)
 	{
 		//In order to prevent the time between the last piece of data and the next piece of data is less than the set timeout time,
@@ -486,22 +513,35 @@ unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned 
 	}
 }
 
+
 /**
- * @brief     	This function serves to receive data function by DMA, this function tell the DMA to get data from the uart data fifo.
- *              1. if the receiving length information of DMA is set to 0xFFFFFC byte(max_value), and write_num is turned on,
- *                 then The length of the data received by dma will be written back to the first four bytes of addr,so need addr = the receive buff addr +4.
- *              2. if the receiving length information of DMA is set to less than 0xFFFFFC byte, and write_num is turned on,
- *                 then the length of data received by DMA will not be written to the first four bytes of addr,  requires the uart_get_dma_rev_data_len calculation.
- * @param[in]  	uart_num - UART0 or UART1.
- * @param[in] 	addr     - pointer to the buffer  receive data.
- * @param[in]   rev_size - the receive length of DMA,The maximum transmission length of DMA is 0xFFFFFC bytes, so dont'n over this length.
+ * @brief     	Receive an amount of data in DMA mode.
+ * @param[in]  	uart_num - UART0 or UART1
+ * @param[in] 	addr     - Pointer to data buffer, it must be 4-bytes aligned
+ * @param[in]   rev_size - Length of DMA in bytes, it must be multiple of 4. The maximum value can be up to 0xFFFFFC.
  * @return    	none
+ * @note
+   @verbatim
+		In the case of rev_size < 0xFFFFFC:
+		-# there will be only data in the buffer of received data, not length information.
+		-# the flag to judge the data reception completion is UART_RXDONE_IRQ_STATUS, that is, call this function uart_get_irq_status(UARTx,UART_RXDONE_IRQ_STATUS).
+		-# If you want to calculate the length, you can call the function uart_get_dma_rev_data_len(x,x) to calculate the length of received data after detecting the status of UART_RXDONE_IRQ_STATUS.
+		-# The actual buffer size defined by the user needs to be not smaller than the rev_size, otherwise there may be an out-of-bounds problem.
+
+		In the case of rev_size=0xFFFFFC, then:
+		-# The first four bytes in the buffer of the received data are the length of the received data.
+		-# the flag to determine the completion of data reception is TC_MASK, that calls this function dma_get_tc_irq_status(UART_RX_DMA_STATUS).
+		-# The actual buffer size to be defined by the user needs to be not less than (the length of the longest packet received + 4),otherwise there may be an out-of-bounds problem.
+
+		After the dma transfer is complete, the interface needs to be re-invoked to receive the next data.
+		If the dma transfer has not been completed when enter low-power suspend, after suspend, the interface needs to be re-invoked to receive the next data.
+   @endverbatim
  */
 void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev_size)
 {
-
+	dma_chn_dis(uart_dma_rx_chn[uart_num]);
 	uart_dma_rev_size[uart_num] = rev_size;
-	uart_rxdone_sel(UART0,UART_DMA_MODE);
+	uart_rxdone_sel(uart_num,UART_DMA_MODE);
 /*
  *1.If the DMA length is set to 0xFFFFFC (maximum), the hardware has a write back length, no need uart_get_dma_rev_data_len to calculate,
  *  uart_auto_clr_rx_fifo_pointer is enabled, the hardware can clear the fifo without manual clearing,the benefits of this feature:
@@ -513,10 +553,10 @@ void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev
  */
 	if(rev_size == 0xFFFFFC){
 		uart_auto_clr_rx_fifo_ptr(uart_num,1);
+		dma_set_wnum_en(uart_dma_rx_chn[uart_num]);
 	}
 	else if(rev_size < 0xFFFFFC){
 		dma_set_wnum_dis(uart_dma_rx_chn[uart_num]);
-		dma_chn_dis(uart_dma_rx_chn[uart_num]);
 		uart_auto_clr_rx_fifo_ptr(uart_num,0);
 	}
 	dma_set_address(uart_dma_rx_chn[uart_num],reg_uart_data_buf_adr(uart_num),(unsigned int)(addr));
@@ -525,8 +565,7 @@ void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev
 }
 
 /**
- * @brief     This function serves to get the length of the data that dma received.
- *            if the receiving length information of DMA is set to less than 0xFFFFFC byte,need use this function to calculate the length of data received by DMA,
+ * @brief     Get data length that dma received In the case of rev_size < 0xFFFFFC,
  *            and when the receive length is larger than the set length,the length calculated by this function is the length set by DMA, and excess data is discarded.
  * @param[in] uart_num - UART0 or UART1.
  * @param[in] chn      - dma channel.
@@ -534,27 +573,26 @@ void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev
  */
 unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
 {
+ /*
+  * the real dma received length is coming from the following:
+  * 1.uart_dma_rev_size[uart_num] - dma_remaining_word*4;
+  * 2.due to dma only move 4 bytes from fifo,so check the uart receive cnt to see how many valid data in fifo,
+  *   then minus the last word(4bytes) + the valid remaining bytes.
+  */
+
 	unsigned int data_len=0;
-	if((reg_dma_size(chn) == 0)&&(uart_get_rxfifo_num(uart_num)>0)){
-		data_len = uart_dma_rev_size[uart_num];
-	}
-	else{
-	    unsigned int buff_data_len = (reg_uart_status(uart_num)&FLD_UART_RBCNT)%4;
-	    if(buff_data_len==0)
-	    {
-		     data_len=4*((uart_dma_rev_size[uart_num]/4)-reg_dma_size(chn));
-	    }
-	    else
-	    {
-		     data_len=4*((uart_dma_rev_size[uart_num]/4)-reg_dma_size(chn)-1)+buff_data_len;
-	    }
+	unsigned int buff_data_len = (reg_uart_status(uart_num)&FLD_UART_RBCNT)%4;
+
+	data_len = uart_dma_rev_size[uart_num] - reg_dma_size(chn)*4;
+	if(buff_data_len){
+		data_len =data_len - 4 + buff_data_len;
 	}
 	return data_len;
 }
 
 
- /**
-  * @brief     This function serves to set uart tx_dam channel and config dma tx default.
+/**
+  * @brief     Configures the uart tx_dma channel control register.
   * @param[in] uart_num - UART0 or UART1.
   * @param[in] chn      - dma channel.
   * @return    none
@@ -566,31 +604,32 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
  }
 
  /**
-  * @brief     This function serves to set uart rx_dam channel and config dma rx default.
-  * @param[in] uart_num - UART0 or UART1.
-  * @param[in] chn      - dma channel.
-  * @return    none
-  */
+   * @brief     Configures uart rx_dma channel control register.
+   * @param[in] uart_num - UART0 or UART1.
+   * @param[in] chn      - dma channel.
+   * @return    none
+   */
  void uart_set_rx_dma_config(uart_num_e uart_num, dma_chn_e chn)
  {
-	//no_dma mode: rxdone(timeout) function switch; 1:enable,0:disable;dma mode must disable.
+	//no_dma mode: rxdone(UART_RXDONE_IRQ_STATUS) function switch; 1:enable,0:disable;dma mode must disable.
 	reg_uart_ctrl0(uart_num)&=~FLD_UART_NDMA_RXDONE_EN;
 	uart_dma_rx_chn[uart_num]=chn;
  	dma_config(chn, &uart_rx_dma_config[uart_num]);
  }
 
  /**
-  * @brief     UART hardware flow control configuration. Configure CTS.
-  * @param[in] uart_num   - UART0 or UART1.
-  * @param[in] cts_pin    - RTS pin select.
-  * @param[in] cts_parity - when CTS's input equals to select, tx will be stopped.
-  * @return    none
-  */
+   * @brief     Configure UART hardware flow CTS.
+   * @param[in] uart_num   - UART0 or UART1.
+   * @param[in] cts_pin    - cts pin select.
+   * @param[in] cts_parity -  1:Active high,when the cts pin receives a high level, it stops sending data.
+   *                          0:Active low,when the cts pin receives a low level, it stops sending data.
+   * @return    none
+   */
  void uart_cts_config(uart_num_e uart_num,gpio_func_pin_e cts_pin,unsigned char cts_parity)
  {
 	 //When the pad is configured with mux input and a pull-up resistor is required, gpio_input_en needs to be placed before gpio_function_dis,
 	 //otherwise first set gpio_input_disable and then call the mux function interface,the mux pad will misread the short low-level timing.confirmed by minghai.20210709.
-	 gpio_input_en(cts_pin);//enable input
+	 gpio_input_en((gpio_pin_e)cts_pin);//enable input
 	 uart_set_cts_pin(uart_num,cts_pin);
 
 	if (cts_parity)
@@ -604,11 +643,25 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
  }
 
  /**
-  * @brief     UART hardware flow control configuration. Configure RTS.
+  * @brief     Configure UART hardware flow RTS.
   * @param[in] uart_num     - UART0 or UART1.
   * @param[in] rts_pin      - RTS pin select.
-  * @param[in] rts_parity   - whether invert the output of RTS pin(only for auto mode)
-  * @param[in] auto_mode_en - set the mode of RTS(auto or manual).
+  * @param[in] rts_parity   - 0: Active high: rts level changed from low to high.
+  *                           1: Active low: rts level changed from high to low.
+  * @param[in] auto_mode_en - set the mode of RTS(1:auto mode  0:manual mode)
+    @verbatim
+ 	-# auto mode:
+ 	   -# the manual mode function is useless.
+ 	   -# rts_parity:It is used in combination with auto mode
+ 	   -# rx_fifo cnt is greater than or equal to the set threshold(uart_rts_trig_level_auto_mode), rts is valid,
+ 		  when the number of rx_fifo is less than the set threshold, the level automatically becomes invalid;
+ 	   -# rx_done signal generation (if uart_rxdone_rts_en enable)),rts is valid,
+ 		  when the UART_RXDONE_IRQ_STATUS signal is cleared,the level automatically becomes invalid;
+ 	   -# Several configurations related to rts,see the following interface for details:uart_rts_stop_rxtimeout_en/dis uart_rxdone_rts_en/dis.
+ 	-# manual mode:
+ 	   -# the auto mode function is useless.
+ 	   -# Manually control the output level of the rts pin through the uart_set_rts_level interface.
+    @endverbatim
   * @return    none
   */
  void uart_rts_config(uart_num_e uart_num,gpio_func_pin_e rts_pin,unsigned char rts_parity,unsigned char auto_mode_en)
@@ -635,14 +688,24 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
  }
 
  /**
-   * @brief     This function servers to configure DMA head node,the chain function only applies to data_len = 0xFFFFFC.
-   * @param[in] uart_num - UART0/UART1.
-   * @param[in] chn          - to select the DMA channel.
-   * @param[in] dst_addr     - the dma address of destination
-   * @param[in] data_len     - to configure DMA length.
-   * @param[in] head_of_list - the head address of dma llp.
-   * @return    none
-   */
+  * @brief      Configure DMA head node.
+  * @param[in]  uart_num    - UART0/UART1.
+  * @param[in]  chn         - dma channel.
+  * @param[in]  dst_addr    - Pointer to data buffer, which must be 4 bytes aligned.
+  * @param[in]  data_len    - It must be set to 0xFFFFFC.
+  * @param[in]  head_of_list - the head address of dma llp.
+  * @return     none.
+  * @note
+    @verbatim
+	   The first four bytes in the buffer of the received data are the length of the received data.
+	   The actual buffer size that the user needs to set needs to be noted on two points:
+		 -# you need to leave 4bytes of space for the length information.
+		 -# The actual buffer size to be defined by the user needs to be not less than (the length of the longest packet received + 4),otherwise there may be an out-of-bounds problem.
+	   If enter low-power suspend  then after suspend:
+		 -# the chain will not continue to work, and needs to dma_chn_dis, then dma_chn_en(no reinitialization required)
+		 -# will automatically jump to the next chain node to start work whether the pre-suspend transfer is complete or not,no UART_RXDONE_IRQ_STATUS interrupt is generated for the last chain node.
+     @endverbatim
+  */
   void uart_set_dma_chain_llp(uart_num_e uart_num, dma_chn_e chn,unsigned char * dst_addr,unsigned int data_len,dma_chain_config_t *head_of_list)
   {
  	uart_dma_rev_size[uart_num] = data_len;
@@ -654,16 +717,24 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
   	reg_dma_llp(chn)=(unsigned int)convert_ram_addr_cpu2bus(head_of_list);
 
   }
-  /**
-   * @brief     This function servers to configure DMA cycle chain node,the chain function only applies to data_len = 0xFFFFFC.
-   * @param[in] uart_num    - UART0/UART1.
-   * @param[in] chn         - to select the DMA channel.
-   * @param[in] config_addr - to servers to configure the address of the current node.
-   * @param[in] llpointer   - to configure the address of the next node configure.
-   * @param[in] dst_addr    - the dma address of destination.
-   * @param[in] data_len    - to configure DMA length.
-   * @return    none
-   */
+
+/**
+  * @brief      Configure DMA cycle chain node.
+  * @param[in]  uart_num    - UART0/UART1.
+  * @param[in]  chn         -  dma channel.
+  * @param[in]  config_addr - to servers to configure the address of the current node.
+  * @param[in]  llpointer   - to configure the address of the next node configure.
+  * @param[in]  dst_addr    - Pointer to data buffer, which must be 4 bytes aligned.
+  * @param[in]  data_len    - It must be set to 0xFFFFFC.
+  * @return     none.
+  * @note
+    @verbatim
+		 The first four bytes in the buffer of the received data are the length of the received data.
+		 The actual buffer size that the user needs to set needs to be noted on two points:
+		-# you need to leave 4bytes of space for the length information.
+		-# The actual buffer size to be defined by the user needs to be not less than (the length of the longest packet received + 4),otherwise there may be an out-of-bounds problem.
+    @endverbatim
+*/
   void uart_rx_dma_add_list_element(uart_num_e uart_num,dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llpointer ,unsigned char * dst_addr,unsigned int data_len)
   {
 	uart_rxdone_sel(uart_num,UART_DMA_MODE);
@@ -674,29 +745,40 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
   	config_addr->dma_chain_data_len=dma_cal_size(data_len,4);
   	config_addr->dma_chain_llp_ptr=(unsigned int)convert_ram_addr_cpu2bus(llpointer);
   }
-  /**
-   * @brief  This function serves to set dma single chain transfer,the chain function only applies to data_len = 0xFFFFFC.
-   * @param[in] uart_num  - UART0/UART1.
-   * @param[in] chn       -  dma channel
-   * @param[in] in_buff   - the pointer of rx_buff.
-   * @param[in] buff_size - the size of rx_buff.
-   * @return    none
-   */
-   void uart_rx_dma_chain_init (uart_num_e uart_num, dma_chn_e chn,unsigned char * in_buff,unsigned int buff_size )
-  {
- 	uart_dma_rev_size[uart_num] = buff_size;
- 	uart_rxdone_sel(uart_num,UART_DMA_MODE);
- 	uart_auto_clr_rx_fifo_ptr(uart_num,1);
-  	uart_set_dma_chain_llp(uart_num,chn,(unsigned char*)in_buff, buff_size, &g_uart_rx_dma_list_cfg);
-  	uart_rx_dma_add_list_element(uart_num,chn,&g_uart_rx_dma_list_cfg, &g_uart_rx_dma_list_cfg,(unsigned char*)in_buff, buff_size);
-  	dma_chn_en(chn);
-  }
+
+/**
+  * @brief      Set dma single chain transfer.
+  * @param[in]  uart_num  - UART0/UART1.
+  * @param[in]  chn       -  dma channel
+  * @param[in]  in_buff   - Pointer to data buffer, which must be 4 bytes aligned.
+  * @param[in]  buff_size - It must be set to 0xFFFFFC.
+  * @return     none.
+  * @note
+    @verbatim
+	   The first four bytes in the buffer of the received data are the length of the received data.
+	   The actual buffer size that the user needs to set needs to be noted on two points:
+		-# you need to leave 4bytes of space for the length information.
+		-# The actual buffer size to be defined by the user needs to be not less than (the length of the longest packet received + 4),otherwise there may be an out-of-bounds problem.
+	   If enter low-power suspend then after suspend:
+		-# the chain will not continue to work, and needs to dma_chn_dis, then dma_chn_en(no reinitialization required)
+		-# will automatically jump to the next chain node to start work whether the pre-suspend transfer is complete or not,no UART_RXDONE_IRQ_STATUS interrupt is generated for the last chain node.
+    @endverbatim
+  */
+void uart_rx_dma_chain_init (uart_num_e uart_num, dma_chn_e chn,unsigned char * in_buff,unsigned int buff_size )
+{
+    uart_dma_rev_size[uart_num] = buff_size;
+    uart_rxdone_sel(uart_num,UART_DMA_MODE);
+    uart_auto_clr_rx_fifo_ptr(uart_num,1);
+    uart_set_dma_chain_llp(uart_num,chn,(unsigned char*)in_buff, buff_size, &g_uart_rx_dma_list_cfg);
+    uart_rx_dma_add_list_element(uart_num,chn,&g_uart_rx_dma_list_cfg, &g_uart_rx_dma_list_cfg,(unsigned char*)in_buff, buff_size);
+    dma_chn_en(chn);
+}
  /**********************************************************************************************************************
   *                    						local function implementation                                             *
   *********************************************************************************************************************/
  /**
-   * @brief     This function is used to look for the prime.if the prime is finded,it will return 1, or return 0.
-   * @param[in] n - the calue to judge.
+   * @brief     This function is used to look for the prime.if the prime is found,it will return 1, or return 0.
+   * @param[in] n - the value to judge.
    * @return    0 or 1
    */
  static unsigned char uart_is_prime(unsigned int n)

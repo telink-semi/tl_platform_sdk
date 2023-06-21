@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	pwm.c
+ * @file    pwm.c
  *
- * @brief	This is the source file for B92
+ * @brief   This is the source file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -50,7 +49,7 @@ dma_config_t pwm_tx_dma_config={
  */
 void pwm_set_pin(gpio_func_pin_e pin,gpio_func_e func){
      gpio_set_mux_function(pin,func);
-     gpio_function_dis(pin);
+     gpio_function_dis((gpio_pin_e)pin);
 }
 
 
@@ -71,6 +70,7 @@ void pwm_set_dma_config(dma_chn_e chn)
  * @param[in] buf_addr - the address where DMA need to get data from SRAM.
  * @param[in] len - the length of data in SRAM.
  * @return    none
+ * @note      buf_addr: must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void pwm_set_dma_buf(dma_chn_e chn,unsigned int buf_addr,unsigned int len)
 {
@@ -98,6 +98,7 @@ void pwm_ir_dma_mode_start(dma_chn_e chn)
  * @param[in] data_len - to configure DMA length.
  * @param[in] head_of_list - to configure the address of the next node configure.
  * @return    none
+ * @note      src_addr: must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void pwm_set_dma_chain_llp(dma_chn_e chn,unsigned short * src_addr, unsigned int data_len,dma_chain_config_t * head_of_list)
 {
@@ -112,17 +113,18 @@ void pwm_set_dma_chain_llp(dma_chn_e chn,unsigned short * src_addr, unsigned int
  * @brief     This function servers to configure DMA cycle chain node.
  * @param[in] chn - to select the DMA channel.
  * @param[in] config_addr  - to servers to configure the address of the current node.
- * @param[in] llponit - to configure the address of the next node configure.
+ * @param[in] llpoint - to configure the address of the next node configure.
  * @param[in] src_addr - to configure DMA source address.
  * @param[in] data_len - to configure DMA length.
  * @return    none
+ * @note      src_addr: must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
-void pwm_set_tx_dma_add_list_element(dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llponit ,unsigned short * src_addr,unsigned int data_len)
+void pwm_set_tx_dma_add_list_element(dma_chn_e chn,dma_chain_config_t *config_addr,dma_chain_config_t *llpoint ,unsigned short * src_addr,unsigned int data_len)
 {
 	config_addr->dma_chain_ctl= reg_dma_ctrl(chn)|BIT(0);
 	config_addr->dma_chain_src_addr=(unsigned int)convert_ram_addr_cpu2bus(src_addr);
 	config_addr->dma_chain_dst_addr=reg_pwm_data_buf_adr;
     config_addr->dma_chain_data_len=dma_cal_size(data_len,DMA_WORD_WIDTH);
-	config_addr->dma_chain_llp_ptr=(unsigned int)convert_ram_addr_cpu2bus(llponit);
+	config_addr->dma_chain_llp_ptr=(unsigned int)convert_ram_addr_cpu2bus(llpoint);
 }
 

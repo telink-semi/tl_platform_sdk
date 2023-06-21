@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file    app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -45,7 +44,7 @@
 #define FLASH_QE_ENABLE         1
 
 /*
- * @note    It is used to verify the read, erase and write functions, lock and unlock functions，read decryptof and umid functions of Flash,
+ * @note    It is used to verify the read, erase and write functions, lock and unlock functions，read decrypt of and umid functions of Flash,
  *          and the read, erase and write functions of the security registers.
  *          You can judge which functions pass the test through structures err_status and check_status.
  */
@@ -104,6 +103,9 @@ typedef struct{
 	unsigned char otp_lock_err:1;
 	unsigned char read_decrypt_check_err:1;
 	unsigned char flash_vendor_add_err:1;
+	unsigned char flash_lock_init_add_err:1;
+	unsigned char flash_unlock_init_add_err:1;
+
 }err_status_t;
 typedef struct{
 	unsigned char erase_check:1;
@@ -116,6 +118,8 @@ typedef struct{
 	unsigned char umid_check:1;
 	unsigned char read_decrypt_check:1;
 	unsigned char flash_vendor_add_check:1;
+	unsigned char flash_lock_init_add_check:1;
+	unsigned char flash_unlock_init_add_check:1;
 }check_status_t;
 volatile err_status_t err_status;
 volatile check_status_t check_status;
@@ -126,6 +130,94 @@ volatile unsigned short status4=0;
 volatile unsigned short status5=0;
 volatile unsigned int  mid=0;
 unsigned char uid[16]={0};
+
+/*
+ * the application has such requirements: in the flash demo, maintain two interface examples, flash_lock/flash_unlock, add all flash
+ * (since there are multiple flash models for each chip, and flash may be added later, avoid missing).
+ * flash_lock: judge whether the flash is locked, if the device is locked, it does not need to be locked again;
+ * flash_unlock: judge whether the device is unlocked,if it is unlocked, there is no need to unlock it again;
+ */
+unsigned char flash_lock(unsigned int flash_mid){
+	switch(flash_mid)
+	{
+	case  MID146085:
+		if(0 == flash_get_lock_block_mid146085()){
+			flash_lock_mid146085(FLASH_LOCK_LOW_64K_MID146085);
+		}
+		return 1;
+		break;
+	case MID156085:
+		if(0 == flash_get_lock_block_mid156085()){
+			flash_lock_mid156085(FLASH_LOCK_LOW_64K_MID156085);
+		}
+		return 1;
+		break;
+	case MID166085:
+		if(0 == flash_get_lock_block_mid166085()){
+			flash_lock_mid166085(FLASH_LOCK_LOW_64K_MID166085);
+		}
+	    return 1;
+		break;
+#if(MCU_CORE_B92)
+	case MID1560c8:
+		if(0 == flash_get_lock_block_mid1560c8()){
+			flash_lock_mid1560c8(FLASH_LOCK_LOW_64K_MID1560c8);
+		}
+		return 1;
+		break;
+	case MID186085:
+		if(0 == flash_get_lock_block_mid186085()){
+			flash_lock_mid186085(FLASH_LOCK_LOW_256K_MID186085);
+		}
+		return 1;
+		break;
+#endif
+	default:
+		   return 0;
+		break;
+	}
+}
+unsigned char flash_unlock(unsigned int flash_mid){
+	switch(flash_mid)
+	{
+	case MID146085:
+		if(0 != flash_get_lock_block_mid146085()){
+			flash_unlock_mid146085();
+		}
+		return 1;
+		break;
+	case MID156085:
+		if(0 != flash_get_lock_block_mid156085()){
+			flash_unlock_mid156085();
+		}
+		return 1;
+		break;
+	case MID166085:
+		if(0 != flash_get_lock_block_mid166085()){
+			flash_unlock_mid166085();
+		}
+		return 1;
+		break;
+#if(MCU_CORE_B92)
+	case MID1560c8:
+		if(0 != flash_get_lock_block_mid1560c8()){
+			flash_unlock_mid1560c8();
+		}
+		return 1;
+		break;
+	case MID186085:
+		if(0 != flash_get_lock_block_mid186085()){
+			flash_unlock_mid186085();
+		}
+		return 1;
+		break;
+#endif
+	default:
+		   return 0;
+		break;
+	}
+}
+
 
 
 #if (MCU_CORE_B91 || MCU_CORE_B92)
@@ -387,6 +479,74 @@ void flash_mid186085_test(void)
 	check_status.otp_lock_check = 1;
 #endif
 }
+
+void flash_mid1560c8_test(void)
+{
+	int i;
+
+	status1 = flash_read_status_mid1560c8();
+	flash_lock_mid1560c8(FLASH_LOCK_LOW_64K_MID1560c8);
+	status2 = flash_read_status_mid1560c8();
+	flash_erase_sector(FLASH_ADDR);
+	flash_read_page(FLASH_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Read_Buff);
+	for(i=0; i<FLASH_BUFF_LEN; i++){
+		if(Flash_Read_Buff[i] != Flash_Write_Buff[i]){
+			err_status.lock_err = 1;
+			while(1);
+		}
+	}
+	check_status.lock_check = 1;
+
+	flash_unlock_mid1560c8();
+	status3 = flash_read_status_mid1560c8();
+	flash_erase_sector(FLASH_ADDR);
+	flash_read_page(FLASH_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Read_Buff);
+	for(i=0; i<FLASH_BUFF_LEN; i++){
+		if(Flash_Read_Buff[i] != 0xff){
+			err_status.unlock_err = 1;
+			while(1);
+		}
+	}
+	check_status.unlock_check = 1;
+
+	flash_erase_otp_mid1560c8(FLASH_SECURITY_ADDR);
+	flash_read_otp_mid1560c8(FLASH_SECURITY_ADDR,FLASH_BUFF_LEN,(unsigned char *)Flash_Read_Buff);
+	for(i=0; i<FLASH_BUFF_LEN; i++){
+		if(Flash_Read_Buff[i] != 0xff){
+			err_status.otp_erase_err = 1;
+			while(1);
+		}
+	}
+	check_status.otp_erase_check = 1;
+
+	flash_write_otp_mid1560c8(FLASH_SECURITY_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Write_Buff);
+	flash_read_otp_mid1560c8(FLASH_SECURITY_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Read_Buff);
+	for(i=0; i<FLASH_BUFF_LEN; i++){
+		if(Flash_Read_Buff[i] != Flash_Write_Buff[i]){
+			err_status.otp_write_err = 1;
+			while(1);
+		}
+	}
+	check_status.otp_write_check = 1;
+
+#if FLASH_OTP_LOCK
+	status4 = flash_read_status_mid1560c8();
+	flash_lock_otp_mid1560c8(FLASH_LOCK_OTP_0x001000_1024B_MID1560c8);
+	status5 = flash_read_status_mid1560c8();
+	flash_erase_otp_mid1560c8(FLASH_SECURITY_ADDR);
+	flash_read_otp_mid1560c8(FLASH_SECURITY_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Read_Buff);
+	for(i=0; i<FLASH_BUFF_LEN; i++){
+		if(Flash_Read_Buff[i] != Flash_Write_Buff[i]){
+			err_status.otp_lock_err = 1;
+			while(1);
+		}
+	}
+	check_status.otp_lock_check = 1;
+#endif
+}
+
+
+
 #endif
 
 void user_init()
@@ -422,13 +582,13 @@ void user_init()
 #if (MCU_CORE_B91)
 	switch(mid)
 	{
-	case 0x146085:
+	case MID146085:
 		flash_mid146085_test();
 		break;
-	case 0x156085:
+	case MID156085:
 		flash_mid156085_test();
 		break;
-	case 0x166085:
+	case MID166085:
 		flash_mid166085_test();
 		break;
 	default:
@@ -437,17 +597,20 @@ void user_init()
 #elif (MCU_CORE_B92)
 	switch(mid)
 	{
-	case 0x146085:
+	case MID146085:
 		flash_mid146085_test();
 		break;
-	case 0x156085:
+	case MID156085:
 		flash_mid156085_test();
 		break;
-	case 0x166085:
+	case MID166085:
 		flash_mid166085_test();
 		break;
-	case 0x186085:
+	case MID186085:
 		flash_mid186085_test();
+		break;
+	case MID1560c8:
+		flash_mid1560c8_test();
 		break;
 	default:
 		break;
@@ -467,6 +630,16 @@ void user_init()
     }else{
 	   err_status.flash_vendor_add_err =1;
     }
+    if(flash_lock(mid)){
+    	check_status.flash_lock_init_add_check =1;
+    }else{
+    	err_status.flash_lock_init_add_err =1;
+    }
+    if(flash_unlock(mid)){
+		check_status.flash_unlock_init_add_check =1;
+	}else{
+		err_status.flash_unlock_init_add_err =1;
+	}
 #endif
 
 
@@ -474,15 +647,15 @@ void user_init()
 #if (MCU_CORE_B91)
 	switch(mid)
 	{
-	case 0x146085:
+	case MID146085:
 		flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
 		g_qe_status = flash_read_status_mid146085();
 		break;
-	case 0x156085:
+	case MID156085:
 		flash_write_status_mid156085(0x200, FLASH_WRITE_STATUS_QE_MID156085);
 		g_qe_status = flash_read_status_mid156085();
 		break;
-	case 0x166085:
+	case MID166085:
 		flash_write_status_mid166085(0x200, FLASH_WRITE_STATUS_QE_MID166085);
 		g_qe_status = flash_read_status_mid166085();
 		break;
@@ -492,21 +665,25 @@ void user_init()
 #elif (MCU_CORE_B92)
 	switch(mid)
 	{
-	case 0x146085:
+	case MID146085:
 		flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
 		g_qe_status = flash_read_status_mid146085();
 		break;
-	case 0x156085:
+	case MID156085:
 		flash_write_status_mid156085(0x200, FLASH_WRITE_STATUS_QE_MID156085);
 		g_qe_status = flash_read_status_mid156085();
 		break;
-	case 0x166085:
+	case MID166085:
 		flash_write_status_mid166085(0x200, FLASH_WRITE_STATUS_QE_MID166085);
 		g_qe_status = flash_read_status_mid166085();
 		break;
-	case 0x186085:
+	case MID186085:
 		flash_write_status_mid186085(0x200, FLASH_WRITE_STATUS_QE_MID186085);
 		g_qe_status = flash_read_status_mid186085();
+		break;
+	case MID1560c8:
+		flash_write_status_mid1560c8(0x200, FLASH_WRITE_STATUS_QE_MID1560c8);
+		g_qe_status = flash_read_status_mid1560c8();
 		break;
 	default:
 		break;

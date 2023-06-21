@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_i2s.c
+ * @file    app_i2s.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -23,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if (AUDIO_MODE>DMA_IRQ_Test)
+#if ((AUDIO_MODE>DMA_IRQ_Test) && (AUDIO_MODE<=I2S_TO_EXT_CODEC_WM))
 #include "ext_codec_wm/ext_codec_wm.h"
 #include "app_sin_data.h"
 #define    AUDIO_BUFF_SIZE  4096
@@ -39,8 +38,8 @@ volatile signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4))
  * For example:sampling rate=16K，i2s_clk_config[5]={ 8,125,6,64,64}, sampling rate=192M*(8/125)/(2*6)/64=16K
  *
  */
-unsigned short aduio_i2s_8k_config[5] 	= {8,125,12,64,64};//AUDIO_RATE_EQUAL	8000
-unsigned short aduio_i2s_16k_config[5][5] =
+unsigned short audio_i2s_8k_config[5] 	= {8,125,12,64,64};//AUDIO_RATE_EQUAL	8000
+unsigned short audio_i2s_16k_config[5][5] =
 {
 	{ 8, 	125,	6,	64, 64},		//AUDIO_RATE_EQUAL	16000  i2s_clk=12.288M
 	{23,	154,	14,	64, 64},		//AUDIO_RATE_GT_L0	16001.86
@@ -49,9 +48,9 @@ unsigned short aduio_i2s_16k_config[5][5] =
 	{27,	211,	12,	64, 64},		//AUDIO_RATE_LT_L0	15995.26
 };
 
-unsigned short aduio_i2s_32k_config[5]  =	 {8, 125,3,  64, 64};//32000
+unsigned short audio_i2s_32k_config[5]  =	 {8, 125,3,  64, 64};//32000
 
-unsigned short  aduio_i2s_48k_config[5][5] =
+unsigned short  audio_i2s_48k_config[5][5] =
 {
 	{2,	    125,	0,	64,	64},		//AUDIO_RATE_EQUAL	48000   192M*(1)/(2*6)/64=48K
 	{69,	154,	14,	64, 64},		//AUDIO_RATE_GT_L0	48005
@@ -60,7 +59,7 @@ unsigned short  aduio_i2s_48k_config[5][5] =
 	{82,	233,	11,	64, 64},		//AUDIO_RATE_LT_L1	47990
 };
 
-unsigned short  aduio_i2s_44k1_config[5][5] =
+unsigned short  audio_i2s_44k1_config[5][5] =
 {
     {76, 	235,	11,	64, 64},		//AUDIO_RATE_EQUAL	44100
 	{101, 	229,	15,	64, 64},		//AUDIO_RATE_GT_L0	44105
@@ -78,11 +77,11 @@ void user_init()
 #if (AUDIO_MODE== I2S_TO_EXT_CODEC_WM)
 	i2s_pin_config_t i2s_pin_config =
 	{
-		.bclk_pin   	= GPIO_PA3,
-		.adc_lr_clk_pin = GPIO_PA2,
-		.adc_dat_pin    = GPIO_PB5,
-		.dac_lr_clk_pin = GPIO_PC0,
-		.dac_dat_pin    = GPIO_PB1,
+		.bclk_pin   	= GPIO_FC_PA3,
+		.adc_lr_clk_pin = GPIO_FC_PA2,
+		.adc_dat_pin    = GPIO_FC_PB5,
+		.dac_lr_clk_pin = GPIO_FC_PC0,
+		.dac_dat_pin    = GPIO_FC_PB1,
 	};
 	audio_i2s_config_t audio_i2s_config =
 	{
@@ -91,7 +90,7 @@ void user_init()
 		.pin_config = &i2s_pin_config,
 		.data_width = I2S_BIT_16_DATA,
 		.master_slave_mode = I2S_AS_MASTER_EN,
-		.sample_rate = aduio_i2s_32k_config,
+		.sample_rate = audio_i2s_32k_config,
 	};
 	audio_i2s_input_output_t audio_i2s_input =
 	{
@@ -114,8 +113,8 @@ void user_init()
 		.data_buf_size = sizeof(AUDIO_BUFF),
 	};
 	audio_power_on();
-	audio_i2c_init_wm(GPIO_PC5,GPIO_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K
-    aduio_i2s_set_mclk(GPIO_PA4,1,16);//only set i2s as master mclk=192M*(1/16)=12M
+	audio_i2c_init_wm(GPIO_FC_PC5,GPIO_FC_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K
+    audio_i2s_set_mclk(GPIO_FC_PA4,1,16);//only set i2s as master mclk=192M*(1/16)=12M
     /****i2s config init ****/
 	audio_i2s_config_init(&audio_i2s_config);
 	/****i2s input init ****/
@@ -144,19 +143,19 @@ void user_init()
 	 */
 	   i2s_pin_config_t i2s0_pin_config =
 	   {
-			.bclk_pin   	= GPIO_PA3,
-			.adc_lr_clk_pin = GPIO_PA2,
-			.adc_dat_pin    = GPIO_PB5,
-			.dac_lr_clk_pin = GPIO_PC0,
-			.dac_dat_pin    = GPIO_PB1,
+			.bclk_pin   	= GPIO_FC_PA3,
+			.adc_lr_clk_pin = GPIO_FC_PA2,
+			.adc_dat_pin    = GPIO_FC_PB5,
+			.dac_lr_clk_pin = GPIO_FC_PC0,
+			.dac_dat_pin    = GPIO_FC_PB1,
 		};
 	   i2s_pin_config_t i2s1_pin_config =
 	   {
-	   		.bclk_pin   	= GPIO_PA1,
-	   		.adc_lr_clk_pin = GPIO_PB4,
-			.dac_dat_pin    = GPIO_PB6,
-	   		.dac_lr_clk_pin = GPIO_PB7,
-	   		.adc_dat_pin    = GPIO_PA0,
+	   		.bclk_pin   	= GPIO_FC_PA1,
+	   		.adc_lr_clk_pin = GPIO_FC_PB4,
+			.dac_dat_pin    = GPIO_FC_PB6,
+	   		.dac_lr_clk_pin = GPIO_FC_PB7,
+	   		.adc_dat_pin    = GPIO_FC_PA0,
 	   		};
 	   audio_i2s_config_t audio_i2s0_config =
 	   {
@@ -165,7 +164,7 @@ void user_init()
 			.pin_config = &i2s0_pin_config,
 			.data_width = I2S_BIT_16_DATA,
 			.master_slave_mode = I2S_AS_MASTER_EN,
-			.sample_rate = aduio_i2s_32k_config,
+			.sample_rate = audio_i2s_32k_config,
 		};
 	   audio_i2s_config_t audio_i2s1_config =
 	   {
@@ -174,7 +173,7 @@ void user_init()
 			.pin_config = &i2s1_pin_config,
 			.data_width = I2S_BIT_16_DATA,
 			.master_slave_mode = I2S_AS_MASTER_EN,
-			.sample_rate = aduio_i2s_32k_config,
+			.sample_rate = audio_i2s_32k_config,
 		};
 
 		audio_power_on();
@@ -183,17 +182,17 @@ void user_init()
 		audio_set_i2s_align_en();
 		audio_set_i2s_align_data_width(I2S_ALIGN_BIT_16_DATA);
 		//step(2)
-	    audio_i2c_init_wm(GPIO_PC5,GPIO_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K
-	    aduio_i2s_set_mclk(GPIO_PA4,1,16);//only set i2s as master mclk=192M*(1/16)=12M
+	    audio_i2c_init_wm(GPIO_FC_PC5,GPIO_FC_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K
+	    audio_i2s_set_mclk(GPIO_FC_PA4,1,16);//only set i2s as master mclk=192M*(1/16)=12M
 	    /****i2s config init ****/
 		audio_i2s_config_init(&audio_i2s0_config);
 		audio_i2s_config_init(&audio_i2s1_config);
 		/****i2s input and output path init ****/
-		audio_data_fifo_input_path_sel(FIFO1,I2S1_IN_FIFO);  //msut FIFO1 and I2S1
-		audio_data_fifo_output_path_sel(FIFO1,I2S1_OUT_FIFO);//msut FIFO1 and I2S1
+		audio_data_fifo_input_path_sel(FIFO1,I2S1_IN_FIFO);  //must FIFO1 and I2S1
+		audio_data_fifo_output_path_sel(FIFO1,I2S1_OUT_FIFO);//must FIFO1 and I2S1
 		/****rx tx dma init ****/
-		audio_rx_dma_chain_init(FIFO1,DMA0,(unsigned short*)AUDIO_BUFF,sizeof(AUDIO_BUFF));//msut  FIFO1
-		audio_tx_dma_chain_init(FIFO1,DMA1,(unsigned short*)AUDIO_BUFF,sizeof(AUDIO_BUFF));//msut  FIFO1
+		audio_rx_dma_chain_init(FIFO1,DMA0,(unsigned short*)AUDIO_BUFF,sizeof(AUDIO_BUFF));//must  FIFO1
+		audio_tx_dma_chain_init(FIFO1,DMA1,(unsigned short*)AUDIO_BUFF,sizeof(AUDIO_BUFF));//must  FIFO1
 		/****i2s starts run****/
 		audio_rx_dma_en(DMA0);
 		audio_tx_dma_en(DMA1);
@@ -203,25 +202,25 @@ void user_init()
 		audio_set_i2s_align_th_tick(stimer_get_tick());
 		//step(5)
 		audio_set_i2s_align_mask_en();
-#elif(AUDIO_MODE== I2S_OUPUT_DOUBLE_BUFF)
+#elif(AUDIO_MODE== I2S_OUTPUT_DOUBLE_BUFF)
 		__attribute__((aligned(4))) volatile signed short buff_L[0x10] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xAA,0x0BB,0xCC,0xDD,0xEE,0xFF};
 
 		__attribute__((aligned(4))) volatile signed short buff_R[0x10] = {0xFF,0xEE,0xDD,0xCC,0xBB,0xAA,0x99,0x88,0x77,0x66,0x55,0x44,0x33,0x22,0x11,0x00};
 		i2s_pin_config_t i2s0_pin_config =
 		{
-			.bclk_pin   	= GPIO_PA3,
-			.adc_lr_clk_pin = GPIO_PA2,
-			.adc_dat_pin    = GPIO_PB5,
-			.dac_lr_clk_pin = GPIO_PC0,
-			.dac_dat_pin    = GPIO_PB1,
+			.bclk_pin   	= GPIO_FC_PA3,
+			.adc_lr_clk_pin = GPIO_FC_PA2,
+			.adc_dat_pin    = GPIO_FC_PB5,
+			.dac_lr_clk_pin = GPIO_FC_PC0,
+			.dac_dat_pin    = GPIO_FC_PB1,
 		};
 		i2s_pin_config_t i2s1_pin_config =
 		{
-			.bclk_pin   	= GPIO_PA1,
-			.adc_lr_clk_pin = GPIO_PB4,
-			.adc_dat_pin    = GPIO_PA0,
-			.dac_lr_clk_pin = GPIO_PB7,
-			.dac_dat_pin    = GPIO_PB6,
+			.bclk_pin   	= GPIO_FC_PA1,
+			.adc_lr_clk_pin = GPIO_FC_PB4,
+			.adc_dat_pin    = GPIO_FC_PA0,
+			.dac_lr_clk_pin = GPIO_FC_PB7,
+			.dac_dat_pin    = GPIO_FC_PB6,
 		};
 
 		audio_i2s_config_t audio_i2s0_config =
@@ -231,7 +230,7 @@ void user_init()
 			.data_width = I2S_BIT_16_DATA,
 			.i2s_mode = I2S_I2S_MODE,
 			.master_slave_mode = I2S_AS_MASTER_EN,
-			.sample_rate = aduio_i2s_32k_config,
+			.sample_rate = audio_i2s_32k_config,
 		};
 
 		audio_i2s_input_output_t audio_i2s0_output0 =
@@ -262,7 +261,7 @@ void user_init()
 			.pin_config = &i2s1_pin_config,
 			.data_width = I2S_BIT_16_DATA,
 			.master_slave_mode = I2S_AS_MASTER_EN,
-			.sample_rate = aduio_i2s_32k_config,
+			.sample_rate = audio_i2s_32k_config,
 		};
 		audio_i2s_input_output_t audio_i2s1_output0 =
 		{
@@ -314,19 +313,19 @@ void user_init()
 #define TX1_DMA_CHN          DMA3
 		i2s_pin_config_t i2s0_pin_config =
 		{
-			.bclk_pin   	= GPIO_PA3,
-			.adc_lr_clk_pin = GPIO_PA2,
-			.adc_dat_pin    = GPIO_PB5,
-			.dac_lr_clk_pin = GPIO_PC0,
-			.dac_dat_pin    = GPIO_PB1,
+			.bclk_pin   	= GPIO_FC_PA3,
+			.adc_lr_clk_pin = GPIO_FC_PA2,
+			.adc_dat_pin    = GPIO_FC_PB5,
+			.dac_lr_clk_pin = GPIO_FC_PC0,
+			.dac_dat_pin    = GPIO_FC_PB1,
 		};
 		i2s_pin_config_t i2s1_pin_config =
 		{
-			.bclk_pin   	= GPIO_PA1,
-			.adc_lr_clk_pin = GPIO_PB4,
-			.adc_dat_pin    = GPIO_PA0,
-			.dac_lr_clk_pin = GPIO_PB7,
-			.dac_dat_pin    = GPIO_PB6,
+			.bclk_pin   	= GPIO_FC_PA1,
+			.adc_lr_clk_pin = GPIO_FC_PB4,
+			.adc_dat_pin    = GPIO_FC_PA0,
+			.dac_lr_clk_pin = GPIO_FC_PB7,
+			.dac_dat_pin    = GPIO_FC_PB6,
 		};
 		audio_i2s_config_t audio_i2s0_config =
 		{
@@ -335,7 +334,7 @@ void user_init()
 			.data_width = I2S_BIT_16_DATA,
 			.pin_config = &i2s0_pin_config,
 			.master_slave_mode = I2S_AS_MASTER_EN,
-			.sample_rate = aduio_i2s_32k_config,
+			.sample_rate = audio_i2s_32k_config,
 		};
 		audio_i2s_config_t audio_i2s1_config =
 		{
@@ -344,7 +343,7 @@ void user_init()
 			.pin_config = &i2s1_pin_config,
 			.data_width = I2S_BIT_16_DATA,
 			.master_slave_mode = I2S_AS_MASTER_EN,
-			.sample_rate = aduio_i2s_32k_config,
+			.sample_rate = audio_i2s_32k_config,
 		};
 
 		audio_i2s_input_output_t audio_i2s0_input = {
@@ -387,8 +386,8 @@ void user_init()
 		};
 
 		audio_power_on();
-		audio_i2c_init_wm(GPIO_PC5,GPIO_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K
-		aduio_i2s_set_mclk(GPIO_PA4,1,16);//only set i2s as master mclk=192M*(1/16)=12M
+		audio_i2c_init_wm(GPIO_FC_PC5,GPIO_FC_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K
+		audio_i2s_set_mclk(GPIO_FC_PA4,1,16);//only set i2s as master mclk=192M*(1/16)=12M
 		/****i2s config init ****/
 		audio_i2s_config_init(&audio_i2s0_config);
 		audio_i2s_config_init(&audio_i2s1_config);

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	dhry_1.c
+ * @file    dhry_1.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -91,6 +90,15 @@ unsigned long memory2[128];
 
 #define  _attribute_ram_code_  __attribute__((section(".ram_code")))
 
+extern _attribute_ram_code_ void Proc_4 (void);
+extern _attribute_ram_code_ void Proc_5 (void);
+extern _attribute_ram_code_ Boolean Func_2 (Str_30 Str_1_Par_Ref, Str_30 Str_2_Par_Ref);
+extern _attribute_ram_code_ void Proc_1 (REG Rec_Pointer Ptr_Val_Par);
+_attribute_ram_code_ void Proc_2 (One_Fifty* Int_Par_Ref);
+_attribute_ram_code_ void Proc_3 (Rec_Pointer* Ptr_Ref_Par);
+extern _attribute_ram_code_ void Proc_6 (Enumeration Enum_Val_Par, Enumeration* Enum_Ref_Par);
+extern _attribute_ram_code_ void Proc_7 (One_Fifty Int_1_Par_Val, One_Fifty Int_2_Par_Val, One_Fifty* Int_Par_Ref);
+extern _attribute_ram_code_ void Proc_8 (Arr_1_Dim Arr_1_Par_Ref, Arr_2_Dim Arr_2_Par_Ref, int Int_1_Par_Val, int Int_2_Par_Val);
 
 _attribute_ram_code_ void dhry_main (void)
 /*****/
@@ -295,7 +303,7 @@ _attribute_ram_code_ void dhry_main (void)
    // printf ("Microseconds for one run through Dhrystone: ");
    // printf ("%6.1f \r\n", Microseconds);
     //printf ("%d \r\n", Microseconds);
-    printf ("User_Time:  %d\r\n",User_Time);
+    printf ("User_Time:  %d\r\n",(unsigned int)User_Time);
    // printf ("%6.1f \r\n", Dhrystones_Per_Second);
     //printf ("%d \r\n", Dhrystones_Per_Second);
     //printf ("\r\n");
@@ -304,7 +312,7 @@ _attribute_ram_code_ void dhry_main (void)
     int dmips_f = (Dhrystone_DMIPS_Per_MHz - dmips_i) * 100;
     printf ("DMIPS per MHz:                                      ");
     printf ("%6.1f \r\n", Dhrystone_DMIPS_Per_MHz);
-    //printf ("%d.%d \r\n", dmips_i, dmips_f);
+    printf ("%d.%d \r\n", dmips_i, dmips_f);
     printf ("\r\n");
   }
 
@@ -313,10 +321,9 @@ _attribute_ram_code_ void dhry_main (void)
 }
 
 
-_attribute_ram_code_ Proc_1 (Ptr_Val_Par)
+_attribute_ram_code_ void Proc_1 (REG Rec_Pointer Ptr_Val_Par)
 /******************/
 
-REG Rec_Pointer Ptr_Val_Par;
     /* executed once */
 {
   REG Rec_Pointer Next_Record = Ptr_Val_Par->Ptr_Comp;
@@ -347,12 +354,10 @@ REG Rec_Pointer Ptr_Val_Par;
 } /* Proc_1 */
 
 
-_attribute_ram_code_ Proc_2 (Int_Par_Ref)
+_attribute_ram_code_ void Proc_2 (One_Fifty* Int_Par_Ref)
 /******************/
     /* executed once */
     /* *Int_Par_Ref == 1, becomes 4 */
-
-One_Fifty   *Int_Par_Ref;
 {
   One_Fifty  Int_Loc;
   Enumeration   Enum_Loc;
@@ -370,12 +375,10 @@ One_Fifty   *Int_Par_Ref;
 } /* Proc_2 */
 
 
-_attribute_ram_code_ Proc_3 (Ptr_Ref_Par)
+_attribute_ram_code_ void Proc_3 (Rec_Pointer* Ptr_Ref_Par)
 /******************/
     /* executed once */
     /* Ptr_Ref_Par becomes Ptr_Glob */
-
-Rec_Pointer *Ptr_Ref_Par;
 
 {
   if (Ptr_Glob != Null)
@@ -385,7 +388,7 @@ Rec_Pointer *Ptr_Ref_Par;
 } /* Proc_3 */
 
 
-_attribute_ram_code_ Proc_4 () /* without parameters */
+_attribute_ram_code_ void Proc_4 (void) /* without parameters */
 /*******/
     /* executed once */
 {
@@ -397,7 +400,7 @@ _attribute_ram_code_ Proc_4 () /* without parameters */
 } /* Proc_4 */
 
 
-_attribute_ram_code_ Proc_5 () /* without parameters */
+_attribute_ram_code_ void Proc_5 (void) /* without parameters */
 /*******/
     /* executed once */
 {

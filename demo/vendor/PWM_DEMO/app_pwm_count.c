@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_pwm_count.c
+ * @file    app_pwm_count.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -31,7 +30,7 @@
 #define PWM_ID		(get_pwmid(PWM_PIN))
 #elif(MCU_CORE_B92)
 #define PWM_ID		PWM0_ID
-#define PWM_PIN		GPIO_PB4
+#define PWM_PIN		GPIO_FC_PB4
 #define PWM_FUNC    PWM0
 #endif
 /*

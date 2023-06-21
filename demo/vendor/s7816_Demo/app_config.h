@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    app_config.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -52,10 +51,10 @@ extern "C" {
 #define S7816_RST_PIN    GPIO_PB1
 #define S7816_CLK_PIN    S7817_CLK_PA0
 #elif(MCU_CORE_B92)
-#define S7816_TRX_PIN    GPIO_PB3
+#define S7816_TRX_PIN    GPIO_FC_PB3
 #define S7816_VCC_PIN    GPIO_PB4
 #define S7816_RST_PIN    GPIO_PB1
-#define S7816_CLK_PIN    GPIO_PA0
+#define S7816_CLK_PIN    GPIO_FC_PA0
 #endif
 
 #define F   372      //clock frequency regulator ,372 is the initialized  value.

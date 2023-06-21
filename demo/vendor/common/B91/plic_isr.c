@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	plic_isr.c
+ * @file    plic_isr.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -28,16 +27,30 @@
  ****************************************************************************************
  */
 #include "lib/include/plic.h"
+
+/**
+ * @brief       default interrupt service function. if you not re-implement the corresponding interrupt, you will enter this function
+ * @return      none
+ */
  __attribute__((section(".ram_code"))) void default_irq_handler(void)
 {
 
 }
- volatile unsigned long mcause ;
- volatile unsigned long mepc ;
- /**
-  * @brief  exception handler.this defines an exception handler to handle all the platform pre-defined exceptions.
-  * @return none
-  */
+
+/**
+ * @brief   this variable is used to save the value of the mcause register when the exception is generated.
+ */
+volatile unsigned long mcause;
+
+/**
+ * @brief   this variable is used to save the value of the mepc register when the exception is generated.
+ */
+volatile unsigned long mepc;
+
+/**
+ * @brief       exception handler. this defines an exception handler to handle all the platform pre-defined exceptions.
+ * @return      none
+ */
  _attribute_ram_code_sec_ __attribute__((weak)) void except_handler()
  {
 	mcause = core_get_mcause();
@@ -50,6 +63,12 @@
  		}
  	}
  }
+
+/**
+ * @brief       trap entry. this defines an trap entry to handle all the platform pre-defined exceptions. such as mtime interrupt and software interrupt(swi).
+ * @return      none
+ * @note        its attribute is weak, application can reimplement this function.
+ */
  _attribute_ram_code_sec_noinline_  __attribute__((weak)) void trap_entry(void) __attribute__ ((interrupt ("machine") , aligned(4)));
  void trap_entry(void)
  {

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file    app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -24,6 +23,30 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
+/**
+   @verbatim
+   ===============================================================================
+                        ##### how to test demo #####
+   ===============================================================================
+   the nodma is divided into the following test items, which are described below:
+   (+) FLOW_CTR == BASE_TX(B91/B92)
+       Hardware connection: the tx of the board <-> rx of serial port tool, the ground <-> the ground;
+       Data stream: tx can send data to the serial port in byte/hword/word to verify the tx function;
+   (+) FLOW_CTR == NORMAL(B91/B92)
+       Hardware connection: the tx of the board<->the rx of serial port tool, the rx of the board<->the tx of serial port tool,the ground <-> the ground;
+       Data stream: the serial port sends 16 bytes, which the rx receives and the tx returns to the serial port;
+   (+) FLOW_CTR==USE_CTS(B91/B92)
+       Hardware connection: the tx of the board <-> rx of serial port tool, the ground <-> the ground;
+       Data stream: tx send data to the serial port in byte continually,After the external sends a high level to the cts pin, the tx is not sending data;
+   (+) FLOW_CTR == USE_RTS(B91/B92)
+       Hardware connection: the rx of the board <-> tx of serial port tool, the ground <-> the ground;
+       Data stream: The serial port sends a length of more than 5 bytes to the rx. Using the logic analyzer to grab the level of the rts pin, a change from low to high is found;
+
+   In addition to the above test items, the demo gives an example of the conversion of an rtx pin to tx function
+   and an example of what you need to do to enter suspend.
+   @endverbatim
+ */
+
 #if (UART_MODE==UART_NDMA)
 
 #if( FLOW_CTR==USE_CTS)
@@ -33,7 +56,7 @@
 #if (FLOW_CTR==USE_RTS)
 	#define RTS_MODE		UART0_RTS_MODE_AUTO 		    //It can be UART_RTS_MODE_AUTO/UART_RTS_MODE_MANUAL.
 	#define RTS_THRESH		5			//UART_RTS_MODE_AUTO need.It indicates RTS trigger threshold.
-	#define RTS_INVERT		1			//UART_RTS_MODE_AUTO need.1 indicates RTS_pin will change from low to hign.
+	#define RTS_INVERT		1			//UART_RTS_MODE_AUTO need.1 indicates RTS_pin will change from low to high.
 	#define RTS_POLARITY	0			//UART_RTS_MODE_MANUAL need. It indicates RTS_POLARITY .
 #endif
 

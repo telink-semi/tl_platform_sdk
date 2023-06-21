@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	dbgport.c
+ * @file    dbgport.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -59,7 +58,7 @@ void bt_dbg_set_pin(btdbg_pin_e pin)
 	//note:  setting pad the function  must before  setting no_gpio function, cause it will lead to uart transmit extra one byte data at begin.(confirmed by minghai&sunpeng)
 	reg_gpio_func_mux(pin)=(reg_gpio_func_mux(pin)& mask)|val;
 
-	gpio_function_dis(pin);
+	gpio_function_dis((gpio_pin_e)pin);
 
 }
 

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_ramless_st77903.c
+ * @file    app_ramless_st77903.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -65,7 +64,7 @@
 
 #define LCD_DATA_LANE_MODE			CMD1X_ADDR1X_DATA4X
 
-spi_pin_config_t lspi_pin_config = {
+lspi_pin_config_t lspi_pin_config = {
 	.spi_csn_pin 		= LSPI_CSN_PE0_PIN,
 	.spi_clk_pin		= LSPI_CLK_PE1_PIN,
 	.spi_mosi_io0_pin   = LSPI_MOSI_IO0_PE2_PIN,
@@ -161,7 +160,7 @@ void ramless_lcd_lspi_master_write_data(unsigned int addr, unsigned char *data, 
  */
 void ramless_lcd_lspi_master_write_cmd(unsigned int addr)
 {
-	 spi_master_write_plus(LSPI_MODULE,0xde,addr,0,0,SPI_MODE_NONE_DATA);
+	spi_master_write_plus(LSPI_MODULE,0xde,addr,0,0,SPI_MODE_WR_WRITE_ONLY);
 }
 
 /**

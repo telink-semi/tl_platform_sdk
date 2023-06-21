@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_oled_rm69330.c
+ * @file    app_oled_rm69330.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -46,7 +45,7 @@ typedef enum{
 	OLED_SINGLE_CMD_ADDR_QUAD_WRITE_CMD = 0x32,
 }oled_cmd_e;
 
-spi_pin_config_t lspi_pin_config = {
+lspi_pin_config_t lspi_pin_config = {
 	.spi_csn_pin 		= LSPI_CSN_PE0_PIN,
 	.spi_clk_pin		= LSPI_CLK_PE1_PIN,
 	.spi_mosi_io0_pin   = LSPI_MOSI_IO0_PE2_PIN,
@@ -116,7 +115,7 @@ void oled_hspi_master_write_data(unsigned int addr, unsigned char *data, unsigne
  */
 void oled_hspi_master_write_cmd(unsigned int addr)
 {
-	 spi_master_write_plus(LSPI_MODULE,OLED_SINGLE_WRITE_CMD,addr,0,0,SPI_MODE_NONE_DATA);
+  spi_master_write_plus(LSPI_MODULE,OLED_SINGLE_WRITE_CMD,addr,0,0,SPI_MODE_WR_WRITE_ONLY);
 }
 
 /**

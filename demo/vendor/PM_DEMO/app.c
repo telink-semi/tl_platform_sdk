@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file    app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -36,6 +35,13 @@ void user_init(void)
 
 #if CURRENT_TEST
 	gpio_shutdown(GPIO_ALL);
+	//Note:
+	//During current test, sws needs to be given a fixed level.
+	//If sws is not connected to the analog pull up and down,it is in a suspended state and may be in a level indeterminate state,
+	//which will affect the electric leakage of digital and lead to higher current than normal during suspend sleep.
+	gpio_set_up_down_res(GPIO_PA7, GPIO_PIN_PULLUP_1M);
+
+
 #else
 	// init the LED pin, for indication
 	gpio_function_en(LED1);
@@ -44,25 +50,30 @@ void user_init(void)
 	gpio_function_en(LED2);
 	gpio_output_en(LED2);
 	gpio_input_dis(LED2);
+	gpio_set_high_level(LED1);
+	delay_ms(1000);
+#if(MCU_CORE_B91)
+#if ((PM_MODE == SUSPEND_MDEC_WAKEUP)||(PM_MODE == DEEP_MDEC_WAKEUP)||(PM_MODE == DEEP_RET32K_MDEC_WAKEUP)||(PM_MODE == DEEP_RET64K_MDEC_WAKEUP))
 	gpio_function_en(LED3);
 	gpio_output_en(LED3);
 	gpio_input_dis(LED3);
 	gpio_function_en(LED4);
 	gpio_output_en(LED4);
 	gpio_input_dis(LED4);
-
-	gpio_set_high_level(LED1);
-	delay_ms(1000);
-
-#if ((PM_MODE == DEEP_MDEC_WAKEUP)||(PM_MODE == DEEP_RET32K_MDEC_WAKEUP)||(PM_MODE == DEEP_RET64K_MDEC_WAKEUP))
 	if(((pm_get_wakeup_src()) & PM_WAKEUP_MDEC) && (CRC_OK == mdec_read_dat(dat)))
 	{
 		gpio_set_high_level(LED3);
 		delay_ms(2000);
 	}
 #endif
-
-#if ((PM_MODE == DEEP_COMPARATOR_WAKEUP)||(PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP)||(PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP))
+#endif
+#if ((PM_MODE == SUSPEND_COMPARATOR_WAKEUP)||(PM_MODE == DEEP_COMPARATOR_WAKEUP)||(PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP)||(PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP)||(PM_MODE == DEEP_RET96K_COMPARATOR_WAKEUP))
+	gpio_function_en(LED3);
+	gpio_output_en(LED3);
+	gpio_input_dis(LED3);
+	gpio_function_en(LED4);
+	gpio_output_en(LED4);
+	gpio_input_dis(LED4);
 	result = lpc_get_result();
 	if(result){
 		gpio_set_high_level(LED3);
@@ -81,11 +92,12 @@ void user_init(void)
 	clock_cal_24m_rc();
 
 	//If it is timer or mdec wake up, you need to initialize 32K
-#if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP\
-	|| PM_MODE == SUSPEND_MDEC_WAKEUP || PM_MODE == DEEP_MDEC_WAKEUP || PM_MODE == DEEP_RET32K_MDEC_WAKEUP || PM_MODE == DEEP_RET64K_MDEC_WAKEUP)
+#if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET96K_32K_RC_WAKEUP\
+	|| PM_MODE == SUSPEND_MDEC_WAKEUP || PM_MODE == DEEP_MDEC_WAKEUP || PM_MODE == DEEP_RET32K_MDEC_WAKEUP || PM_MODE == DEEP_RET64K_MDEC_WAKEUP || PM_MODE == DEEP_RET96K_MDEC_WAKEUP\
+	|| PM_MODE == SUSPEND_COMPARATOR_WAKEUP || PM_MODE == DEEP_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET96K_COMPARATOR_WAKEUP)
 	clock_32k_init(CLK_32K_RC);
 	clock_cal_32k_rc();	//6.68ms
-#elif(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP)
+#elif(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET96K_32K_XTAL_WAKEUP)
 	clock_32k_init(CLK_32K_XTAL);
 	clock_kick_32k_xtal(10);
 #endif
@@ -101,30 +113,40 @@ void user_init(void)
 #elif(PM_MODE == DEEP_PAD_WAKEUP)	//Caution: if wake-up source is only pad, 32K clock source MUST be 32K RC.
 	pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
 	gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
-	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == DEEP_RET32K_PAD_WAKEUP)
 	retention_data_test++;
 	pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
 	gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_PAD, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == DEEP_RET64K_PAD_WAKEUP)
 	retention_data_test++;
 	pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
 	gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_PAD, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
+
+#elif(PM_MODE == DEEP_RET96K_PAD_WAKEUP)
+	retention_data_test++;
+	pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
+	gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW96K, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE==DEEP_32K_RC_WAKEUP||PM_MODE==DEEP_32K_XTAL_WAKEUP)
-	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER_16M, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
+	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
 #elif(PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP)
 	retention_data_test++;
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_TIMER, PM_TICK_STIMER_16M, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
 #elif(PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP)
 	retention_data_test++;
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_TIMER, PM_TICK_STIMER_16M, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
+
+#elif(PM_MODE == DEEP_RET96K_32K_RC_WAKEUP || PM_MODE == DEEP_RET96K_32K_XTAL_WAKEUP)
+	retention_data_test++;
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW96K, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
 #elif(PM_MODE == SUSPEND_MDEC_WAKEUP)
 	mdec_init(FLD_SELE_PE0);
@@ -135,57 +157,86 @@ void user_init(void)
 	mdec_init(FLD_SELE_PE0);
 	mdec_reset();
 	pm_set_mdec_value_wakeup(MDEC_MATCH_VALUE);
-	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_MDEC, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_MDEC, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == DEEP_RET32K_MDEC_WAKEUP)
 	retention_data_test++;
 	mdec_init(FLD_SELE_PE0);
 	mdec_reset();
 	pm_set_mdec_value_wakeup(MDEC_MATCH_VALUE);
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_MDEC, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_MDEC, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == DEEP_RET64K_MDEC_WAKEUP)
 	retention_data_test++;
 	mdec_init(FLD_SELE_PE0);
 	mdec_reset();
 	pm_set_mdec_value_wakeup(MDEC_MATCH_VALUE);
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_MDEC, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_MDEC, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == SUSPEND_COMPARATOR_WAKEUP)
-	lpc_power_on();
 	lpc_set_input_chn(LPC_INPUT_PB1);
-	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_872MV);
-	lpc_set_scaling_coeff(LPC_SCALING_PER50);
+	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_820MV);
+	lpc_set_scaling_coeff(LPC_SCALING_PER75);
+	lpc_power_on();
+	delay_us(64);
 
 #elif(PM_MODE == DEEP_COMPARATOR_WAKEUP)
-	lpc_power_on();
 	lpc_set_input_chn(LPC_INPUT_PB1);
-	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_872MV);
-	lpc_set_scaling_coeff(LPC_SCALING_PER50);
-	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER_16M, 0);
+	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_820MV);
+	lpc_set_scaling_coeff(LPC_SCALING_PER75);
+	lpc_power_on();
+	delay_us(64);
+	//When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
+	//otherwise can not enter sleep normally, crash occurs.
+	pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP)
 	retention_data_test++;
-	lpc_power_on();
 	lpc_set_input_chn(LPC_INPUT_PB1);
-	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_872MV);
-	lpc_set_scaling_coeff(LPC_SCALING_PER50);
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER_16M, 0);
+	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_820MV);
+	lpc_set_scaling_coeff(LPC_SCALING_PER75);
+	lpc_power_on();
+	delay_us(64);
+	//When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
+	//otherwise can not enter sleep normally, crash occurs.
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP)
 	retention_data_test++;
-	lpc_power_on();
 	lpc_set_input_chn(LPC_INPUT_PB1);
-	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_872MV);
-	lpc_set_scaling_coeff(LPC_SCALING_PER50);
-	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER_16M, 0);
+	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_820MV);
+	lpc_set_scaling_coeff(LPC_SCALING_PER75);
+	lpc_power_on();
+	delay_us(64);
+	//When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
+	//otherwise can not enter sleep normally, crash occurs.
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER, 0);
 
-#elif(PM_MODE == SUSPEND_CORE_WAKEUP)
+#elif(PM_MODE == DEEP_RET96K_COMPARATOR_WAKEUP)
+	retention_data_test++;
+	lpc_set_input_chn(LPC_INPUT_PB1);
+	lpc_set_input_ref(LPC_LOWPOWER,LPC_REF_820MV);
+	lpc_set_scaling_coeff(LPC_SCALING_PER75);
+	lpc_power_on();
+	delay_us(64);
+	//When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
+	//otherwise can not enter sleep normally, crash occurs.
+	pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW96K, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER, 0);
+
+#elif(PM_MODE == SUSPEND_CORE_USB_WAKEUP)
 	usb_set_pin_en();
+	reg_wakeup_en |= 0x01;
 	gpio_set_up_down_res(GPIO_PA5, GPIO_PIN_PULLDOWN_100K);
-	write_reg8(reg_wakeup_en,0x1d);
-	delay_ms(500);
+	gpio_set_up_down_res(GPIO_PA6, GPIO_PIN_PULLUP_10K);
 	pm_set_suspend_power_cfg(PM_POWER_USB, 1);
+
+//#elif(PM_MODE == SUSPEND_CORE_GPIO_WAKEUP)
+//	gpio_input_en(WAKEUP_PAD);
+//	gpio_irq_en(WAKEUP_PAD);
+//	reg_gpio_irq_ctrl |= FLD_GPIO_CORE_WAKEUP_EN;
+//	reg_wakeup_en |= 0x02;
+//	pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
+//	gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
 
 #endif
 
@@ -200,14 +251,15 @@ void main_loop(void)
 	gpio_set_low_level(LED2);
 	delay_ms(500);
 #endif
+
 #if(PM_MODE == SUSPEND_PAD_WAKEUP)
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == SUSPEND_32K_XTAL_WAKEUP)
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER_16M, stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS);
+	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS);
 
 #elif(PM_MODE == SUSPEND_MDEC_WAKEUP)
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_MDEC, PM_TICK_STIMER_16M, 0);
+	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_MDEC, PM_TICK_STIMER, 0);
 	if((CRC_OK == mdec_read_dat(dat)))
 	{
 		gpio_toggle(LED3);
@@ -215,14 +267,16 @@ void main_loop(void)
 	mdec_reset();
 
 #elif(PM_MODE == SUSPEND_COMPARATOR_WAKEUP)
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER_16M, 0);
+	//When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
+	//otherwise can not enter sleep normally, crash occurs.
+	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER, 0);
 	if(1 == lpc_get_result())
 	{
 		gpio_toggle(LED3);
 	}
 
-#elif(PM_MODE == SUSPEND_CORE_WAKEUP)
-	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER_16M, 0);
+#elif(PM_MODE == SUSPEND_CORE_USB_WAKEUP || PM_MODE == SUSPEND_CORE_GPIO_WAKEUP)
+	pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER, 0);
 
 #else
 	gpio_set_high_level(LED2);

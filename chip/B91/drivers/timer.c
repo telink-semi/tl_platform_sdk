@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	timer.c
+ * @file    timer.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -28,7 +27,7 @@
  *********************************************************************************************************************/
 
 /**
- * @brief     the specifed timer start working.
+ * @brief     the specified timer start working.
  * @param[in] type - select the timer to start.
  * @return    none
  */
@@ -48,7 +47,7 @@ void timer_start(timer_type_e type)
 }
 
 /**
- * @brief     the specifed timer stop working.
+ * @brief     the specified timer stop working.
  * @param[in] type - select the timer to stop.
  * @return    none
  */

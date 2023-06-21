@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	cstartup_flash.S
+ * @file    cstartup_flash.S
  *
- * @brief	This is the boot file for B92
+ * @brief   This is the boot file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -37,7 +36,24 @@
 #define DP_THROUGH_SWIRE_DIS      1
 #endif
 
+.extern pm_retention_register_recover
+
+//	According to the different ram size of the chip, the corresponding configuration values are as follows:
+//		SRAM	  128K	256K  384K	512K
+//	__IRAM_2_EN 	0	  1		1	  1
+//	__DRAM_1_EN 	0	  0		1	  1
+//	__DRAM_2_EN 	0	  0		0	  1
+//	__DRAM_DIS 		1	  1		0	  0
+	.equ __IRAM_2_EN, 	0
+	.equ __DRAM_1_EN, 	0
+	.equ __DRAM_2_EN, 	0
+	.equ __DRAM_DIS, 	1
+
     .section .vectors, "ax"
+    .global		__IRAM_2_EN
+    .global		__DRAM_1_EN
+    .global		__DRAM_2_EN
+    .global		__DRAM_DIS
 
     //.org  and linker's relaxation (-flto) cannot be used at the same time
     //Pop corresponds to push. Before using .option norelax, use push to save the current .option configuration
@@ -73,12 +89,13 @@ _START:
 
 #if 0
 	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
+	lui		t0, 0x80140
 	li		t1, 0xef
 	li		t2, 0x10
-	sb		t1 , 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
-	sb		t2 , 0x30b(t0)		 //0x8014030b  PB output  =  0x10
+	sb		t1, 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
+	sb		t2, 0x30b(t0)		 //0x8014030b  PB output  =  0x10
 #endif
+
 	/* Initialize global pointer */
     .option push
     .option norelax
@@ -95,7 +112,6 @@ _START:
 	/* Initialize stack pointer */
     la     t0, _STACK_TOP
     mv     sp, t0
-
 
 #ifdef __nds_execit
 	/* Initialize EXEC.IT table */
@@ -129,9 +145,9 @@ _START:
     ori    t0,  t0,  2  #/D-Cache
     csrw   mcache_ctl,  t0
     fence.i
+
 	/* Move retention reset from flash to sram */
 _RETENTION_RESET_INIT:
-
     la     t1, _RETENTION_RESET_LMA_START
     la     t2, _RETENTION_RESET_VMA_START
     la     t3, _RETENTION_RESET_VMA_END
@@ -145,7 +161,6 @@ _RETENTION_RESET_BEGIN:
 
 	/* Move retention from flash to sram */
 _RETENTION_DATA_INIT:
-
     la     t1, _RETENTION_DATA_LMA_START
     la     t2, _RETENTION_DATA_VMA_START
     la     t3, _RETENTION_DATA_VMA_END
@@ -159,18 +174,16 @@ _RETENTION_DATA_INIT_BEGIN:
 
 	/* Move ramcode from flash to sram */
 _RAMCODE_INIT:
-
     la     t1, _RAMCODE_LMA_START
     la     t2, _RAMCODE_VMA_START
     la     t3, _RAMCODE_VMA_END
 _RAMCODE_INIT_BEGIN:
-    bleu    t3, t2, _DATA_INIT
+    bleu   t3, t2, _DATA_INIT
     lw     t0, 0(t1)
     sw     t0, 0(t2)
     addi   t1, t1, 4
     addi   t2, t2, 4
     j      _RAMCODE_INIT_BEGIN
-
 
 	/* Move Data from flash to sram */
 _DATA_INIT:
@@ -184,8 +197,6 @@ _DATA_INIT_BEGIN:
     addi   t1, t1, 4
     addi   t2, t2, 4
     j      _DATA_INIT_BEGIN
-
-
 
 	/* Zero .bss section in sram */
 _ZERO_BSS:
@@ -222,6 +233,7 @@ _FILL_STK_BEGIN:
     addi   t2, t2, 4
     j      _FILL_STK_BEGIN
 #endif
+
 	/* Jump to the main function */
 _MAIN_FUNC:
     nop
@@ -253,11 +265,11 @@ _IRESET_ENTRY:
 _ISTART:
 #if 0
 	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
+	lui		t0, 0x80140
 	li		t1, 0xef
 	li		t2, 0x10
-	sb		t1 , 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
-	sb		t2 , 0x30b(t0)		 //0x8014030b  PB output  =  0x10
+	sb		t1, 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
+	sb		t2, 0x30b(t0)		 //0x8014030b  PB output  =  0x10
 #endif
 	/* Initialize global pointer */
 
@@ -301,64 +313,68 @@ _ISTART:
     csrw   mcache_ctl,  t0
     fence.i
 
+ /* after retention, digital register will be lost, restore some register values that need to be used */
+    la     t0, pm_retention_register_recover
+    jalr   t0
 
-/* flash wakeup */
-_WAKEUP_FLASH:
-	lui		t0 , 0x80140
-	li		t1 , 0xff
-	li		t2 , 0x0
-	li		t3 , 0xab
-	sb		t1 , 0x329(t0)			 //mspi ie enable	:0x140329:0x1f
-	sb		t2 , 0x101(t0)			 //cs_low			:0x140101:0x00
-	sb		t3 , 0x100(t0)			 //wakeup_cmd		:0x140100:0xab
-_MSPI_WAIT:
-	lui		t0 , 0x80140
-	lb		t2 , 0x102(t0)			//read reg_mspi_status FLD_MSPI_BUSY(bit0)
-	li		t3 , 0x1
-	li		t4 , 0x10
-	beq 	t3 , t2 ,_MSPI_WAIT
-	sb		t4 , 0x101(t0)			//cs_high			:0x140101:0x10
+
+	/* flash wakeup */
 #if 0
-	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
-	li		t1, 0x00
-	sb		t1 , 0x30b(t0)		 //0x8014030b  PB output  =  0x00
-#endif
-/*efuse load need delay about 18us */
+	/*flash poweron need delay about 150us */
 	li		t0 , 0
-	li		t1 , 226
-_WAIT_EFUSE_LOAD_FINISH:
+	li		t1 , 2000
+_WAIT_FLASH_POWERON:
 	addi 	t0 , t0 , 1
-	bgeu 	t1 , t0 , _WAIT_EFUSE_LOAD_FINISH
-
-#if 0
-	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
-	li		t1, 0x10
-	sb		t1 , 0x30b(t0)		 //0x8014030b  PB output  =  0x00
+	bgeu 	t1 , t0 , _WAIT_FLASH_POWERON
 #endif
+
+	lui		t0, 0xA3FFF
+	addi	t0, t0, 0x790
+	li		t1, 0x0e
+	sb		t1, 0x78c(t0)		//xip_stop		:0xA3FFFF1c = 0x0e
+_MSPI_WAIT_1:
+	lui		t0, 0xA3FFF
+	addi	t0, t0, 0x790
+	lb		t2, 0x798(t0)
+	li		t3, 0x80
+	beq 	t3, t2, _MSPI_WAIT_1//read reg_mspi_status FLD_MSPI_BUSY(0xA3FFFF28[bit7])
+	lui		t0, 0xA3FFF
+	addi	t0, t0, 0x790
+	li		t1, 0x06
+	sb		t1, 0x78c(t0)		//xip_disable		:0xA3FFFF1c = 0x06
+	lui		t0, 0x80140
+	li		t1, 0x3f
+	sb		t1, 0x331(t0)		//mspi ie enable	:0x80140331 = 0x3f
+	lui		t0, 0xA3FFF
+	addi	t0, t0, 0x790
+	li		t2, 0x80
+	sb		t2, 0x778(t0)		//mspi_ctrl1		:0xA3FFFF08 = 0x80
+	li		t3, 0xab
+	sb		t3, 0x774(t0)		//wakeup_cmd		:0xA3FFFF04 = 0xab
+_MSPI_WAIT_2:
+	lui		t0, 0xA3FFF
+	addi	t0, t0, 0x790
+	lb		t2, 0x798(t0)
+	li		t3, 0x80
+	beq 	t3, t2, _MSPI_WAIT_2//read reg_mspi_status FLD_MSPI_BUSY(0xA3FFFF28[bit7])
+	lui		t0, 0xA3FFF
+	addi	t0, t0, 0x790
+	li		t1, 0x0a
+	sb		t1, 0x78c(t0)		//xip_enable		:0xA3FFFF1c = 0x0a
+
+	/*flash wakeup need delay about 150us */
+	li		t0 , 0
+	li		t1 , 2000
+_WAIT_FLASH_WAKEUP:
+	addi 	t0 , t0 , 1
+	bgeu 	t1 , t0 , _WAIT_FLASH_WAKEUP
+
 _MULTI_ADDRESS_BEGIN:
 	lui		t0 , 0xA3FFF
 	addi	t0 , t0 , 0x790
 	la		t1 , g_pm_mspi_cfg
 	lw		t2 , 0(t1)
-	sw		t2 , 0x790(t0)			 //g_pm_mspi_cfg->0xA3FFFF20
-
-#if 0
-	/* Move ramcode from flash to sram */
-_IRAMCODE_INIT:
-
-    la     t1, _RAMCODE_LMA_START
-    la     t2, _RAMCODE_VMA_START
-    la     t3, _RAMCODE_VMA_END
-_IRAMCODE_INIT_BEGIN:
-    bleu   t3, t2, _IDATA_INIT
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _IRAMCODE_INIT_BEGIN
-#endif
+	sw		t2 , 0x790(t0)		//g_pm_mspi_cfg->0xA3FFFF20
 
 	/* Move Data from flash to sram */
 _IDATA_INIT:
@@ -372,8 +388,6 @@ _IDATA_INIT_BEGIN:
     addi   t1, t1, 4
     addi   t2, t2, 4
     j      _IDATA_INIT_BEGIN
-
-
 
 	/* Zero .bss section in sram */
 _IZERO_BSS:
@@ -397,7 +411,6 @@ _IZERO_AES_BEGIN:
     addi   t2, t2, 4
     j      _IZERO_AES_BEGIN
 
-
 	/* Fill the remaining section in sram */
 _IFILL_STK:
 #if 0
@@ -411,6 +424,8 @@ _IFILL_STK_BEGIN:
     addi   t2, t2, 4
     j      _IFILL_STK_BEGIN
 #endif
+
+
 	/* Jump to the main function */
 _IMAIN_FUNC:
     nop

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	bqb.h
+ * @file    bqb.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -33,7 +32,11 @@
 #define SUPPORT_CONFIGURATION	0
 
 /* set power of Tx */
+#if(MCU_CORE_B91)
 #define BQB_TX_POWER		RF_POWER_P6p98dBm
+#else
+#define BQB_TX_POWER		RF_POWER_P7p00dBm
+#endif
 
 #define ACCESS_CODE        	0x29417671
 
@@ -68,7 +71,7 @@
 #define BQB_UART_TX_PORT   	GPIO_FC_PB1
 #define BQB_UART_RX_PORT   	GPIO_FC_PB2
 #endif
-#define BQB_UART_BUAD	   	115200
+#define BQB_UART_BAUD	   	115200
 
 /* set pa port */
 #if !SUPPORT_CONFIGURATION
@@ -154,7 +157,7 @@ void  bqbtest_init();
 
 
 /**
- * @brief   This function serves to read the usrt data and execute BQB program
+ * @brief   This function serves to read the uart data and execute BQB program
  * @param   none.
  * @return  none.
  */

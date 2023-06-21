@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usbaud.h
+ * @file    usbaud.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -104,7 +103,7 @@ void usbaud_mic_en(int en);
 //void audio_tx_data_to_usb(AudioInput_Typedef Input_Type,AudioRate_Typedef Audio_Rate);
 void audio_rx_data_from_usb(void);
 /**
- * @brief		This function serves to send datat to USB Host or receive data from USB Host
+ * @brief		This function serves to send data to USB Host or receive data from USB Host
  * @param[in] 	none
  * @return 		none
  */

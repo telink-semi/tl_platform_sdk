@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	rf.h
+ * @file    rf.h
  *
- * @brief	This is the header file for B91
+ * @brief   This is the header file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -125,9 +124,9 @@ typedef enum{
 }rf_ant_pattern_e;
 
 /**
- * @brief	It can be defined as atsel0 pin.
+ * @brief	It can be defined as Antennae select pin.
  * @note	B87 found in AOA/AOD verification that PC5, 6, 7 will cause interference to the RF module
- * 			when used as ATSEL, so this group of pins should be commented out in the driver.
+ * 			when used as Antennae select, so this group of pins should be commented out in the driver.
  */
 typedef enum
 {
@@ -139,7 +138,7 @@ typedef enum
 /**
  * @brief	It can be defined as atsel1 pin.
  * @note	B87 found in AOA/AOD verification that PC5, 6, 7 will cause interference to the RF module
- * 			when used as ATSEL, so this group of pins should be commented out in the driver.
+ * 			when used as Antennae select, so this group of pins should be commented out in the driver.
  */
 typedef enum
 {
@@ -150,7 +149,7 @@ typedef enum
 /**
  * @brief	It can be defined as atsel2 pin.
  * @note	B87 found in AOA/AOD verification that PC5, 6, 7 will cause interference to the RF module
- * 			when used as ATSEL, so this group of pins should be commented out in the driver.
+ * 			when used as Antennae select, so this group of pins should be commented out in the driver.
  */
 typedef enum
 {
@@ -288,7 +287,7 @@ typedef enum {
     RF_MODE_TX = 0,		/**<  Tx mode */
     RF_MODE_RX = 1,		/**<  Rx mode */
     RF_MODE_AUTO=2,		/**<  Auto mode */
-	RF_MODE_OFF =3		/**<  TXRX OFF mode */
+	RF_MODE_OFF =3		/**<  TX RX OFF mode */
 } rf_status_e;
 
 /**
@@ -435,12 +434,60 @@ typedef enum {
 /**********************************************************************************************************************
  *                                         RF global constants                                                        *
  *********************************************************************************************************************/
-extern const rf_power_level_e rf_power_Level_list[30];
+extern rf_power_level_e rf_power_Level_list[30];
 
 
 /**********************************************************************************************************************
  *                                         RF function declaration                                                    *
  *********************************************************************************************************************/
+
+/**
+ * @brief	    This function is used to enable the ldo rxtxlf bypass function, and the calibration value
+ * 				written by the software will take effect after enabling.
+ * @param[in]	none.
+ * @return	 	none.
+ */
+static inline void rf_ldot_ldo_rxtxlf_bypass_en(void)
+{
+	write_reg8(0x140ee4,read_reg8(0x140ee4)|BIT(1));
+}
+
+/**
+ * @brief	    This function is used to close the ldo rxtxlf bypass function, and the hardware will
+ * 				automatically perform the calibration function after closing.
+ * @param[in]	none.
+ * @return	 	none.
+ */
+static inline void rf_ldot_ldo_rxtxlf_bypass_dis(void)
+{
+	write_reg8(0x140ee4,read_reg8(0x140ee4)&(~BIT(1)));
+}
+
+/**
+ * @brief      This function serves to optimize RF performance
+ * 			   This function must be called every time rx is turned on,
+ * 			   and is called by an internal function.
+ * 			   If there are other requirements that need to be called,
+ * 			   turn off rx first, then call it again to make sure the Settings take effect
+ * @param[in]  none
+ * @return     none
+ * @note	   1.Call this function after turning on rx 30us, and the calibration value set by the function
+ * 			      will take effect after calling rf_ldot_ldo_rxtxlf_bypass_en;if automatic calibration is
+ * 			      required, you can use rf_ldot_ldo_rxtxlf_bypass_dis to turn off the bypass function; how to
+ * 			      use it can refer to bqb.c file or rf_emi_rx in emi.c
+ *			   2. After using rf_ldot_ldo_rxtxlf_bypass_dis to turn off the bypass function and enter tx/rx
+ *			      automatic calibration, to use this function again, you need to call the rf_set_rxpara function
+ *			      again after entering rx 30us.
+ *
+ */
+
+static inline void rf_set_rxpara(void)
+{
+	unsigned char reg_calibration=0;
+	reg_calibration = ((read_reg8(0x140eed)&0xf)<<2)|((read_reg8(0x140eec)&0xc0)>>6);
+	if(reg_calibration>9)	reg_calibration -= 9;
+	write_reg8(0x140ee5,(read_reg8(0x140ee5)&0xc0)|reg_calibration);
+}
 
 
 /**
@@ -450,7 +497,7 @@ extern const rf_power_level_e rf_power_Level_list[30];
  */
 static inline unsigned char rf_receiving_flag(void)
 {
-	//if the value of [2:0] of the reg_0x140840 isn't 0 , it means that the RF is in the receiving packet phase.(confirmed by junwen).
+	//if the value of [2:0] of the reg_0x140840 isn't 0 , it means that the RF is in the receiving packet phase.(confirmed by jun wen).
 	return ((read_reg8(0x140840)&0x07) > 1);
 }
 
@@ -628,7 +675,7 @@ static inline void rf_set_rx_maxlen(unsigned int byte_len)
 
 /**
  * @brief		This function serve to rx dma fifo size.
- * @param[in]	fifo_byte_size - the size of each fifo.
+ * @param[in]	fifo_byte_size - The length of one dma fifo,the range is 0x10~0xff0(the corresponding number of fifo bytes is fifo_byte_size;and must be a multiple of 16).
  * @return		none
  */
 static inline void rf_set_rx_dma_fifo_size(unsigned short fifo_byte_size)
@@ -637,12 +684,13 @@ static inline void rf_set_rx_dma_fifo_size(unsigned short fifo_byte_size)
 }
 /**
  * @brief		This function serve to set rx dma wptr.
- * @param[in]	wptr	-rx_wptr_real=rx_wptr & mask:After receiving 4 packets,the address returns to original address.mask value must in (0x01,0x03,0x07,0x0f).
+ * @param[in]	fifo_num	-This parameter is used to set the mask value for the number of enabled FIFOs. The value of the mask must (0x00,0x01,0x03,0x07,0x0f,0x1f).
+ * 							 The number of FIFOs enabled is the value of wptr_mask plus 1.(0x01,0x02,0x04,0x08,0x10,0x20)
  * @return 		none
  */
 static inline void rf_set_rx_dma_fifo_num(unsigned char fifo_num)
 {
-	reg_rf_rx_wptr_mask = fifo_num; //rx_wptr_real=rx_wptr & mask:After receiving 4 packets,the address returns to original address.mask value must in (0x01,0x03,0x07,0x0f).
+	reg_rf_rx_wptr_mask = fifo_num; //rx_wptr_real=rx_wptr & mask:After receiving 4 packets,the address returns to original address.mask value must in (0x01,0x03,0x07,0x0f,0x1f).
 }
 
 
@@ -652,7 +700,8 @@ static inline void rf_set_rx_dma_fifo_num(unsigned char fifo_num)
  *	            In this case,the rxFiFo address can be changed every time a packet is received
  *	            Before setting, call the function "rf_set_rx_dma" to clear DMA fifo mask value(set 0)
  * @param[in]	rx_addr   - The address store receive packet.
- * @return	 	none
+ * @return	 	none.
+ * @note		rx_addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 static inline void rf_set_rx_buffer(unsigned char *rx_addr)
 {
@@ -688,7 +737,7 @@ static inline void rf_set_tx_dma_fifo_size(unsigned short fifo_byte_size)
 static inline void rf_set_tx_settle_time(unsigned short tx_stl_us )
 {
 	tx_stl_us &= 0x0fff;
-	write_reg16(0x140a04, (read_reg8(0x140a04)& 0xf000) |(tx_stl_us - 1));
+	write_reg16(0x140a04, (read_reg16(0x140a04)& 0xf000) |(tx_stl_us - 1));
 }
 /**
  * @brief   This function serves to set RF tx settle time and rx settle time.
@@ -700,7 +749,7 @@ static inline void rf_set_tx_settle_time(unsigned short tx_stl_us )
 static inline void rf_set_rx_settle_time( unsigned short rx_stl_us )
 {
 	 rx_stl_us &= 0x0fff;
-	 write_reg16(0x140a0c, (read_reg8(0x140a0c)& 0xf000) |(rx_stl_us - 1));
+	 write_reg16(0x140a0c, (read_reg16(0x140a0c)& 0xf000) |(rx_stl_us - 1));
 }
 
 /**
@@ -928,19 +977,24 @@ void rf_set_ant_mode(void);
 void rf_set_tx_dma_config(void);
 /**
  * @brief     This function serves to set RF tx DMA setting.
- * @param[in] fifo_depth  		- tx chn deep.
- * @param[in] fifo_byte_size    - tx_idx_addr = {tx_chn_adr*bb_tx_size,4'b0}.
+ * @param[in] fifo_depth 		- tx chn deep,fifo_depth range: 0~5,Number of fifo=2^fifo_depth.
+ * @param[in] fifo_byte_size 	- The length of one dma fifo,the range is 0x10~0xff0(the corresponding number of fifo bytes is fifo_byte_size;and must be a multiple of 16).
  * @return	  none.
  */
 void rf_set_tx_dma(unsigned char fifo_depth,unsigned short fifo_byte_size);
 
 
 /**
- * @brief     This function serves to rx dma setting.
- * @param[in] buff 		 	  - The buffer that store received packet.
- * @param[in] wptr_mask  	  - DMA fifo mask value (0~fif0_num-1).
- * @param[in] fifo_byte_size  - The length of one dma fifo.
- * @return	  none.
+ * @brief      This function serves to rx dma setting.
+ * @param[in]  buff - This parameter is the first address of the received data buffer, which must be 4 bytes aligned, otherwise the program will enter an exception.
+ * @attention  The first four bytes in the buffer of the received data are the length of the received data.
+ *             The actual buffer size that the user needs to set needs to be noted on two points:
+ *			   -# you need to leave 4bytes of space,the dma transfers start from the fourth byte of the Buff.
+ *			   -# dma is transmitted in accordance with 4bytes, so the length of the buffer needs to be a multiple of 4. Otherwise, there may be an out-of-bounds problem.
+ * @param[in]  wptr_mask  	   - This parameter is used to set the mask value for the number of enabled FIFOs. The value of the mask must (0x00,0x01,0x03,0x07,0x0f,0x1f).
+ * 								 The number of FIFOs enabled is the value of wptr_mask plus 1.(0x01,0x02,0x04,0x08,0x10,0x20)
+ * @param[in]  fifo_byte_size  - The length of one dma fifo,the range is 0x10~0xff0(the corresponding number of fifo bytes is fifo_byte_size;and must be a multiple of 16).
+ * @return     none.
  */
 void rf_set_rx_dma(unsigned char *buff,unsigned char wptr_mask,unsigned short fifo_byte_size);
 
@@ -987,6 +1041,7 @@ void rf_set_txmode(void);
  * @brief	  	This function serves to set RF Tx packet address to DMA src_addr.
  * @param[in]	addr   - The packet address which to send.
  * @return	 	none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception..
  */
 _attribute_ram_code_sec_ void rf_tx_pkt(void* addr);
 
@@ -1005,7 +1060,7 @@ int rf_set_trx_state(rf_status_e rf_status, signed char rf_channel);
  * @param[in]   chn   - That you want to set the channel as 2400+chn.
  * @return  	none.
  */
-void rf_set_chn(signed char chn);
+_attribute_ram_code_sec_noinline_ void rf_set_chn(signed char chn);
 
 
 /**
@@ -1036,6 +1091,7 @@ void rf_pn_disable(void);
  * @param[in]   fifo_dep   - deepth of each fifo set in dma.
  * @param[in]   addr       - address of rx packet.
  * @return  	the next rx_packet address.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 unsigned char* rf_get_rx_packet_addr(int fifo_num,int fifo_dep,void* addr);
 
@@ -1053,7 +1109,7 @@ void rf_set_power_level (rf_power_level_e level);
  * @param[in]   idx 	 - The index of power level which you want to set.
  * @return  	none.
  */
-void rf_set_power_level_index(rf_power_level_index_e idx);
+_attribute_ram_code_sec_ void rf_set_power_level_index(rf_power_level_index_e idx);
 
 
 /**
@@ -1121,13 +1177,13 @@ static inline void rf_set_rx_timeout(unsigned short timeout_us)
 
 
 /**
- * @brief	This function serve to initial the ptx seeting.
+ * @brief	This function serve to initial the ptx setting.
  * @return	none.
  */
 void rf_ptx_config(void);
 
 /**
- * @brief	This function serve to initial the prx seeting.
+ * @brief	This function serve to initial the prx setting.
  * @return	none.
  */
 void rf_prx_config(void);
@@ -1137,6 +1193,7 @@ void rf_prx_config(void);
  * @param[in]	addr	-	The address of tx_packet.
  * @param[in]	tick	-	Trigger ptx after (tick-current tick),If the difference is less than 0, trigger immediately.
  * @return  none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 void rf_start_ptx  (void* addr,  unsigned int tick);
 
@@ -1172,6 +1229,7 @@ unsigned char rf_is_rx_fifo_empty(unsigned char pipe_id);
  * @param[in] 	addr  	- DMA tx buffer.
  * @param[in] 	tick  	- Send after tick delay.
  * @return	   	none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_stx(void* addr, unsigned int tick);
 
@@ -1181,6 +1239,7 @@ _attribute_ram_code_sec_noinline_ void rf_start_stx(void* addr, unsigned int tic
  * @param[in] 	addr  	- DMA tx buffer.
  * @param[in] 	tick  	- Send after tick delay.
  * @return	    none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_stx2rx  (void* addr, unsigned int tick);
 
@@ -1209,6 +1268,7 @@ _attribute_ram_code_sec_noinline_ void rf_set_rxmode(void);
  * @param[in]	addr   - The address to store received data.
  * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215)
  * @return	 	none
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_brx  (void* addr, unsigned int tick);
 
@@ -1221,6 +1281,7 @@ _attribute_ram_code_sec_noinline_ void rf_start_brx  (void* addr, unsigned int t
  * @param[in]	addr   - The address to store send data.
  * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215)
  * @return	 	none
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_btx (void* addr, unsigned int tick);
 
@@ -1229,6 +1290,7 @@ _attribute_ram_code_sec_noinline_ void rf_start_btx (void* addr, unsigned int ti
  * @param[in] 	addr  - DMA tx buffer.
  * @param[in] 	tick  - Trigger rx receive packet after tick delay.
  * @return	    none.
+ * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
 _attribute_ram_code_sec_noinline_ void rf_start_srx2tx  (void* addr, unsigned int tick);
 

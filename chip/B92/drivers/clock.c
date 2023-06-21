@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	clock.c
+ * @file    clock.c
  *
- * @brief	This is the source file for B92
+ * @brief   This is the source file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -26,6 +25,11 @@
 #include "clock.h"
 #include "mspi.h"
 #include "stimer.h"
+
+
+unsigned char rc_24m_power;
+unsigned char bbpll_power;
+
 /**********************************************************************************************************************
  *                                			  local constants                                                       *
  *********************************************************************************************************************/
@@ -98,38 +102,37 @@ unsigned char clock_kick_32k_xtal(unsigned char xtal_times)
 	int curr_32k_tick;
 	for(unsigned char i = 0; i< xtal_times; i++)
 	{
-		if(0xff == g_chip_version)
-		{
-			delay_ms(1000);
-		}
-		else		//**Note that the clock is 24M crystal oscillator. PCLK is 24MHZ
-		{
-			//2.set PD0 as pwm output
-			unsigned char pwm_clk = read_reg8(0x1401d8);//**condition: PCLK is 24MHZ,PCLK = HCLK
-			write_reg8(0x1401d8,((pwm_clk & 0xfc) | 0x01));//PCLK = 12M
-			unsigned char reg_31e = read_reg8(0x14031e);	//PD0
-			write_reg8(0x14031e,reg_31e & 0xfe);
-			unsigned short reg_418 = read_reg16(0x140418);	//pwm1 cmp
-			write_reg16(0x140418,0x01);
-			unsigned short reg_41a = read_reg16(0x14041a);  //pwm1 max
-			write_reg16(0x14041a,0x02);
-			unsigned char reg_400 = read_reg8(0x140400);	//pwm en
-			write_reg8(0x140400,0x02);
-			write_reg8(0x140402,0xb6);						//12M/(0xb6 + 1)/2 = 32k
+		//**Note that the clock is 24M crystal oscillator. PCLK is 24MHZ
+		//2.set PD0 as pwm output
+		unsigned char reg_360 = read_reg8(0x140360);
+		write_reg8(0x140360, PWM0);					//PD0
+		unsigned char reg_31e = read_reg8(0x14031e);
+		write_reg8(0x14031e, reg_31e & 0xfe);		//PD0
+		unsigned char reg_403 = read_reg8(0x140403);
+		write_reg8(0x140403, 0x00);					//pwm0 mode
+		unsigned char reg_414 = read_reg8(0x140414);
+		write_reg8(0x140414, 0x02);					//pwm0 cmp
+		unsigned char reg_416 = read_reg8(0x140416);
+		write_reg8(0x140416, 0x04);					//pwm0 max
+		unsigned char reg_402 = read_reg8(0x140402);
+		write_reg8(0x140402, 0xb6);					//24M/(0xb6 + 1)/4 = 32786, ~=32768
+		unsigned short reg_400 = read_reg16(0x140400);
+		write_reg16(0x140400, reg_400|0x0100);		//pwm0 en
 
-			//3.wait for PWM wake up Xtal
-			delay_ms(100);
+		//3.wait for PWM wake up Xtal
+		delay_ms(100);
 
-			//4.Xtal 32k output
-			analog_write_reg8(0x03,0x4f); //<7:6>current select
+		//4.Xtal 32k output
+		analog_write_reg8(0x03,0x4f); //<7:6>current select
 
-			//5.Recover PD0 as Xtal pin
-			write_reg8(0x1401d8,pwm_clk);
-			write_reg8(0x14031e,reg_31e);
-			write_reg16(0x140418,reg_418);
-			write_reg16(0x14041a,reg_41a);
-			write_reg8(0x140400,reg_400);
-		}
+		//5.Recover PD0 as Xtal pin
+		write_reg8(0x140360,reg_360);
+		write_reg8(0x14031e,reg_31e);
+		write_reg8(0x140403,reg_403);
+		write_reg8(0x140414,reg_414);
+		write_reg8(0x140416,reg_416);
+		write_reg8(0x140402,reg_402);
+		write_reg16(0x140400,reg_400);
 
 		last_32k_tick = clock_get_32k_tick();	//clock_get_32k_tick()
 		delay_us(305);		//for 32k tick accumulator, tick period: 30.5us, dly 10 ticks
@@ -185,6 +188,8 @@ void clock_cal_32k_rc(void)
 	analog_write_reg8(0x4f, (res2 | (analog_read_reg8(0x4f) & 0xc0)));		//write 32k res[5:0] into manual register
 	analog_write_reg8(0xc6, 0xf6);
 	analog_write_reg8(0x4f, ((analog_read_reg8(0x4f) & 0x3f) | 0x00));//manual on
+	rc_24m_power = analog_read_reg8(0x05) & 0x04;
+	bbpll_power  = analog_read_reg8(0x06) & 0x01;
 }
 
 /**
@@ -194,35 +199,66 @@ void clock_cal_32k_rc(void)
  */
 void clock_set_32k_tick(unsigned int tick)
 {
-	reg_system_ctrl |= FLD_SYSTEM_32K_WR_EN;//r_32k_wr = 1;
+	reg_system_ctrl |= FLD_SYSTEM_32K_WR_EN;	//r_32k_wr = 1;
 	while(reg_system_st & FLD_SYSTEM_RD_BUSY);
 	reg_system_timer_set_32k = tick;
 
-	reg_system_st = FLD_SYSTEM_CMD_SYNC;//cmd_sync = 1,trig write
+	reg_system_st = FLD_SYSTEM_CMD_SYNC;	//cmd_sync = 1,trig write
 	//delay 10us
 	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
 	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
 	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
 	__asm__("nop");__asm__("nop");__asm__("nop");__asm__("nop");
-	while(reg_system_st & FLD_SYSTEM_CMD_SYNC);//wait wr_busy = 0
+	while(reg_system_st & FLD_SYSTEM_CMD_SYNC);	//wait wr_busy = 0
 
 }
 
 /**
  * @brief  This function serves to get the 32k tick.
- * @return none.
+ * @return 32k tick value.
+ */
+#if 0
+/*
+ * modify by yi.bao,confirmed by guangjun at 20210105
+ * Use digital register way to get 32k tick may read error tick,cause the wakeup time is
+ * incorrect with the setting time,the sleep time will very little or very big,will not wakeup on time.
  */
 unsigned int clock_get_32k_tick(void)
 {
 	unsigned int timer_32k_tick;
-	reg_system_st = FLD_SYSTEM_CLR_RD_DONE;//clr rd_done
-	while((reg_system_st & FLD_SYSTEM_CLR_RD_DONE) != 0);//wait rd_done = 0;
+	reg_system_st = FLD_SYSTEM_CLR_RD_DONE;	//clr rd_done
+	while((reg_system_st & FLD_SYSTEM_CLR_RD_DONE) != 0);	//wait rd_done = 0;
 	reg_system_ctrl &= ~FLD_SYSTEM_32K_WR_EN;	//1:32k write mode; 0:32k read mode
-	while((reg_system_st & FLD_SYSTEM_CLR_RD_DONE) == 0);//wait rd_done = 1;
+	while((reg_system_st & FLD_SYSTEM_CLR_RD_DONE) == 0);	//wait rd_done = 1;
 	timer_32k_tick = reg_system_timer_read_32k;
 	reg_system_ctrl |= FLD_SYSTEM_32K_WR_EN;	//1:32k write mode; 0:32k read mode
 	return timer_32k_tick;
 }
+#else
+unsigned int clock_get_32k_tick(void)
+{
+    unsigned int t0 = 0;
+    unsigned int t1 = 0;
+
+    //In the system timer auto mode, when writing a tick value to the system tick, if the writing operation overlaps
+    //with the 32k rising edge, the writing operation will be unsuccessful. When reading the 32k tick value,
+    //first wait for the rising edge to pass to avoid overlap with the subsequent write tick value operation.
+    //modify by weihua.zhang, confirmed by jianzhi at 20210126
+	t0 = analog_read_reg32(0x60);
+	while(1)
+	{
+		t1 = analog_read_reg32(0x60);
+		if((t1-t0) == 1)
+		{
+			return t1;
+		}
+		else if(t1-t0)
+		{
+			t0 = t1;
+		}
+	}
+}
+#endif
 
 /**
  * @brief       This function use to select the system clock source.
@@ -231,18 +267,23 @@ unsigned int clock_get_32k_tick(void)
  * @param[in]	cclk_div - the cclk divide from pll.it is useless if src is not PAD_PLL_DIV. cclk max is 96M
  * @param[in]	hclk_div - the hclk divide from cclk.hclk max is 48M.
  * @param[in]	pclk_div - the pclk divide from hclk.pclk max is 24M.if hclk = 1/2 * cclk, the pclk can not be 1/4 of hclk.
- * @param[in]	mspi_clk_div - mspi_clk has two source. pll div and hclk.mspi max is 64M.
+ * @param[in]	mspi_clk_div - mspi_clk has two source - pll div and 24M rc. If it is built-in flash, the maximum speed of mspi is 64M.
+							   If it is an external flash, the maximum speed of mspi needs to be based on the board test.
+							   Because the maximum speed is related to the wiring of the board, and is also affected by temperature and GPIO voltage,
+							   the maximum speed needs to be tested at the highest and lowest voltage of the board,
+							   and the high and low temperature long-term stability test speed is no problem.
  * @return      none
  * @note		Do not switch the clock during the DMA sending and receiving process;
  * 			    because during the clock switching process, the system clock will be
  * 			    suspended for a period of time, which may cause data loss
  */
-void clock_init(sys_pll_clk_e pll,
-		sys_clock_src_e src,
-		sys_pll_div_to_cclk_e cclk_div,
-		sys_cclk_div_to_hclk_e hclk_div,
-		sys_hclk_div_to_pclk_e pclk_div,
-		sys_pll_div_to_mspi_clk_e mspi_clk_div)
+_attribute_ram_code_sec_noinline_
+void clock_init_ram(sys_pll_clk_e pll,
+					sys_clock_src_e src,
+					sys_pll_div_to_cclk_e cclk_div,
+					sys_cclk_div_to_hclk_e hclk_div,
+					sys_hclk_div_to_pclk_e pclk_div,
+					sys_pll_div_to_mspi_clk_e mspi_clk_div)
 {
 
 	//pll clk
@@ -276,7 +317,7 @@ void clock_init(sys_pll_clk_e pll,
 	}
 	mspi_set_xip_en();
 
-	//hclk and pclk should be set ahead of cclk, ensure the hclk and pclk not exceed the max clk(cclk max 96M, hclk max 48M, pclk max 24M)
+	//hclk and pclk should be set ahead of cclk, ensure the hclk and pclk not exceed the max clk(cclk max 96M, hclk max 48M, pclk max 48M)
 	if(CCLK_DIV1_TO_HCLK == hclk_div)
 	{
 		write_reg8(0x1401d8, read_reg8(0x1401d8) & ~BIT(2));
@@ -317,6 +358,58 @@ void clock_init(sys_pll_clk_e pll,
 	sys_clk.pclk = sys_clk.hclk / pclk_div;
 }
 
+_attribute_text_sec_
+void clock_init(sys_pll_clk_e pll,
+				sys_clock_src_e src,
+				sys_pll_div_to_cclk_e cclk_div,
+				sys_cclk_div_to_hclk_e hclk_div,
+				sys_hclk_div_to_pclk_e pclk_div,
+				sys_pll_div_to_mspi_clk_e mspi_clk_div)
+{
+	__asm__("csrci 	mmisc_ctl,8");	//disable BTB
+	clock_init_ram(pll, src, cclk_div, hclk_div, pclk_div, mspi_clk_div);
+	__asm__("csrsi 	mmisc_ctl,8");	//enable BTB
+}
+
+/**
+ * @brief       This function used to configure the frequency of CCLK/HCLK/PCLK when the PLL is 192M.
+ * 				You need to wait until all the peripherals that use these clocks are idle before you can switch frequencies.
+ * @param[in]   cclk_hclk_pclk - frequency of CCLK/HCLK/PCLK.
+ * @return      none
+ */
+void cclk_hclk_pclk_config(pll_div_cclk_hclk_pclk_e div)
+{
+	unsigned char cclk_div = div>>8;
+	unsigned char hclk_div = (div&0x00f0)>>4;
+	unsigned char pclk_div = div&0x000f;
+
+	//HCLK and PCLK should be set ahead of CCLK, ensure the HCLK and PCLK not exceed the max CCLK(CCLK max 96M, HCLK max 48M, PCLK max 48M)
+	if(CCLK_DIV1_TO_HCLK == hclk_div)
+	{
+		write_reg8(0x1401d8, read_reg8(0x1401d8) & ~BIT(2));
+	}
+	else
+	{
+		write_reg8(0x1401d8, read_reg8(0x1401d8) | BIT(2));
+	}
+
+	//PCLK can div1/div2/div4 from HCLK.
+	if(HCLK_DIV1_TO_PCLK == pclk_div)
+	{
+		write_reg8(0x1401d8, read_reg8(0x1401d8) & 0xfc);
+	}
+	else
+	{
+		write_reg8(0x1401d8, (read_reg8(0x1401d8) & 0xfc) | (pclk_div/2));
+	}
+
+	//Configure the CCLK clock frequency.
+	write_reg8(0x1401e8, (read_reg8(0x1401e8) & 0xf0) | cclk_div);
+
+	sys_clk.cclk = sys_clk.pll_clk / cclk_div;
+	sys_clk.hclk = sys_clk.cclk / hclk_div;
+	sys_clk.pclk = sys_clk.hclk / pclk_div;
+}
 
 /**********************************************************************************************************************
  *                    						local function implementation                                             *

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	main.c
+ * @file    main.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -25,7 +24,7 @@
 #include "app_config.h"
 
 
-extern void user_init();
+extern void user_init(void);
 extern void main_loop (void);
 
 /**
@@ -35,7 +34,7 @@ extern void main_loop (void);
  */
 int main (void)   //must on ramcode
 {
-	sys_init(LDO_1P2_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+	sys_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6, GPIO_VOLTAGE_3V3);
 	wd_32k_stop();
 	CCLK_24M_HCLK_24M_PCLK_24M;
 

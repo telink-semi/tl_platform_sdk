@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usbkb.c
+ * @file    usbkb.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -54,7 +53,7 @@ static vk_ext_t vk_media_map[VK_MEDIA_CNT] = {
     {VK_W_SRCH_V},
     {VK_HOME_V},
     {VK_W_BACK_V},
-    {VK_W_FORWRD_V},
+    {VK_W_FORWARD_V},
     {VK_W_STOP_V},
     {VK_W_REFRESH_V},
     {VK_W_FAV_V},

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	aes.c
+ * @file    aes.c
  *
- * @brief	This is the source file for B92
+ * @brief   This is the source file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -23,6 +22,7 @@
  *
  *******************************************************************************************************/
 #include "aes.h"
+#include "string.h"
 #include "compiler.h"
 
 /**********************************************************************************************************************
@@ -66,8 +66,10 @@ static inline void aes_wait_done(void);
  * @brief     This function refer to encrypt/decrypt to set key and data. AES module register must be used by word.
  * 				All data need Little endian.
  * @param[in] key  - the key of encrypt/decrypt.
- * @param[in] data - the data which to do encrypt/decrypt.
- * @return    none
+ * @param[in] data - the data which to do encrypt/decrypt. The address is 32 bits, but only the lower 16 bits are used.
+ * @return    none.
+ * @note	  reg_embase_addr (32bit) +reg_aes_ptr (16bit) is the actual access address.
+ * 			  reg_aes_ptr is only 16bit, so access space is only 64K. Adjusting reg_embase_addr changes the initial address of 64K.
  */
 void aes_set_key_data(unsigned char *key, unsigned char* data)
 {
@@ -120,6 +122,60 @@ int aes_encrypt(unsigned char *key, unsigned char* plaintext, unsigned char *res
 }
 
 /**
+ * @brief     This function refer to encrypt when BT is connected. AES module register must be used by word, all data need big endian.
+ * @param[in] key       - the key of encrypt.
+ * @param[in] plaintext - the plaintext of encrypt.
+ * @param[in] result    - the result of encrypt.
+ * @return    none
+ * @note      Invoking this interface avoids the risk of AES conflicts when BT is connected.
+ */
+int aes_encrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned char *result)
+{
+	int i, aes_correct = 0;
+	unsigned char temp_result[AES_MAX_CNT][16];
+
+	for(i=0; i<AES_MAX_CNT; i++)
+	{
+		 aes_encrypt(key, plaintext, temp_result[i]);
+
+		if(i > 0)
+		{
+			if(!memcmp(temp_result[i], temp_result[i-1], 16))
+			{
+				aes_correct = 1;
+				break;
+			}
+			else
+			{
+				if(i >= 2)
+				{
+					for(int j=0; j<i-1; j++)
+					{
+						if(!memcmp(temp_result[i], temp_result[j], 16))
+						{
+							aes_correct = 1;
+							break;
+						}
+					}
+				}
+
+			}
+		}
+
+		if(aes_correct){
+			break;
+		}
+	}
+
+	if(aes_correct)
+	{
+		memcpy(result, temp_result[i], 16);
+		return 1;
+	}
+	return 0;
+}
+
+/**
  * @brief     This function refer to decrypt. AES module register must be used by word.all data need big endian.
  * @param[in] key         - the key of decrypt.
  * @param[in] decrypttext - the text of decrypt.
@@ -141,11 +197,67 @@ int aes_decrypt(unsigned char *key, unsigned char* decrypttext, unsigned char *r
 }
 
 /**
+ * @brief     This function refer to decrypt when BT is connected. AES module register must be used by word.all data need big endian.
+ * @param[in] key         - the key of decrypt.
+ * @param[in] decrypttext - the text of decrypt.
+ * @param[in] result      - the result of decrypt.
+ * @return    none.
+ * @note      Invoking this interface avoids the risk of AES conflicts when BT is connected.
+ */
+int aes_decrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned char *result)
+{
+	int i, aes_correct = 0;
+	unsigned char temp_result[AES_MAX_CNT][16];
+
+	for(i=0; i<AES_MAX_CNT; i++)
+	{
+		aes_decrypt(key, plaintext, temp_result[i]);
+
+		if(i > 0)
+		{
+			if(!memcmp(temp_result[i], temp_result[i-1], 16))
+			{
+				aes_correct = 1;
+				break;
+			}
+			else
+			{
+				if(i >= 2)
+				{
+					for(int j=0; j<i-1; j++)
+					{
+						if(!memcmp(temp_result[i], temp_result[j], 16))
+						{
+							aes_correct = 1;
+							break;
+						}
+					}
+				}
+
+			}
+		}
+
+		if(aes_correct){
+			break;
+		}
+	}
+
+	if(aes_correct)
+	{
+		memcpy(result, temp_result[i], 16);
+		return 1;
+	}
+	return 0;
+}
+
+/**
  * @brief     This function refer to match the rpa.
- * @param[in] irk         - the irk sequence, max 16 group(16byte a group).
+ * @param[in] irk         - the irk sequence, max 16 group(16byte a group). The address is 32 bits, but only the lower 16 bits are used.
  * @param[in] irk_len	  - the irk group num.
  * @param[in] rpa      	  - the rpa which want to match.
  * @return    0xff-not matched, (0x0-0x0f)-the match group index.
+ * @note	  reg_embase_addr (32bit) +reg_aes_irk_ptr (16bit) is the actual access address.
+ * 			  reg_aes_irk_ptr is only 16bit, so access space is only 64K. Adjusting reg_embase_addr changes the initial address of 64K.
  */
 unsigned char aes_rpa_match(unsigned char *irk, unsigned char irk_len, unsigned char *rpa)
 {
@@ -158,16 +270,16 @@ unsigned char aes_rpa_match(unsigned char *irk, unsigned char irk_len, unsigned 
 
 	reg_embase_addr = aes_embase_addr;  //set the embase addr
 
-	reg_aes_hash_status |= FLD_AES_RPACE_STA_CLR;
-	reg_aes_RPACE_CNT = (prand & FLD_AES_PRAND) | ((irk_len << 24) & FLD_AES_IRK_NUM) | FLD_AES_RPACE_EN;
+	reg_aes_hash_status |= FLD_AES_RPASE_STA_CLR;
+	reg_aes_rpase_cnt = (prand & FLD_AES_PRAND) | ((irk_len << 24) & FLD_AES_IRK_NUM) | FLD_AES_RPASE_EN;
 
 	reg_aes_irk_ptr = (unsigned int)rpa_data_buff - embase_offset;
 
 	reg_aes_hash_status = (hash & FLD_AES_HASH_STA);
 
-	reg_aes_RPACE_CNT |= FLD_AES_RPACE_START;
+	reg_aes_rpase_cnt |= FLD_AES_RPASE_START;
 
-	while(BIT(30) != (reg_aes_hash_status & FLD_AES_RPACE_STA));
+	while(BIT(30) != (reg_aes_hash_status & FLD_AES_RPASE_STA));
 
 	unsigned int match_status = reg_aes_hash_status;
 
@@ -183,10 +295,13 @@ unsigned char aes_rpa_match(unsigned char *irk, unsigned char irk_len, unsigned 
   *                    						local function implementation                                             *
   *********************************************************************************************************************/
 /**
- * @brief     This function refer to set the embase addr.
- * @param[in] addr - the base addr of CEVA data.the [addr,addr+64k) need to cover the head address of the session of aes_data,
- * 						Maybe you should to modify the link file to change the aes_data session address.
+ * @brief     This function refer to set the em base address.
+ * @param[in] addr - The range of em base address that can be set is the address space of DLM and ILM, which can view the Memory Map of datasheets.
+ * 					 The current driver default setting is em_base_addr = 0xc0000000, if you call this function to modify the em base address,
+ * 					 you need to ensure that the _attribute_aes_data_sec_ section in the link file (AES-related functions will use this section)
+ * 					 is set in the following address range: [em_base_addr,em_base_addr+64KB] (chip design requirements)
  * @return    none.
+ * @attention If you are using a BT-related SDK, you must follow the planning of BT's sdk to handle this address and not call this function
  */
 void aes_set_em_base_addr(unsigned int addr){
 	aes_embase_addr = addr;   //set the embase addr

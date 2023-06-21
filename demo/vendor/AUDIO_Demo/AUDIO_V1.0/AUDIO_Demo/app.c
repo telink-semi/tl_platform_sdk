@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app.c
+ * @file    app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -49,7 +48,7 @@ volatile unsigned int tx_wptr_out=0;
 volatile unsigned int flash_rptr=0;
 volatile unsigned short remaining;
 volatile unsigned char ex_cnt;
-volatile unsigned char swith;
+volatile unsigned char sample_rate_switch;
 unsigned long t;
 #endif
 
@@ -167,7 +166,7 @@ void main_loop (void)
 #endif
 	/////////////////////exchange dac sample rate  test /////////////////////////////////////////
 #if 0
-	if(swith==0)
+	if(sample_rate_switch==0)
 	{
 		audio_data_fifo(flash_read_48K_buff,FLASH_48k_SIZE);
 	}
@@ -188,7 +187,7 @@ void main_loop (void)
 		audio_change_sample_rate(AUDIO_16K);
 		memset(audio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
 		audio_resume_out_path();
-		swith=1;
+		sample_rate_switch=1;
 		flash_rptr=0;
 	}
 	else
@@ -197,7 +196,7 @@ void main_loop (void)
 		audio_change_sample_rate(AUDIO_48K);
 		memset(audio_buff,0,AUIDO_BUFF_SIZE);//Clear data that does not match the dac sampling rate
 		audio_resume_out_path();
-		swith=0;
+		sample_rate_switch=0;
 		flash_rptr=0;
 	}
 

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	uart_reg.h
+ * @file    uart_reg.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -82,6 +81,11 @@ enum {
 	FLD_UART_TX_IRQ_TRIQ_LEV 	= BIT_RNG(4,7),
 };
 ////////////////////////////////////////////////////
+/**
+ *  rx_timeout = reg_uart_rx_timeout0*reg_uart_rx_timeout1[0:1],when no data is received within the rx_timeout period, that is rx timeout, the UART_RXDONE_IRQ_STATUS interrupt is generated:
+*      -# reg_uart_rx_timeout0: the maximum value is 0xff,this setting is transfer one bytes need cycles base on uart_clk,for example, if transfer one bytes (1start bit+8bits data+1 priority bit+2stop bits) total 12 bits,this register setting should be ((bpwc+1)*12).
+*      -# reg_uart_rx_timeout1[0:1]: multiple of the reg_uart_rx_timeout0.
+ */
 #define reg_uart_rx_timeout0(i)	REG_ADDR8(0x14008a+(i)*0x40)
 
 enum{
@@ -131,7 +135,7 @@ enum{
 //state machine use for IC debug
 #define reg_uart_state(i)       REG_ADDR8(0x14008f+0x40*(i))
 enum{
-	FLD_UART_TSTATE_i   	=  BIT_RNG(0,2),//only for dma default 1.
+	FLD_UART_TSTATE_i   	=  BIT_RNG(0,2),
 	FLD_UART_RSTATE_i   	=  BIT_RNG(4,7),
 };
 

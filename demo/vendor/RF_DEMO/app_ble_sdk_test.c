@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_ble_sdk_test.c
+ * @file    app_ble_sdk_test.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -27,7 +26,6 @@
 #if (RF_MODE == RF_BLE_SDK_TEST)
 
 #define TEST_CHN   				1		// 37/38/39 adv channel
-#define RF_POWER			RF_POWER_P4p35dBm
 
 #define BLE_ACCESS_CODE			0x9A3CC36A//0xA5CC336A//0xd6be898e//
 
@@ -136,7 +134,7 @@ typedef enum advChannelPDUType_e {
 	LL_TYPE_ADV_NONCONN_IND = 0x02,
 	LL_TYPE_SCAN_REQ = 0x03,
 	LL_TYPE_SCAN_RSP = 0x04,
-	LL_TYPE_CONNNECT_REQ = 0x05,
+	LL_TYPE_CONNECT_REQ = 0x05,
 	LL_TYPE_ADV_SCAN_IND = 0x06,
 } advChannelPDUType_t;
 
@@ -533,7 +531,7 @@ void ble_brx_rx_test(void)
 	while(1)
 	{
 
-		// 2mS before peer devoce TX
+		// 2mS before peer device TX
 		while( (unsigned long)(stimer_get_tick() - (bltc_connExpectTime - 2 * SYSTEM_TIMER_TICK_1MS)) > BIT(30) );
 
 		bltc_tick_1st_rx = 0;

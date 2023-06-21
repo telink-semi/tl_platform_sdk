@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_dma.c
+ * @file    app_dma.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -368,12 +367,15 @@ void main_loop (void)
 		}
 	}
 #else
-	end_irq_flag = 0;
 	spi_master_write_dma_plus(SPI_MODULE_SEL, 	SPI_WRITE_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff), SPI_MODE_WR_DUMMY_WRITE);
 	while(!end_irq_flag);//Wait for spi transmission end interrupt.
 	end_irq_flag = 0;
+	while (spi_is_busy(SPI_MODULE_SEL));//Spi transmission end interrupt doesn't mean spi is free. Better to check spi busy state again.
+
 	spi_master_read_dma_plus(SPI_MODULE_SEL, SPI_READ_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)(spi_rx_buff), DATA_BYTE_LEN, SPI_MODE_RD_DUMMY_READ);
 	while(!end_irq_flag);//Wait for spi transmission end interrupt.
+	end_irq_flag = 0;
+	while (spi_is_busy(SPI_MODULE_SEL));//Spi transmission end interrupt doesn't mean spi is free. Better to check spi busy state again.
 
 	for (unsigned char i = 0; i < DATA_BYTE_LEN; i++)
 	{

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_dma.c
+ * @file    app_dma.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -75,7 +74,7 @@
  *                                        SPI  pin  define                                               	 	  *
  *********************************************************************************************************************/
 #if (SPI_MODULE_SEL == GSPI_MODULE)
-spi_pin_config_t gspi_pin_config = {
+gspi_pin_config_t gspi_pin_config = {
 	.spi_csn_pin 		= GPIO_FC_PA0,
 	.spi_clk_pin		= GPIO_FC_PA3,
 	.spi_mosi_io0_pin   = GPIO_FC_PB3,
@@ -91,7 +90,7 @@ gpio_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, /*GPIO_FC_PA1, GPIO_
 		/*GPIO_FC_PB0, GPIO_FC_PB1, */GPIO_FC_PB2, GPIO_FC_PB3, GPIO_FC_PB4, GPIO_FC_PB5, GPIO_FC_PB6, GPIO_FC_PB7};
 #endif
 #elif (SPI_MODULE_SEL == LSPI_MODULE)
-spi_pin_config_t lspi_pin_config = {
+lspi_pin_config_t lspi_pin_config = {
 	.spi_csn_pin 		= LSPI_CSN_PE0_PIN,
 	.spi_clk_pin		= LSPI_CLK_PE1_PIN,
 	.spi_mosi_io0_pin   = LSPI_MOSI_IO0_PE2_PIN,
@@ -356,7 +355,7 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 	if(spi_get_irq_status(SPI_MODULE_SEL,SPI_END_INT))
 	{
 
-		spi_clr_irq_status(SPI_MODULE_SEL, FLD_SPI_END_INT);//clr
+		spi_clr_irq_status(SPI_MODULE_SEL, SPI_END_INT);//clr
 		end_irq_flag = 1;
 	}
 }
@@ -391,8 +390,15 @@ void user_init()
 	//B92 supports up to 32-byte dummy, and B93 supports up to 256-byte dummy.
 	//When B92 and B91 communicate with SPI, B91 as slave supports up to 8byte dummy. When B91 is master, invalid data can be added before tx_buff to act as dummy.
 	spi_set_dummy_cnt(SPI_MODULE_SEL, 32);
-	spi_clr_irq_status(SPI_MODULE_SEL, FLD_SPI_SLV_CMD_EN |FLD_SPI_END_INT_EN);
+	spi_clr_irq_status(SPI_MODULE_SEL, SPI_SLV_CMD_EN |SPI_END_INT_EN);
 	spi_set_irq_mask(SPI_MODULE_SEL,SPI_SLV_CMD_EN |SPI_END_INT_EN);//endint_en txfifoint_en rxfifoint_en
+	/**
+	 * In order to solve the logic bug of GSPI rx DMA (LSPI tx/rx dma,GSPI tx DMA does not affect),
+	 * gspi_reset() must be called every time the DMA transfer is complete when using GSPI rx DMA,
+	 * changed by pengxiang.hong 20230328.
+	 */
+	dma_set_irq_mask(SPI_RX_DMA_CHN,TC_MASK);
+	plic_interrupt_enable(IRQ5_DMA);
 #if (SPI_MODULE_SEL == GSPI_MODULE)
 	gspi_set_pin(&gspi_pin_config);
 	plic_interrupt_enable(IRQ23_GSPI);
@@ -457,5 +463,18 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 	}
 }
 #endif
+
+/**
+ * Bugfix: reset GSPI RXDMA in DMA transfer completion interrupt(this is a hardware bug already confirmed with jianzhi)
+ * changed by pengxiang.hong 20230328.
+ */
+_attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
+{
+	if(dma_get_tc_irq_status(BIT(SPI_RX_DMA_CHN)))
+	{
+		dma_clr_tc_irq_status(BIT(SPI_RX_DMA_CHN));
+		gspi_reset();
+	}
+}
 #endif
 #endif

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	mspi_reg.h
+ * @file    mspi_reg.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -220,10 +219,6 @@ enum{
 	FLD_MSPI_TXF_THRES_INT_STA 	 		= BIT(3),
 	FLD_MSPI_TRANS_END_INT_STA          = BIT(4),
 };
-
-#define reg_mspi_cipher_key				REG_ADDR32(MSPI_BASE_ADDR + 0x80)
-
-#define reg_mspi_data_nonce				REG_ADDR8(MSPI_BASE_ADDR + 0x84)
 
 
 #define reg_mspi_xip_config				REG_ADDR32(MSPI_BASE_ADDR + 0x90)

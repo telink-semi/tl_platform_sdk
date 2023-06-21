@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	driver.h
+ * @file    driver.h
  *
- * @brief	This is the header file for B91
+ * @brief   This is the header file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -23,8 +22,9 @@
  *
  *******************************************************************************************************/
 #pragma once
+
 #include "lib/include/pke/pke.h"
-#include "lib/include/emi.h"
+
 #include "lib/include/plic.h"
 #include "lib/include/pm.h"
 #include "lib/include/rf.h"
@@ -33,6 +33,7 @@
 
 #include "lib/include/pke/pke_algorithm.h"
 
+#include "emi.h"
 #include "audio.h"
 #include "analog.h"
 #include "dma.h"

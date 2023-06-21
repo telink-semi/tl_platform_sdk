@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_ble_1m_hyper_length.c
+ * @file    app_ble_1m_hyper_length.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -66,7 +65,6 @@ unsigned char  ble_tx_packet[1024*32] __attribute__ ((aligned (4))) ={3,0,0,0,0,
 
 
 #define RF_FREQ				17
-#define RF_POWER			RF_POWER_P4p35dBm
 #define ACCESS_CODE        0xf8118ac9//0Xfcaab2c1//0x29417671//
 volatile unsigned int rx_cnt=0;
 volatile unsigned int tx_cnt=0;
@@ -111,8 +109,7 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 void user_init(void)
 {
 	rf_set_power_level(RF_POWER);
-//	rf_set_chn(RF_FREQ);
-	rf_set_channel_fpga(19);
+	rf_set_chn(RF_FREQ);
 	rf_access_code_comm(ACCESS_CODE);
 	rf_aoa_aod_sample_point_adjust(0x65);
 //	rf_aoa_rx_ant_switch_point_adjust(0x86);
@@ -335,8 +332,7 @@ void main_loop(void)
 void user_init(void)
 {
 	rf_set_power_level(RF_POWER);
-//	rf_set_chn(RF_FREQ);
-	rf_set_channel_fpga(19);
+	rf_set_chn(RF_FREQ);
 	rf_access_code_comm(ACCESS_CODE);
 	rf_aoa_aod_sample_point_adjust(0x65);
 	rf_aoa_rx_ant_switch_point_adjust(0x86);

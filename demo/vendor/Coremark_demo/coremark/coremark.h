@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	coremark.h
+ * @file    coremark.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -94,12 +93,12 @@ ee_s32 parseval(char *valstring);
 typedef struct list_data_s {
 	ee_s16 data16;
 	ee_s16 idx;
-} list_data;
+}  __attribute__ ((packed,aligned(4))) list_data;
 
 typedef struct list_head_s {
 	struct list_head_s *next;
 	struct list_data_s *info;
-} list_head;
+} __attribute__ ((packed,aligned(4))) list_head;
 
 
 /*matrix benchmark related stuff */

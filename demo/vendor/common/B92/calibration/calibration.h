@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	calibration.h
+ * @file    calibration.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -60,12 +59,13 @@ typedef enum {
 }user_calib_from_e;
 /**
  * @brief		This function is used to calibrate the user's parameters.
- * 				This function is to read the calibration value stored in flash,
+ * 				This function is to read the calibration value stored in efuse and flash ,
  * 				and use the calibration value to configure the chip to improve chip performance.
  * 				(reduce adc measurement error, reduce frequency offset, etc.)
+ * @param[in]   gpio_type - enum variable of the GPIO voltage.
  * @return		none.
  */
-void user_read_flash_value_calib(void);
+void calibration_func(gpio_voltage_e gpio_type);
 
 /**
  * @brief      This function serves to update rf frequency offset.

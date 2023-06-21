@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_dma.c
+ * @file    app_dma.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -23,6 +22,36 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
+/**
+   @verbatim
+   ===============================================================================
+                        ##### how to test demo #####
+   ===============================================================================
+   the nodma is divided into the following test items, which are described below:
+   (+) FLOW_CTR == NORMAL(B91/B92)
+       (++) UART_DEVICE ==  UART_MASTER_DEVICE
+       Hardware connection: the tx <->the rx of serial port tool,the ground <-> the ground;
+       Data stream: tx sends data to the serial port in dma mode, and sends the next data through the tx_done flag in the main_loop;
+       (++) UART_DEVICE ==  UART_SLAVE_DEVICE
+       Hardware connection: the tx of the board<->the rx of serial port tool, the rx of the board<->the tx of serial port tool,the ground <-> the ground;
+         (+++)B91:
+            Data stream: the serial port sends data to the rx. rx_done is used to check whether the data is received. Then uart_get_dma_rev_data_len is used to calculate the length and send the data to the serial port;
+         (+++)B92:
+            when the received length configured for rx_dma is less than 0xfffffc:
+            Data stream: the serial port sends data to the rx. rx_done is used to check whether the data is received. Then uart_get_dma_rev_data_len is used to calculate the length and send the data to the serial port;
+            when the received length configured for rx_dma is 0xfffffc:
+            Data stream: the serial port sends data to the rx. rx_done is used to check whether the data is received. Then the receive length hardware automatically writes back to the first four bytes of rxbuff and send the data to the serial port;
+   (+) FLOW_CTR==USE_CTS(B91/B92)
+       Hardware connection: the tx of the board <-> rx of serial port tool, the ground <-> the ground;
+       Data stream: tx sends data to the serial port in dma mode, and sends the next data through the tx_done flag in the main_loop continually,After the external sends a high level to the cts pin, the tx is not sending data;
+   (+) FLOW_CTR == USE_RTS(B91/B92)
+       Hardware connection: the rx of the board <-> tx of serial port tool, the ground <-> the ground;
+       Data stream: The serial port sends a length of more than 5 bytes to the rx. Using the logic analyzer to grab the level of the rts pin, a change from low to high is found;
+
+   In addition to the above test items, the demo gives an example of the conversion of an rtx pin to tx function
+   and an example of what you need to do to enter suspend.
+   @endverbatim
+ */
 
 #if (UART_MODE==UART_DMA)
 
@@ -33,7 +62,7 @@
 #if (FLOW_CTR==USE_RTS)
 	#define RTS_MODE		UART0_RTS_MODE_AUTO 		    //It can be UART_RTS_MODE_AUTO/UART_RTS_MODE_MANUAL.
 	#define RTS_THRESH		5			//UART_RTS_MODE_AUTO need.It indicates RTS trigger threshold.
-	#define RTS_INVERT		1			//UART_RTS_MODE_AUTO need.1 indicates RTS_pin will change from low to hign.
+	#define RTS_INVERT		1			//UART_RTS_MODE_AUTO need.1 indicates RTS_pin will change from low to high.
 	#define RTS_POLARITY	0			//UART_RTS_MODE_MANUAL need. It indicates RTS_POLARITY .
 #endif
 
@@ -55,6 +84,7 @@
 #define DMA_REV_LEN           BUFF_DATA_LEN
 #elif(MCU_CORE_B92 && (DMA_REV_LEN_TYPE == DMA_REV_LEN_MAX))
 #define DMA_REV_LEN           0xFFFFFC
+#define  UART_RX_DMA_STATUS  BIT(UART_DMA_CHANNEL_RX)
 #endif
 
 
@@ -103,7 +133,7 @@ void user_init()
 	uart_clr_tx_done(UART0);
 #endif
 #if( FLOW_CTR == NORMAL)
-	uart_set_irq_mask(UART0, UART_RXDONE_MASK);
+
 	uart_set_irq_mask(UART0, UART_TXDONE_MASK);
 	plic_interrupt_enable(IRQ19_UART0);
 	core_interrupt_enable();
@@ -119,6 +149,7 @@ void user_init()
 						  3.The two packets of data are very close to each other, but the rx_done signal of the previous data has also been generated. Before the rx_done interrupt flag and rx_fifo software are cleared,
 						    the next data has been transferred, which leads to the error of clearing.
  */
+	uart_set_irq_mask(UART0, UART_RXDONE_MASK);
 	uart_receive_dma(UART0, (unsigned char*)rec_buff,DMA_REV_LEN);
 
 #elif(DMA_REV_LEN  ==  0xFFFFFC)
@@ -128,6 +159,8 @@ void user_init()
 	  Possible problems:     Because the dma receive length is set to 0xfffffc byte, it is possible that the dma receive length is larger than the rec_buff set length,
 	                         which is out of the rec_buff's address range.
 */
+	dma_set_irq_mask(UART_DMA_CHANNEL_RX, TC_MASK);
+	plic_interrupt_enable(IRQ5_DMA);
 	uart_receive_dma(UART0, (unsigned char*)(rec_buff+4),DMA_REV_LEN);
 #endif
 #endif
@@ -215,7 +248,6 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
         	uart_clr_irq_status(UART0,UART_RXBUF_IRQ_STATUS);
 #endif
         }
-#if(DMA_REV_LEN  ==  BUFF_DATA_LEN)
         /************************get the length of receive data****************************/
         rev_data_len = uart_get_dma_rev_data_len(UART0,UART_DMA_CHANNEL_RX);
         /************************clr rx_irq****************************/
@@ -229,18 +261,24 @@ _attribute_ram_code_sec_ void uart0_irq_handler(void)
         //DMA access memory needs to be aligned according to word.
     	uart_receive_dma(UART0, (unsigned char*)rec_buff,DMA_REV_LEN);
     	uart_send_dma(UART0, (unsigned char*)rec_buff, rev_data_len);
-#elif(DMA_REV_LEN  ==  0xFFFFFC)
+    }
+}
+
+#if(DMA_REV_LEN  ==  0xFFFFFC)
+void dma_irq_handler(void)
+{
+	 if(dma_get_tc_irq_status(UART_RX_DMA_STATUS))
+	 {
+		 dma_clr_tc_irq_status(UART_RX_DMA_STATUS);
         /************************get the length of receive data****************************/
         rev_data_len = *(unsigned int*)rec_buff;
         /************************clr rx_irq****************************/
         uart_clr_irq_status(UART0,UART_RXDONE_IRQ_STATUS);
         uart_receive_dma(UART0, (unsigned char*)(rec_buff+4),DMA_REV_LEN);
         uart_send_dma(UART0, (unsigned char*)(rec_buff+4), rev_data_len);
-
-#endif
-
-    }
+	 }
 }
+#endif
 #endif
 
 #endif

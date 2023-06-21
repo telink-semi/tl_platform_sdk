@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    app_config.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -28,7 +27,6 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
 #if(MCU_CORE_B91)
 #define LED1            		GPIO_PB4
 #define LED2            		GPIO_PB5
@@ -62,8 +60,8 @@ extern "C" {
 #endif
 
 #define GPIO_IRQ				1
-#define GPIO_IRQ_RSIC0			2
-#define GPIO_IRQ_RSIC1			3
+#define GPIO_IRQ_RISC0			2
+#define GPIO_IRQ_RISC1			3
 #define GPIO_HIGH_RESISTOR		4
 #if(MCU_CORE_B92)
 #define GPIO_SEL_IRQ_SRC        5

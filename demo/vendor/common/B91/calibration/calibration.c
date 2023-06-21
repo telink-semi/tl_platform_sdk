@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	calibration.c
+ * @file    calibration.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2021
+ * @author  Driver Group
+ * @date    2021
  *
  * @par     Copyright (c) 2021, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -25,7 +24,7 @@
 #include "calibration.h"
 
 /**
- * @brief      This function is used to calib ADC 1.2V vref.
+ * @brief      This function is used to calibrate ADC 1.2V vref.
  * @param[in]  velfrom - the calibration value from flash or otp.
  * @param[in]  addr - the calibration value address of flash or otp.
  * @return 	   1 - the calibration value update, 0 - the calibration value is not update.
@@ -37,10 +36,10 @@ unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
 	Two kind of ADC calibration value in flash are one-point calibration and two-point calibration.
 	The kind of ADC calibration value in efuse only is two-point calibration.
 	The two-point calibration method will store two values, one is called gain and the other is offset.
-	Priority of ADC calibration: two-point calib in flash > two-point calib in efuse > one-point calib in flash > default of value(1175 mv)
-	deviation of two-point calib in flash:-11~7mv.
-	deviation of two-point calib in efuse:-9~24mv.
-	deviation of one-point calib in flash:-20~20mv.
+	Priority of ADC calibration: two-point calibrate in flash > two-point calibrate  in efuse > one-point calibrate in flash > default of value(1175 mv)
+	deviation of two-point calibrate  in flash:-11~7mv.
+	deviation of two-point calibrate  in efuse:-9~24mv.
+	deviation of one-point calibrate  in flash:-20~20mv.
 	The above statistical results are obtained by testing only 19 9213A chips.
 ********************************************************************************************/
 	unsigned char adc_vref_calib_value[7] = {0};
@@ -51,9 +50,12 @@ unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
 		/****** If flash check mid fail,use the Efuse calibration value ********/
 		if(0 != efuse_get_adc_calib_value(&gpio_calib_value, &gpio_calib_value_offset))
 		{
-			adc_set_gpio_calib_vref(gpio_calib_value);
-			adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
-			return 1;
+			if((gpio_calib_value > 1100) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 43))
+			{
+				adc_set_gpio_calib_vref(gpio_calib_value);
+				adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
+				return 1;
+			}
 		}
 	}
 	else
@@ -69,24 +71,30 @@ unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
 			/****** offset = [Five_Byte - 20] mv ********/
 			gpio_calib_value = (adc_vref_calib_value[6] << 8) + adc_vref_calib_value[5] + 1000;
 			gpio_calib_value_offset = adc_vref_calib_value[4] - 20;
-			adc_set_gpio_calib_vref(gpio_calib_value);
-			adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
-			return 1;
+			if ((gpio_calib_value > 1047) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 107))
+			{
+			   adc_set_gpio_calib_vref(gpio_calib_value);
+			   adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
+			   return 1;
+			}
 		}
 		else
 		{
 			if(0 != efuse_get_adc_calib_value(&gpio_calib_value, &gpio_calib_value_offset))
 			{
+				if((gpio_calib_value > 1100) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 43))
+			    {
 				adc_set_gpio_calib_vref(gpio_calib_value);
 				adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
 				return 1;
+			    }
 			}
 			else{
 				/****** Method of calculating one-point calibration Flash_gpio_Vref value: ********/
 				/****** Vref = [1175 +First_Byte-255+Second_Byte] mV = [920 + First_Byte + Second_Byte] mV ********/
 				gpio_calib_value = 920 + adc_vref_calib_value[0] + adc_vref_calib_value[1];
 				/****** Check the calibration value whether is correct ********/
-				if ((gpio_calib_value > 1047) && (gpio_calib_value < 1302))
+				if ((gpio_calib_value > 1047) && (gpio_calib_value < 1300))
 				{
 					adc_set_gpio_calib_vref(gpio_calib_value);
 					return 1;
@@ -106,14 +114,14 @@ unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
  */
 unsigned char user_calib_freq_offset(user_calib_from_e velfrom, unsigned int addr)
 {
-	unsigned char freqency_offset_value = 0xff;
+	unsigned char frequency_offset_value = 0xff;
 	if(velfrom == USER_CALIB_FROM_FLASH)
 	{
-		flash_read_page(addr, 1, &freqency_offset_value);
+		flash_read_page(addr, 1, &frequency_offset_value);
 	}
-	if(0xff != freqency_offset_value)
+	if(0xff != frequency_offset_value)
 	{
-		rf_update_internal_cap(freqency_offset_value);
+		rf_update_internal_cap(frequency_offset_value);
 		return 1;
 	}
 

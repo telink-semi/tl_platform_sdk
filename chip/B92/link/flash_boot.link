@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	flash_boot.link
+ * @file    flash_boot.link
  *
- * @brief	This is the link file for B92
+ * @brief   This is the link file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -38,6 +37,7 @@ SECTIONS
 	PROVIDE (_RETENTION_RESET_VMA_END = .); 
 	/* By default,the aes_data section can only be used in the first 64K of IRAM, */
 	/* please do not change the position of this section,unless you know the correct way to use */ 
+	/* For more details, see the aes_set_em_base_addr() function*/
 	. = ALIGN(8);
 	PROVIDE (_AES_VMA_START = .);
 	.aes_data 	(NOLOAD)	: { KEEP(*(.aes_data )) }
@@ -70,8 +70,8 @@ SECTIONS
 		
 	.exec.itable 	: AT(ALIGN(LOADADDR (.eh_frame) + SIZEOF (.eh_frame), ALIGNOF(.exec.itable)))
 		{ KEEP(*(.exec.itable)) }
-				
-	. = 0x00080000;
+		
+	. = (0x00080000*__DRAM_1_EN) + (ALIGN(ADDR(.ram_code) + SIZEOF (.ram_code), 8)*__DRAM_DIS);
 	PROVIDE( __global_pointer$ = . + (4K / 2) );
 	.data	: AT(ALIGN(LOADADDR (.exec.itable) + SIZEOF (.exec.itable),  ALIGNOF(.data)))
 		{ *(.data .data.* .gnu.linkonce.d.* ) KEEP(*(.gnu.linkonce.d.*personality* )) SORT(CONSTRUCTORS) 
@@ -96,7 +96,7 @@ SECTIONS
 	/* end is the starting address of the heap, the heap grows upward */
 	_end = .;
 	PROVIDE (end = .);		
-	PROVIDE (_STACK_TOP = 0x00c0000);
+	PROVIDE (_STACK_TOP = 0x0020000 + (0x0020000*__IRAM_2_EN) + (0x0060000*__DRAM_1_EN) + (0x0020000*__DRAM_2_EN));
 	PROVIDE (FLASH_SIZE = 0x0100000);
 }
 

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	dhry_2.c
+ * @file    dhry_2.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -36,13 +35,12 @@ extern  char    Ch_1_Glob;
 
 #define  _attribute_ram_code_   __attribute__((section(".ram_code")))
 
-_attribute_ram_code_ Proc_6 (Enum_Val_Par, Enum_Ref_Par)
+_attribute_ram_code_ Boolean Func_3 (Enumeration Enum_Par_Val);
+
+_attribute_ram_code_ void Proc_6 (Enumeration Enum_Val_Par, Enumeration* Enum_Ref_Par)
 /*********************************/
     /* executed once */
     /* Enum_Val_Par == Ident_3, Enum_Ref_Par becomes Ident_2 */
-
-Enumeration  Enum_Val_Par;
-Enumeration *Enum_Ref_Par;
 {
   *Enum_Ref_Par = Enum_Val_Par;
   if (! Func_3 (Enum_Val_Par))
@@ -70,7 +68,7 @@ Enumeration *Enum_Ref_Par;
 } /* Proc_6 */
 
 
-_attribute_ram_code_ Proc_7 (Int_1_Par_Val, Int_2_Par_Val, Int_Par_Ref)
+_attribute_ram_code_ void Proc_7 (One_Fifty Int_1_Par_Val, One_Fifty Int_2_Par_Val, One_Fifty* Int_Par_Ref)
 /**********************************************/
     /* executed three times                                      */
     /* first call:      Int_1_Par_Val == 2, Int_2_Par_Val == 3,  */
@@ -79,9 +77,6 @@ _attribute_ram_code_ Proc_7 (Int_1_Par_Val, Int_2_Par_Val, Int_Par_Ref)
     /*                  Int_Par_Ref becomes 17                   */
     /* third call:      Int_1_Par_Val == 6, Int_2_Par_Val == 10, */
     /*                  Int_Par_Ref becomes 18                   */
-One_Fifty       Int_1_Par_Val;
-One_Fifty       Int_2_Par_Val;
-One_Fifty      *Int_Par_Ref;
 {
   One_Fifty Int_Loc;
 
@@ -90,15 +85,11 @@ One_Fifty      *Int_Par_Ref;
 } /* Proc_7 */
 
 
-_attribute_ram_code_ Proc_8 (Arr_1_Par_Ref, Arr_2_Par_Ref, Int_1_Par_Val, Int_2_Par_Val)
+_attribute_ram_code_ void Proc_8 (Arr_1_Dim Arr_1_Par_Ref, Arr_2_Dim Arr_2_Par_Ref, int Int_1_Par_Val, int Int_2_Par_Val)
 /*********************************************************************/
     /* executed once      */
     /* Int_Par_Val_1 == 3 */
     /* Int_Par_Val_2 == 7 */
-Arr_1_Dim       Arr_1_Par_Ref;
-Arr_2_Dim       Arr_2_Par_Ref;
-int             Int_1_Par_Val;
-int             Int_2_Par_Val;
 {
   REG One_Fifty Int_Index;
   REG One_Fifty Int_Loc;
@@ -141,14 +132,12 @@ Capital_Letter   Ch_2_Par_Val;
 } /* Func_1 */
 
 
-_attribute_ram_code_ Boolean Func_2 (Str_1_Par_Ref, Str_2_Par_Ref)
+_attribute_ram_code_ Boolean Func_2 (Str_30 Str_1_Par_Ref, Str_30 Str_2_Par_Ref)
 /*************************************************/
     /* executed once */
     /* Str_1_Par_Ref == "DHRYSTONE PROGRAM, 1'ST STRING" */
     /* Str_2_Par_Ref == "DHRYSTONE PROGRAM, 2'ND STRING" */
 
-Str_30  Str_1_Par_Ref;
-Str_30  Str_2_Par_Ref;
 {
   REG One_Thirty        Int_Loc;
       Capital_Letter    Ch_Loc;

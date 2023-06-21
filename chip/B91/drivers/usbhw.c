@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	usbhw.c
+ * @file    usbhw.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -25,7 +24,7 @@
 #include "usbhw.h"
 /**
  * @brief      This function disables the manual interrupt
- *             (Endpont8 is the alias of endpoint0)
+ *             (Endpoint8 is the alias of endpoint0)
  * @param[in]  m - the irq mode needs to set
  * @return     none
  */

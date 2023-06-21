@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	gpio.c
+ * @file    gpio.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -400,8 +399,8 @@ void gpio_set_up_down_res(gpio_pin_e pin, gpio_pull_type_e up_down_res)
 }
 
 /**
- * @brief     This function set pin's 30k pull-up registor.
- * @param[in] pin - the pin needs to set its pull-up registor.
+ * @brief     This function set pin's 30k pull-up register.
+ * @param[in] pin - the pin needs to set its pull-up register.
  * @return    none.
   * @attention  This function sets the digital pull-up, it will not work after entering low power consumption.
  */

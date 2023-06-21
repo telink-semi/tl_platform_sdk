@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	watchdog.h
+ * @file    watchdog.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,7 +21,6 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-
 /**	@page WATCHDOG
  *
  *	Introduction
@@ -39,7 +37,7 @@
  *  |                |              |                                                    |source in the sleep state,32K watchdog cannot be enabled. |
  *  |                |              |                                                    |                                                          |
  *  |                |              | 1. reset exceptions that occur during active       |                                                          |                                                         |
- *  | 32k watchdog   | 32k timer    | 2. reser exceptions thar occur during sleep wakeup |2.Because the 32K clock source may also be used by other  |
+ *  | 32k watchdog   | 32k timer    | 2. reset exceptions that occur during sleep wakeup |2.Because the 32K clock source may also be used by other  |
  *  |                |              |                                                    |modules,the 32K watchdog has no action to clear watchdog, |
  *  |                |              |                                                    |and can only feed the dog by resetting the capture value. |
  *  |                |              |                                                    |The correct operation process is:                         |
@@ -149,4 +147,16 @@ _attribute_ram_code_sec_noinline_ void wd_32k_clear_status(void);
  * @return    none
  */
 _attribute_ram_code_sec_noinline_ void wd_32k_set_interval_ms(unsigned int period_ms);
+
+
+/**
+ * @brief      This function is used to turn off the 8s vbus timer.
+ * @attention  When using the vbus (not vbat) power supply, you must turn off the vbus timer,
+ *             otherwise the MCU will be reset after 8s.
+ * @return     none.
+ */
+static inline void wd_turn_off_vbus_timer(void)
+{
+	analog_write_reg8(0x69, 0x40);
+}
 #endif

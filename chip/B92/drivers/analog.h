@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	analog.h
+ * @file    analog.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -27,7 +26,7 @@
  *
  *	Introduction
  *	===============
- *	TLSRB91 analog support dma and normal mode, in each mode, support byte/halfword/word/buffer write and read.
+ *  B92 analog support dma and normal mode, in each mode, support byte/halfword/word/buffer write and read.
  *
  *	API Reference
  *	===============

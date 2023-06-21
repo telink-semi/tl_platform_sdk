@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	core_main.c
+ * @file    core_main.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -118,7 +117,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	clock_init(PLL_CLK_96M, PAD_PLL_DIV, PLL_DIV3_TO_CCLK,	CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, CCLK_TO_MSPI_CLK);
 	gpio_function_en	(LED_BLUE|LED_RED|LED_GREEN|LED_WHITE);
 	gpio_output_en	(LED_BLUE|LED_RED|LED_GREEN|LED_WHITE);
-	reg_usb_ep8_send_thre = 64;
+	reg_usb_ep8_send_thres = 64;
 
 	//myudb_set_txfifo_local ();
 	// initial USB & pull up DP
@@ -164,7 +163,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 		results[0].seed2=0;
 		results[0].seed3=0x66;
 	}
-	if ((results[0].seed1==1) && (results[0].seed2==0) && (results[0].seed3==0)) { /* perfromance run */
+	if ((results[0].seed1==1) && (results[0].seed2==0) && (results[0].seed3==0)) { /* performance run */
 		results[0].seed1=0x3415;
 		results[0].seed2=0x3415;
 		results[0].seed3=0x66;
@@ -392,7 +391,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 #endif
 	/* And last call any target specific code for finalizing */
 	portable_fini(&(results[0].port));
-	reg_usb_ep8_send_thre = 1;
+	reg_usb_ep8_send_thres = 1;
 	gpio_set_high_level (LED_WHITE);
 
 	return MAIN_RETURN_VAL;

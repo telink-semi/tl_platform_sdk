@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	driver.h
+ * @file    driver.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -26,19 +25,19 @@
 
 
 
-#include "lib/include/emi.h"
+
 #include "lib/include/plic.h"
 #include "lib/include/pm.h"
 #include "lib/include/rf.h"
-
 #include "lib/include/sys.h"
 #include "lib/include/trng.h"
 #include "lib/include/flash_base.h"
-
+#include "lib/include/hadm.h"
 
 #include "lib/include/pke/pke.h"
 #include "lib/include/pke/pke_algorithm.h"
 
+#include "emi.h"
 #include "audio.h"
 #include "analog.h"
 #include "dma.h"
@@ -52,7 +51,6 @@
 #include "watchdog.h"
 #include "s7816.h"
 #include "nds_intrinsic.h"
-#include "mdec.h"
 
 #include "uart.h"
 #include "stimer.h"
@@ -65,3 +63,5 @@
 #include "qdec.h"
 #include "flash/flash_type.h"
 #include "sdk_version.h"
+#include "plic_sw.h"
+#include "plmt.h"

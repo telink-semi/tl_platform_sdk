@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_ant.c
+ * @file    app_ant.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -48,7 +47,6 @@ unsigned char  ant_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0x1,0x2
 
 
 #define RF_FREQ				17
-#define RF_POWER			RF_POWER_P4p35dBm
 #define ACCESS_CODE        0x29417671//0xd6be898e// 0x898e898e//
 volatile unsigned int tx_cnt=0;
 volatile unsigned int rx_cnt=0;

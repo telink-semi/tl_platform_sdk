@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	myudb_usb.c
+ * @file    myudb_usb.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -435,7 +434,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd (unsigned char *p, int nbyte
 		{
 			for (int i=0; i<n; i++)
 			{
-				analog_write_reg8 (adr + i, p[i + 6]);
+				analog_write_reg8(adr + i, p[i + 6]);
 			}
 		}
 		else if (type == 2)			// flash
@@ -574,7 +573,7 @@ void myudb_usb_init(unsigned short id, void *p)
 	//reg_usb_mask = BIT(7);			//audio in interrupt enable
 	//reg_irq_mask |= FLD_IRQ_IRQ4_EN;
 	reg_usb_ep_max_size = (128 >> 2);
-	reg_usb_ep8_send_thre = 0x40;
+	reg_usb_ep8_send_thres = 0x40;
 	reg_usb_ep_buf_addr (MYUDB_EDP_IN_HCI) = 128;
 	reg_usb_ep_buf_addr (MYUDB_EDP_OUT_HCI) = 192;
 	reg_usb_ep_buf_addr (MYUDB_EDP_IN_VCD) = 0;

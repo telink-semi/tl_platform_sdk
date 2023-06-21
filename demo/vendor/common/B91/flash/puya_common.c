@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	puya_common.c
+ * @file    puya_common.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,9 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-
 #include "puya_common.h"
-extern aduio_i2s_codec_config_t audio_i2s_codec_config;
+extern audio_i2s_codec_config_t audio_i2s_codec_config;
 extern audio_i2s_invert_config_t audio_i2s_invert_config;
 
 #define	REBOOT		0
@@ -217,14 +215,14 @@ _attribute_ram_code_sec_noinline_ void flash_power_off_on_ram(unsigned int flash
  */
 void audio_config_on(audio_flow_mode_e flow_mode,audio_sample_rate_e rate,audio_channel_wl_mode_e channel_wl)
 {
-	aduio_set_chn_wl(channel_wl);
+	audio_set_chn_wl(channel_wl);
 	audio_set_codec_clk(1,16);//from ppl 192/16=12M
 	audio_mux_config(CODEC_I2S,audio_i2s_codec_config.audio_in_mode,audio_i2s_codec_config.audio_in_mode,audio_i2s_codec_config.audio_out_mode);
 	audio_i2s_config(I2S_I2S_MODE,audio_i2s_codec_config.i2s_data_select,audio_i2s_codec_config.i2s_codec_m_s_mode,&audio_i2s_invert_config);
 	audio_set_i2s_clock(rate,AUDIO_RATE_EQUAL,0);
 	audio_clk_en(1,1);
 	reg_audio_codec_vic_ctr=FLD_AUDIO_CODEC_SLEEP_ANALOG;//active analog sleep mode
-	while(!(reg_audio_codec_stat_ctr&FLD_AUDIO_CODEC_PON_ACK));//wait codec can be configed
+	while(!(reg_audio_codec_stat_ctr&FLD_AUDIO_CODEC_PON_ACK));//wait codec can be configured
 	if(flow_mode<BUF_TO_LINE_OUT)
 	{
 		audio_codec_adc_config(audio_i2s_codec_config.i2s_codec_m_s_mode,(flow_mode%3),rate,audio_i2s_codec_config.codec_data_select,MCU_WREG);

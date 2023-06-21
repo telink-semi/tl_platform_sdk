@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	cstartup_ram.S
+ * @file    cstartup_ram.S
  *
- * @brief	This is the boot file for B92
+ * @brief   This is the boot file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -38,7 +37,23 @@
 #define DP_THROUGH_SWIRE_DIS      1
 #endif
 
-.section .ram_boot, "ax"
+//	According to the different ram size of the chip, the corresponding configuration values are as follows:
+//		SRAM	  128K	256K  384K	512K
+//	__IRAM_2_EN 	0	  1		1	  1
+//	__DRAM_1_EN 	0	  0		1	  1
+//	__DRAM_2_EN 	0	  0		0	  1
+//	__DRAM_DIS 		1	  1		0	  0
+	.equ __IRAM_2_EN, 	0
+	.equ __DRAM_1_EN, 	0
+	.equ __DRAM_2_EN, 	0
+	.equ __DRAM_DIS, 	1
+
+	.section .ram_boot, "ax"
+    .global		__IRAM_2_EN
+    .global		__DRAM_1_EN
+    .global		__DRAM_2_EN
+    .global		__DRAM_DIS
+
     .option push
 	.option norelax
     .global _RAM_RESET_ENTRY

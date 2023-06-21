@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	myudb_usbdesc.h
+ * @file    myudb_usbdesc.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -249,7 +248,7 @@
 /** \name USB Configuration Descriptor Attribute Masks */
 //@{
 /** Mask for the reserved bit in the Configuration Descriptor's \c ConfigAttributes field, which must be set on all
- *  devices for historial purposes.
+ *  devices for historical purposes.
  */
 #define USB_CONFIG_ATTR_RESERVED          0x80
 /** Can be masked with other configuration descriptor attributes for a \ref USB_Descriptor_Configuration_Header_t

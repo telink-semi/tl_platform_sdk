@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	keyboard_app.c
+ * @file    keyboard_app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -27,8 +26,10 @@
 #include "application/usb_app/usbkb.h"
 #include "application/usbstd/usb.h"
 unsigned char  kb_data[6];
-extern volatile unsigned int pm_top_reset_tick;
-extern volatile unsigned int charger_clear_vbus_detect_flag;
+#if(MCU_CORE_B92)
+extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
+extern volatile unsigned int g_vbus_timer_turn_off_flag;
+#endif
 
 // BYTE0: special key(Ctrl/shift ...);
 // BYTE1: reserved;
@@ -84,13 +85,26 @@ void main_loop (void)
 	 *              otherwise the MCU will be reset after 8s.
 	*/
 #if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
-	if(charger_get_vbus_detect_status()){
-	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
-	   {
-		  charger_clear_vbus_detect_status();//clear reset
-		  charger_clear_vbus_detect_flag = 1;
-	   }
-    }
+	/**
+     *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
+     */
+if(usb_get_vbus_detect_status())
+{
+	if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
+	{
+		/**
+		 * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
+		 * The vbus detect status will not be clear to 0.
+		 */
+		wd_turn_off_vbus_timer();
+		g_vbus_timer_turn_off_flag = 1;
+	}
+}
+else
+{
+	g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+	g_vbus_timer_turn_off_flag = 0;
+}
 #endif
 
 	usb_handle_irq();

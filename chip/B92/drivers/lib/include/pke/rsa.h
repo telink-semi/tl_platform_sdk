@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	rsa.h
+ * @file    rsa.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -53,7 +52,7 @@ enum RSA_RET_CODE
 /**
  * @brief		out = a^e mod n.
  * @param[in]	a		- unsigned int big integer a, base number, make sure a < n.
- * @param[in]	e		- unsigned int big integer e, exeponent, make sure e < n.
+ * @param[in]	e		- unsigned int big integer e, exponent, make sure e < n.
  * @param[in]	n		- unsigned int big integer n, modulus, make sure n is odd.
  * @param[out]	out		- out = a^e mod n.
  * @param[in]	eBitLen	- real bit length of unsigned int big integer e.

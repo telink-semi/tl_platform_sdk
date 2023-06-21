@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    app_config.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -59,6 +58,12 @@ extern "C" {
 #endif
 
 #define RF_MODE 			RF_BLE_SDK_TEST
+
+#if(MCU_CORE_B91)
+#define RF_POWER			RF_POWER_P4p35dBm
+#elif(MCU_CORE_B92)
+#define RF_POWER			RF_POWER_P5p21dBm
+#endif
 
 #if(MCU_CORE_B91)
 #define LED1            		GPIO_PB4

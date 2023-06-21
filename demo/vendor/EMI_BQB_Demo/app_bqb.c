@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_bqb.c
+ * @file    app_bqb.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -116,7 +115,7 @@ uart_num_redef_e get_uart_num(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin)
 }
 
 uart_num_redef_e uart_setup(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin,
-			unsigned int boardrate, unsigned int pclk,
+			unsigned int baudrate, unsigned int pclk,
 			uart_parity_e parity, uart_stop_bit_e stop_bit)
 {
 	unsigned short div = 0;
@@ -129,7 +128,7 @@ uart_num_redef_e uart_setup(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin,
 	}
 	uart_set_pin(tx_pin, rx_pin);
 	uart_reset(uart_num);
-	uart_cal_div_and_bwpc(boardrate, pclk, &div, &bwpc);
+	uart_cal_div_and_bwpc(baudrate, pclk, &div, &bwpc);
 	uart_set_rx_timeout(uart_num, bwpc, 12, UART_BW_MUL1);
 	uart_init(uart_num, div, bwpc, parity, stop_bit);
 
@@ -137,17 +136,17 @@ uart_num_redef_e uart_setup(uart_tx_pin_e tx_pin,uart_rx_pin_e rx_pin,
 }
 #elif(MCU_CORE_B92)
 uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin,gpio_func_pin_e rx_pin,
-			unsigned int boardrate, unsigned int pclk,
+			unsigned int baudrate, unsigned int pclk,
 			uart_parity_e parity, uart_stop_bit_e stop_bit)
 {
 	unsigned short div = 0;
 	unsigned char bwpc = 0;
-	uart_num_redef_e uart_num = UART0;
-	uart_set_pin(uart_num,tx_pin, rx_pin);
-	uart_reset(uart_num);
-	uart_cal_div_and_bwpc(boardrate, pclk, &div, &bwpc);
-	uart_set_rx_timeout(uart_num, bwpc, 12, UART_BW_MUL1);
-	uart_init(uart_num, div, bwpc, parity, stop_bit);
+	uart_num_redef_e uart_num = UART_NUM0;
+	uart_set_pin((uart_num_e)uart_num,tx_pin, rx_pin);
+	uart_reset((uart_num_e)uart_num);
+	uart_cal_div_and_bwpc(baudrate, pclk, &div, &bwpc);
+	uart_set_rx_timeout((uart_num_e)uart_num, bwpc, 12, UART_BW_MUL1);
+	uart_init((uart_num_e)uart_num, div, bwpc, parity, stop_bit);
 
 	return uart_num;
 }
@@ -241,12 +240,12 @@ void user_init(void)
 	get_uart_port(&bqb_uart_tx_port, &bqb_uart_rx_port);
 #endif
 	uart_using = uart_setup(bqb_uart_tx_port, bqb_uart_rx_port,
-							BQB_UART_BUAD,
+							BQB_UART_BAUD,
 							sys_clk.pclk*1000*1000,
 							UART_PARITY_NONE, UART_STOP_BIT_ONE);
-	uart_set_irq_mask(uart_using, UART_RX_IRQ_MASK);
-	uart_clr_irq_mask(uart_using, UART_TX_IRQ_MASK);
-	uart_rx_irq_trig_level(uart_using, 1);
+	uart_set_irq_mask((uart_num_e)uart_using, UART_RX_IRQ_MASK);
+	uart_clr_irq_mask((uart_num_e)uart_using, UART_TX_IRQ_MASK);
+	uart_rx_irq_trig_level((uart_num_e)uart_using, 1);
 	bqb_pa_init();
 	bqbtest_init();
 	write_sram8(CALIBRATION_CAP_RAM_ADDR, 0xff);//for sram calibration

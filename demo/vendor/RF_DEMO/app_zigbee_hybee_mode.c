@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_zigbee_hybee_mode.c
+ * @file    app_zigbee_hybee_mode.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -41,7 +40,6 @@
 #define	SCHEDULE_MODE		0//0:Trigger tx immediately;1:Trigger after tick
 
 #define RF_FREQ				40
-#define RF_POWER			RF_POWER_INDEX_P9p11dBm
 
 #define RX_FIFO_NUM			4
 #define RX_FIFO_DEP			128

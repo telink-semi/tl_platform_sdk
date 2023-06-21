@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_codec.c
+ * @file    app_codec.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -94,7 +93,7 @@ volatile signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4))
 
 #endif
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);
@@ -112,12 +111,12 @@ void user_init()
 	 audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_18_DB);
 #endif
 #if (AUDIO_MODE==DMIC0_INPUT_TO_BUF_TO_LINEOUT)
-	 audio_set_stream0_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
+	 audio_set_stream0_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
 	 audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
 #endif
 
 #else /*sterm1 dmic1 input init*/
-	 audio_set_stream1_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
+	 audio_set_stream1_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
 	 audio_codec_stream1_input_init(&audio_codec_input);
 	 audio_set_stream1_dig_gain(CODEC_IN_D_GAIN1_18_DB);
 
@@ -147,7 +146,7 @@ void user_init()
 		.data_buf = AUDIO_BUFF,
 		.data_buf_size = sizeof(AUDIO_BUFF),
 	};
-	 audio_codec_stream1_input_t audio_codec_dimc_input =
+	 audio_codec_stream1_input_t audio_codec_dmic_input =
 	 {
 		.input_src	 = DMIC_STREAM1_STEREO,
 		.sample_rate = AUDIO_16K,
@@ -161,14 +160,14 @@ void user_init()
 	/****amic input init ****/
 	audio_codec_stream0_input_init(&audio_codec_amic_input);
 	/****dmic1 input init****/
-	audio_set_stream1_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
-	audio_codec_stream1_input_init(&audio_codec_dimc_input);
+	audio_set_stream1_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
+	audio_codec_stream1_input_init(&audio_codec_dmic_input);
 	/****rx tx dma init****/
 	audio_rx_dma_chain_init(audio_codec_amic_input.fifo_num,audio_codec_amic_input.dma_num,(unsigned short*)audio_codec_amic_input.data_buf,audio_codec_amic_input.data_buf_size);
-	audio_rx_dma_chain_init(audio_codec_dimc_input.fifo_num,audio_codec_dimc_input.dma_num,(unsigned short*)audio_codec_dimc_input.data_buf,audio_codec_dimc_input.data_buf_size);
+	audio_rx_dma_chain_init(audio_codec_dmic_input.fifo_num,audio_codec_dmic_input.dma_num,(unsigned short*)audio_codec_dmic_input.data_buf,audio_codec_dmic_input.data_buf_size);
 	/****audio starts run****/
 	audio_rx_dma_en(audio_codec_amic_input.dma_num);
-	audio_rx_dma_en(audio_codec_dimc_input.dma_num);
+	audio_rx_dma_en(audio_codec_dmic_input.dma_num);
 
 #elif (AUDIO_MODE==DMIC0_AND_DMIC1_INPUT_TO_ONE_BUF)
 #define   SAMPLE_RATE     AUDIO_16K
@@ -179,7 +178,7 @@ void user_init()
 	  * The data of stream0 and stream1 are stored in one buff,only stereo 16 bits of data bit width are supported,[stream1 data(the first 4bytes),stream0 data(the second 4bytes)]
 	  *                                                                                                              {dmic1_r[15:0], dmic1_l[15:0],dmic0_r[15:0], dmic1_l[15:0]}
 	  * */
-	 audio_codec_stream0_input_t audio_codec_dimc0_input =
+	 audio_codec_stream0_input_t audio_codec_dmic0_input =
 	 {
 		.input_src	 = DMIC_STREAM0_STEREO,
 		.sample_rate = SAMPLE_RATE,
@@ -189,7 +188,7 @@ void user_init()
 		.data_buf = AUDIO_BUFF,
 		.data_buf_size = sizeof(AUDIO_BUFF),
 	};
-	 audio_codec_stream1_input_t audio_codec_dimc1_input =
+	 audio_codec_stream1_input_t audio_codec_dmic1_input =
 	 {
 		.input_src	 = DMIC_STREAM0_STREAM1_STEREO,
 		.sample_rate = SAMPLE_RATE,
@@ -200,11 +199,11 @@ void user_init()
 		.data_buf_size = sizeof(AUDIO_BUFF),
 	};
 	 /****dmic0,dmic1 pin init ****/
-	 audio_set_stream0_dmic_pin(GPIO_PD2,GPIO_PD7,GPIO_PD6);
-	audio_set_stream1_dmic_pin(GPIO_PD5,GPIO_PD4,GPIO_PD3);
+	audio_set_stream0_dmic_pin(GPIO_FC_PD2,GPIO_FC_PD7,GPIO_FC_PD6);
+	audio_set_stream1_dmic_pin(GPIO_FC_PD5,GPIO_FC_PD4,GPIO_FC_PD3);
 	/****dmic0,dmic1 input ****/
-	audio_codec_stream0_input_init(&audio_codec_dimc0_input);
-	audio_codec_stream1_input_init(&audio_codec_dimc1_input);
+	audio_codec_stream0_input_init(&audio_codec_dmic0_input);
+	audio_codec_stream1_input_init(&audio_codec_dmic1_input);
 	audio_set_stream0_dig_gain1(CODEC_IN_D_GAIN1_30_DB);
 	audio_set_stream1_dig_gain(CODEC_IN_D_GAIN1_30_DB);
 	/****rx dma init****/

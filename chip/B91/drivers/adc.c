@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	adc.c
+ * @file    adc.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -26,6 +25,10 @@
 #include "audio.h"
 #include "compiler.h"
 
+/**
+ * Note: When the reference voltage is configured to 1.2V, the calculated ADC voltage value is closest to the actual voltage value using 1175 as the coefficient default.
+ * 1175 is the value obtained by ATE through big data statistics, which is more in line with most chips than 1200.
+ */
 _attribute_data_retention_sec_ unsigned short g_adc_vref = 1175; //default ADC ref voltage (unit:mV)
 _attribute_data_retention_sec_ signed char g_adc_vref_offset = 0;//ADC calibration value voltage offset (unit:mV).
 volatile unsigned char g_adc_pre_scale;
@@ -61,14 +64,18 @@ void adc_set_dma_config(dma_chn_e chn)
 	dma_config(chn, &adc_rx_dma_config);
 	dma_clr_irq_mask(adc_dma_chn,TC_MASK|ERR_MASK|ABT_MASK);
 	dma_set_irq_mask(adc_dma_chn, TC_MASK);
-
+/*
+ * sar_adc can only use audio's fifo1 (not fifo0), and fifo1 cannot be used on both sar_adc and audio at the same time.
+ * Fifo0 can only be used by audio.
+ */
 	audio_data_fifo1_path_sel(SAR_ADC_DATA_IN_FIFO,OUT_NO_USE);//connect DMA and ADC by audio input fifo1.
 }
 /**
- * @brief     This function serves to start sample with adc DMA channel.
- * @param[out] adc_data_buf 	- the address of data buffer
- * @param[in] data_byte_len - the length of data size by byte
- * @return    none
+ * @brief      This function serves to start sample with adc DMA channel.
+ * @param[out] adc_data_buf  - This parameter is the first address of the received data buffer, which must be 4 bytes aligned, otherwise the program will enter an exception.
+ *                             and the actual buffer size defined by the user needs to be not smaller than the data_byte_len, otherwise there may be an out-of-bounds problem.
+ * @param[in]  data_byte_len - This parameter is used to set the size of the received dma and must be set to a multiple of 4. The maximum value that can be set is 0xFFFFFC.
+ * @return     none
  */
 void adc_start_sample_dma(unsigned short *adc_data_buf,unsigned int data_byte_len)
 {
@@ -152,6 +159,17 @@ void adc_set_gpio_calib_vref(unsigned short data)
 {
 	g_adc_gpio_calib_vref = data;
 }
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref offset for GPIO two-point.
+ * @param[in] offset - GPIO sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_gpio_two_point_calib_offset(signed char offset)
+{
+	g_adc_gpio_calib_vref_offset = offset;
+}
+
 /**
  * @brief This function serves to set the channel reference voltage.
  * @param[in]  v_ref - enum variable of ADC reference voltage.
@@ -288,7 +306,7 @@ void adc_gpio_sample_init(adc_input_pin_def_e pin,adc_ref_vol_e v_ref,adc_pre_sc
 void adc_temperature_sample_init(void)
 {
 	adc_init(ADC_VREF_1P2V, ADC_PRESCALE_1, ADC_SAMPLE_FREQ_96K);
-	adc_set_diff_input(ADC_TEMSENSORP_EE, ADC_TEMSENSORN_EE);
+	adc_set_diff_input(ADC_TEMPSENSORP_EE, ADC_TEMPSENSORN_EE);
 	adc_set_vbat_divider(ADC_VBAT_DIV_OFF);
 	adc_temp_sensor_power_on();
 }
@@ -304,7 +322,7 @@ void adc_temperature_sample_init(void)
  *			--3/4 external resistor voltage divider(total resistance 400k, without any capacitance),
  *			--1.2V Vref,
  *			--1/4 Scale
- *			--Sampling frequence below 48K.
+ *			--Sampling frequency below 48K.
  *			changed by chaofan.20201230.
  */
 void adc_battery_voltage_sample_init(void)
@@ -317,8 +335,9 @@ void adc_battery_voltage_sample_init(void)
 }
 /**
  * @brief This function serves to start adc sample and get raw adc sample code.
- * @param[out]   sample_buffer 		- pointer to the buffer adc sample code need to store.
- * @param[in]   sample_num 			- the number of adc sample code.
+ * @param[out]  sample_buffer - This parameter is the first address of the received data buffer, which must be 4 bytes aligned, otherwise the program will enter an exception.
+ *                              and the actual buffer size defined by the user needs to be not smaller than the sample_num, otherwise there may be an out-of-bounds problem.
+ * @param[in]   sample_num 	  - This parameter is used to set the size of the received dma and must be set to a multiple of 4. The maximum value that can be set is 0xFFFFFC.
  * @return 		none
  */
 void adc_get_code_dma(unsigned short *sample_buffer, unsigned short sample_num)
@@ -327,7 +346,7 @@ void adc_get_code_dma(unsigned short *sample_buffer, unsigned short sample_num)
 	adc_start_sample_dma((unsigned short *)sample_buffer, sample_num<<1);
 	/******wait for adc sample finish********/
 	while(!adc_get_sample_status_dma());
-	/******stop dma smaple********/
+	/******stop dma sample********/
 	adc_stop_sample_dma();
 	/******clear adc sample finished status********/
 	adc_clr_sample_status_dma();//must
@@ -365,15 +384,6 @@ unsigned short adc_get_code(void)
 		adc_code &= 0x1FFF;
 	}
 	return adc_code;
-}
-/**
- * @brief This function is used to calib ADC 1.2V vref offset for GPIO two-point.
- * @param[in] offset - GPIO sampling two-point calibration value offset.
- * @return none
- */
-void adc_set_gpio_two_point_calib_offset(signed char offset)
-{
-	g_adc_gpio_calib_vref_offset = offset;
 }
 /**
  * @brief This function serves to calculate voltage from adc sample code.

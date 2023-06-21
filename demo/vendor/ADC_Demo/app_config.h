@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_config.h
+ * @file    app_config.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -54,11 +53,11 @@ extern "C" {
 	*	--3/4 external resistor voltage divider(total resistance 400k, without any capacitance),
 	*	--1.2V Vref,
 	*	--1/4 Scale
-	*	--Sampling frequence below 48K.
+	*	--Sampling frequency below 48K.
 	*	add by chaofan.20201230 for B91.
 **/
 /**
-	* 	B92 supports Vbat channel battery voltage sample, and the range is 1.8~4.2V
+	* 	B92 supports Vbat channel battery voltage sample, and the range is 1.9~4.3V
 **/
 #define ADC_VBAT_SAMPLE			2	//Vbat channel Battery Voltage with low accuracy.
 #define ADC_TEMP_SENSOR_SAMPLE	3	//Temp test

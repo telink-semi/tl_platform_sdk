@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	mic_spk_app.c
+ * @file    mic_spk_app.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -39,8 +38,10 @@
 
 unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
 unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
-extern volatile unsigned int pm_top_reset_tick;
-extern volatile unsigned int charger_clear_vbus_detect_flag;
+#if(MCU_CORE_B92)
+extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
+extern volatile unsigned int g_vbus_timer_turn_off_flag;
+#endif
 int		iso_in_w = 0;
 int		iso_in_r = 0;
 
@@ -61,11 +62,11 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 
 	switch(audio_rate)
 	{
-		case 	AUDIO_8K:	length = 8* MIC_CHANNLE_COUNT;break;
-		case	AUDIO_16K:	length = 16*MIC_CHANNLE_COUNT;break;
-		case	AUDIO_32K:	length = 32*MIC_CHANNLE_COUNT;break;
-		case	AUDIO_48K:	length = 48*MIC_CHANNLE_COUNT;break;
-		default:			length = 16*MIC_CHANNLE_COUNT;break;
+		case 	AUDIO_8K:	length = 8* MIC_CHANNEL_COUNT;break;
+		case	AUDIO_16K:	length = 16*MIC_CHANNEL_COUNT;break;
+		case	AUDIO_32K:	length = 32*MIC_CHANNEL_COUNT;break;
+		case	AUDIO_48K:	length = 48*MIC_CHANNEL_COUNT;break;
+		default:			length = 16*MIC_CHANNEL_COUNT;break;
 	}
 
 		for (unsigned char i=0; i<length&& iso_in_r != iso_in_w ; i++)
@@ -307,13 +308,26 @@ void main_loop (void)
 	 *              otherwise the MCU will be reset after 8s.
 	*/
 #if(MCU_CORE_B92 && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
-	if(charger_get_vbus_detect_status()){
-	   if(clock_time_exceed(pm_top_reset_tick, 100*1000) && (charger_clear_vbus_detect_flag == 0))
-	   {
-		  charger_clear_vbus_detect_status();//clear reset
-		  charger_clear_vbus_detect_flag = 1;
-	   }
-    }
+	/**
+     *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
+     */
+if(usb_get_vbus_detect_status())
+{
+	if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
+	{
+		/**
+		 * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
+		 * The vbus detect status will not be clear to 0.
+		 */
+		wd_turn_off_vbus_timer();
+		g_vbus_timer_turn_off_flag = 1;
+	}
+}
+else
+{
+	g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+	g_vbus_timer_turn_off_flag = 0;
+}
 #endif
 
 	usb_handle_irq();

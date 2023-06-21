@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	app_ble_1m_stx2rx.c
+ * @file    app_ble_1m_stx2rx.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2019
+ * @author  Driver Group
+ * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -59,7 +58,6 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 
 
 #define RF_FREQ				35
-#define RF_POWER			RF_POWER_P4p35dBm
 #define ACCESS_CODE        0xd6be898e//0x29417671
 volatile unsigned int rx_cnt=0;
 volatile unsigned int tx_cnt=0;

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	pke_utility.h
+ * @file    pke_utility.h
  *
- * @brief	This is the header file for B92
+ * @brief   This is the header file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -128,10 +127,10 @@ void uint8_XOR(unsigned char *A, unsigned char *B, unsigned char *C, unsigned in
 unsigned int get_valid_bits(const unsigned int *a, unsigned int wordLen);
 
 /**
- * @brief       get real word lenth of big number a of max_words words.
+ * @brief       get real word length of big number a of max_words words.
  * @param[in]   a         - big integer a.
  * @param[in]   max_words - max word length of a.
- * @return   	real word lenth of big number a.
+ * @return   	real word length of big number a.
  */
 unsigned int get_valid_words(unsigned int *a, unsigned int max_words);
 

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	calibration.h
+ * @file    calibration.h
  *
- * @brief	This is the header file for B91m
+ * @brief   This is the header file for B91m
  *
- * @author	Driver Group
- * @date	2021
+ * @author  Driver Group
+ * @date    2021
  *
  * @par     Copyright (c) 2021, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -93,7 +92,7 @@ typedef enum {
 void user_read_flash_value_calib(void);
 
 /**
- * @brief      This function is used to calib ADC 1.2V vref.
+ * @brief      This function is used to calibrate ADC 1.2V vref.
  * @param[in]  velfrom - the calibration value from flash or otp.
  * @param[in]  addr - the calibration value address of flash or otp.
  * @return 	   1 - the calibration value update, 0 - the calibration value is not update.

@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	puya_flash_scratch.c
+ * @file    puya_flash_scratch.c
  *
- * @brief	This is the source file for B91m
+ * @brief   This is the source file for B91m
  *
- * @author	Driver Group
- * @date	2022
+ * @author  Driver Group
+ * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -43,8 +42,8 @@ unsigned char program_buff[256]={
 	0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,
 };
 unsigned char read_buff[256]={0};
-unsigned int plane_pragram_addr[16]={0x0000,0x0100,0x0200,0x0300,0x1000,0x1100,0x1200,0x1300,0x400,0x500,0x600,0x700,0x1400,0x1500,0x1600,0x1700};
-unsigned int page_pragram_addr[8]={0x0000,0x0100,0x0200,0x0300,0x1000,0x1100,0x1200,0x1300};
+unsigned int plane_program_addr[16]={0x0000,0x0100,0x0200,0x0300,0x1000,0x1100,0x1200,0x1300,0x400,0x500,0x600,0x700,0x1400,0x1500,0x1600,0x1700};
+unsigned int page_program_addr[8]={0x0000,0x0100,0x0200,0x0300,0x1000,0x1100,0x1200,0x1300};
 unsigned char config_write_buff[4]={0x00,0x80,0x04,0x80};
 unsigned int config_addr[4]={0x1300,0x1301,0x1302,0x1303};
 unsigned char config_read_buff[4]={0};
@@ -81,7 +80,7 @@ _attribute_ram_code_sec_ static inline int flash_is_busy_testmode(void){
 	return mspi_read_testmode() & 0x01;		//the busy bit, pls check flash spec
 }
 /**
- * @brief     This function serves to wait flash done in testmode.(make this a asynchorous version).
+ * @brief     This function serves to wait flash done in testmode.(make this a asynchronous version).
  * @return    none.
  */
 _attribute_ram_code_sec_noinline_ static void flash_wait_done_testomode(){
@@ -99,7 +98,7 @@ _attribute_ram_code_sec_noinline_ static void flash_wait_done_testomode(){
 	BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
 }
 /**
- * @brief     This function serves to wait flash done.(make this a asynchorous version).
+ * @brief     This function serves to wait flash done.(make this a asynchronous version).
  * @return    none.
  */
 _attribute_ram_code_sec_noinline_ static void flash_wait_done_common(){
@@ -189,13 +188,13 @@ _attribute_ram_code_sec_noinline_ static void flash_write_config_scratch_testmod
 	flash_wait_done_testomode();
 }
 /**
- * @brief 		This function serves to flash plane pragram in test mode.
+ * @brief 		This function serves to flash plane program in test mode.
  * @param[in]   addr		- starting address.
  * @param[in]   len	        - the length(in byte) of content needs to be written.
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */
-_attribute_ram_code_sec_noinline_ static void flash_plane_pragram_scratch_testmode(unsigned int addr,unsigned long len, unsigned char *buf){
+_attribute_ram_code_sec_noinline_ static void flash_plane_program_scratch_testmode(unsigned int addr,unsigned long len, unsigned char *buf){
 	flash_write_testmode(0xDA,addr,len,buf);
 	flash_wait_done_testomode();
 }
@@ -206,7 +205,7 @@ _attribute_ram_code_sec_noinline_ static void flash_plane_pragram_scratch_testmo
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */
-_attribute_ram_code_sec_noinline_ static void flash_page_pragram_scratch_testmode(unsigned int addr,unsigned long len, unsigned char *buf){
+_attribute_ram_code_sec_noinline_ static void flash_page_program_scratch_testmode(unsigned int addr,unsigned long len, unsigned char *buf){
 	flash_write_enable_cmd_testmode();
 	flash_write_testmode(0x02,addr,len,buf);
 	flash_wait_done_testomode();
@@ -226,9 +225,9 @@ _attribute_ram_code_sec_noinline_ static unsigned char flash_scratch_ram(void)
 	flash_enter_test_mode((unsigned char *)enter_cmd_scratch);
 	//chip erase
 	flash_erase_chip_scratch_testmode();
-	//test mode profram full chip
+	//test mode program full chip
     for(unsigned char i=0;i<16;i++){
-    	flash_plane_pragram_scratch_testmode(plane_pragram_addr[i],256,(unsigned char *)program_buff);
+    	flash_plane_program_scratch_testmode(plane_program_addr[i],256,(unsigned char *)program_buff);
     }
     //set config
     for(unsigned char i=0;i<4;i++){
@@ -236,7 +235,7 @@ _attribute_ram_code_sec_noinline_ static unsigned char flash_scratch_ram(void)
     }
     //page program target memory address
     for(unsigned char i=0;i<8;i++){
-    	flash_page_pragram_scratch_testmode(page_pragram_addr[i],256,(unsigned char*)program_buff);
+    	flash_page_program_scratch_testmode(page_program_addr[i],256,(unsigned char*)program_buff);
     }
     //exit test mode
 //  flash_exit_test_mode();

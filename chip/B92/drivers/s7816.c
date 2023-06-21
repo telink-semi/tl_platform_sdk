@@ -1,13 +1,12 @@
 /********************************************************************************************************
- * @file	s7816.c
+ * @file    s7816.c
  *
- * @brief	This is the source file for B92
+ * @brief   This is the source file for B92
  *
- * @author	Driver Group
- * @date	2020
+ * @author  Driver Group
+ * @date    2020
  *
  * @par     Copyright (c) 2020, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -133,7 +132,7 @@ void s7816_set_pin(gpio_pin_e rst_pin,gpio_pin_e vcc_pin,gpio_func_pin_e clk_pin
 	s7816_vcc_pin=vcc_pin;
 
 	reg_gpio_func_mux(clk_pin) = CLK_7816;
-	gpio_function_dis(clk_pin);
+	gpio_function_dis((gpio_pin_e)clk_pin);
 
 	s7816_rtx_pin=rtx_pin;//if the trx function set to early,it may trigger interrupt by accident.so we set the function in coldreset.
 }
