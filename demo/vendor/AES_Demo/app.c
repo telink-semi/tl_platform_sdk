@@ -53,7 +53,7 @@ unsigned char rpa_data[112] __attribute__((aligned(4))) = {
 													0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f};
 
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_function_en(LED2);
@@ -64,15 +64,15 @@ void user_init()
 	gpio_set_low_level(LED1);
 	gpio_set_low_level(LED2);
 
-#if(AES_MODE == INTERRUPT_MODE)
+#if((AES_MODE == AES_CRYPT_MODE) && (CRYPT_MODE == CRYPT_IRQ_MODE))
 
 #if(MCU_CORE_B91)
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ12_ZB_DM);
+	plic_interrupt_enable(IRQ_ZB_DM);
 	aes_set_irq_mask(FLD_CRYPT_IRQ);
 #elif(MCU_CORE_B92)
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ14_ZB_BT);
+	plic_interrupt_enable(IRQ_ZB_BT);
 	aes_set_irq_mask(FLD_CRYPT_IRQ);
 #endif
 

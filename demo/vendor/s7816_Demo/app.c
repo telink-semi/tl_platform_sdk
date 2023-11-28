@@ -21,6 +21,72 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+/**
+   @verbatim
+   ===============================================================================
+                        ##### ISO-7816 ATR protocol explain#####
+   ===============================================================================
+   ATR stands for "Answer to Reset" , which is the first instruction the card sends after reset. 
+    - There are two protocols, T0 and T1, which the IC card must support, but not simultaneously. 
+    - T=0 communication protocol is an asynchronous half-duplex character transmission protocol.
+    - T=1 communication protocol is an asynchronous half-duplex block transmission protocol. 
+    - If there is no TD1 in the reset response information, it means that the communication will use the T=0 protocol.
+   
+   ATR protocol format:
+                        |     data element    |        explain       |
+                        |:--------------------|:---------------------|
+                        |         TS          |     start symbol     |
+                        |         T0          |    format symbol     |
+                        | TA1,TB1,TC1,TD1,... |   interface symbol   |
+                        |  T1,T2,......,TK    |    history symbol    |
+                        |         TCK         |  verification symbol |
+
+    - TS is a mandatory part of ATR and must always be sent. This byte only allows two encodings : 
+      - 3B for positive agreement.
+      - 3F for negative agreement.
+
+    - T0 contains a set of bits to indicate which interface character will be transmitted next and also indicates the number of subsequent historical characters. Like TS, this byte must be present in each ATR. 
+      - The high half byte (b5-b8) indicates whether TA1 to TD1 exist in the subsequent characters. (b5 corresponds to TA1, and b8 corresponds to TD1).
+      - The low half byte (b1-b4) indicates the number of optional historical characters (0 to 15).
+
+    - TA1 communicates the values of FI and DI :
+      - FI (high 4 bits) is used to determine the value of F, which is the clock frequency conversion factor, used to modify the clock frequency provided by the terminal after the reset. 
+      - DI (low 4 bits) is used to determine the value of D, called the bit rate adjustment factor, used to adjust the bit duration after the reset response.
+
+    - TD1 character is crucial :
+      - The high 4 bits of TD1 determine whether TA2/TB2/TC2/TD2 exist. 
+      - In the same way, the high 4 bits of TD2 determine whether TA3/TB3/TC3/TD3 exist, all the way to TDx not existing.
+
+    - T1, T2,......,TK They indicate some general information :
+      - Such as the manufacturer of the card, the chip embedded in the card, and the status of the files in the card.
+
+    - TCK has a value that allows the integrity of the data sent during the reset response period to be checked :
+      - The value of TCK should be such that the result of the XOR operation between T0 and including TCK is zero. When there is no TD1, T=0, TCK does not exist.
+   @endverbatim
+ */
+
+/**
+   @verbatim
+    =============================================================================
+                        ##### how to test demo #####
+    =============================================================================
+    hardware connection : rst <-> rst,vcc <-> vcc,clk <-> clk,trx <-> trx,gnd <-> gnd;
+    The demo phenomenon is as follows:
+    =========================================
+    Take an initialized SMARTCOS-PSAM card as an example. The demo first performs a cold reset and then takes random numbers. Take random command is: 0x00,0x84,0x00,0x00,0x04 (take 4 bytes of random number)
+    - Cold reset to obtain initial ATR
+    - Taking random numbers is as follows:
+        - Where 0x00,0x84,0x00,0x00,0x04 are the commands sent by the terminal to the IC card to take random numbers.
+        - The random numbers obtained are a total of 4 bytes, and the random numbers taken will be different each time.
+        - Data ending with ox9000 indicates successful execution of the command.
+    - For some manufacturers' IC cards, custom characters may be added after the standard ATR reply, and the random number instruction may not be replied. All this depends on the settings of IC card manufacturers.
+  @endverbatim
+ */
+
+
+
+
+
 #include "app_config.h"
 
 volatile unsigned int  s7816_irq_cnt=0;
@@ -28,16 +94,16 @@ volatile unsigned int  s7816_irq_cnt=0;
 volatile __attribute__((aligned(4))) unsigned char s7816_rx_buff_byte[S7816_RX_BUFF_LEN] ={0};
 volatile __attribute__((aligned(4))) unsigned char command[5]={0x00,0x84,0x00,0x00,0x04};//the command serves to get random number.
 
-void user_init()
+void user_init(void)
 {
 	s7816_set_pin(S7816_RST_PIN,S7816_VCC_PIN,S7816_CLK_PIN,S7816_TRX_PIN);
 	s7816_init(S7816_UART_CHN,S7816_4MHZ,F,D);
 
 	core_interrupt_enable();
 #if( S7816_UART_CHN == S7816_UART0)
-	plic_interrupt_enable(IRQ19_UART0);
+	plic_interrupt_enable(IRQ_UART0);
 #elif(S7816_UART_CHN == S7816_UART1)
-	plic_interrupt_enable(IRQ18_UART1);
+	plic_interrupt_enable(IRQ_UART1);
 #endif
 	uart_tx_irq_trig_level(S7816_UART_CHN, 0);
 	uart_rx_irq_trig_level(S7816_UART_CHN, 1);
@@ -76,7 +142,7 @@ void uart0_irq_handler(void)
 		}
 	}
 }
-
+PLIC_ISR_REGISTER(uart0_irq_handler, IRQ_UART0)
 
 #elif(S7816_UART_CHN == S7816_UART1)
 void uart1_irq_handler(void)
@@ -90,6 +156,7 @@ void uart1_irq_handler(void)
 		}
 	}
 }
+PLIC_ISR_REGISTER(uart1_irq_handler, IRQ_UART1)
 #endif
 
 

@@ -192,7 +192,9 @@ int main(void)
 #endif
 
 	CCLK_24M_HCLK_24M_PCLK_24M;
-
+    // Note: This is to set SWS pull. If SWS is not set up, SWS will be floating, causing abnormal sleep currents of suspend,
+    // there may be the risk of sws miswriting the chip registers or sram causing a crash.
+    gpio_set_up_down_res(GPIO_SWS, GPIO_PIN_PULLUP_1M);
     user_init();
 
     while(1)

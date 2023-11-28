@@ -117,7 +117,7 @@
 		<link>
 			<name>vendor/PKE_Demo</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo/B91_B92_PKE_Demo_v1.0.1/PKE_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/PM_DEMO</name>
@@ -150,9 +150,9 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/STimer_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/TRAP_DEMO</name>
+			<name>vendor/TRAP_Demo</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/TRAP_DEMO</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/TRAP_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/TRNG_Demo</name>
@@ -193,11 +193,6 @@
 			<name>vendor/common/exception.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/B92/exception.c</locationURI>
-		</link>
-		<link>
-			<name>vendor/common/plic_isr.c</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/common/B92/plic_isr.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

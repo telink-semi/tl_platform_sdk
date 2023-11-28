@@ -25,7 +25,7 @@
 #if(USB_DEMO_TYPE==USB_MIC_SPEAKER)
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
-#include <string.h>
+
 
 #define MIC_DMA_RX_CHN          DMA0
 #define SPK_DMA_TX_CHN          DMA3
@@ -36,8 +36,8 @@
 #define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
 #define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
 
-unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
-unsigned short		iso_out_buff[SPK_BUFFER_SIZE];
+short iso_in_buff[MIC_BUFFER_SIZE];
+short iso_out_buff[SPK_BUFFER_SIZE];
 #if(MCU_CORE_B92)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
@@ -87,7 +87,7 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
  * @param[in] none
  * @return    none.
  */
-void  audio_rx_data_from_usb ()
+void  audio_rx_data_from_usb (void)
 {
 	unsigned char len = reg_usb_ep_ptr(USB_EDP_SPEAKER);
 	usbhw_reset_ep_ptr(USB_EDP_SPEAKER);
@@ -136,6 +136,8 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	}
 
 }
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
+
 #if (MCU_CORE_B91)
 
 void user_init(void)
@@ -157,7 +159,7 @@ void user_init(void)
 	reg_usb_ep7_buf_addr = 0x20;		// 32
 	reg_usb_ep8_buf_addr = 0x00;
 	reg_usb_ep_max_size = (192 >> 3);
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	plic_interrupt_enable(IRQ_USB_ENDPOINT);		// enable usb endpoint interrupt
 
 	//1.enable USB DP pull up 1.5k
 	usb_set_pin_en();
@@ -246,7 +248,7 @@ void user_init(void)
 	};
 
 	core_interrupt_enable();//enable global interrupt
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	plic_interrupt_enable(IRQ_USB_ENDPOINT);		// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
 	usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
 	/***mic***/

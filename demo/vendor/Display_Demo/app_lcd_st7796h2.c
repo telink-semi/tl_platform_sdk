@@ -79,7 +79,7 @@ spi_wr_rd_config_t lspi_lcd_protocol_config = {
  * @brief    This function serves to reset lcd.
  * @return   none
  */
-void lcd_reset()
+void lcd_reset(void)
 {
 	gpio_set_low_level(LCD_RESET_PIN);
 	delay_ms(120);
@@ -368,7 +368,7 @@ void lcd_show_picture(unsigned short x, unsigned short x_delta, unsigned short y
 }
 volatile unsigned char spi_rx_buff[240*2*2] __attribute__((aligned(4))) = {0x00};
 
-void user_init()
+void user_init(void)
 {
 	gpio_output_en(LCD_RESET_PIN);
 	gpio_input_dis(LCD_RESET_PIN);

@@ -21,6 +21,25 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+
+/**
+   @verbatim
+   ===============================================================================
+                        ##### how to test demo #####
+   ===============================================================================
+   master and slave end hardware connection:scl <-> scl,sda <-> sda,gnd <-> gnd,during the test, power on the slave and then the master.
+   (+) I2C_DEVICE == I2C_MASTER_DEVICE(B91/B92)
+       the bin is burned into the master, and the data flow situation:
+       the master writes the data to the slave end, and then reads back to determine whether the written data is consistent with the read data;
+   (+) I2C_DEVICE == I2C_SLAVE_DEVICE(B91/B92)
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_DIS(B91/B92)
+           the bin is burned into the slave. data flow condition:
+           the slave receives data from the master and then writes the received data back to the master.
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_EN(B92)
+          (+)Another mechanism for communicating with the master,the bin is burned into the slave. data flow condition:
+             the slave receives data from the master and then writes the received data back to the master.
+   @endverbatim
+ */
 #include "app_config.h"
 
 #if(I2C_MASTER_WRITE_READ_MODE == I2C_MASTER_WRITE_READ_NO_DMA)
@@ -48,11 +67,11 @@
 volatile unsigned char i2c_read_flag =0;
 
 #define     BUFF_DATA_LEN_NO_DMA	 		 16
-volatile unsigned char i2c_rx_buff[BUFF_DATA_LEN_NO_DMA] __attribute__((aligned(4)));
+unsigned char i2c_rx_buff[BUFF_DATA_LEN_NO_DMA] __attribute__((aligned(4)));
 
 
 #define     BUFF_ADDR_DATA_LEN_NO_DMA	 		16
-volatile unsigned char i2c_tx_buff[BUFF_ADDR_DATA_LEN_NO_DMA] __attribute__((aligned(4)))= {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
+unsigned char i2c_tx_buff[BUFF_ADDR_DATA_LEN_NO_DMA] __attribute__((aligned(4)))= {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
 volatile unsigned char  slave_rx_end_flag=0;
 
@@ -77,24 +96,18 @@ void user_init(void)
 #if(I2C_DEVICE == I2C_MASTER_DEVICE)
     i2c_master_init();
 	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*I2C_CLK_SPEED)));
-#if(MCU_CORE_B92)
-	i2c_master_detect_nack_en();
-#if(I2C_STRETCH_MODE == I2C_STRETCH_EN)
-	i2c_master_stretch_en();
-#endif
-#endif
 #elif(I2C_DEVICE == I2C_SLAVE_DEVICE)
     i2c_slave_init(0x5a);
 	i2c_rx_irq_trig_cnt(SLAVE_RX_IRQ_TRIG_LEVEL);
 #if(MCU_CORE_B91)
     i2c_set_irq_mask(I2C_RX_BUF_MASK|I2C_RX_DONE_MASK);
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
     i2c_set_irq_mask(I2C_RX_BUF_MASK|I2C_RX_END_MASK);
 #if(I2C_STRETCH_MODE == I2C_STRETCH_EN)
     i2c_slave_stretch_en();
 #endif
 #endif
-    plic_interrupt_enable(IRQ21_I2C);
+    plic_interrupt_enable(IRQ_I2C);
     core_interrupt_enable();
 #endif
 }
@@ -130,12 +143,12 @@ void main_loop(void)
 		slave_rx_end_flag=0;
 		gpio_toggle(LED4);
 	}
-#elif(MCU_CORE_B92||(I2C_STRETCH_MODE == I2C_STRETCH_EN))
+#elif((MCU_CORE_B92||MCU_CORE_B93)||(I2C_STRETCH_MODE == I2C_STRETCH_EN))
 	//parsing to the read and write command sent by the master, the interrupt state set 1,
 	//judge whether it is a read command or not,the slave pull the clock line up,and fill in the data.
 	if(i2c_get_irq_status(I2C_SLAVE_WR_STATUS))
 	{
-		i2c_clr_irq_status(I2C_SLAVE_WR_CLR);
+		i2c_clr_irq_status(I2C_SLAVE_WR_STATUS);
 		if(I2C_SLAVE_WRITE == i2c_slave_get_cmd())
 		{
 		  i2c_slave_write((unsigned char*)i2c_rx_buff,BUFF_DATA_LEN_NO_DMA);
@@ -183,7 +196,7 @@ _attribute_ram_code_sec_noinline_ void i2c_irq_handler(void)
 	    i2c_clr_fifo(I2C_RX_BUFF_CLR);
 		slave_rx_done_end_flag=1;
 	}
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
 	if(i2c_get_irq_status(I2C_RX_BUF_STATUS))
 	{
 		i2c_slave_read((unsigned char*)(i2c_rx_buff+i2c_read_flag),SLAVE_RX_IRQ_TRIG_LEVEL);
@@ -204,6 +217,7 @@ _attribute_ram_code_sec_noinline_ void i2c_irq_handler(void)
 	gpio_toggle(LED3);
 #endif
 }
+PLIC_ISR_REGISTER(i2c_irq_handler, IRQ_I2C)
 #endif
 
 

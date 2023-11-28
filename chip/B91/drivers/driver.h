@@ -59,3 +59,5 @@
 #include "adc.h"
 #include "flash/flash_type.h"
 #include "sdk_version.h"
+#include "plic_sw.h"
+#include "plmt.h"

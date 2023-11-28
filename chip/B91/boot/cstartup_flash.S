@@ -36,6 +36,11 @@
 #define DP_THROUGH_SWIRE_DIS      1
 #endif
 
+//According to the current internal seal flash model of B91m, the maximum time between the flash awakening and the operating flash is 20us, which leaves some margin and is set to 25us.
+//When adding flash later, if tRES1 is greater than 25us, this waiting time needs to be updated. (flash tRES1, which can be viewed in the comments of the variable flash_support_mid.)
+//(add by weihua.zhang 20230811)
+#define EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM		320	//25us
+
     .section .vectors, "ax"
 
     //.org  and linker's relaxation (-flto) cannot be used at the same time
@@ -326,61 +331,34 @@ _MSPI_WAIT:
 	li		t4 , 0x10
 	beq 	t3 , t2 ,_MSPI_WAIT
 	sb		t4 , 0x101(t0)			//cs_high			:0x140101:0x10
+
 #if 0
 	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
+	lui		t0, 0x80140 			//0x8014030a
 	li		t1, 0x00
-	sb		t1 , 0x30b(t0)		 //0x8014030b  PB output  =  0x00
+	sb		t1, 0x30b(t0)		 	//0x8014030b  PB output  =  0x00
 #endif
-/*efuse load need delay about 18us */
-	li		t0 , 0
-	li		t1 , 226
-_WAIT_EFUSE_LOAD_FINISH:
-	addi 	t0 , t0 , 1
-	bgeu 	t1 , t0 , _WAIT_EFUSE_LOAD_FINISH
+
+	/*flash wakeup need delay about 20us */
+	/*efuse load need delay about 18us */
+	li		t0, 0
+	li		t1, EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM
+_WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH:
+	addi 	t0, t0 , 1
+	bgeu 	t1, t0 , _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH
 
 #if 0
 	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
+	lui		t0, 0x80140 			//0x8014030a
 	li		t1, 0x10
-	sb		t1 , 0x30b(t0)		 //0x8014030b  PB output  =  0x00
+	sb		t1, 0x30b(t0)		 //0x8014030b  PB output  =  0x00
 #endif
+
 _MULTI_ADDRESS_BEGIN:
-	lui		t0 , 0x80140
-	la		t1 , g_pm_mspi_cfg
-	lw		t2 , 0(t1)
-	sw		t2 , 0x104(t0)			 //g_pm_mspi_cfg->0x80140104
-
-#if 0
-	/* Move ramcode from flash to sram */
-_IRAMCODE_INIT:
-
-    la     t1, _RAMCODE_LMA_START
-    la     t2, _RAMCODE_VMA_START
-    la     t3, _RAMCODE_VMA_END
-_IRAMCODE_INIT_BEGIN:
-    bleu   t3, t2, _IDATA_INIT
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _IRAMCODE_INIT_BEGIN
-#endif
-
-	/* Move Data from flash to sram */
-_IDATA_INIT:
-    la     t1, _DATA_LMA_START
-    la     t2, _DATA_VMA_START
-    la     t3, _DATA_VMA_END
-_IDATA_INIT_BEGIN:
-    bleu   t3, t2, _IZERO_BSS
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _IDATA_INIT_BEGIN
-
-
+	lui		t0, 0x80140
+	la		t1, g_pm_mspi_cfg
+	lw		t2, 0(t1)
+	sw		t2, 0x104(t0)			 //g_pm_mspi_cfg->0x80140104
 
 	/* Zero .bss section in sram */
 _IZERO_BSS:
@@ -404,7 +382,6 @@ _IZERO_AES_BEGIN:
     addi   t2, t2, 4
     j      _IZERO_AES_BEGIN
 
-
 	/* Fill the remaining section in sram */
 _IFILL_STK:
 #if 0
@@ -413,11 +390,26 @@ _IFILL_STK:
     la     t2, _BSS_VMA_END
     la     t3, _STACK_TOP
 _IFILL_STK_BEGIN:
-    bleu   t3, t2, _IMAIN_FUNC
+    bleu   t3, t2, _IDATA_INIT
     sw     t0, 0(t2)
     addi   t2, t2, 4
     j      _IFILL_STK_BEGIN
 #endif
+
+	/* Move Data from flash to sram */
+//Read the flash as late as possible to lengthen the time from the wake up to the operation of the flash.
+_IDATA_INIT:
+    la     t1, _DATA_LMA_START
+    la     t2, _DATA_VMA_START
+    la     t3, _DATA_VMA_END
+_IDATA_INIT_BEGIN:
+    bleu   t3, t2, _IMAIN_FUNC
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _IDATA_INIT_BEGIN
+
 	/* Jump to the main function */
 _IMAIN_FUNC:
     nop

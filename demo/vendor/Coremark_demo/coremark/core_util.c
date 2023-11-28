@@ -182,7 +182,7 @@ ee_u16 crc16(ee_s16 newval, ee_u16 crc) {
 	return crcu16((ee_u16)newval, crc);
 }
 
-ee_u8 check_data_types() {
+ee_u8 check_data_types(void) {
 	ee_u8 retval=0;
 	if (sizeof(ee_u8) != 1) {
 		printf("ERROR: ee_u8 is not an 8b datatype!\n");

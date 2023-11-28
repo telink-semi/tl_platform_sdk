@@ -22,14 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-/* Includes: */
-#include "CDCClassCommon.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
     extern "C" {
 #endif
+/* Includes: */
+#include "CDCClassCommon.h"
 
 typedef struct
 {
@@ -45,7 +43,7 @@ typedef struct
 		unsigned char NotificationEndpointNumber;
 		unsigned short NotificationEndpointSize;
 		_Bool NotificationEndpointDoubleBank;
-	} Config;
+	} __attribute__((packed)) Config;
 
 	struct
 	{
@@ -56,8 +54,8 @@ typedef struct
 		} ControlLineStates;
 
 		CDC_LineEncoding_t LineEncoding;
-	} State;
-} USB_ClassInfo_CDC_Device_t;
+	} __attribute__((packed)) State;
+} __attribute__((packed)) USB_ClassInfo_CDC_Device_t;
 
 
 /* Disable C linkage for C++ Compilers: */

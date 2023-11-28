@@ -25,6 +25,19 @@
 #define CORE_H
 #include "lib/include/sys.h"
 #include "nds_intrinsic.h"
+
+/**
+ * @brief Machine mode MHSP_CTL
+ */
+typedef enum {
+    MHSP_CTL_OVF_EN     = BIT(0), /**< Enable bit for the stack overflow protection and recording mechanism. */
+    MHSP_CTL_UDF_EN     = BIT(1), /**< Enable bit for the stack underflow protection mechanism. */
+    MHSP_CTL_SCHM_SEL   = BIT(2), /**< 0-Stack overflow/underflow,1-Top-of-stack recording. */
+    MHSP_CTL_U_EN       = BIT(3), /**< Enables the SP protection and recording mechanism in User mode. */
+    MHSP_CTL_S_EN       = BIT(4), /**< Enables the SP protection and recording mechanism in Supervisor mode. */
+    MHSP_CTL_M_EN       = BIT(5), /**< Enables the SP protection and recording mechanism in Machine mode. */
+} mhsp_ctl_e;
+
 typedef enum
 {
 	FLD_MSTATUS_MIE = BIT(3),//M-mode interrupt enable bit
@@ -35,6 +48,21 @@ typedef enum
 	FLD_MIE_MTIE     = BIT(7),//M-mode timer interrupt enable bit
 	FLD_MIE_MEIE     = BIT(11),//M-mode external interrupt enable bit
 }mie_e;
+
+/**
+ * @brief MEI, MSI, and MTI interrupt nesting priorities.
+ * @note
+ *        - By default, interrupt nesting is disabled.
+ *        - When interrupt nesting is enabled
+ *          - MEI, MSI and MTI occur simultaneously, they are handled under the following order:MEI > MSI > MTI.
+ *          - Other cases as described in core_preempt_pri_e below.
+ */
+typedef enum {
+    CORE_PREEMPT_PRI_MODE0 = FLD_MIE_MSIE | FLD_MIE_MTIE, /**< MTI and MSI cannot interrupt MEI, MSI and MTI can be nested within each other. */
+    CORE_PREEMPT_PRI_MODE1 = FLD_MIE_MTIE,                /**< MTI cannot interrupt MEI, MSI and MTI can be nested within each other. */
+    CORE_PREEMPT_PRI_MODE2 = FLD_MIE_MSIE,                /**< MSI cannot interrupt MEI, MSI and MTI can be nested within each other. */
+    CORE_PREEMPT_PRI_MODE3 = BIT(1),                      /**< MEI, MSI and MTI can be nested within each other(MIE register bit1 is an invalid bit). */
+}core_preempt_pri_e;
 
 #define  read_csr(reg)		         __nds__csrr(reg)
 #define  write_csr(reg, val)	      __nds__csrw(val, reg)
@@ -98,11 +126,12 @@ feature_e;
  * @note  this function must be used when the system wants to disable all the interrupt.
  * @return     none
  */
-static inline unsigned int core_interrupt_disable(void){
+_attribute_ram_code_sec_optimize_o2_ static inline unsigned int core_interrupt_disable(void){
 	unsigned int r = read_csr (NDS_MSTATUS)&FLD_MSTATUS_MIE;
 	if(r)
 	{
 		clear_csr(NDS_MSTATUS,FLD_MSTATUS_MIE);//global interrupts disable
+        fence_iorw; /* Hardware may change this value, fence IO ensures that software changes are valid. */
 	}
 	return r;
 }
@@ -114,25 +143,120 @@ static inline unsigned int core_interrupt_disable(void){
  * @return     0
  * @note this function must be used when the system wants to restore all the interrupt.
  */
-static inline unsigned int core_restore_interrupt(unsigned int en){
+_attribute_ram_code_sec_optimize_o2_ static inline unsigned int core_restore_interrupt(unsigned int en){
 	if(en)
 	{
 		set_csr(NDS_MSTATUS,en);//global interrupts enable
+        fence_iorw; /* Hardware may change this value, fence IO ensures that software changes are valid. */
 	}
 	return 0;
 }
 
 /**
- * @brief enable interrupts globally in the system.
+ * @brief This function serves to enable MEI(Machine External Interrupt),MTI(Machine timer Interrupt),or MSI(Machine Software Interrupt).
+ * @param[in] mie_mask - MIE(Machine Interrupt Enable) register mask.
+ * @return  none
+ */
+static _always_inline void core_mie_enable(mie_e mie_mask)
+{
+    set_csr(NDS_MIE, mie_mask);
+}
+
+/**
+ * @brief This function serves to disable MEI(Machine External Interrupt),MTI(Machine timer Interrupt),or MSI(Machine Software Interrupt).
+ * @param[in] mie_mask - MIE(Machine Interrupt Enable) register mask.
+ * @return  none
+ */
+static _always_inline void core_mie_disable(mie_e mie_mask)
+{
+    clear_csr(NDS_MIE, mie_mask);
+}
+
+/**
+ * @brief This function serves to enable interrupts globally in the system, MEI(machine external interrupt) will also enable.
  * @return  none
  */
 static inline void core_interrupt_enable(void)
 {
-	set_csr(NDS_MSTATUS,FLD_MSTATUS_MIE);//global interrupts enable
-	set_csr(NDS_MIE,FLD_MIE_MSIE |FLD_MIE_MTIE|FLD_MIE_MEIE);//machine Interrupt enable selectively
+    set_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);//global interrupts enable
+    fence_iorw; /* Hardware may change this value, fence IO ensures that software changes are valid. */
+    core_mie_enable(FLD_MIE_MEIE);//machine interrupt enable selectively
 }
 
+/**
+ * @brief This function serves to set mhsp control registers.
+ * @param[in]  ctl - the value of mhsp_ctl, refer to mhsp_ctl_e for the definition of MHSP_CTL
+ * @return     none
+ */
+static inline void core_set_mhsp_ctr(mhsp_ctl_e ctl)
+{
+    write_csr(NDS_MHSP_CTL, (unsigned int)ctl);
+}
 
+/**
+ * @brief This function serves to set hsp bound registers.
+ *  ---Stack overflow---
+ When the SP overflow detection mechanism is properly selected and enabled, any updated value to
+ the SP register (via any instruction) is compared with the msp_bound register If the updated value
+ to the SP register is smaller than the msp_bound register, a stack overflow exception is generated
+ a stack overflow exception is generated.
+ The stack overflow exception has an exception code of 32 in the mcause register
+ ---Top-of-stack recording---
+ When the top of stack recording mechanism is properly selected and enabled, any updated value to
+ the SP register on any instruction is compared with the msp_bound register. If the updated value
+ to the SP register is smaller than the msp_bound register, the msp_bound register is updated with this updated value
+ * @param[in]  bound - the value of  hsp_bound .
+ * @return     none
+ */
+static inline void core_set_msp_bound(unsigned int bound)
+{
+    write_csr(NDS_MSP_BOUND, bound);
+}
+
+/**
+ * @brief This function serves to set hsp base registers.
+ When the SP underflow detection mechanism is properly selected and enabled, any updated value to
+ the SP register (via any instruction) is compared with the msp_base register. If the updated value to
+ the SP register is greater than the msp_base register, a stack underflow exception is generated. The
+ stack underflow exception has an exception code of 33 in the mcause register.
+ * @param[in]  base - the value of hsp_base .
+ * @return     none
+ */
+static inline void core_set_msp_base(unsigned int base)
+{
+    write_csr(NDS_MSP_BASE, base);
+}
+
+/**
+ * @brief This function serves to get hsp bound registers.
+ * ---Top-of-stack recording---
+ When the top of stack recording mechanism is properly selected and enabled, any updated value to
+ the SP register on any instruction is compared with the msp_bound register. If the updated value
+ to the SP register is smaller than the msp_bound register, the msp_bound register is updated with this updated value,you can read this value.
+ * @return     none
+ */
+static inline unsigned int core_get_msp_bound(void)
+{
+    return read_csr(NDS_MSP_BOUND);
+}
+
+/**
+ * @brief This function serves to get hsp base registers.there is no recording.
+ * @return     none
+ */
+static inline unsigned int core_get_msp_base(void)
+{
+    return read_csr(NDS_MSP_BASE);
+}
+
+/**
+ * @brief This function serves to get current sp(Stack pointer).
+ * @return     none
+ */
+static inline unsigned int core_get_current_sp(void)
+{
+    return __nds__get_current_sp();
+}
 
 /**
  * @brief This function serves to get mcause(Machine Cause) value.
@@ -154,6 +278,48 @@ static inline unsigned int core_get_mcause(void)
 static inline unsigned int core_get_mepc(void)
 {
 	return read_csr(NDS_MEPC);
+}
+
+/**
+ * @brief    This function serves to enable mcu entry WFI(Wait-For-Interrupt) mode similar to stall mcu.
+ * @return   none
+ * @note:    there are two awoke modes by interrupt:
+ *             - When global interrupts are enabled using the interface core_interrupt_enable() (mstatus.MIE is enabled)
+ *               - Before entering WFI, make sure the following conditions are met:
+ *                 -# Enable MEI, MSI or MTI using interface core_mie_enable(), so that can wake up mcu after core enters WFI.
+ *                 -# If there is an interrupt that has already been triggered, the corresponding interrupt flag bit has been cleared.
+ *                 -# Interrupt enable for wakeup source using interface plic_interrupt_enable(), interrupt disable for non-wakeup sources using interface plic_interrupt_disable().
+ *               - After exiting WFI, the processor is awoken by a taken interrupt, it will resume and start to execute from the corresponding interrupt service routine, the processing steps in ISR as follows:
+*                  -# Clear the corresponding interrupt flag bit in the corresponding interrupt service routine.
+ *                 -# Your application code.
+ *             - When global interrupts are disabled using the interface core_interrupt_disable() (mstatus.MIE is disabled)
+ *               - Before entering WFI, make sure the following conditions are met:
+ *                 -# Enable MEI, MSI or MTI using interface core_mie_enable(), so that can wake up mcu after core enters WFI.
+ *                 -# If there is an interrupt that has already been triggered, the corresponding interrupt flag bit has been cleared.
+ *                 -# Interrupt enable for wakeup source using interface plic_interrupt_enable(), interrupt disable for non-wakeup sources using interface plic_interrupt_disable().
+ *                 -# Clear all current requests from the PLIC using the plic_clr_all_request() interface.
+ *               - After exiting WFI, the processor is awoken by a pending interrupt, it will resume and start to execute from the instruction after the WFI instruction, the processing steps after WFI instruction as follows:
+ *                 -# Getting the wakeup source using interface plic_interrupt_claim().
+ *                 -# Take stimer for example, using the interfaces stimer_get_irq_status() and stimer_clr_irq_status() to get and clear the corresponding interrupt flag bit according to the interrupt source.
+ *                 -# Your application code.
+ *                 -# Using interface plic_interrupt_complete() to notify PLIC that the corresponding interrupt processing is complete.
+ */
+static inline void core_entry_wfi_mode(void)
+{
+    /* Interrupts disabled by the mie CSR will not be able to wake up the processor.
+      However,the processor can be awoken by these interrupts regardless the value of the global interrupt enable bit (mstatus.MIE)*/
+    __asm__ __volatile__("wfi");
+}
+
+/**
+ * @brief     This function serves to get current pc.
+ * @return    current pc
+ */
+static inline unsigned int core_get_current_pc(void)
+{
+    unsigned int current_pc = 0;
+    __asm__("auipc %0, 0" : "=r"(current_pc)::"a0");
+    return current_pc;
 }
 
 #endif

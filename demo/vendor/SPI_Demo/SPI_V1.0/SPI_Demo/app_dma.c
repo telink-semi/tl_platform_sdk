@@ -215,7 +215,7 @@ spi_b91m_slave_protocol_t __attribute__((aligned(4))) spi_tx_buff =
 	};
 #endif
 
-void user_init()
+void user_init(void)
 {
 	delay_ms(2000);
 	gpio_output_en(LED2); 		//enable output
@@ -233,13 +233,13 @@ void user_init()
 	pspi_set_pin(&pspi_pin_config);
 	pspi_set_tx_dma_config(SPI_TX_DMA_CHN);
 	pspi_set_rx_dma_config(SPI_RX_DMA_CHN);
-	plic_interrupt_enable(IRQ23_SPI_APB);
+	plic_interrupt_enable(IRQ_SPI_APB);
 #elif(SPI_MODULE_SEL == HSPI_MODULE)
 	spi_master_init(SPI_MODULE_SEL, sys_clk.hclk * 1000000 / (2 * SPI_CLK) - 1, SPI_MODE0);
 	hspi_set_pin(&hspi_pin_config);
 	hspi_set_tx_dma_config(SPI_TX_DMA_CHN);
 	hspi_set_rx_dma_config(SPI_RX_DMA_CHN);
-	plic_interrupt_enable(IRQ22_SPI_AHB);
+	plic_interrupt_enable(IRQ_SPI_AHB);
 #endif
 
 #if (SPI_PROTOCOL == B85M_SLAVE_PROTOCOL)
@@ -456,6 +456,12 @@ _attribute_ram_code_sec_ void hspi_irq_handler(void)
 		end_irq_flag = 1;
 	}
 }
+#if(SPI_MODULE_SEL == PSPI_MODULE)
+PLIC_ISR_REGISTER(pspi_irq_handler, IRQ_SPI_APB)
+#elif(SPI_MODULE_SEL == HSPI_MODULE)
+PLIC_ISR_REGISTER(hspi_irq_handler, IRQ_SPI_AHB)
+#endif
+
 #elif(SPI_DEVICE == SPI_SLAVE_DEVICE)
 	/**********************************************************************************************************************
 	*                                         SPI slave setting 				                                	 	  *
@@ -466,7 +472,7 @@ _attribute_ram_code_sec_ void hspi_irq_handler(void)
 #define DATA_BYTE_OFFSET    8 //must be a multiple 4
 unsigned char spi_slave_rx_buff[SPI_RX_BUFF_LEN] __attribute__((aligned(4))) = {0x00};
 #endif
-void user_init()
+void user_init(void)
 {
 	delay_ms(2000);
 	gpio_output_en(LED2); 		//enable output
@@ -483,12 +489,12 @@ void user_init()
 	spi_set_irq_mask(SPI_MODULE_SEL,SPI_SLV_CMD_EN |SPI_END_INT_EN);//endint_en txfifoint_en rxfifoint_en
 #if(SPI_MODULE_SEL == PSPI_MODULE)
 	pspi_set_pin(&pspi_pin_config);
-	plic_interrupt_enable(IRQ23_SPI_APB);
+	plic_interrupt_enable(IRQ_SPI_APB);
 	pspi_set_tx_dma_config(SPI_TX_DMA_CHN);
 	pspi_set_rx_dma_config(SPI_RX_DMA_CHN);
 #elif(SPI_MODULE_SEL == HSPI_MODULE)
 	hspi_set_pin(&hspi_pin_config);
-	plic_interrupt_enable(IRQ22_SPI_AHB);
+	plic_interrupt_enable(IRQ_SPI_AHB);
 	hspi_set_tx_dma_config(SPI_TX_DMA_CHN);
 	hspi_set_rx_dma_config(SPI_RX_DMA_CHN);
 #endif
@@ -543,6 +549,12 @@ _attribute_ram_code_sec_ void hspi_irq_handler(void)
 		spi_clr_irq_status(SPI_MODULE_SEL, SPI_END_INT);//clr
 	}
 }
+#if(SPI_MODULE_SEL == PSPI_MODULE)
+PLIC_ISR_REGISTER(pspi_irq_handler, IRQ_SPI_APB)
+#elif(SPI_MODULE_SEL == HSPI_MODULE)
+PLIC_ISR_REGISTER(hspi_irq_handler, IRQ_SPI_AHB)
+#endif
+
 #endif
 #endif
 #endif

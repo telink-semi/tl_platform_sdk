@@ -22,12 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
 
 #define CLOCK_AHB_CLOCK_HZ  	48000000

@@ -21,33 +21,23 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
 #define	 PWM_CONTINUE		    1
 #define	 PWM_COUNT			    2
 #define	 PWM_IR			        3
 #define	 PWM_IR_FIFO		    4
 #define	 PWM_IR_DMA		        5
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||MCU_CORE_B93)
 #define  PWM_CENTER_ALIGNED     6
 #endif
 #define	 SET_PWM_MODE		   PWM_CONTINUE
 
-#if(MCU_CORE_B92)
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
-#elif(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-#endif
 
 #define     PWM_PCLK_SPEED				12000000 //pwm clock 12M.
 #define     PWM_32K_SPEED               32000    //pwm 32K

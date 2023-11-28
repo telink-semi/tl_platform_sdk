@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    puya_flash_scratch.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for B91
  *
  * @author  Driver Group
  * @date    2022
@@ -179,7 +179,7 @@ _attribute_ram_code_sec_noinline_ static void flash_erase_chip_scratch_testmode(
 /**
  * @brief 		This function serves to flash write config in test mode.
  * @param[in]   addr		- starting address.
- * @param[in]   len	        - the length(in byte) of content needs to be written.
+ * @param[in]   len	        - the length(in byte, must be above 0) of content needs to be written.
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */
@@ -190,7 +190,7 @@ _attribute_ram_code_sec_noinline_ static void flash_write_config_scratch_testmod
 /**
  * @brief 		This function serves to flash plane program in test mode.
  * @param[in]   addr		- starting address.
- * @param[in]   len	        - the length(in byte) of content needs to be written.
+ * @param[in]   len	        - the length(in byte, must be above 0) of content needs to be written.
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */
@@ -201,7 +201,7 @@ _attribute_ram_code_sec_noinline_ static void flash_plane_program_scratch_testmo
 /**
  * @brief 		This function serves to flash page program in test mode.
  * @param[in]   addr		- starting address.
- * @param[in]   len	        - the length(in byte) of content needs to be written.
+ * @param[in]   len	        - the length(in byte, must be above 0) of content needs to be written.
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */

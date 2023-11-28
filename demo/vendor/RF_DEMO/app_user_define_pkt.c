@@ -116,6 +116,7 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 	}
 
 }
+PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
 #endif
 
 /**
@@ -178,7 +179,7 @@ void user_init(void)
 #if(RF_RX_IRQ_EN)
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_RX);
 	rf_start_srx(stimer_get_tick());
 #endif
@@ -279,7 +280,7 @@ void user_init(void)
 #if(RF_RX_IRQ_EN)
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_RX);
 	rf_set_rxmode();
 	delay_us(85);  //Wait for calibration to stabilize

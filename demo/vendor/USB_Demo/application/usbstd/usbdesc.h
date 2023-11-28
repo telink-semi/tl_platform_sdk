@@ -22,6 +22,10 @@
  *
  *******************************************************************************************************/
 #pragma once
+/* Enable C linkage for C++ Compilers: */
+#if defined(__cplusplus)
+extern "C" {
+#endif
 #include "AudioClassCommon.h"
 #include "CDCClassCommon.h"
 #include "HIDClassCommon.h"
@@ -33,10 +37,6 @@
 #include "StdDescriptors.h"
 #include "../../../../vendor/USB_Demo/usb_default.h"
 #include "usbdesc.h"
-/* Enable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
 // interface id
 typedef
@@ -259,23 +259,23 @@ enum {
 typedef struct {
 	USB_HID_Descriptor_HID_t audio_hid;
 	USB_Descriptor_Endpoint_t audio_in_endpoint;
-} USB_HID_Descriptor_HID_Audio_t;
+} __attribute__((packed)) USB_HID_Descriptor_HID_Audio_t;
 
 typedef struct {
 	USB_HID_Descriptor_HID_t mouse_hid;
 	USB_Descriptor_Endpoint_t mouse_in_endpoint;
-} USB_HID_Descriptor_HID_Mouse_t;
+} __attribute__((packed)) USB_HID_Descriptor_HID_Mouse_t;
 
 typedef struct {
 	USB_HID_Descriptor_HID_t keyboard_hid;
 	USB_Descriptor_Endpoint_t keyboard_in_endpoint;
-} USB_HID_Descriptor_HID_Keyboard_t;
+} __attribute__((packed)) USB_HID_Descriptor_HID_Keyboard_t;
 
 typedef struct {
 	USB_HID_Descriptor_HID_t somatic_hid;
 	USB_Descriptor_Endpoint_t somatic_in_endpoint;
 	USB_Descriptor_Endpoint_t somatic_out_endpoint;
-} USB_HID_Descriptor_HID_Somatic_t;
+} __attribute__((packed)) USB_HID_Descriptor_HID_Somatic_t;
 
 typedef struct {
 	// CDC Control Interface
@@ -289,7 +289,7 @@ typedef struct {
 	USB_Descriptor_Interface_t               CDC_DCI_Interface;
 	USB_Descriptor_Endpoint_t                CDC_DataOutEndpoint;
 	USB_Descriptor_Endpoint_t                CDC_DataInEndpoint;
-} USB_CDC_Descriptor_t;
+} __attribute__((packed)) USB_CDC_Descriptor_t;
 
 typedef struct {
     USB_Descriptor_Configuration_Hdr_t Config;
@@ -377,7 +377,7 @@ typedef struct {
 	USB_Descriptor_Endpoint_t disk_out_endpoint;
 #endif
 
-} USB_Descriptor_Configuration_t;
+} __attribute__((packed)) USB_Descriptor_Configuration_t;
 
 typedef struct {
 	unsigned int dwLength;    // length, in bytes, of the complete extended compat ID descriptor
@@ -386,7 +386,7 @@ typedef struct {
 	unsigned char bCount;	     //The number of custom property sections
 	unsigned char RESERVED[7];  //Reserved
 
-}USB_MS_OS_compatID_Header_t;
+} __attribute__((packed)) USB_MS_OS_compatID_Header_t;
 
 typedef struct {
 
@@ -396,13 +396,13 @@ typedef struct {
 	unsigned char subCompatibleID[8];     //The functions subcompatible ID
 	unsigned char RESERVED2[6];           //Reserved
 
-}USB_MS_OS_compatID_Function_t;
+} __attribute__((packed)) USB_MS_OS_compatID_Function_t;
 
 
 typedef struct {
 	USB_MS_OS_compatID_Header_t    compatID_Header;
 	USB_MS_OS_compatID_Function_t  compatID_Function[];
-}USB_MS_OS_compatID_t;
+} __attribute__((packed)) USB_MS_OS_compatID_t;
 
 
 unsigned char* usbdesc_get_language(void);
@@ -428,7 +428,7 @@ unsigned char* usbdesc_get_keyboard(void);
 unsigned char* usbdesc_get_somatic(void);
 #endif
 
-#if (USB_CRC_ENABLE)
+#if (USB_CDC_ENABLE)
 unsigned char *usbdesc_get_cdc(void);
 #endif
 

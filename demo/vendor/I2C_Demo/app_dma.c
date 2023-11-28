@@ -21,8 +21,26 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
 
+/**
+   @verbatim
+   ===============================================================================
+                        ##### how to test demo #####
+   ===============================================================================
+   master and slave end hardware connection:scl <-> scl,sda <-> sda,gnd <-> gnd,during the test, power on the slave and then the master.
+   (+) I2C_DEVICE == I2C_MASTER_DEVICE(B91/B92)
+       the bin is burned into the master, and the data flow situation:
+       the master writes the data to the slave end, and then reads back to determine whether the written data is consistent with the read data;
+   (+) I2C_DEVICE == I2C_SLAVE_DEVICE(B91/B92)
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_DIS(B91/B92)
+           the bin is burned into the slave. data flow condition:
+           the slave receives data from the master and then writes the received data back to the master.
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_EN(B92)
+          (+)Another mechanism for communicating with the master,the bin is burned into the slave. data flow condition:
+             the slave receives data from the master and then writes the received data back to the master.
+   @endverbatim
+ */
+#include "app_config.h"
 
 #if(I2C_MASTER_WRITE_READ_MODE == I2C_MASTER_WRITE_READ_DMA)
 
@@ -31,7 +49,7 @@
 #define     I2C_SLAVE_DEVICE			2   //i2c slave demo
 #define     I2C_DEVICE					I2C_MASTER_DEVICE
 
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||MCU_CORE_B93)
 /*
  * If the slave supports stretch when tx_fifo is 0, and the master supports stretch, then the slave can configure tx dma by referring to the demo with stretch enabled,
  * otherwise, refer to the demo of stretch dis. when the master read, the slave needs to fill data in advance
@@ -50,12 +68,12 @@
 
 
 #define     BUFF_DATA_LEN_DMA	 	     	     16
-volatile unsigned char i2c_tx_buff[BUFF_DATA_LEN_DMA] __attribute__((aligned(4))) = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
+unsigned char i2c_tx_buff[BUFF_DATA_LEN_DMA] __attribute__((aligned(4))) = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 #define     RX_BUFF_DATA_LEN_DMA	 	     	 16
 
 #if(MCU_CORE_B91)
 #define  DMA_REV_LEN    RX_BUFF_DATA_LEN_DMA
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
 //In DMA mode, only one demo is provided where DMA_REV_LEN is 0xFFFFFC (maximum),If  want to set the length to less than 0XFFFFFC, can ask the driver to confirm how to use it.
 #define  DMA_REV_LEN    0xFFFFFC
 #endif
@@ -64,9 +82,9 @@ volatile unsigned char i2c_tx_buff[BUFF_DATA_LEN_DMA] __attribute__((aligned(4))
 //Note:In B91,the length of data received by the slave must be the same as the length of data sent by the master.
 //In B92,the length of data received by slave should not be greater than the length of i2c_rx_buff, otherwise it will be out of the i2c_rx_buff's address range.
 #if(MCU_CORE_B91)
-volatile unsigned char i2c_rx_buff[RX_BUFF_DATA_LEN_DMA] __attribute__((aligned(4)));
-#elif(MCU_CORE_B92)
-volatile unsigned char i2c_rx_buff[RX_BUFF_DATA_LEN_DMA+4] __attribute__((aligned(4)));
+unsigned char i2c_rx_buff[RX_BUFF_DATA_LEN_DMA] __attribute__((aligned(4)));
+#elif(MCU_CORE_B92||MCU_CORE_B93)
+unsigned char i2c_rx_buff[RX_BUFF_DATA_LEN_DMA+4] __attribute__((aligned(4)));
 #endif
 volatile unsigned char i2c_master_read_nack_cnt=0;
 volatile unsigned char i2c_master_write_nack_cnt=0;
@@ -87,41 +105,48 @@ void user_init(void)
 	gpio_output_en(LED4); 		//enable output
 	gpio_input_dis(LED4);		//disable input
 	i2c_set_pin(I2C_GPIO_SDA_PIN,I2C_GPIO_SCL_PIN);
-	i2c_set_rx_dma_config(I2C_RX_DMA_CHN);
 	i2c_set_tx_dma_config(I2C_TX_DMA_CHN);
 
 #if(I2C_DEVICE == I2C_MASTER_DEVICE)
 	//For eagle the slave ID is 0x5a, for kite the slave ID is 0x5c.
 	i2c_master_init();
 	i2c_set_master_clk((unsigned char)(sys_clk.pclk*1000*1000/(4*I2C_CLK_SPEED)));//set i2c frequency 200K.
-#if(MCU_CORE_B92)
-#if(I2C_STRETCH_MODE == I2C_STRETCH_EN)
-	i2c_master_stretch_en();
+#if(MCU_CORE_B92||MCU_CORE_B91)
+	i2c_set_rx_dma_config(I2C_RX_DMA_CHN);
+#elif(MCU_CORE_B93)
+	i2c_set_master_rx_dma_config(I2C_RX_DMA_CHN);
 #endif
-	i2c_master_detect_nack_en();
+#if(MCU_CORE_B92||MCU_CORE_B93)
 	i2c_set_irq_mask(I2C_MASTER_NAK_MASK);
-	plic_interrupt_enable(IRQ21_I2C);
-	core_interrupt_enable();
+	plic_interrupt_enable(IRQ_I2C);
+    core_interrupt_enable();
 #endif
 #elif(I2C_DEVICE == I2C_SLAVE_DEVICE)
-#if(MCU_CORE_B92 &&I2C_STRETCH_MODE == I2C_STRETCH_EN)
-	i2c_slave_stretch_en();
+    i2c_slave_init(0x5a);
+#if(MCU_CORE_B92||MCU_CORE_B91)
+	i2c_set_rx_dma_config(I2C_RX_DMA_CHN);
+#elif(MCU_CORE_B93)
+	i2c_set_slave_rx_dma_config(I2C_RX_DMA_CHN);
 #endif
-	i2c_slave_init(0x5a);
+#if((MCU_CORE_B92||MCU_CORE_B93) &&I2C_STRETCH_MODE == I2C_STRETCH_EN)
+	i2c_slave_stretch_en();
+	i2c_set_irq_mask(I2C_RX_END_MASK|I2C_SLAVE_WR_MASK);
+
+#elif(MCU_CORE_B91||((MCU_CORE_B92||MCU_CORE_B93) &&(I2C_STRETCH_MODE == I2C_STRETCH_DIS)))
+
 #if(MCU_CORE_B91)
-	plic_interrupt_enable(IRQ5_DMA);
-	dma_set_irq_mask(I2C_RX_DMA_CHN, TC_MASK);
     i2c_clr_irq_status(I2C_TX_DONE_CLR);
 	i2c_set_irq_mask(I2C_TX_DONE_MASK);
-#elif(MCU_CORE_B92)
-	i2c_set_irq_mask(I2C_RX_END_MASK|I2C_SLAVE_WR_MASK);
-#if(I2C_STRETCH_MODE == I2C_STRETCH_DIS)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
+	i2c_set_irq_mask(I2C_TX_END_MASK);
+#endif
 	dma_set_irq_mask(I2C_RX_DMA_CHN, TC_MASK);
-	plic_interrupt_enable(IRQ5_DMA);
+	plic_interrupt_enable(IRQ_DMA);
 #endif
-#endif
+
+
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ21_I2C);
+	plic_interrupt_enable(IRQ_I2C);
 
 /*
  * B91 and B92 demo different:
@@ -134,7 +159,7 @@ void user_init(void)
  */
 #if(MCU_CORE_B91)
     i2c_slave_set_rx_dma((unsigned char*)(i2c_rx_buff),DMA_REV_LEN);
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
     i2c_slave_set_rx_dma((unsigned char*)(i2c_rx_buff+4),DMA_REV_LEN);
 #endif
 #endif
@@ -168,7 +193,7 @@ void main_loop(void)
 //when enabling dma transfers i2c receiving data, the internal working principle: when the i2c fifo each reach 4,
 //will send the dma requests, to move data from the fifo, if finally fifo data less than four,
 //through the i2c stop signal sends a request to the dma,move the fifo data away.
-#if(MCU_CORE_B91||(MCU_CORE_B92 &&(I2C_STRETCH_MODE == I2C_STRETCH_DIS)))
+#if(I2C_STRETCH_MODE == I2C_STRETCH_DIS)
 void dma_irq_handler(void)
 {
 #if(I2C_DEVICE == I2C_SLAVE_DEVICE)
@@ -178,7 +203,7 @@ void dma_irq_handler(void)
     	dma_clr_tc_irq_status(I2C_RX_DMA_STATUS);
 #if(MCU_CORE_B91)
     	i2c_slave_set_tx_dma((unsigned char*)(i2c_rx_buff),RX_BUFF_DATA_LEN_DMA);
-#elif(MCU_CORE_B92 &&(I2C_STRETCH_MODE == I2C_STRETCH_DIS))
+#elif((MCU_CORE_B92||MCU_CORE_B93) &&(I2C_STRETCH_MODE == I2C_STRETCH_DIS))
     	i2c_slave_set_tx_dma((unsigned char*)(i2c_rx_buff+4),RX_BUFF_DATA_LEN_DMA);
 #endif
         gpio_toggle(LED1);
@@ -190,16 +215,18 @@ void dma_irq_handler(void)
 #endif
 
 }
+PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
+
 #endif
 
 //When the slave parsing ID does not match, the slave will return nack, but it will still receive the data sent from the master,
 //enter the rx_buff and rx_done interrupt normally,, and reply nack.
  void i2c_irq_handler(void)
 {
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||MCU_CORE_B93)
 #if(I2C_DEVICE==I2C_MASTER_DEVICE)
 	if(i2c_get_irq_status(I2C_MASTER_NAK_STATUS)){
-      	i2c_clr_irq_status(I2C_MASTER_NAK_CLR);
+      	i2c_clr_irq_status(I2C_MASTER_NAK_STATUS);
 		reg_i2c_sct1 = (FLD_I2C_LS_STOP);
 		while(i2c_master_busy());//wait for the STOP signal to finish sending.
 		dma_chn_dis(I2C_TX_DMA_CHN);
@@ -208,7 +235,7 @@ void dma_irq_handler(void)
 		//after interrupt, and process the following operations.
 		if(I2C_MASTER_WRITE == i2c_get_master_wr_status())
 		{
-            i2c_clr_fifo(I2C_TX_BUFF_CLR);
+			i2c_clr_irq_status(I2C_TX_BUF_STATUS);
 			i2c_master_write_nack_cnt++;
 		}
 		//When receiving data in the master, nack can be received only in the id stage,
@@ -232,11 +259,11 @@ void dma_irq_handler(void)
 			i2c_slave_set_rx_dma((unsigned char*)(i2c_rx_buff),DMA_REV_LEN);
 			gpio_toggle(LED2);
 		}
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
 #if(I2C_STRETCH_MODE == I2C_STRETCH_DIS)
-	if(i2c_get_irq_status(I2C_TX_DONE_STATUS))
+	if(i2c_get_irq_status(I2C_TX_END_STATUS))
 	{
-		i2c_clr_irq_status(I2C_TX_DONE_CLR);
+		i2c_clr_irq_status(I2C_TX_END_STATUS);
 		i2c_slave_set_rx_dma((unsigned char*)(i2c_rx_buff+4),DMA_REV_LEN);
 		gpio_toggle(LED2);
 	}
@@ -244,7 +271,7 @@ void dma_irq_handler(void)
 #elif(I2C_STRETCH_MODE == I2C_STRETCH_EN)
     if(i2c_get_irq_status(I2C_SLAVE_WR_STATUS))
     {
-    	i2c_clr_irq_status(I2C_SLAVE_WR_CLR);
+    	i2c_clr_irq_status(I2C_SLAVE_WR_STATUS);
     	if(I2C_SLAVE_WRITE == i2c_slave_get_cmd())
         {
 		 i2c_slave_set_tx_dma((unsigned char*)(i2c_rx_buff+4),*(unsigned int *)i2c_rx_buff);
@@ -253,7 +280,7 @@ void dma_irq_handler(void)
     }
 	if((i2c_get_irq_status(I2C_RX_END_STATUS)))
 	{
-		i2c_clr_irq_status(I2C_RX_END_CLR);
+		i2c_clr_irq_status(I2C_RX_END_STATUS);
 		i2c_slave_set_rx_dma((unsigned char*)(i2c_rx_buff+4),DMA_REV_LEN);
 	}
 #endif
@@ -262,7 +289,7 @@ void dma_irq_handler(void)
 
 
 }
-
+PLIC_ISR_REGISTER(i2c_irq_handler, IRQ_I2C)
 #endif
 
 

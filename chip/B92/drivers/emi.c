@@ -1,9 +1,7 @@
 /********************************************************************************************************
- * @file	emi.c
+ * @file    emi.c
  *
- * @brief	This is the source file for B92
- *
- * @brief   This is the header file for B92
+ * @brief   This is the source file for B92
  *
  * @author  Driver Group
  * @date    2020
@@ -374,22 +372,20 @@ void rf_emi_tx_burst_loop(rf_mode_e rf_mode,unsigned char pkt_type)
 	unsigned char rf_data_len = EMI_TX_PKT_PAYLOAD+1;
 	unsigned int rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
 	reg_rf_ll_cmd = 0x80; // stop SM
-	rf_set_txmode();
 	if((rf_mode==RF_MODE_BLE_1M_NO_PN)||(rf_mode==RF_MODE_BLE_2M))//ble
 	{
         rf_data_len = EMI_TX_PKT_PAYLOAD+2;
         rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
-        emi_ble_tx_packet[4]=0;
         emi_ble_tx_packet[5]=EMI_TX_PKT_PAYLOAD;
         emi_ble_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
         emi_ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
         emi_ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
         emi_ble_tx_packet[0] = rf_tx_dma_len&0xff;
-        rf_start_stx ((void *)emi_ble_tx_packet,stimer_get_tick() + 10);
+        delay_ms(2);
+        rf_tx_pkt((void *)emi_ble_tx_packet);
 		while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
 		rf_clr_irq_status(FLD_RF_IRQ_TX);
 
-	    delay_ms(2);
 	    if(pkt_type == 0)
 	    	rf_phy_test_prbs9(&emi_ble_tx_packet[6],37);
 	}
@@ -397,18 +393,16 @@ void rf_emi_tx_burst_loop(rf_mode_e rf_mode,unsigned char pkt_type)
 	{
         rf_data_len = EMI_TX_PKT_PAYLOAD+2;
         rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
-        emi_ble_tx_packet[4]=0;
         emi_ble_tx_packet[5]=EMI_TX_PKT_PAYLOAD;
         emi_ble_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
         emi_ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
         emi_ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
         emi_ble_tx_packet[0] = rf_tx_dma_len&0xff;
-        rf_start_stx ((void *)emi_ble_tx_packet,stimer_get_tick() + 10);
+        delay_ms(2);
+        rf_tx_pkt((void *)emi_ble_tx_packet);
 		while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
 		rf_clr_irq_status(FLD_RF_IRQ_TX);
 
-
-	    delay_ms(2);
 	    if(pkt_type == 0)
 	    	rf_phy_test_prbs9(&emi_ble_tx_packet[6],37);
 	}
@@ -416,18 +410,16 @@ void rf_emi_tx_burst_loop(rf_mode_e rf_mode,unsigned char pkt_type)
 	{
         rf_data_len = EMI_TX_PKT_PAYLOAD+2;
         rf_tx_dma_len = rf_tx_packet_dma_len(rf_data_len);
-        emi_ble_tx_packet[4]=0;
         emi_ble_tx_packet[5]=EMI_TX_PKT_PAYLOAD;
         emi_ble_tx_packet[3] = (rf_tx_dma_len >> 24)&0xff;
         emi_ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
         emi_ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
         emi_ble_tx_packet[0] = rf_tx_dma_len&0xff;
-        rf_start_stx ((void *)emi_ble_tx_packet,stimer_get_tick() + 10);
+	    delay_ms(2);
+        rf_tx_pkt((void *)emi_ble_tx_packet);
 		while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
 		rf_clr_irq_status(FLD_RF_IRQ_TX);
 
-
-	    delay_ms(2);
 	    if(pkt_type == 0)
 	    	rf_phy_test_prbs9(&emi_ble_tx_packet[6],37);
 	}
@@ -440,12 +432,12 @@ void rf_emi_tx_burst_loop(rf_mode_e rf_mode,unsigned char pkt_type)
 		emi_zigbee_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
 		emi_zigbee_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
 		emi_zigbee_tx_packet[0] = rf_tx_dma_len&0xff;
-		rf_start_stx ((void *)emi_zigbee_tx_packet,stimer_get_tick() + 10);
+
+		delay_us(625*2);
+		rf_tx_pkt((void *)emi_zigbee_tx_packet);
 		while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
 		rf_clr_irq_status(FLD_RF_IRQ_TX);
 
-
-	    delay_us(625*2);
 	    if(pkt_type == 0)
 	    	rf_phy_test_prbs9(&emi_zigbee_tx_packet[5],37);
 	}
@@ -458,12 +450,11 @@ void rf_emi_tx_burst_loop(rf_mode_e rf_mode,unsigned char pkt_type)
 			Private_TPLL_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
 			Private_TPLL_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
 			Private_TPLL_tx_packet[0] = rf_tx_dma_len&0xff;
-			rf_start_stx((void *)Private_TPLL_tx_packet, read_reg32(0x140200) + 10);
+			delay_ms(1);
+			rf_tx_pkt((void *)Private_TPLL_tx_packet);
 			while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
 			rf_clr_irq_status(FLD_RF_IRQ_TX);
 
-
-			delay_ms(1);
 			if(pkt_type == 0)
 				rf_phy_test_prbs9(&Private_TPLL_tx_packet[5],37);
 		}
@@ -565,7 +556,8 @@ void rf_emi_tx_burst_setup(rf_mode_e rf_mode,rf_power_level_e power_level,signed
 	    default:
 	    	break;
 	}
-
+	rf_set_txmode();
+	delay_us(150);
 }
 
 /**
@@ -623,5 +615,4 @@ _attribute_ram_code_sec_noinline_ void rf_current_test_cfg(void)
 
 	__asm__ __volatile__ ("wfi");//mcu_stall
 }
-
 

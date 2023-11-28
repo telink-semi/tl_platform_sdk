@@ -22,35 +22,21 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#if(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-#elif(MCU_CORE_B92)
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
-#endif
+#include "driver.h"
+#include "common.h"
 
-#define INTERRUPT_NESTED_DEMO				1 // external interrupt
-#if(MCU_CORE_B91)
-#define HSP_DEMO				            2//Hardware Stack Protection
-#define WFI_DEMO				            3//(Wait-For-Interrupt Mode)
-#endif
 
-#if (MCU_CORE_B92)
+
+#define INTERRUPT_NESTED_DEMO               1 // external interrupt
+#define HSP_DEMO                            2 //Hardware Stack Protection
+#define WFI_DEMO                            3 //(Wait-For-Interrupt Mode)
 #define INTERRUPT_MTIME_DEMO                4 // machine time interrupt
 #define INTERRUPT_SWI_DEMO                  5 // software interrupt
 #define EXT_MTIME_SWI_NESTED_DEMO           6 // external, mtime and swi interrupt
-#endif
 
 #define TRAP_DEMO                       INTERRUPT_NESTED_DEMO
 

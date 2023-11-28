@@ -22,17 +22,15 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
 
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
+
 
 
 /* Enable C linkage for C++ Compilers: */

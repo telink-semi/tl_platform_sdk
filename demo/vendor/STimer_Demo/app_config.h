@@ -22,29 +22,21 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#if(MCU_CORE_B91)
-#define LED1            		GPIO_PB4
-#define LED2            		GPIO_PB5
-#define LED3            		GPIO_PB6
-#define LED4            		GPIO_PB7
+#include "driver.h"
+#include "common.h"
 
-#elif(MCU_CORE_B92)
-#define LED1            		GPIO_PD0
-#define LED2            		GPIO_PD1
-#define LED3            		GPIO_PE6
-#define LED4            		GPIO_PE7
-#endif
 
 
 #define STIMER_DELAY				1
 #if (MCU_CORE_B91)||(MCU_CORE_B92)
 #define STIMER_IRQ					2
+#elif (MCU_CORE_B93)
+#define STIMER_IRQ_D25				3
+#define STIMER_IRQ_D25_N22_DSP		4
 #endif
 #define STIMER_GET_32K_TICK			5
 #define STIMER_SET_32K_TICK			6

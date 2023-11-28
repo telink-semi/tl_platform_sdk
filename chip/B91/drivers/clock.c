@@ -200,7 +200,7 @@ void clock_cal_32k_rc(void)
  * @param  tick - the value of to be set to 32k.
  * @return none.
  */
-void clock_set_32k_tick(unsigned int tick)
+_attribute_ram_code_sec_noinline_ void clock_set_32k_tick(unsigned int tick)
 {
 	reg_system_ctrl |= FLD_SYSTEM_32K_WR_EN;//r_32k_wr = 1;
 	while(reg_system_st & FLD_SYSTEM_RD_BUSY);
@@ -238,7 +238,7 @@ unsigned int clock_get_32k_tick(void)
  * Use digital register way to get 32k tick may read error tick,cause the wakeup time is
  * incorrect with the setting time,the sleep time will very little or very big,will not wakeup on time.
  */
-unsigned int clock_get_32k_tick(void)
+_attribute_ram_code_sec_noinline_ unsigned int clock_get_32k_tick(void)
 {
     unsigned int t0 = 0;
     unsigned int t1 = 0;
@@ -289,6 +289,12 @@ void clock_init_ram(sys_pll_clk_e pll,
 		sys_hclk_div_to_pclk_e pclk_div,
 		sys_pll_div_to_mspi_clk_e mspi_clk_div)
 {
+	//ensure mspi is not in busy status before change mspi clock
+	mspi_stop_xip();
+
+	//first cclk/mspi_clk switch to 24rc to avoid the risk of hclk/pclk/mspi_clk exceeding its maximum configurable frequency for a short period of time
+	//when switching different clock frequencies using this interface.
+	write_reg8(0x1401e8, read_reg8(0x1401e8) & 0x0f);				//cclk/mspi_clk to 24M rc clock
 
 	//pll clk
 	analog_write_reg8(0x80, (analog_read_reg8(0x80) & 0xe0) | ((pll >> 2) & 0x1f));
@@ -302,9 +308,6 @@ void clock_init_ram(sys_pll_clk_e pll,
 	analog_write_reg8(0x81, (analog_read_reg8(0x81) | BIT(6)));
 	while(BIT(5) != (analog_read_reg8(0x88) & BIT(5)));
 	analog_write_reg8(0x81, (analog_read_reg8(0x81) & ~BIT(6)));
-
-	//ensure mspi is not in busy status before change mspi clock
-	mspi_stop_xip();
 
 	//change mspi clock should be ram code.
 	if(CCLK_TO_MSPI_CLK == mspi_clk_div)

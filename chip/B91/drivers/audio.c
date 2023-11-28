@@ -271,6 +271,42 @@ void audio_i2s_set_pin(void)
 }
 
 /**
+ * @brief      This function serves to set codec active, the bias voltage can only be set after setting the codec active.
+ * @return     none
+ */
+void audio_codec_active(void)
+{
+    audio_set_codec_clk(1, 16); /* from ppl 192/16=12M */
+    audio_clk_en(0, 1);
+    reg_audio_codec_vic_ctr = FLD_AUDIO_CODEC_SLEEP_ANALOG; /* active analog sleep mode */
+    while (!(reg_audio_codec_stat_ctr & FLD_AUDIO_CODEC_PON_ACK)); /* wait codec can be configured */
+    BM_CLR(reg_audio_codec_vic_ctr, FLD_AUDIO_CODEC_SLEEP_ANALOG); /* disable sleep mode */
+}
+
+/**
+ * @brief      This function serves to set amic micbias.
+ * @param[in]  en               - POWER_DOWN or POWER_ON.
+ * @param[in]  micbias_mode     - micbias output mode.
+ * @return     none
+ * @note       The interface audio_codec_active() must be called before the bias voltage can be set.
+ */
+void audio_codec_set_micbias(power_switch_e en, micbias_work_mode_e micbias_mode)
+{
+    if (en)
+    {
+        reg_audio_codec_mic1_ctr= (reg_audio_codec_mic1_ctr & (~(FLD_AUDIO_CODEC_MICBIAS1_SB | FLD_AUDIO_CODEC_MICBIAS1_V))) | MASK_VAL(FLD_AUDIO_CODEC_MICBIAS1_SB, 0,\
+                                    FLD_AUDIO_CODEC_MICBIAS1_V, micbias_mode);
+    }
+    else
+    {
+        reg_audio_codec_mic1_ctr |= FLD_AUDIO_CODEC_MICBIAS1_SB;
+    }
+        /* 0x17 <7>:mic bias voltage select(default 0)   0:micbias voltage = 2.08V, 1:micbias voltage = 1.66V
+                <5>:pd_micbias(default 1)                0:micbias active,          1:micbias power down
+        */
+}
+
+/**
  * 	@brief      This function serves to set codec supply voltage
  * 	@param[in]  volt - the voltage of codec supply.A1 2.8V default,A0 1.8V default.
  * 	@return     none

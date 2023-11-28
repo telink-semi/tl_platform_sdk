@@ -22,6 +22,10 @@
  *
  *******************************************************************************************************/
 #pragma once
+/* Enable C linkage for C++ Compilers: */
+#if defined(__cplusplus)
+    extern "C" {
+#endif
 #include "../../../../vendor/USB_Demo/usb_default.h"
 #if USB_CDC_ENABLE
 #include "driver.h"
@@ -32,10 +36,6 @@
 
 
 
-/* Enable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-    extern "C" {
-#endif
 
 
 extern unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];

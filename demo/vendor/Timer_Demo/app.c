@@ -37,8 +37,8 @@ void user_init(void)
 	gpio_output_en(LED3);
 
 #if (TIMER_MODE == TIMER_SYS_CLOCK_MODE)
-	plic_interrupt_enable(IRQ4_TIMER0);
-	plic_interrupt_enable(IRQ3_TIMER1);
+	plic_interrupt_enable(IRQ_TIMER0);
+	plic_interrupt_enable(IRQ_TIMER1);
 	core_interrupt_enable();
 	timer_set_init_tick(TIMER0,0);
 	timer_set_cap_tick(TIMER0,50*sys_clk.pclk*1000);
@@ -52,8 +52,8 @@ void user_init(void)
 #elif(TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ4_TIMER0);
-	plic_interrupt_enable(IRQ3_TIMER1);
+	plic_interrupt_enable(IRQ_TIMER0);
+	plic_interrupt_enable(IRQ_TIMER1);
 
 	gpio_function_en(GPIO_PA2|GPIO_PA3);
 	gpio_output_en(GPIO_PA2|GPIO_PA3);
@@ -76,8 +76,8 @@ void user_init(void)
 #elif(TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ4_TIMER0);
-	plic_interrupt_enable(IRQ3_TIMER1);
+	plic_interrupt_enable(IRQ_TIMER0);
+	plic_interrupt_enable(IRQ_TIMER1);
 
 	gpio_function_en(GPIO_PA2|GPIO_PA3);
 	gpio_output_en(GPIO_PA2|GPIO_PA3);
@@ -124,7 +124,7 @@ void user_init(void)
 	wd_start();
 
 #elif(TIMER_MODE == TIMER_32K_WATCHDOG_MODE)
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||  MCU_CORE_B93)
 	delay_ms(500);
 	//Remove the stop 32k watchdog operation in main, otherwise this state cannot be read.
 	if(wd_32k_get_status())
@@ -176,7 +176,7 @@ void main_loop(void)
 	gpio_set_high_level(LED3);
 
 #elif(TIMER_MODE == TIMER_32K_WATCHDOG_MODE)
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||  MCU_CORE_B93)
 	//990ms<1000ms, watchdog does not overflow and the program continues to run.
 	delay_ms(990);
 	wd_32k_stop();

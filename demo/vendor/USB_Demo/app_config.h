@@ -22,23 +22,14 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
-#if(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-#elif(MCU_CORE_B92)
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
+#if(MCU_CORE_B92)
 /**
  * @brief	The POWER_SUPPLY_MODE defaults to VBUS_POWER_SUPPLY.
  */
@@ -82,7 +73,8 @@ extern "C" {
 	#define	USB_MIC_ENABLE 			1
 	#define	USB_SPEAKER_ENABLE 		1
 #endif
-#if ((USB_DEMO_TYPE == USB_MASS_STORAGE)&&MCU_CORE_B91)
+#if(MCU_CORE_B91)
+#if ((USB_DEMO_TYPE == USB_MASS_STORAGE))
 	#define	USB_MASS_STORAGE_ENABLE     1
 
 	#define SYS_NOR_FLASH_SUPPORT       1 //sys NOR_FLASH  1.Please refer to "sys_norflash.h" for the allocated address and capacity,2.Must be formatted for the first use
@@ -91,6 +83,7 @@ extern "C" {
 	#define USB_DISK_NUM     1 //1 means 2 disk,0 means 1 disk, and so on
 #elif (SD_NAND_FLASH_SUPPORT) || (SYS_NOR_FLASH_SUPPORT)
 	#define USB_DISK_NUM     0 //1 means 2 disk,0 means 1 disk, and so on
+#endif
 #endif
 #endif
 

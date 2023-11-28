@@ -459,6 +459,7 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 	}
 
 }
+PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
 
 
 
@@ -485,7 +486,7 @@ _attribute_ram_code_sec_noinline_ void ble_manual_rx_test(void)
 	delay_us(85);
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_RX);
 
 	while(1)
@@ -509,7 +510,7 @@ void ble_brx_rx_test(void)
 	rf_access_code_comm(BLE_ACCESS_CODE);
 
 	rf_clr_irq_status(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
 	brx_mode_flag = 0;
 

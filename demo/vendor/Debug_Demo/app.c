@@ -21,9 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "printf.h"
 #include "app_config.h"
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);

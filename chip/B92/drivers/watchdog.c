@@ -36,6 +36,8 @@ _attribute_ram_code_sec_noinline_ void wd_32k_start(void)
 /**
  * @brief     stop 32k watchdog.
  * @return    none.
+ * @note      -# the interface sys_init() must be called before this interface can be invoked.
+ *            -# after calling this interface, wd_32k_get_status() will be cleared.
  */
 _attribute_ram_code_sec_noinline_ void wd_32k_stop(void)
 {
@@ -45,6 +47,11 @@ _attribute_ram_code_sec_noinline_ void wd_32k_stop(void)
 /**
  * @brief     get 32k watchdog overflow status.
  * @return    watchdog overflow status.
+ * @note      -# After the 32k watchdog reboot returns, the status is set to 1,before the mcu enters the next state, wd_32k_clear_status() must be used to clear the status,
+ *               otherwise, the next status judgment of the mcu will be affected;
+ *            -# When the status is set to 1, if it is not cleared by calling wd_32k_clear_status():
+ *                - software reboot(sys_reboot())/deep/deepretation/32k watchdog come back,the interface status remains;
+ *                - power cyele/reset pin/vbus detect come back, the status of the interface is lost;
  */
 _attribute_ram_code_sec_noinline_ unsigned char wd_32k_get_status(void)
 {
@@ -54,6 +61,7 @@ _attribute_ram_code_sec_noinline_ unsigned char wd_32k_get_status(void)
 /**
  * @brief     Clear the reset state caused by the 32k watchdog overflow.
  * @return    none.
+ * @note      -# the interface sys_init() must be called before this interface can be invoked.
  */
 _attribute_ram_code_sec_noinline_ void wd_32k_clear_status(void)
 {

@@ -22,14 +22,13 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "calibration.h"
 
 extern void user_init(void);
 extern void main_loop (void);
 extern volatile unsigned int timer_up_32k_tick;
 
 #if (STIMER_MODE == STIMER_IRQ)
-_attribute_ram_code_sec_ void stimer_irq_handler()
+_attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
 	if(stimer_get_irq_status(FLD_SYSTEM_IRQ))
 	{
@@ -38,10 +37,21 @@ _attribute_ram_code_sec_ void stimer_irq_handler()
 		stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
 	}
 }
-
-
+PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
+#elif ( MCU_CORE_B93 && ((STIMER_MODE == STIMER_IRQ_D25) || (STIMER_MODE == STIMER_IRQ_D25_N22_DSP)))
+_attribute_ram_code_sec_ void stimer_irq_handler(void)
+{
+	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
+	{
+		gpio_toggle(LED2);
+		stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F);
+		stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
+	}
+}
+PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
 #elif (STIMER_MODE == STIMER_SET_32K_TICK)
-_attribute_ram_code_sec_ void pm_irq_handler()
+#if (MCU_CORE_B91)||(MCU_CORE_B92)
+_attribute_ram_code_sec_ void pm_irq_handler(void)
 {
 	if(analog_read_reg8(0x64)&(BIT(2)))
 	{
@@ -50,6 +60,14 @@ _attribute_ram_code_sec_ void pm_irq_handler()
 	}
 	analog_write_reg8(0x64, 0xff);
 }
+#if (MCU_CORE_B91)
+PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_TM)
+#elif (MCU_CORE_B92)
+PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_IRQ)
+#endif
+#elif (MCU_CORE_B93)
+PLIC_ISR_REGISTER(pm_wkup_irq_handler, IRQ_PM_WKUP)
+#endif
 
 #endif
 
@@ -59,22 +77,9 @@ _attribute_ram_code_sec_ void pm_irq_handler()
  */
 int main(void)
 {
-#if(MCU_CORE_B91)
-	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-	//Note: This function can improve the performance of some modules, which is described in the function comments.
-	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
-	user_read_flash_value_calib();
-	CCLK_24M_HCLK_24M_PCLK_24M;
-#elif(MCU_CORE_B92)
-	sys_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6, GPIO_VOLTAGE_3V3);
-	wd_32k_stop();
-	//Note: This function can improve the performance of some modules, which is described in the function comments.
-	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
-	calibration_func(GPIO_VOLTAGE_3V3);
-	CCLK_24M_HCLK_24M_PCLK_24M;
-#endif
-
-	user_init();
+    PLATFORM_INIT;
+    CLOCK_INIT;
+    user_init();
 
     while(1)
     {

@@ -803,7 +803,8 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 		gpio_toggle(LED2);
 	}
 }
-__attribute__((section(".ram_code"))) void user_init()
+PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
+__attribute__((section(".ram_code"))) void user_init(void)
 {
 
 	gpio_output_en(RAMLESS_LCD_RESET_PIN); 		//enable output
@@ -851,7 +852,7 @@ __attribute__((section(".ram_code"))) void user_init()
 
 	spi_master_init(LSPI_MODULE, sys_clk.pll_clk * 1000000/SPI_CLK, SPI_MODE0);//48M SPI_CLK
 	spi_tx_irq_trig_cnt(LSPI_MODULE,20);
-	plic_interrupt_enable(IRQ22_LSPI);
+	plic_interrupt_enable(IRQ_LSPI);
 	core_interrupt_enable();
 	lspi_set_pin(&lspi_pin_config);
 

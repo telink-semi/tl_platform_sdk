@@ -202,9 +202,15 @@ void portable_fini(core_portable *p);
 #if !defined(PROFILE_RUN) && !defined(PERFORMANCE_RUN) && !defined(VALIDATION_RUN)
 #if (TOTAL_DATA_SIZE==1200)
 #define PROFILE_RUN 1
+#define PERFORMANCE_RUN 0
+#define VALIDATION_RUN 0
 #elif (TOTAL_DATA_SIZE==2000)
+#define PROFILE_RUN 0
 #define PERFORMANCE_RUN 1
+#define VALIDATION_RUN 0
 #else
+#define PROFILE_RUN 0
+#define PERFORMANCE_RUN 0
 #define VALIDATION_RUN 1
 #endif
 #endif

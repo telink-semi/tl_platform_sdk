@@ -30,7 +30,11 @@
 #define	MIC_BUFFER_SIZE			2048
 
 
-unsigned short		iso_in_buff[MIC_BUFFER_SIZE];
+#if(MIC_RESOLUTION_BIT == 24)
+int iso_in_buff[MIC_BUFFER_SIZE];
+#elif(MIC_RESOLUTION_BIT == 16)
+short iso_in_buff[MIC_BUFFER_SIZE];
+#endif
 #if(MCU_CORE_B92)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
@@ -77,13 +81,22 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 
 	else
 	{
+#if(MIC_RESOLUTION_BIT == 24)
+        for (unsigned char i = 0; i < length ; i++)
+        {
+            int md = iso_in_buff[iso_in_r++ & (MIC_BUFFER_SIZE-1)];
+            reg_usb_ep7_dat = md;
+            reg_usb_ep7_dat = md >>8;
+            reg_usb_ep7_dat = md >>16;
+        }
+#elif(MIC_RESOLUTION_BIT == 16)
 		for (unsigned char i=0; i<length&& iso_in_r != iso_in_w ; i++)
 		{
 			short md = iso_in_buff[iso_in_r++ &(MIC_BUFFER_SIZE-1)];
 			reg_usb_ep7_dat = md;
 			reg_usb_ep7_dat = md >>8;
 		}
-
+#endif
 	}
 	 usbhw_data_ep_ack(USB_EDP_MIC);
 }
@@ -105,6 +118,7 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	}
 
 }
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
 
 void user_init(void)
 {
@@ -130,7 +144,7 @@ void user_init(void)
 	usb_init_interrupt();
 	//3.enable global interrupt
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	plic_interrupt_enable(IRQ_USB_ENDPOINT);		// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
 #if(MCU_CORE_B91)
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
@@ -165,8 +179,20 @@ void main_loop (void)
 #define AUDIO_AMIC_IN            1
 #define AUDIO_DMIC0_IN           2
 #define DMIC0_DMIC1_IN           3
-#define AUDIO_IN_MODE          AUDIO_DMIC0_IN
+#define AUDIO_0581_MIC_IN        4
 
+#define AUDIO_IN_MODE          AUDIO_DMIC0_IN
+#if (AUDIO_IN_MODE == AUDIO_0581_MIC_IN)
+unsigned short audio_i2s_16k_config[5] = {8,  125,  6,  64,  64}; /* sampling rate = 192M * (8 / 125) / (2 * 6) / 64   = 16K */
+unsigned short audio_i2s_48k_config[5] = {2,  125,  0,  64,  64}; /* sampling rate = 192M * (2 / 125) / 64             = 48K */
+#endif
+#if(AUDIO_IN_MODE == AUDIO_0581_MIC_IN)
+#define CODEC_ADC_CHNL0         0
+#define CODEC_ADC_CHNL1         1
+#define CODEC_ADC_CHNL2         2
+
+#define CODEC_ADC_CHNL_SEL      CODEC_ADC_CHNL0
+#endif
 
 #if(AUDIO_IN_MODE ==DMIC0_DMIC1_IN)
 #define TX_DATA_FOR_DMIC0        0 //The data of DMIC0 and DMIC1 are stored in one buff,only process DMIC0  data( the second 4bytes in the buff).
@@ -250,15 +276,23 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
 		}
 
 
-
 #else
+#if(MIC_RESOLUTION_BIT == 24)
+    for (unsigned char i = 0; i < length ; i++)
+    {
+        int md = iso_in_buff[iso_in_r++ & (MIC_BUFFER_SIZE-1)];
+        reg_usb_ep7_dat = md;
+        reg_usb_ep7_dat = md >>8;
+        reg_usb_ep7_dat = md >>16;
+    }
+#elif(MIC_RESOLUTION_BIT == 16)
 	for (unsigned char i=0; i<length ; i++)
 		{
 			short md = iso_in_buff[iso_in_r++ &(MIC_BUFFER_SIZE-1)];
 			reg_usb_ep7_dat = md;
 			reg_usb_ep7_dat = md >>8;
 		}
-
+#endif
 #endif
 	 usbhw_data_ep_ack(USB_EDP_MIC);
 }
@@ -280,11 +314,13 @@ _attribute_ram_code_sec_noinline_ void  usb_endpoint_irq_handler (void)
 		if ((num_iso_in & 0x7f) == 0)		gpio_toggle(LED2);
 	}
 }
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
+
 #endif
 
 
 #define    AUDIO_BUFF_SIZE    4096
-volatile signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
+signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
 
 void user_init(void)
 {
@@ -302,7 +338,7 @@ void user_init(void)
 
 	//3.enable global interrupt
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	plic_interrupt_enable(IRQ_USB_ENDPOINT);		// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
 
 #if(AUDIO_IN_MODE==AUDIO_LINE_IN)
@@ -386,7 +422,83 @@ void user_init(void)
 	audio_set_stream1_dig_gain(CODEC_IN_D_GAIN1_30_DB);
 	audio_rx_dma_chain_init(audio_codec_dmic1_input.fifo_num,audio_codec_dmic1_input.dma_num,(unsigned short*)audio_codec_dmic1_input.data_buf,audio_codec_dmic1_input.data_buf_size);
 	audio_rx_dma_en(MIC_DMA_CHN);
+#elif(AUDIO_IN_MODE == AUDIO_0581_MIC_IN)
+    /* i2s config */
+    codec_0581_i2s_init_t i2s_init = {
+#if (MIC_RESOLUTION_BIT == 16)
+        .data_width             = I2S_BIT_16_DATA,
+#elif (MIC_RESOLUTION_BIT == 24)
+        .data_width             = I2S_BIT_24_DATA,
+#endif
 
+#if (MIC_SAMPLE_RATE == 16000)
+        .sample_rate            = audio_i2s_16k_config,
+#elif (MIC_SAMPLE_RATE == 48000)
+        .sample_rate            = audio_i2s_48k_config,
+#endif
+    };
+
+    /* i2s input config */
+    codec_0581_i2s_input_t i2s_input = {
+        .i2s_ch_sel             = I2S_MONO,
+        .rx_dma_num             = MIC_DMA_CHN,
+        .input_data_buf         = iso_in_buff,
+        .input_buf_size         = sizeof(iso_in_buff),
+    };
+
+    /* init i2s */
+    codec_0581_i2s_init(&i2s_init, &i2s_input, 0);
+
+    /* init codec_0581 */
+    if (CODEC_0581_OK != codec_0581_init())
+    {
+        return;
+    }
+
+    /**** input path: adc -> asrco -> sap/i2s ****/
+
+    codec_0581_input_adc_config_t codec_0581_adc_config = {
+#if(CODEC_ADC_CHNL_SEL==COEDC_ADC_CHNL0)
+        .adc_chnl           = CODEC_ADC_CHNL_0,
+#elif(CODEC_ADC_CHNL_SEL==CODEC_ADC_CHNL1)
+        .adc_chnl           = CODEC_ADC_CHNL_1,
+#elif(CODEC_ADC_CHNL_SEL==CODEC_ADC_CHNL2)
+        .adc_chnl           = CODEC_ADC_CHNL_2,
+#endif
+        .adc_rate           = CODEC_ADC_SAMPLE_RATE_48KHz,
+    };
+
+    /* asrco */
+    codec_0581_input_asrco_config_t codec_0581_asrco_config = {
+        .asrco_in_fs        = CODEC_ASRC_FS_48K,
+        .asrco_chnl         = CODEC_ASRCO_CHNL_0,
+#if(CODEC_ADC_CHNL_SEL == CODEC_ADC_CHNL0)
+        .asrco_route_from   = CODEC_ASRCO_ROUTE_ADC0,
+#elif(CODEC_ADC_CHNL_SEL == CODEC_ADC_CHNL1)
+        .asrco_route_from   = CODEC_ASRCO_ROUTE_ADC1,
+#elif(CODEC_ADC_CHNL_SEL == CODEC_ADC_CHNL2)
+        .asrco_route_from   = CODEC_ASRCO_ROUTE_ADC2,
+#endif
+    };
+
+    /* sap */
+    codec_0581_input_sap_config_t codec_0581_sap_config = {
+        .slot_id            = CODEC_SAP_SLOT1_RIGHT, /* The i2s channel is mono, it must be CODEC_SAP_SLOT1_RIGHT. */
+        .sap_route_from     = CODEC_SAP_OUT_ROUTE_FROM_ASRCO0,
+    };
+    /* input config */
+    codec_0581_input_t codec_0581_input_config = {
+        .adc_config         = &codec_0581_adc_config,
+        .asrco_config       = &codec_0581_asrco_config,
+        .fdec_config        = 0, /* this example fdec not used */
+        .sap_config         = &codec_0581_sap_config,
+    };
+
+    /**** codec_0581 input path init ****/
+    codec_0581_input_init(&codec_0581_input_config);
+
+    /* enable rx dma */
+    audio_rx_dma_en(i2s_input.rx_dma_num);
 #endif
 #elif (USB_MODE==AISO)
 #define FIFO_NUM              FIFO0

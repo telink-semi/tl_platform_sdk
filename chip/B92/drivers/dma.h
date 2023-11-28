@@ -27,6 +27,7 @@
  */
 #ifndef DMA_H_
 #define DMA_H_
+#include "compiler.h"
 #include "reg_include/register.h"
 /**
  * @brief Supports up to 8 DMA channels,DMA0 and DMA1 support additional functions for RF.
@@ -236,7 +237,7 @@ static inline void dma_set_llp_int_mode(dma_chn_e chn,dma_llp_int_mode_e llp_mod
  * @return    none
  * @note      When a certain DMA channel has not finished the transmission (bit 0 of reg_dma_ctr0(chn) is 1),it is needed to disable DMA before writing to the DMA register.
  */
-static inline void dma_config(dma_chn_e chn ,dma_config_t *config)
+static _always_inline void dma_config(dma_chn_e chn ,dma_config_t *config)
 {
 	reg_dma_ctrl(chn) = (reg_dma_ctrl(chn)&(~BIT_RNG(4,31)))|((*(unsigned int*)config)<<4);
 }

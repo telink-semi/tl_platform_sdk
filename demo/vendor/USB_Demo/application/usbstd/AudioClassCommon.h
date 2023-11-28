@@ -22,14 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-/* Includes: */
-#include "StdDescriptors.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+/* Includes: */
+#include "StdDescriptors.h"
 
 #define AUDIO_CHANNEL_LEFT_FRONT           BIT(0)
 #define AUDIO_CHANNEL_RIGHT_FRONT          BIT(1)

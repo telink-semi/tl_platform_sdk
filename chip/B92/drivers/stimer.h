@@ -102,9 +102,10 @@ static inline void stimer_clr_irq_status(stimer_irq_e status)
 }
 
 /**
- * @brief This function servers to get stimer irq status.
- * @param[in] 	status - the irq status.
- * @return      none.
+ * @brief       This function servers to get stimer irq status.
+ * @param[in]   status    - the irq status.
+ * @retval      non-zero      - the interrupt occurred.
+ * @retval      zero  - the interrupt did not occur.
  */
 static inline unsigned char stimer_get_irq_status(stimer_irq_e status)
 {
@@ -162,7 +163,7 @@ static inline void stimer_disable(void)
  * @brief     This function performs to get system timer tick.
  * @return    system timer tick value.
 **/
-static inline unsigned int stimer_get_tick(void)
+static _always_inline unsigned int stimer_get_tick(void)
 {
 
 	return reg_system_tick;
@@ -174,7 +175,7 @@ static inline unsigned int stimer_get_tick(void)
  * @param[in] us   - count by us.
  * @return    true - timeout, false - not timeout
  */
-static inline _Bool clock_time_exceed(unsigned int ref, unsigned int us)
+static _always_inline _Bool clock_time_exceed(unsigned int ref, unsigned int us)
 {
 	return ((unsigned int)(stimer_get_tick() - ref) > us * SYSTEM_TIMER_TICK_1US);
 }

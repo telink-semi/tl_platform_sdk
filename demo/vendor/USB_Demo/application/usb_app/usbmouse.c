@@ -59,7 +59,7 @@ void usbmouse_add_frame (rf_packet_mouse_t *packet_mouse){
 }
 
 
-void usbmouse_release_check(){
+void usbmouse_release_check(void){
 	if(usbmouse_not_released && clock_time_exceed(usbmouse_data_report_time, USB_MOUSE_RELEASE_TIMEOUT)){
 	    unsigned int release_data = 0;
 
@@ -70,7 +70,7 @@ void usbmouse_release_check(){
 }
 
 
-void usbmouse_report_frame(){
+void usbmouse_report_frame(void){
 
 #if 	USB_MOUSE_REPORT_SMOOTH
 	static unsigned int tick = 0;
@@ -151,7 +151,7 @@ int usbmouse_hid_report(unsigned char report_id, unsigned char *data, int cnt)
 }
 
 
-void usbmouse_init()
+void usbmouse_init(void)
 {
 }
 

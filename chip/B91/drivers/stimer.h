@@ -104,7 +104,8 @@ static inline void stimer_clr_irq_status(stimer_irq_e status)
 /**
  * @brief This function servers to get stimer irq status.
  * @param[in] 	status - the irq status.
- * @return      none.
+ * @retval	  non-zero   -  the interrupt occurred.
+ * @retval	  zero  -  the interrupt did not occur.
  */
 static inline unsigned char stimer_get_irq_status(stimer_irq_e status)
 {

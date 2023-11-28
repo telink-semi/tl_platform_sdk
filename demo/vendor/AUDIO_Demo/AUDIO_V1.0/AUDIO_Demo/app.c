@@ -23,11 +23,11 @@
  *******************************************************************************************************/
 #include "app_config.h"
 #include "app_sin_data.h"
-#include <string.h>
+
 unsigned int  dma_rx_irq_cnt=0;
 #if ((AUDIO_MODE==LINEIN_TO_LINEOUT)||(AUDIO_MODE==AMIC_TO_LINEOUT)||(AUDIO_MODE==DMIC_TO_LINEOUT)||(AUDIO_MODE==EXT_CODEC_LINEIN_LINEOUT))
 #define    AUDIO_BUFF_SIZE    4096
-volatile signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
+signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
 #elif(AUDIO_MODE==BUFFER_TO_LINEOUT)
 dma_chain_config_t tx_dma_list_config[2];
 #define    MIC_BUFFER_SIZE    (441*4)
@@ -53,7 +53,7 @@ unsigned long t;
 #endif
 
 
-void user_init()
+void user_init(void)
 {
 #if(CHIP_VER_A0==CHIP_VER)
 	audio_set_codec_supply(CODEC_2P8V);

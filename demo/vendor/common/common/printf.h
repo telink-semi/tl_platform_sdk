@@ -54,6 +54,8 @@
 #define  DEBUG_INFO_TX_PIN           		GPIO_PA0//uart tx pin
 #if(MCU_CORE_B91|| MCU_CORE_B92)
 #define  TX_PIN_OUTPUT_REG				    reg_gpio_out(DEBUG_INFO_TX_PIN)
+#else
+#define  TX_PIN_OUTPUT_REG				    reg_gpio_out_set_clear(DEBUG_INFO_TX_PIN)
 #endif
 
 #define	 BIT_INTERVAL	(SYSTEM_TIMER_TICK_1S/PRINT_BAUD_RATE)

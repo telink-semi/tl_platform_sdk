@@ -22,26 +22,15 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if(MCU_CORE_B91)
-#define LED1            GPIO_PB4	//blue
-#define LED2            GPIO_PB5	//green
-#define LED3            GPIO_PB6	//white
-#define LED4            GPIO_PB7	//red
-#elif(MCU_CORE_B92)
-#define LED3            GPIO_PD0
-#define LED4            GPIO_PD1
-#define LED1            GPIO_PE6
-#define LED2            GPIO_PE7
+#include "driver.h"
+#include "common.h"
 
-#endif
+
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

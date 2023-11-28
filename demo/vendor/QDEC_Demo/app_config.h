@@ -21,27 +21,15 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+#include "driver.h"
+#include "common.h"
 
 
-#if(MCU_CORE_B91)
-#define LED1            		GPIO_PB4
-#define LED2            		GPIO_PB5
-#define LED3            		GPIO_PB6
-#define LED4            		GPIO_PB7
-
-#elif(MCU_CORE_B92)
-#define LED1                    GPIO_PD0
-#define LED2                    GPIO_PD1
-#define LED3                    GPIO_PE6
-#define LED4                    GPIO_PE7
-
-#endif
 
 #define     QDEC_32K_SPEED               32000    //pwm 32K
 

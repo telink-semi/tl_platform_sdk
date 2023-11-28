@@ -175,7 +175,7 @@ static inline void flash_change_rw_func(flash_handler_t read, flash_handler_t wr
 
 /**
  * @brief 		This function serves to erase a sector.
- * @param[in]   addr	- the start address of the sector needs to erase.
+ * @param[in]   addr	- must be 0 or a multiple of 0x1000.
  * @return 		none.
  * @note        Attention: The block erase takes a long time, please pay attention to feeding the dog in advance.
  * 				The maximum block erase time is listed at the beginning of this document and is available for viewing.
@@ -196,7 +196,7 @@ _attribute_text_sec_ void flash_erase_sector(unsigned long addr);
 /**
  * @brief 		This function reads the content from a page to the buf with single mode.
  * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  buf		- the start address of the buffer(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:1x, dummy:0
@@ -215,7 +215,7 @@ _attribute_text_sec_ void flash_read_data(unsigned long addr, unsigned long len,
 /**
  * @brief 		This function reads the content from a page to the buf with dual read mode.
  * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  buf		- the start address of the buffer(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:2x, dummy:8
@@ -234,7 +234,7 @@ _attribute_text_sec_ void flash_dread(unsigned long addr, unsigned long len, uns
 /**
  * @brief 		This function reads the content from a page to the buf with 4*IO read mode.
  * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  buf		- the start address of the buffer(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:4x, data:4x, dummy:6
@@ -253,7 +253,7 @@ _attribute_text_sec_ void flash_4read(unsigned long addr, unsigned long len, uns
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in single mode.
  * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
  * @return 		0: check pass; 1: check fail.
  * @note        cmd:1x, addr:1x, data:1x, dummy:0
@@ -271,7 +271,7 @@ _attribute_text_sec_ unsigned char  flash_read_data_decrypt_check(unsigned long 
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in dual read mode.
  * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
  * @return 		0: check pass; 1: check fail.
  * @note        cmd:1x, addr:1x, data:2x, dummy:8
@@ -289,7 +289,7 @@ _attribute_text_sec_ unsigned char flash_dread_decrypt_check(unsigned long addr,
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in 4*IO read mode.
  * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
  * @return 		0: check pass; 1: check fail.
  * @note        cmd:1x, addr:4x, data:4x, dummy:6
@@ -311,7 +311,7 @@ _attribute_text_sec_ unsigned char flash_4read_decrypt_check(unsigned long addr,
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:1x
@@ -335,7 +335,7 @@ _attribute_text_sec_ void flash_page_program(unsigned long addr, unsigned long l
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:4x
@@ -360,7 +360,7 @@ _attribute_text_sec_ void flash_quad_page_program(unsigned long addr, unsigned l
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:1x
@@ -384,7 +384,7 @@ _attribute_text_sec_ void flash_page_program_encrypt(unsigned long addr, unsigne
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:4x
@@ -439,15 +439,15 @@ _attribute_text_sec_ void flash_read_uid(unsigned char idcmd, unsigned char *buf
 
 
 /**
- * @brief 		This function serves to set priority threshold. when the interrupt priority > Threshold flash process will disturb by interrupt.
+ * @brief 		This function serves to set priority threshold. When the interrupt priority is greater than the maximum of the current interrupt threshold and the given interrupt threshold, flash process will disturb by interrupt.
  * @param[in]   preempt_en	- 1 can disturb by interrupt, 0 can disturb by interrupt.
  * @param[in]	threshold	- priority Threshold, .
  * @return    	none.
  * @note
  *              -# The correlation between flash_plic_preempt_config() and the flash functions that call sub-functions (all declared in flash_base.h) is as follows:
  *                  - When preempt_en = 1 and interrupt nesting is enabled (plic_preempt_feature_en):
- *                      - The initialized interrupt threshold can only be 0, because the PLIC threshold will be set to 0 when the flash functions returns.
- *                      - During the flash functions execution, it can be interrupted by external interrupts with priority greater than given threshold
+ *                      - During the flash functions execution, the threshold of the PLIC is set to the maximum of the threshold before calling the interface and the given threshold value. \n
+ *                        This means that when the external interrupt priority is greater than this maximum value, the execution of the flash function is disturbed by this interrupt.
  *                      - machine timer and software interrupt will definitely interrupt the flash functions execution, they are not controlled by the plic interrupt threshold
  *                  - In other cases(preempt_en = 0 or plic_preempt_feature_en = 0), global interrupts (including machine timer and software interrupt) will be turned off during the execution of the flash functions and will be restored when the flash functions exits.
  *              -# If the flash operation may be interrupted by an interrupt, it is necessary to ensure that the interrupt handling function and the function it calls must be in the RAM code. 

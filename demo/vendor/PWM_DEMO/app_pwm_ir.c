@@ -31,6 +31,10 @@
 #define PWM_ID		PWM0_ID
 #define PWM_PIN		GPIO_FC_PB4
 #define PWM_FUNC     PWM0
+#elif(MCU_CORE_B93)
+#define PWM_ID		PWM0_ID
+#define PWM_PIN		PWM_PWM0_PA0
+#define PWM_FUNC    FC_PWM0
 #endif
 
 /**
@@ -59,26 +63,35 @@ _attribute_ram_code_sec_ void pwm_irq_handler(void)
 	}
 
 }
-
+PLIC_ISR_REGISTER(pwm_irq_handler, IRQ_PWM)
 
 
 void user_init(void)
 {
 	  gpio_function_en(LED2);
-	  gpio_set_output_en(LED2);
-	  gpio_set_input_dis(LED2);
+	  gpio_output_en(LED2);
+	  gpio_input_dis(LED2);
 	  gpio_function_en(LED3);
-	  gpio_set_output_en(LED3);
-	  gpio_set_input_dis(LED3);
+	  gpio_output_en(LED3);
+	  gpio_input_dis(LED3);
 	  gpio_function_en(LED4);
-	  gpio_set_output_en(LED4);
-	  gpio_set_input_dis(LED4);
+	  gpio_output_en(LED4);
+	  gpio_input_dis(LED4);
 
 	delay_ms(2000);
+	gpio_function_en(LED1);
+	gpio_function_en(LED2);
+	gpio_function_en(LED3);
+	gpio_function_en(LED4);
+
+	gpio_output_en(LED1);
+	gpio_output_en(LED2);
+	gpio_output_en(LED3);
+	gpio_output_en(LED4);
 
 #if(MCU_CORE_B91)
         pwm_set_pin(PWM_PIN);
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
         pwm_set_pin(PWM_PIN,PWM_FUNC);
 #endif
 
@@ -98,7 +111,7 @@ void user_init(void)
 
 	core_interrupt_enable();
 
-    plic_interrupt_enable(IRQ16_PWM);
+    plic_interrupt_enable(IRQ_PWM);
 
     pwm_start(FLD_PWM0_EN);
 

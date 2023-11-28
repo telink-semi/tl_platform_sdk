@@ -39,6 +39,7 @@
  *  How to use this driver
  *  ===============
  *    -# Enable global interrupt using the function core_interrupt_enable().
+ *    -# Enable MSI(Machine Software Interrupt) using the function core_mie_enable()
  *    -# Enable plic_sw interrupt using the function plic_sw_interrupt_enable().
  *    -# Trigger a software interrupt using the function plic_sw_set_pending().
  *    -# Re-implement the mswi_irq_handler() function and write your application code in it.
@@ -91,7 +92,7 @@ static inline unsigned int plic_sw_interrupt_claim(void)
  * @return   none
  * @note     Software interrupts need to be completed before exiting the interrupt service routine to ensure that software interrupts are fully released..
  */
-static inline void plic_sw_interrupt_complete()
+static inline void plic_sw_interrupt_complete(void)
 {
     reg_irq_sw_done = FLD_PLIC_SW_ID;
 }

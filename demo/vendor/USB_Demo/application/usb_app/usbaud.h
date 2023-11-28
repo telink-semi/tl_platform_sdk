@@ -23,13 +23,13 @@
  *******************************************************************************************************/
 #ifndef USBAUD_H_
 #define USBAUD_H_
-#include "driver.h"
-#include "../usbstd/HIDClassCommon.h"
-#include "../usbstd/HIDReportData.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "../usbstd/HIDClassCommon.h"
+#include "../usbstd/HIDReportData.h"
 
 // telink usb report ctrl command. used mixed with USB_REPORT_NO_EVENT
 enum {
@@ -55,21 +55,21 @@ typedef struct{
 	signed char speaker_mute;
 	signed char mic_mute;
 	signed char change;
-}usb_audio_status_t;
+} __attribute__((packed)) usb_audio_status_t;
 
 
 typedef struct {
 	unsigned short vol_cur;
 	unsigned short	vol_step;
 	unsigned char 	mute;
-}speaker_setting_t;
+} __attribute__((packed)) speaker_setting_t;
 
 
 typedef struct {
 	unsigned short vol_cur;
 	unsigned short	vol_step;
 	unsigned char 	mute;
-}mic_setting_t;
+} __attribute__((packed)) mic_setting_t;
 
 #define AUDIO_VOLUME_STEP_MAX  11
 

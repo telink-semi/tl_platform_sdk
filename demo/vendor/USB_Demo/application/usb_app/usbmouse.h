@@ -22,7 +22,10 @@
  *
  *******************************************************************************************************/
 #pragma once
-
+/* Enable C linkage for C++ Compilers: */
+#if defined(__cplusplus)
+	extern "C" {
+#endif
 
 #include "../usbstd/HIDClassCommon.h"
 #include "../usbstd/HIDReportData.h"
@@ -30,10 +33,6 @@
 
 
 
-/* Enable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-	extern "C" {
-#endif
 
 
 #define MOUSE_REPORT_DATA_LEN     (sizeof(mouse_data_t))

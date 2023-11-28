@@ -22,19 +22,16 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
+/* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
 
-/* Enable C linkage for C++ Compilers: */
 
 
-#define LED1            GPIO_PB4//do not use it when set PB4 set as spi mode
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6//do not use it when set PB6 set as spi mode
-#define LED4            GPIO_PB7
 
 
 #define SPI_NDMA_MODE              1

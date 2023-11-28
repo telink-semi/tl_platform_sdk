@@ -22,15 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
-#define LED1            GPIO_PD6
-#define LED2            GPIO_PD7
-#define LED3            GPIO_PE0
-#define LED4            GPIO_PE1
 
 #define SPI_LCD  		 	1//support 320*385 ST7796H2 LCD display
 #define SPI_OLED 		 	2//support 454*454 RM69330 OLED display

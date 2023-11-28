@@ -23,15 +23,13 @@
  *******************************************************************************************************/
 #ifndef _CDC_CLASS_COMMON_H_
 #define _CDC_CLASS_COMMON_H_
-
-/* Includes: */
-#include "StdDescriptors.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+/* Includes: */
+#include "StdDescriptors.h"
 
 
 #define CDC_CONTROL_LINE_OUT_DTR         BIT(0)
@@ -124,7 +122,7 @@ typedef struct
 	USB_Descriptor_Hdr_t Header;
 	unsigned char Subtype;
 	unsigned short CDCSpecification;
-} USB_CDC_Descriptor_FunctionalHeader_t;
+} __attribute__((packed)) USB_CDC_Descriptor_FunctionalHeader_t;
 
 typedef struct
 {
@@ -132,14 +130,14 @@ typedef struct
 	unsigned char bDescriptorType;
 	unsigned char bDescriptorSubType;
 	unsigned short bcdCDC;
-} USB_CDC_StdDescriptor_FunctionalHeader_t;
+} __attribute__((packed))  USB_CDC_StdDescriptor_FunctionalHeader_t;
 
 typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
 	unsigned char Subtype;
 	unsigned char Capabilities;
-} USB_CDC_Descriptor_FunctionalACM_t;
+} __attribute__((packed))  USB_CDC_Descriptor_FunctionalACM_t;
 
 typedef struct
 {
@@ -155,7 +153,7 @@ typedef struct
 	unsigned char Subtype;
 	unsigned char MasterInterfaceNumber;
 	unsigned char SlaveInterfaceNumber;
-} USB_CDC_Descriptor_FunctionalUnion_t;
+} __attribute__((packed))  USB_CDC_Descriptor_FunctionalUnion_t;
 
 typedef struct
 {
@@ -164,7 +162,7 @@ typedef struct
 	unsigned char bDescriptorSubType;
 	unsigned char bMasterInterface;
 	unsigned char bSlaveInterface0;
-} USB_CDC_StdDescriptor_FunctionalUnion_t;
+} __attribute__((packed))  USB_CDC_StdDescriptor_FunctionalUnion_t;
 
 typedef struct
 {
@@ -172,7 +170,7 @@ typedef struct
 	unsigned char CharFormat;
 	unsigned char ParityType;
 	unsigned char DataBits;
-} CDC_LineEncoding_t;
+} __attribute__((packed))  CDC_LineEncoding_t;
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

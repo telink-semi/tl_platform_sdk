@@ -21,9 +21,25 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+/**
+   @verbatim
+   ===============================================================================
+                        ##### how to test demo #####
+   ===============================================================================
+   master and slave end hardware connection:scl <-> scl,sda <-> sda,gnd <-> gnd,during the test, power on the slave and then the master.
+   master: burn directly into the bin,data flow: data is written to the slave end and then read back;
+   slave:  burn the slave bin of the b85m or b91m;
+   @endverbatim
+ */
 #include "app_config.h"
 //For the i2c1_m module, there is only the master function.
 #if(I2C_MASTER_WRITE_READ_MODE == I2C1_M_MASTER_WRITE_READ_NO_DMA)
+
+
+#define     B85M_SLAVE_PROTOCOL                      0         //b85m slave select slave in no mapping mode.
+#define     B91M_SLAVE_PROTOCOL                      1
+#define     SLAVE_CHIP_CHOOSE               B91M_SLAVE_PROTOCOL
+
 
 #define     BUFF_DATA_LEN_NO_DMA			 16
 #define     I2C1_M_CLK_SPEED				 100000
@@ -42,7 +58,7 @@ i2c1_m_tx_b85m_slave_protocol_t i2c1_m_tx_buff ={
 };
 unsigned char i2c1_m_rx_buff[BUFF_DATA_LEN_NO_DMA] __attribute__((aligned(4)));
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1); 		//enable output
@@ -65,12 +81,20 @@ void main_loop (void)
 {
     delay_ms(10);
     i2c1_m_tx_buff.data[0]++;
-    i2c1_m_master_send_stop(1);
-	i2c1_m_master_write(0x5C,(unsigned char *)&i2c1_m_tx_buff, BUFF_DATA_LEN_NO_DMA+SLAVE_DEVICE_ADDR_LEN);
-    delay_ms(10);
-    i2c1_m_master_send_stop(0);
-    i2c1_m_master_write_read(0x5C,(unsigned char *)(i2c1_m_tx_buff.address),SLAVE_DEVICE_ADDR_LEN,(unsigned char *)i2c1_m_rx_buff, BUFF_DATA_LEN_NO_DMA);
-	gpio_toggle(LED1);
+    #if(SLAVE_CHIP_CHOOSE==B85M_SLAVE_PROTOCOL)
+        i2c1_m_master_send_stop(1);     //Enable i2c1_m_master_write() to resume sending stop signal.
+        i2c1_m_master_write(0x5C,(unsigned char *)&i2c1_m_tx_buff, BUFF_DATA_LEN_NO_DMA+SLAVE_DEVICE_ADDR_LEN);
+        delay_ms(10);
+        i2c1_m_master_send_stop(0);     /*Enable i2c1_m_master_write_read() to send the Sr signal between write and read timing.
+                                          If you need to send the stop signal instead of the Sr signal at i2c1_m_master_write_read(),
+                                          i2c1_m_master_send_stop(1) and i2c1_m_master_send_stop(0) do not need to be called.*/
+        i2c1_m_master_write_read(0x5C,(unsigned char *)(i2c1_m_tx_buff.address),SLAVE_DEVICE_ADDR_LEN,(unsigned char *)i2c1_m_rx_buff, BUFF_DATA_LEN_NO_DMA);
+    #elif(SLAVE_CHIP_CHOOSE==B91M_SLAVE_PROTOCOL)
+        i2c1_m_master_write(0x5a,(unsigned char *)&i2c1_m_tx_buff.data, BUFF_DATA_LEN_NO_DMA); //default send stop signal after writing.
+        delay_ms(10);
+        i2c1_m_master_read(0x5a, (unsigned char *)i2c1_m_rx_buff,BUFF_DATA_LEN_NO_DMA);//default send stop signal after reading.
+    #endif
+    gpio_toggle(LED1);
 
 }
 

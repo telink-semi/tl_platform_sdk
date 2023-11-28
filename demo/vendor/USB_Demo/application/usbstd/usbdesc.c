@@ -561,7 +561,7 @@ const USB_Descriptor_Configuration_t
 					AUDIO_DSUBTYPE_CSInterface_FormatType,
 					USB_AUDIO_FORMAT_PCM,
 					SPK_CHANNEL_COUNT,   // audio channels
-					2, // // Two bytes per audio sub-frame.
+					SPK_RESOLUTION_BIT / 8, // SubFrameSize.
 					SPK_RESOLUTION_BIT, // BitsResolution 16 bits per sample.
 					1   // One sample rate provided
 				},
@@ -626,7 +626,7 @@ const USB_Descriptor_Configuration_t
 					AUDIO_DSUBTYPE_CSInterface_FormatType, USB_AUDIO_FORMAT_PCM, // FormatType
 
 				     MIC_CHANNEL_COUNT, // Channels
-					2, // SubFrameSize
+					MIC_RESOLUTION_BIT / 8, // SubFrameSize
 					MIC_RESOLUTION_BIT, //todo  BitsResolution  driver 16 bit
 					1 // TotalDiscreteSampleRates
 				},
@@ -788,15 +788,15 @@ const USB_Descriptor_Configuration_t
 };
 
 unsigned char* usbdesc_get_language(void) {
-	return (unsigned char*) (&language_desc);
+	return (unsigned char*)(unsigned int)(&language_desc);
 }
 
 unsigned char* usbdesc_get_vendor(void) {
-	return (unsigned char*) (&vendor_desc);
+	return (unsigned char*)(unsigned int)(&vendor_desc);
 }
 
 unsigned char* usbdesc_get_product(void) {
-	return (unsigned char*) (&product_desc);
+	return (unsigned char*)(unsigned int)(&product_desc);
 }
 
 #if (MS_OS_DESCRIPTOR_ENABLE)
@@ -819,15 +819,15 @@ unsigned char* usbdesc_get_compatID(int *length) {
 #endif
 
 unsigned char* usbdesc_get_serial(void) {
-	return (unsigned char*) (&serial_desc);
+	return (unsigned char*)(unsigned int)(&serial_desc);
 }
 
 unsigned char* usbdesc_get_device(void) {
-	return (unsigned char*) (&device_desc);
+	return (unsigned char*)(unsigned int)(&device_desc);
 }
 
 unsigned char* usbdesc_get_configuration(void) {
-	return (unsigned char*) (&configuration_desc);
+	return (unsigned char*)(unsigned int)(&configuration_desc);
 }
 
 #if(0)
@@ -838,13 +838,13 @@ unsigned char* usbdesc_get_audio(void) {
 
 #if (USB_MOUSE_ENABLE)
 unsigned char* usbdesc_get_mouse(void) {
-	return (unsigned char*) (&configuration_desc.mouse_descriptor);
+	return (unsigned char*)(unsigned int)(&configuration_desc.mouse_descriptor);
 }
 #endif
 
 #if (USB_KEYBOARD_ENABLE)
 unsigned char* usbdesc_get_keyboard(void) {
-	return (unsigned char*) (&configuration_desc.keyboard_descriptor);
+	return (unsigned char*)(unsigned int)(&configuration_desc.keyboard_descriptor);
 }
 #endif
 
@@ -856,11 +856,11 @@ unsigned char* usbdesc_get_somatic(void) {
 
 #if (USB_CDC_ENABLE)
 unsigned char* usbdesc_get_cdc(void) {
-	return (unsigned char*) (&configuration_desc.cdc_descriptor);
+	return (unsigned char*)(unsigned int)(&configuration_desc.cdc_descriptor);
 }
 
 unsigned char* usbdesc_get_cdc_inf(void) {
-	return (unsigned char*) (&configuration_desc.cdc_interface);
+	return (unsigned char*)(unsigned int)(&configuration_desc.cdc_interface);
 }
 #endif
 

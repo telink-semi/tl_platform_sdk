@@ -122,7 +122,7 @@ void flash_unlock_mid146085(void)
  */
 mid146085_lock_block_e flash_get_lock_block_mid146085(void)
 {
-	return flash_read_status_mid146085()|FLASH_WRITE_STATUS_BP_MID146085;
+	return flash_read_status_mid146085()&FLASH_WRITE_STATUS_BP_MID146085;
 }
 
 /**
@@ -131,7 +131,7 @@ mid146085_lock_block_e flash_get_lock_block_mid146085(void)
  *						the address of the  Security Registers #1 0x001000-0x0011ff
  *						the address of the  Security Registers #2 0x002000-0x0021ff
  *						the address of the  Security Registers #3 0x003000-0x0031ff
- * @param[in]   len		- the length of the content to be read.
+ * @param[in]   len		- the length(in byte, must be above 0) of the content to be read.
  * @param[out]  buf		- the starting address of the content to be read.
  * @return 		none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
@@ -155,7 +155,7 @@ void flash_read_otp_mid146085(unsigned long addr, unsigned long len, unsigned ch
  *						the address of the  Security Registers #1 0x001000-0x0011ff
  *						the address of the  Security Registers #2 0x002000-0x0021ff
  *						the address of the  Security Registers #3 0x003000-0x0031ff
- * @param[in]   len		- the length of content to be written.
+ * @param[in]   len		- the length(in byte, must be above 0) of content to be written.
  * @param[in]   buf		- the starting address of the content to be written.
  * @return 		none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.

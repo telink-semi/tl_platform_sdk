@@ -60,7 +60,7 @@ enum {
 	MYUDB_USB_IRQ_DATA_REQ,
 };
 
-void myudb_set_txfifo_local ()
+void myudb_set_txfifo_local (void)
 {
 	myudb_fifo = &myudb_txfifo;
 }
@@ -136,7 +136,7 @@ void myudb_usb_prepare_desc_data(void) {
 	return;
 }
 
-void myudb_usb_handle_in_class_intf_req() {
+void myudb_usb_handle_in_class_intf_req(void) {
 	unsigned char property = control_request.bRequest;
 	switch (property) {
 		case 0x00:
@@ -213,7 +213,7 @@ void myudb_usb_handle_request(unsigned char data_request) {
 	return;
 }
 
-void myudb_usb_handle_ctl_ep_setup() {
+void myudb_usb_handle_ctl_ep_setup(void) {
 	usbhw_reset_ctrl_ep_ptr();
 	control_request.bmRequestType = usbhw_read_ctrl_ep_data();
 	control_request.bRequest = usbhw_read_ctrl_ep_data();
@@ -238,7 +238,7 @@ void myudb_usb_handle_ctl_ep_data(void) {
 		usbhw_write_ctrl_ep_ctrl(FLD_EP_DAT_ACK);
 }
 
-void myudb_usb_handle_ctl_ep_status() {
+void myudb_usb_handle_ctl_ep_status(void) {
 	if (myudb_g_stall)
 		usbhw_write_ctrl_ep_ctrl(FLD_EP_STA_STALL);
 	else
@@ -309,7 +309,7 @@ void usb_send_str_data (char *str, unsigned char *ph, int n)
 	my_irq_restore ();
 }
 
-_attribute_ram_code_sec_noinline_ void myudb_to_usb()
+_attribute_ram_code_sec_noinline_ void myudb_to_usb(void)
 {
 	static unsigned short len = 0;
 	static unsigned char *p = 0;
@@ -558,7 +558,7 @@ void myudb_usb_handle_irq(void) {
 
 }
 
-void myudb_usb_bulkout_ready ()
+void myudb_usb_bulkout_ready (void)
 {
 	reg_usb_ep_ctrl (MYUDB_EDP_OUT_HCI) = FLD_EP_DAT_ACK;
 }

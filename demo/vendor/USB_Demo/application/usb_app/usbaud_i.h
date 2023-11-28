@@ -103,7 +103,7 @@ static const USB_Descriptor_HIDReport_Datatype_t usbaud_report_desc[] = {
 		0x02, 0x75, 0x08, 0x95, 0x02, 0x81, 0x00, 0xc0, };
 
 static inline unsigned char* usbaud_get_report_desc(void) {
-	return (unsigned char*) (usbaud_report_desc);
+	return (unsigned char*)(unsigned int)(usbaud_report_desc);
 }
 
 static inline unsigned short usbaud_get_report_desc_size(void) {

@@ -26,8 +26,6 @@
 #include "application/usb_app/usbcdc.h"
 #include "application/usbstd/usb.h"
 
-extern unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];
-extern unsigned short usb_cdc_data_len;
 #if(MCU_CORE_B92)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;

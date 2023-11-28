@@ -22,23 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
 
-#if(MCU_CORE_B91)
-#define LED1           			GPIO_PB4
-#define LED2            		GPIO_PB5
-#define LED3          			GPIO_PB6
-#define LED4           			GPIO_PB7
-#elif(MCU_CORE_B92)
-#define LED3                    GPIO_PD0
-#define LED4                    GPIO_PD1
-#define LED1                    GPIO_PE6
-#define LED2                    GPIO_PE7
-#endif
 #define ADC_DMA_MODE				1
 #define ADC_NDMA_MODE				2
 
@@ -64,6 +53,21 @@ extern "C" {
 
 #define ADC_SAMPLE_MODE				ADC_GPIO_SAMPLE
 
+#if(MCU_CORE_B91)
+
+#if(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
+/**
+ 		The Vbat channel battery voltage sample range is 1.8~3.5V and is low accuracy,
+ 		and must set sys_init with the mode for battery voltage less than 3.6V.
+		changed by chaofan.20201230.
+**/
+#define PLATFORM_INIT   platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_LESS_THAN_3V6)
+#else
+#define PLATFORM_INIT 	platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#endif
+
+#endif
+#include "common.h"
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

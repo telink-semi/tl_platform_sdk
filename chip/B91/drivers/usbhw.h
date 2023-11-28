@@ -195,7 +195,8 @@ static inline void usbhw_clr_irq_mask( usb_irq_mask_e mask)
 /**
  * @brief     This function servers to get usb irq status.
  * @param[in]  status -the  irq status of usb.
- * @return    the status of irq.
+ * @retval	  non-zero   -  the interrupt occurred.
+ * @retval	  zero  -  the interrupt did not occur.
  */
 static inline unsigned char  usbhw_get_irq_status(usb_irq_status_e status)
 {
@@ -209,7 +210,20 @@ static inline unsigned char  usbhw_get_irq_status(usb_irq_status_e status)
  */
 static inline void usbhw_clr_irq_status(usb_irq_status_e status)
 {
-	reg_usb_irq_mask|=status;
+    /** the reg_usb_irq_mask register mask and status are in the same register
+     * enum
+     * {
+     *      FLD_USB_IRQ_RESET_MASK   = 	BIT(0),
+     *      FLD_USB_IRQ_250US_MASK 	 = 	BIT(1),
+     *      FLD_USB_IRQ_SUSPEND_MASK = 	BIT(2),
+     *      FLD_USB_IRQ_RESET_LVL	 = 	BIT(3),
+     *      FLD_USB_IRQ_250US_LVL	 = 	BIT(4),
+     *      FLD_USB_IRQ_RESET_O 	 = 	BIT(5),
+     *      FLD_USB_IRQ_250US_O		 = 	BIT(6),
+     *      FLD_USB_IRQ_SUSPEND_O	 = 	BIT(7),
+     * };
+     * Flags can only be cleared with |=, not by direct assignment. */
+	reg_usb_irq_mask|=status; 
 }
 
 

@@ -28,7 +28,7 @@
 
 #define	FLOW_NO_S				1
 
-
+#define MS_OS_DESCRIPTOR_ENABLE	0
 #define APPLICATION_DONGLE							1
 #if(APPLICATION_DONGLE)
 
@@ -85,7 +85,6 @@
 #define SPK_CHANNEL_COUNT		2
 #define SPEAKER_SAMPLE_RATE		16000
 
-#define USB_MODE_AUDIO_EN		1
 #endif
 
 
@@ -99,7 +98,7 @@
 
 #define  ID_VERSION             0x0100
 
-#if(USB_MODE_CDC_EN)
+#if(USB_CDC_ENABLE)
 #define STRING_VENDOR				L"Telink Semi-conductor Ltd, Co"
 #define STRING_PRODUCT				L"Telink CDC"
 #define STRING_SERIAL				L"CDC demo "
@@ -130,7 +129,7 @@
 #endif
 
 
-#if(USB_MODE_AUDIO_EN)
+#if(USB_MIC_ENABLE||USB_SPEAKER_ENABLE)
 #define STRING_VENDOR				L"Telink Semi-conductor Ltd, Co"
 #define STRING_PRODUCT				L"Telink Audio16"
 #define STRING_SERIAL				L"Audio16"
@@ -142,7 +141,7 @@
 #define STRING_SERIAL				L"MS Demo"
 #endif
 
-#if((!USB_MODE_AUDIO_EN)&&(!USB_KEYBOARD_ENABLE)&&(!USB_MOUSE_ENABLE)&&(!USB_MODE_CDC_EN)&&(!USB_CDC_ENABLE)&&(!USB_MASS_STORAGE_ENABLE))
+#if((!(USB_MIC_ENABLE||USB_SPEAKER_ENABLE))&&(!USB_KEYBOARD_ENABLE)&&(!USB_MOUSE_ENABLE)&&(!USB_CDC_ENABLE)&&(!USB_MASS_STORAGE_ENABLE))
 #define STRING_VENDOR				L"Telink Semi-conductor Ltd, Co"
 #define STRING_PRODUCT				L"Telink No Product"
 #define STRING_SERIAL				L"USB demo"
@@ -219,8 +218,4 @@
 
 
 
-/* Disable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-}
-#endif
 
