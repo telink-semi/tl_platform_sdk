@@ -189,17 +189,17 @@ void usb_prepare_desc_data(void) {
 		break;
 
 	}
-	usb_len_idx_s = g_response_len;
 	if (control_request.Length < g_response_len) {
 		g_response_len = control_request.Length;
 	}
+	usb_len_idx_s = g_response_len;
 
 	return;
 }
 
 //standard interface request handle
 
-void usb_handle_std_intf_req() {
+void usb_handle_std_intf_req(void) {
 	unsigned char value_h = (control_request.Value >> 8) & 0xff;
 
 #if( USB_MOUSE_ENABLE || USB_KEYBOARD_ENABLE || USB_SOMATIC_ENABLE)
@@ -228,7 +228,7 @@ void usb_handle_std_intf_req() {
 		{
 			//mouse
 			g_response = usbdesc_get_mouse();
-			g_response_len = sizeof(USB_HID_Descriptor_HID_Mouse_t);
+			g_response_len = sizeof(USB_HID_Descriptor_HID_t); /* HID descriptor length */
 		}
 	#endif
 #endif
@@ -244,7 +244,7 @@ void usb_handle_std_intf_req() {
 		if (index_l == USB_INTF_KEYBOARD) {
 			//keyboard
 			g_response = usbdesc_get_keyboard();
-			g_response_len = sizeof(USB_HID_Descriptor_HID_Keyboard_t);
+			g_response_len = sizeof(USB_HID_Descriptor_HID_t); /* HID descriptor length */
 		}
 	#endif
 #endif
@@ -254,7 +254,7 @@ void usb_handle_std_intf_req() {
 		{
 			//SOMATIC
 			g_response = usbdesc_get_somatic();
-			g_response_len = sizeof(USB_HID_Descriptor_HID_Somatic_t);
+			g_response_len = sizeof(USB_HID_Descriptor_HID_t); /* HID descriptor length */
 		}
 #endif
 		break;
@@ -311,6 +311,7 @@ void usb_handle_std_intf_req() {
 	if (control_request.Length < g_response_len) {
 		g_response_len = control_request.Length;
 	}
+	usb_len_idx_s = g_response_len;
 
 	return;
 }
@@ -359,14 +360,7 @@ void usb_handle_out_class_intf_req(int data_request) {
 			if (data_request) {
 				host_keyboard_status = usbhw_read_ctrl_ep_data();
 			}
-#if(USB_SET_REPORT_FEATURE_SUPPORT)
-		{
-			usb_set_report_t rpt;
-			rpt.report_id = value_l;
-			rpt.len = control_request.Index;
-			ev_emit_event_syn(EV_USB_SET_REPORT, (void*)(&rpt));	// send in report id
-		}
-#endif
+
 			break;
 		case HID_REPORT_CUSTOM:
 #if (USB_CUSTOM_HID_REPORT)
@@ -479,7 +473,7 @@ void usb_handle_out_class_intf_req(int data_request) {
 
 
 
-void usb_handle_in_class_intf_req() {
+void usb_handle_in_class_intf_req(void) {
 	unsigned char property = control_request.Request;
 #if (USB_MIC_ENABLE || USB_SPEAKER_ENABLE)
 	unsigned char value_h = (control_request.Value >> 8);
@@ -583,7 +577,7 @@ void usb_handle_in_class_intf_req() {
 }
 
 
-void usb_handle_in_class_endp_req() {
+void usb_handle_in_class_endp_req(void) {
 #if (USB_MIC_ENABLE || USB_SPEAKER_ENABLE)
 	unsigned char property = control_request.Request;
 	unsigned char ep_ctrl = control_request.Value >> 8;
@@ -603,7 +597,7 @@ void usb_handle_in_class_endp_req() {
 #endif
 }
 
-void usb_handle_out_class_endp_req() {
+void usb_handle_out_class_endp_req(void) {
 	return;
 #if 0
 	unsigned char property = control_request.Request;
@@ -615,7 +609,7 @@ void usb_handle_out_class_endp_req() {
 }
 
 
-void usb_handle_set_intf() {
+void usb_handle_set_intf(void) {
 #if (USB_SPEAKER_ENABLE || USB_MIC_ENABLE)
 	unsigned char value_l = (control_request.Value) & 0xff;
 	unsigned char intf_index = (control_request.Index) & 0x07;
@@ -646,7 +640,7 @@ void usb_handle_set_intf() {
 }
 
 #if (USB_SPEAKER_ENABLE || USB_MIC_ENABLE)
-void usb_handle_get_intf() {
+void usb_handle_get_intf(void) {
 	unsigned char intf_index = (control_request.Index) & 0x07;
 	usbhw_write_ctrl_ep_data(usb_alt_intf[intf_index]);
 
@@ -800,7 +794,7 @@ void usb_handle_ctl_ep_data(void) {
 
 
 
-void usb_handle_ctl_ep_status() {
+void usb_handle_ctl_ep_status(void) {
 	reg_usb_sups_cyc_cali=0x38;
 	if (g_stall)
 		usbhw_write_ctrl_ep_ctrl(FLD_EP_STA_STALL);
@@ -946,23 +940,21 @@ void usb_init_interrupt(void)
 
 }
 
-void usb_init() {
+void usb_init(void) {
 
 #if(USB_MOUSE_ENABLE)
-    extern void usbmouse_init();
+    extern void usbmouse_init(void);
     usbmouse_init();
 #endif
 #if(USB_KEYBOARD_ENABLE)
-    extern void usbkb_init();
+    extern void usbkb_init(void);
     usbkb_init();
 #endif
 
 	usb_init_interrupt();
-#if FLOW_NO_OS
 
-#else
 	usb_handle_irq();
-#endif
+
 }
 
 #if(USB_CDC_ENABLE)

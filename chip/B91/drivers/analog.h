@@ -78,7 +78,7 @@ _attribute_ram_code_sec_noinline_ void analog_write_reg8(unsigned char addr, uns
  * @param[in]  addr - address need to be read.
  * @return     the result of read.
  */
-unsigned short analog_read_reg16(unsigned char addr);
+_attribute_ram_code_sec_noinline_ unsigned short analog_read_reg16(unsigned char addr);
 
 /**
  * @brief      This function serves to analog register write by halfword.
@@ -86,14 +86,14 @@ unsigned short analog_read_reg16(unsigned char addr);
  * @param[in]  data - the value need to be write.
  * @return     none.
  */
-void analog_write_reg16(unsigned char addr, unsigned short data);
+_attribute_ram_code_sec_noinline_ void analog_write_reg16(unsigned char addr, unsigned short data);
 
 /**
  * @brief      This function serves to analog register read by word.
  * @param[in]  addr - address need to be read.
  * @return     the result of read.
  */
- unsigned int analog_read_reg32(unsigned char addr);
+_attribute_ram_code_sec_noinline_ unsigned int analog_read_reg32(unsigned char addr);
 
  /**
   * @brief      This function serves to analog register write by word.
@@ -101,7 +101,7 @@ void analog_write_reg16(unsigned char addr, unsigned short data);
   * @param[in]  data - the value need to be write.
   * @return     none.
   */
-void analog_write_reg32(unsigned char addr, unsigned int data);
+_attribute_ram_code_sec_noinline_ void analog_write_reg32(unsigned char addr, unsigned int data);
 /**
  * @brief      This function serves to analog register read.
  * @param[in]  addr  - address need to be read.

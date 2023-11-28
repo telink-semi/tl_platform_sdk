@@ -21,24 +21,45 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+/**
+   @verbatim
+    Telink SoC integrates ISO-7816 communication module and supports communication with contact IC cards. The S7816 is implemented through the UART function of the SoC, so it will occupy the corresponding UART module when used.
+    The demo default baud rate configuration:
+    =========================================
+     - 10752 baud rate
+     - 8 data bits
+     - Even parity
+     - One stop bit
+
+    The pin function explain:
+    =========================================
+    In actual use, we need to connect each contact of IC card to SoC one by one, which is the hardware basis for communication between SoC and IC card.
+     - VCC is the power supply voltage of IC card. We can choose any one of the free GPIO pins of the SoC to connect to it.
+     - RST is the reset signal of IC card. We can choose any one of the free GPIO pins of the SoC to connect to it.
+     - CLK is the clock contact of the IC card. The clock is supplied to the IC card by the SoC.
+     - TRX, I/O contact, is IC card input and output contact. Because IC card only supports half-duplex communication, at a certain moment I/O contact only supports input or output, so in actual use we need to pay attention to the timing.
+
+    The pin voltages explain:
+    =========================================
+    The IS07816-3 protocol specifies three operating voltages for IC cards: Class A-5V, Class B-3V, and Class C-1.8V. In actual use, the voltage provided by the SoC needs to match the operating voltage of the card.
+
+   @endverbatim
+ */
+
+
+
+
+
+
+
 #pragma once
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
-#if(MCU_CORE_B92)
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
-#elif(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
-#endif
 
 #define S7816_UART0    0
 #define S7816_UART1    1

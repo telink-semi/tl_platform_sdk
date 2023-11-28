@@ -35,7 +35,7 @@ extern volatile unsigned int g_vbus_timer_turn_off_flag;
 // BYTE1: reserved;
 // BYTE2~BYTE7: normal key
 
-void user_init()
+void user_init(void)
 {
 	//1.enable USB DP pull up 1.5k
 	usb_set_pin_en();

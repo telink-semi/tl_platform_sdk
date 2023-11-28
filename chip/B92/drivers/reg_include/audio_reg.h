@@ -149,15 +149,6 @@ enum
 	FLD_AUDIO_FIFO_AIN_TRIG_NUM         =  BIT_RNG(4,7),
 };
 
-
-
-#define   reg_audio_ptr_set			   	    REG_ADDR8(REG_AUDIO_APB_BASE+0x10)
-enum
-{
-	FLD_AUDIO_TX_PTR_SEL                 =  BIT(0),
-	FLD_AUDIO_RX_PTR_SEL                 =  BIT(4),
-};
-
 #define   reg_audio_ptr_en			    REG_ADDR8(REG_AUDIO_APB_BASE+0x11)
 enum
 {
@@ -194,8 +185,6 @@ enum
 #define   reg_i2s_pcm_clk_num(i)	  REG_ADDR8(REG_AUDIO_APB_BASE+0x54-((i)*0x1A))
 
 #define   reg_codec_dec0_vol0         REG_ADDR8(REG_AUDIO_APB_BASE+0x61)
-
-#define   reg_codec_dec0_vol1         REG_ADDR8(REG_AUDIO_APB_BASE+0x25)
 
 #define   reg_codec_dec1_vol          REG_ADDR8(REG_AUDIO_APB_BASE+0x55)
 
@@ -553,10 +542,5 @@ enum
 {
 	FLD_AUDIO_CODEC_DEC1_CLK_SR        =  BIT_RNG(0,4),
 };
-
-#define   i2s_timer_th0          REG_ADDR8(REG_AUDIO_CODEC_BASE+0x5C)
-#define   i2s_timer_th1          REG_ADDR8(REG_AUDIO_CODEC_BASE+0x5D)
-#define   i2s_timer_th2          REG_ADDR8(REG_AUDIO_CODEC_BASE+0x5E)
-#define   i2s_timer_th3          REG_ADDR8(REG_AUDIO_CODEC_BASE+0x5F)
 
 #endif

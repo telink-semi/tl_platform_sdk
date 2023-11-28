@@ -22,23 +22,23 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+
 
 
 #define EMI_DEMO	0
 #define BQB_DEMO	1
-#define TEST_DEMO	0
+#define TEST_DEMO	EMI_DEMO
 
 
 #if TEST_DEMO == EMI_DEMO
 
 /**
- * @brief Generate EMI binary that support setting，Open by default
+ * @brief Generate EMI binary that support setting, Open by default
  * @note  1.The emi bin provided in the BDT tool is compiled under the EMI_SUPPORT_SETTING option.
  *        2.When compiling sram bin, you need to delete (NOLOAD) after the sbss and bss segments in ram_boot.link.
  *          At the same time, delete the AT instruction content after sdk_version segment.

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for B91
  *
  * @author  Driver Group
  * @date    2021

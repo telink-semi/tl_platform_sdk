@@ -38,16 +38,43 @@
 
 .extern pm_retention_register_recover
 
-//	According to the different ram size of the chip, the corresponding configuration values are as follows:
-//		SRAM	  128K	256K  384K	512K
-//	__IRAM_2_EN 	0	  1		1	  1
-//	__DRAM_1_EN 	0	  0		1	  1
-//	__DRAM_2_EN 	0	  0		0	  1
-//	__DRAM_DIS 		1	  1		0	  0
+//According to the current internal seal flash model of B91m, the maximum time between the flash awakening and the operating flash is 20us, which leaves some margin and is set to 25us.
+//When adding flash later, if tRES1 is greater than 25us, this waiting time needs to be updated. (flash tRES1, which can be viewed in the comments of the variable flash_support_mid.)
+//(add by weihua.zhang 20230811)
+#define EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM		320	//25us
+
+//The default driver configuration is 128K to ensure that the default driver configuration can work properly on all models.
+//In actual use, please configure the sram size according to your own model, otherwise the efficiency will be affected.
+//the most efficient use is:
+//IRAM is used to store code, DRAM is used to store data, if the data-related segments are stored in IRAM, the efficiency will be affected.
+//(add by weihua.zhang, confirmed by kaixin.chen and shujuan.chu 20230725)
+#define SRAM_128K      1	//128KSRAM, 128KB-IRAM(96KB-Retention)/0KB-DRAM
+#define SRAM_256K      2	//256KSRAM, 256KB-IRAM(96KB-Retention)/0KB-DRAM
+#define SRAM_384K      3	//384KSRAM, 256KB-IRAM(96KB-Retention)/128KB-DRAM
+#define SRAM_512K      4	//512KSRAM, 256KB-IRAM(96KB-Retention)/256KB-DRAM
+#define SRAM_SIZE      SRAM_128K
+
+#if (SRAM_SIZE == SRAM_256K)
+	.equ __IRAM_2_EN, 	1
+	.equ __DRAM_1_EN, 	0
+	.equ __DRAM_2_EN, 	0
+	.equ __DRAM_DIS, 	1
+#elif (SRAM_SIZE == SRAM_384K)
+	.equ __IRAM_2_EN, 	1
+	.equ __DRAM_1_EN, 	1
+	.equ __DRAM_2_EN, 	0
+	.equ __DRAM_DIS, 	0
+#elif (SRAM_SIZE == SRAM_512K)
+	.equ __IRAM_2_EN, 	1
+	.equ __DRAM_1_EN, 	1
+	.equ __DRAM_2_EN, 	1
+	.equ __DRAM_DIS, 	0
+#else
 	.equ __IRAM_2_EN, 	0
 	.equ __DRAM_1_EN, 	0
 	.equ __DRAM_2_EN, 	0
 	.equ __DRAM_DIS, 	1
+#endif
 
     .section .vectors, "ax"
     .global		__IRAM_2_EN
@@ -319,15 +346,6 @@ _ISTART:
 
 
 	/* flash wakeup */
-#if 0
-	/*flash poweron need delay about 150us */
-	li		t0 , 0
-	li		t1 , 2000
-_WAIT_FLASH_POWERON:
-	addi 	t0 , t0 , 1
-	bgeu 	t1 , t0 , _WAIT_FLASH_POWERON
-#endif
-
 	lui		t0, 0xA3FFF
 	addi	t0, t0, 0x790
 	li		t1, 0x0e
@@ -362,32 +380,20 @@ _MSPI_WAIT_2:
 	li		t1, 0x0a
 	sb		t1, 0x78c(t0)		//xip_enable		:0xA3FFFF1c = 0x0a
 
-	/*flash wakeup need delay about 150us */
-	li		t0 , 0
-	li		t1 , 2000
-_WAIT_FLASH_WAKEUP:
-	addi 	t0 , t0 , 1
-	bgeu 	t1 , t0 , _WAIT_FLASH_WAKEUP
+	/*flash wakeup need delay about 20us */
+	/*efuse load need delay about 0us */
+	li		t0, 0
+	li		t1, EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM
+_WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH:
+	addi 	t0, t0 , 1
+	bgeu 	t1, t0 , _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH
 
 _MULTI_ADDRESS_BEGIN:
-	lui		t0 , 0xA3FFF
-	addi	t0 , t0 , 0x790
-	la		t1 , g_pm_mspi_cfg
-	lw		t2 , 0(t1)
-	sw		t2 , 0x790(t0)		//g_pm_mspi_cfg->0xA3FFFF20
-
-	/* Move Data from flash to sram */
-_IDATA_INIT:
-    la     t1, _DATA_LMA_START
-    la     t2, _DATA_VMA_START
-    la     t3, _DATA_VMA_END
-_IDATA_INIT_BEGIN:
-    bleu   t3, t2, _IZERO_BSS
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _IDATA_INIT_BEGIN
+	lui		t0, 0xA3FFF
+	addi	t0, t0 , 0x790
+	la		t1, g_pm_mspi_cfg
+	lw		t2, 0(t1)
+	sw		t2, 0x790(t0)		//g_pm_mspi_cfg->0xA3FFFF20
 
 	/* Zero .bss section in sram */
 _IZERO_BSS:
@@ -419,12 +425,25 @@ _IFILL_STK:
     la     t2, _BSS_VMA_END
     la     t3, _STACK_TOP
 _IFILL_STK_BEGIN:
-    bleu   t3, t2, _IMAIN_FUNC
+    bleu   t3, t2, _IDATA_INIT
     sw     t0, 0(t2)
     addi   t2, t2, 4
     j      _IFILL_STK_BEGIN
 #endif
 
+	/* Move Data from flash to sram */
+//Read the flash as late as possible to lengthen the time from the wake up to the operation of the flash.
+_IDATA_INIT:
+    la     t1, _DATA_LMA_START
+    la     t2, _DATA_VMA_START
+    la     t3, _DATA_VMA_END
+_IDATA_INIT_BEGIN:
+    bleu   t3, t2, _IMAIN_FUNC
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _IDATA_INIT_BEGIN
 
 	/* Jump to the main function */
 _IMAIN_FUNC:

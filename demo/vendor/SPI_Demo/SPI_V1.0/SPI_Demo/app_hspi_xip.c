@@ -64,7 +64,7 @@ hspi_config_t hspi_xip_config = {
 	.hspi_addr_fmt_en 	= 0,//when hspi_addr_en = false,invalid set.
 };
 
-_attribute_ram_code_sec_noinline_ void user_init()
+_attribute_ram_code_sec_noinline_ void user_init(void)
 {
 	delay_ms(2000);	//must
 	gpio_function_en(LED2);
@@ -116,7 +116,7 @@ hspi_config_t hspi_xip_config = {
 	.hspi_cmd_fmt_en 	= 0,//when hspi_cmd_en = false,invalid set.
 	.hspi_addr_fmt_en 	= 0,//when hspi_addr_en = false,invalid set.
 };
-_attribute_ram_code_sec_noinline_ void user_init()
+_attribute_ram_code_sec_noinline_ void user_init(void)
 {
 	delay_ms(500);	//must
 	gpio_function_en(LED2);
@@ -168,7 +168,7 @@ hspi_config_t hspi_xip_config = {
 	.hspi_cmd_fmt_en 	= 0,//when hspi_cmd_en = false,invalid set.
 	.hspi_addr_fmt_en 	= 1,//when hspi_addr_en = false,invalid set.
 };
-_attribute_ram_code_sec_noinline_ void user_init()
+_attribute_ram_code_sec_noinline_ void user_init(void)
 {
 	delay_ms(500);	//must
 	gpio_function_en(LED2);
@@ -223,7 +223,7 @@ hspi_config_t hspi_xip_config = {
  	.hspi_cmd_fmt_en 	= 1,//when hspi_cmd_en = false,invalid set.
  	.hspi_addr_fmt_en 	= 1,//when hspi_addr_en = false,invalid set.
 };
-_attribute_ram_code_sec_noinline_ void user_init()
+_attribute_ram_code_sec_noinline_ void user_init(void)
 {
 	delay_ms(500);	//must
 	gpio_function_en(LED2);
@@ -281,7 +281,7 @@ hspi_config_t hspi_xip_config = {
  	.hspi_cmd_fmt_en 	= 1,//when hspi_cmd_en = false,invalid set.
  	.hspi_addr_fmt_en 	= 1,//when hspi_addr_en = false,invalid set.
 };
-_attribute_ram_code_sec_noinline_ void user_init()
+_attribute_ram_code_sec_noinline_ void user_init(void)
 {
 	delay_ms(500);	//must
 	gpio_function_en(LED2);
@@ -344,7 +344,7 @@ hspi_config_t hspi_xip_config = {
  	.hspi_cmd_fmt_en 	= 1,//when hspi_cmd_en = false,invalid set.
  	.hspi_addr_fmt_en 	= 1,//when hspi_addr_en = false,invalid set.
 };
-_attribute_ram_code_sec_noinline_ void user_init()
+_attribute_ram_code_sec_noinline_ void user_init(void)
 {
 	delay_ms(500);	//must
 	gpio_function_en(LED2);

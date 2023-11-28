@@ -38,6 +38,11 @@ _attribute_ram_code_sec_noinline_ void pm_irq_handler(void)
 		mdec_clr_irq_status(FLD_WKUP_MDEC);
 	}
 }
+#if (MCU_CORE_B91)
+PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_TM)
+#elif (MCU_CORE_B92)
+PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_IRQ)
+#endif
 
 void user_init(void)
 {
@@ -53,9 +58,9 @@ void user_init(void)
 	//due to FLD_WKUP_TIMER,FLD_WKUP_DIG is 1,plic receives the result,once enable plic, will request an interrupt to the CPU.
 	//Therefore, notice the processing of the interrupt sequence here.changed by shuaixing,confirmed by jianzhi.20201104.
 	mdec_clr_irq_status(FLD_WKUP_MDEC|FLD_WKUP_TIMER|FLD_WKUP_DIG);
-	plic_interrupt_enable(IRQ62_PM_TM);
+	plic_interrupt_enable(IRQ_PM_TM);
 	plic_interrupt_claim();
-	plic_interrupt_complete(IRQ62_PM_TM);
+	plic_interrupt_complete(IRQ_PM_TM);
 	core_interrupt_enable();
 	mdec_reset();
 }

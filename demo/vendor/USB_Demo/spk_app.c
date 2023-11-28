@@ -25,13 +25,26 @@
 #if(USB_DEMO_TYPE==USB_SPEAKER)
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
-#include <string.h>
 
 #define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
 #define SPK_DMA_CHN    DMA3
 #define	SPK_BUFFER_SIZE			2048
-unsigned short		iso_out_buff [SPK_BUFFER_SIZE]__attribute__((aligned(4)));
+
+
+
+#if(SPK_RESOLUTION_BIT == 24)
+int iso_out_buff [SPK_BUFFER_SIZE]__attribute__((aligned(4)));
+#elif(SPK_RESOLUTION_BIT == 16)
+short iso_out_buff [SPK_BUFFER_SIZE]__attribute__((aligned(4)));
+#endif
+
+
 #if(MCU_CORE_B92)
+#define CODEC_SPK_MODE        0
+#define CODEC0581_SPK_MODE    1
+
+#define SPK_MODE               CODEC_SPK_MODE
+
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
 #endif
@@ -75,7 +88,7 @@ void user_init(void)
 	usb_init_interrupt();
 	//3.enable global interrupt
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);		// enable usb endpoint interrupt
+	plic_interrupt_enable(IRQ_USB_ENDPOINT);		// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
 #if(MCU_CORE_B91)
 	usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
@@ -93,6 +106,16 @@ void  audio_rx_data_from_usb ()
 {
 	unsigned char len = reg_usb_ep6_ptr;
 	usbhw_reset_ep_ptr(USB_EDP_SPEAKER);
+#if(SPK_RESOLUTION_BIT == 24)
+    for (unsigned int i = 0; i < len; i += 3)
+    {
+        int d0 = reg_usb_ep6_dat;
+        d0 |= reg_usb_ep6_dat << 8;
+        d0 |= reg_usb_ep6_dat << 16;
+
+        iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d0;
+    }
+#elif(SPK_RESOLUTION_BIT == 16)
 	for (unsigned int i=0; i<len; i+=4)
 	{
 		signed short d0 = reg_usb_ep6_dat;
@@ -106,6 +129,7 @@ void  audio_rx_data_from_usb ()
 
 
 	}
+#endif
 	usbhw_data_ep_ack(USB_EDP_SPEAKER);
 }
 
@@ -125,6 +149,8 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	}
 
 }
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
+
 #if 0
 /**
  * @brief     This function servers to adjust sampling rate .
@@ -186,7 +212,12 @@ void main_loop (void)
 	}
 }
 #elif(MCU_CORE_B92)
+#if(SPK_MODE == CODEC0581_SPK_MODE)
 
+unsigned short audio_i2s_16k_config[5] = {8,  125,  6,  64,  64}; /* sampling rate = 192M * (8 / 125) / (2 * 6) / 64   = 16K */
+unsigned short audio_i2s_48k_config[5] = {2,  125,  0,  64,  64}; /* sampling rate = 192M * (2 / 125) / 64             = 48K */
+
+#endif
 volatile unsigned int		iso_out_w = 0;
 unsigned int		        num_iso_out = 0;
 
@@ -227,11 +258,73 @@ void user_init(void)
 	audio_codec_init();
 #if(USB_MODE==INT)
 	core_interrupt_enable();//	enable global interrupt
-	plic_interrupt_enable(IRQ11_USB_ENDPOINT);// enable usb endpoint interrupt
+	plic_interrupt_enable(IRQ_USB_ENDPOINT);// enable usb endpoint interrupt
 	usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
+#if(SPK_MODE == CODEC_SPK_MODE)
 	audio_codec_stream_output_init(&audio_codec_output);
 	audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
 	audio_tx_dma_en(audio_codec_output.dma_num);
+#elif(SPK_MODE == CODEC0581_SPK_MODE)
+    /* i2s config */
+    codec_0581_i2s_init_t i2s_init = {
+    #if(SPK_RESOLUTION_BIT==16)
+        .data_width = I2S_BIT_16_DATA,
+    #elif(SPK_RESOLUTION_BIT==24)
+        .data_width = I2S_BIT_24_DATA,
+    #endif
+
+    #if(SPEAKER_SAMPLE_RATE == 16000)
+        .sample_rate = audio_i2s_16k_config,
+    #elif(SPEAKER_SAMPLE_RATE == 48000)
+        .sample_rate = audio_i2s_48k_config,
+    #endif
+    };
+
+    /* i2s output config */
+    codec_0581_i2s_output_t i2s_output = {
+            .tx_dma_num             = SPK_DMA_CHN,
+            .output_data_buf        = iso_out_buff,
+            .output_buf_size        = sizeof(iso_out_buff),
+    };
+
+    /* init i2s */
+    codec_0581_i2s_init(&i2s_init, 0, &i2s_output);
+
+    /* init codec_0581 */
+    if (CODEC_0581_OK != codec_0581_init())
+    {
+        gpio_toggle(LED2);
+        return;
+    }
+
+
+/** DAC defaults to normal mode, 
+ * if you want to test enhance mode, just call the statement: codec_0581_dac_enhanced_mode_enable(CODEC_BOOL_TRUE);
+ */
+
+    /**** output path: sap/i2s -> asrci -> dac ****/
+    /* asrci */
+    codec_0581_output_asrci_config_t codec_0581_asrci_config = {
+        .asrci_out_fs       = CODEC_ASRC_FS_48K,
+    };
+    /* dac */
+    codec_0581_output_dac_config_t codec_0581_dac_config = {
+        .dac_rate           = CODEC_DAC_SAMPLE_RATE_48KHz,
+        .dac_input          = CODEC_DAC_ROUTE_ASRCI0,
+    };
+    /* output config */
+    codec_0581_output_t codec_0581_output_config = {
+        .asrci_config       = &codec_0581_asrci_config,
+        .fint_config        = 0, /* this example fint not used */
+        .dac_config         = &codec_0581_dac_config,
+    };
+
+    /**** codec_0581 output path init ****/
+    codec_0581_output_init(&codec_0581_output_config);
+    /* enable tx dma */
+    audio_tx_dma_en(i2s_output.tx_dma_num);
+#endif
+
 #else
 	audio_data_fifo_input_path_sel(FIFO_NUM,USB_AISO_IN_FIFO);
 	audio_codec_stream_output_init(&audio_codec_output);
@@ -248,10 +341,20 @@ void user_init(void)
  * @param[in] none
  * @return    none.
  */
-void  audio_rx_data_from_usb ()
+void  audio_rx_data_from_usb (void)
 {
 	unsigned char len = reg_usb_ep6_ptr;
 	usbhw_reset_ep_ptr(USB_EDP_SPEAKER);
+#if(SPK_RESOLUTION_BIT == 24)
+    for (unsigned int i = 0; i < len; i += 3)
+    {
+        int d0 = reg_usb_ep6_dat;
+        d0 |= reg_usb_ep6_dat << 8;
+        d0 |= reg_usb_ep6_dat << 16;
+
+        iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d0;
+    }
+#elif(SPK_RESOLUTION_BIT == 16)
 	for (unsigned int i=0; i<len; i+=4)
 	{
 		signed short d0 = reg_usb_ep6_dat;
@@ -263,6 +366,7 @@ void  audio_rx_data_from_usb ()
 		iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d1;
 
 	}
+#endif
 	usbhw_data_ep_ack(USB_EDP_SPEAKER);
 }
 
@@ -282,6 +386,8 @@ _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 	}
 
 }
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
+
 #endif
 
 void main_loop (void)
@@ -320,6 +426,6 @@ else
 
 #endif
 
-#endif /* end of USB_DEMO_TYPE==USB_SPEAKER */
+#endif
 
 

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    puya_common.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for B91
  *
  * @author  Driver Group
  * @date    2022
@@ -103,7 +103,7 @@ _attribute_ram_code_sec_noinline_ void flash_exit_test_mode(void)
  * @brief 		This function serves to flash read in test mode.
  * @param[in]   cmd			- the read command.
  * @param[in]   addr		- starting address.
- * @param[in]   len	        - the length(in byte) of content needs to be written.
+ * @param[in]   len	        - the length(in byte, must be above 0) of content needs to be written.
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */
@@ -138,7 +138,7 @@ _attribute_ram_code_sec_noinline_  void flash_read_testmode(unsigned char cmd,un
  * @brief 		This function serves to flash write in test mode.
  * @param[in]   cmd			- the write command.
  * @param[in]   addr		- starting address.
- * @param[in]   len	        - the length(in byte) of content needs to be written.
+ * @param[in]   len	        - the length(in byte, must be above 0) of content needs to be written.
  * @param[out]  buf		    - the start address of the data buffer.
  * @return 		none.
  */

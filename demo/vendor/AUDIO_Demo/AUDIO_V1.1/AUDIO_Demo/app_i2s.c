@@ -26,8 +26,8 @@
 #include "ext_codec_wm/ext_codec_wm.h"
 #include "app_sin_data.h"
 #define    AUDIO_BUFF_SIZE  4096
-volatile signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
-volatile signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
+signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
+signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
 
 /**
  *                                          i2s_clk_config[2]   i2s_clk_config[3]-->lrclk_adc(sampling rate)
@@ -35,7 +35,7 @@ volatile signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4))
  *  pll(192M default)------->div---->i2s_clk--->2 * div(div=0,bypass)--->blck----->div
  *                           ||                                         ||
  *           i2s_clk_config[0]/i2s_clk_config[1]                 i2s_clk_config[4]-->lrclk_dac(sampling rate)
- * For example:sampling rate=16K，i2s_clk_config[5]={ 8,125,6,64,64}, sampling rate=192M*(8/125)/(2*6)/64=16K
+ * For example:sampling rate=16K, i2s_clk_config[5]={ 8,125,6,64,64}, sampling rate=192M*(8/125)/(2*6)/64=16K
  *
  */
 unsigned short audio_i2s_8k_config[5] 	= {8,125,12,64,64};//AUDIO_RATE_EQUAL	8000
@@ -69,7 +69,7 @@ unsigned short  audio_i2s_44k1_config[5][5] =
 };
 
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);
@@ -139,7 +139,7 @@ void user_init()
 	     step(3) Call the audio_set_i2s_align_mask_dis() to disable the align mask
 	     step(4) Set sys_timer threshold ticks
 	     step(5) Call the audio_set_i2s_align_mask_en() to enable the align mask,
-	 *3、Restriction: The selected FIFO can only be FIFO1, and the input and output paths can only be I2S1.
+	 *3: Restriction: The selected FIFO can only be FIFO1, and the input and output paths can only be I2S1.
 	 */
 	   i2s_pin_config_t i2s0_pin_config =
 	   {
@@ -203,9 +203,9 @@ void user_init()
 		//step(5)
 		audio_set_i2s_align_mask_en();
 #elif(AUDIO_MODE== I2S_OUTPUT_DOUBLE_BUFF)
-		__attribute__((aligned(4))) volatile signed short buff_L[0x10] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xAA,0x0BB,0xCC,0xDD,0xEE,0xFF};
+		__attribute__((aligned(4))) signed short buff_L[0x10] = {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xAA,0x0BB,0xCC,0xDD,0xEE,0xFF};
 
-		__attribute__((aligned(4))) volatile signed short buff_R[0x10] = {0xFF,0xEE,0xDD,0xCC,0xBB,0xAA,0x99,0x88,0x77,0x66,0x55,0x44,0x33,0x22,0x11,0x00};
+		__attribute__((aligned(4))) signed short buff_R[0x10] = {0xFF,0xEE,0xDD,0xCC,0xBB,0xAA,0x99,0x88,0x77,0x66,0x55,0x44,0x33,0x22,0x11,0x00};
 		i2s_pin_config_t i2s0_pin_config =
 		{
 			.bclk_pin   	= GPIO_FC_PA3,
@@ -404,7 +404,7 @@ void user_init()
 		audio_set_tx_fifo_threshold(FIFO1_NUM,AUDIO_BUFF_SIZE/2);
 		/****i2s interrupt init ****/
 		core_interrupt_enable();
-		plic_interrupt_enable(IRQ20_DFIFO);
+		plic_interrupt_enable(IRQ_DFIFO);
 		audio_set_irq_mask(AUDIO_RX_FIFO0_IRQ|AUDIO_TX_FIFO0_IRQ|AUDIO_RX_FIFO1_IRQ|AUDIO_TX_FIFO1_IRQ);
 		/****rx tx dma init ****/
 		audio_rx_dma_chain_init(audio_i2s0_input.fifo_chn,audio_i2s0_input.dma_num,(unsigned short*)audio_i2s0_input.data_buf,audio_i2s0_input.data_buf_size);
@@ -463,5 +463,6 @@ _attribute_ram_code_sec_ void audio_irq_handler(void)
 	}
 
 }
+PLIC_ISR_REGISTER(audio_irq_handler, IRQ_DFIFO)
 #endif
 #endif

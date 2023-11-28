@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    image_4bitram_boe1_72.h
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the header file for B91m
  *
  * @author  Driver Group
  * @date    2022

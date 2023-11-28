@@ -24,10 +24,19 @@
 #include "app_config.h"
 #if(SET_PWM_MODE==PWM_CENTER_ALIGNED)
 #define PWM_ID		PWM1_ID
-#define PWM_PIN		GPIO_PB4
+#if(MCU_CORE_B92)
+#define PWM_PIN		GPIO_FC_PB4
+#elif(MCU_CORE_B93)
+#define PWM_PIN		PWM_PWM1_PA1
+#endif
 #define PWM_FUNC    PWM1
+
 #define PWM_ID1		PWM2_ID
-#define PWM_PIN1	GPIO_PB5
+#if(MCU_CORE_B92)
+#define PWM_PIN1	GPIO_FC_PB5
+#elif(MCU_CORE_B93)
+#define PWM_PIN1	PWM_PWM2_PA2
+#endif
 #define PWM_FUNC1   PWM2
 
 

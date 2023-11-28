@@ -42,7 +42,7 @@ dma_config_t pwm_tx_dma_config={
 
 
 /**
- * @brief     This function servers to set pin as pwm0
+ * @brief     This function servers to set pin as pwm.
  * @param[in] pin - selected pin
  * @return	  none.
  */

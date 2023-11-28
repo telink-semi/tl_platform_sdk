@@ -51,7 +51,7 @@ extern "C" {
  * @param[in]   wordLen - word length of buffer a.
  * @return   	none.
  */
-void uint32_set(unsigned int *a, unsigned int value, unsigned int wordLen);
+void uint32_set(volatile unsigned int *a, unsigned int value, unsigned int wordLen);
 
 /**
  * @brief       copy uint32 buffer.
@@ -60,7 +60,7 @@ void uint32_set(unsigned int *a, unsigned int value, unsigned int wordLen);
  * @param[in]   wordLen - word length of buffer dst or src.
  * @return   	none.
  */
-void uint32_copy(unsigned int *dst, unsigned int *src, unsigned int wordLen);
+void uint32_copy(volatile unsigned int *dst, volatile const unsigned int *src, unsigned int wordLen);
 
 /**
  * @brief       	clear uint32 buffer.
@@ -68,7 +68,7 @@ void uint32_copy(unsigned int *dst, unsigned int *src, unsigned int wordLen);
  * @param[in]   	aWordLen - word length of buffer a.
  * @return   		none.
  */
-void uint32_clear(unsigned int *a, unsigned int wordLen);
+void uint32_clear(volatile unsigned int *a, unsigned int wordLen);
 
 /**
  * @brief       sleep for a while.
@@ -85,7 +85,7 @@ void uint32_sleep(volatile unsigned int count);
  * @return   	none.
  * @caution		in and out could point the same buffer.
  */
-void reverse_byte_array(unsigned char *in, unsigned char *out, unsigned int byteLen);
+void reverse_byte_array(volatile const unsigned char *in, unsigned char *out, unsigned int byteLen);
 
 /**
  * @brief       reverse byte order in every unsigned int word.
@@ -132,7 +132,7 @@ unsigned int get_valid_bits(const unsigned int *a, unsigned int wordLen);
  * @param[in]   max_words - max word length of a.
  * @return   	real word length of big number a.
  */
-unsigned int get_valid_words(unsigned int *a, unsigned int max_words);
+unsigned int get_valid_words(volatile const unsigned int *a, unsigned int max_words);
 
 /**
  * @brief       check whether big number or unsigned char buffer a is all zero or not.
@@ -158,7 +158,7 @@ unsigned char uint32_BigNum_Check_Zero(unsigned int a[], unsigned int aWordLen);
  * @param[in]   bWordLen - word length of b.
  * @return   	0:a=b,   1:a>b,   -1: a<b.
  */
-int uint32_BigNumCmp(unsigned int *a, unsigned int aWordLen, unsigned int *b, unsigned int bWordLen);
+int uint32_BigNumCmp(volatile const unsigned int *a, unsigned int aWordLen, volatile const unsigned int *b, unsigned int bWordLen);
 
 /**
  * @brief       for a = b*2^t, b is odd, get t.
@@ -177,7 +177,7 @@ unsigned int Get_Multiple2_Number(unsigned int a[]);
  * @caution     1. make sure aWordLen is real word length of a.
  *              2. a may be 0, then aWordLen is 0, to make sure aWordLen-1 is available, so data type of aWordLen is int32_t, not uint32_t.
  */
-unsigned int Big_Div2n(unsigned int a[], signed int aWordLen, unsigned int n);
+unsigned int Big_Div2n(volatile unsigned int a[], signed int aWordLen, unsigned int n);
 
 /**
  * @brief       check whether a is equal to 1 or not.
@@ -185,7 +185,7 @@ unsigned int Big_Div2n(unsigned int a[], signed int aWordLen, unsigned int n);
  * @param[in]   aWordLen - word length of big integer a.
  * @return   	1(a is 1), 0(a is not 1).
  */
-unsigned char Bigint_Check_1(unsigned int a[], unsigned int aWordLen);
+unsigned char Bigint_Check_1(volatile unsigned int a[], unsigned int aWordLen);
 
 /**
  * @brief       check whether a is equal to p-1 or not.

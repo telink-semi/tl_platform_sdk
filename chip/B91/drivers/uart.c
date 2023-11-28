@@ -183,21 +183,40 @@ void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_
 
     //stop bit config
     reg_uart_ctrl1(uart_num) = ((reg_uart_ctrl1(uart_num) & (~FLD_UART_STOP_SEL)) | stop_bit);
+    //When dma receives data, the send length is greater than the receive length, and if the number of FIFOs exceeds uart_rts_trig_level_auto_mode,
+    //rxdone cannot be generated normally, it is necessary to turn off the rts function and open it again if needed
+    uart_set_rts_dis(uart_num);
 }
 
 
 /**
- * @brief  		Calculate the best bwpc(bit width).
- * @param[in]	baudrate - baud rate of UART.
- * @param[in]	pclk     - pclk.
- * @param[out]	div      - uart clock divider.
- * @param[out]	bwpc     - bitwidth, should be set to larger than 2,range[3-15].
- * @return 		none
+ * @brief       Calculate the best bwpc(bit width).
+ * @param[in]   baudrate - baud rate of UART.
+ * @param[in]   pclk     - pclk.
+ * @param[out]  div      - uart clock divider.
+ * @param[out]  bwpc     - bitwidth, should be set to larger than 2,range[3-15].
+ * @return      none
  * @note        BaudRate*(div+1)*(bwpc+1) = pclk.
  * <p>
- *  		    simplify the expression: div*bwpc =  constant(z).
+ *              simplify the expression: div*bwpc =  constant(z).
  * <p>
- * 		        bwpc range from 3 to 15.so loop and get the minimum one decimal point.
+ *              bwpc range from 3 to 15.so loop and get the minimum one decimal point.
+ * @note
+     -# The maximum baud rate depends on the hardware environment (such as cable length, etc.) and pclk/cclk/hclk:
+         - pclk is the main factor affecting the upper baud rate of UART
+         - cclk and pclk affect interrupt processing times(increase the frequency of cclk will increase the maximum baud rate of NDMA, but it has no obvious effect on the maximum baud rate of DMA)
+     -# The maximum baud rate must meet two testing conditions: 
+         - proper parsing by the logic analyzer
+         - successful communication on the development board
+     -# Note on the actual use of the maximum baud rate:
+         - if only communication on the development board is considered, the baud rate can be set higher
+         - setting a significantly higher baud rate may result in a deviation between the set and actual baud rates, leading to incorrect parsing by the logic analyzer and possible communication failures with other devices
+     -# Using the B91 development board, the test results:
+         - CCLK_16M_HCLK_16M_PCLK_16M: in nodma,the maximum speed is 2 MHz; in dma,the maximum speed is 2 MHz;
+         - CCLK_24M_HCLK_24M_PCLK_24M: in nodma,the maximum speed is 3 MHz; in dma,the maximum speed is 3 MHz;
+         - CCLK_32M_HCLK_32M_PCLK_16M: in nodma,the maximum speed is 2 MHz; in dma,the maximum speed is 2 MHz;
+         - CCLK_48M_HCLK_48M_PCLK_24M: in nodma,the maximum speed is 3 MHz; in dma,the maximum speed is 3 MHz;
+         - CCLK_96M_HCLK_48M_PCLK_24M: in nodma,the maximum speed is 3 MHz; in dma,the maximum speed is 3 MHz;
  */
 void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned short* div, unsigned char *bwpc)
 {
@@ -263,21 +282,22 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned sh
 }
 
 /**
- * @brief  	  Set rx_timeout:
- *            -# it is used to generate UART_RXDONE signals
- *            -# the UART_RXDONE interrupt is required to process the remaining data below the threshold(the DMA Operation threshold is fixed at 4,
- *               the NDMA threshold can be configured through uart_rx_irq_trig_level)
- * <p>
- *            the rx_timeout interpretation:
- * <p>
- *            rx_timeout = reg_uart_rx_timeout0*reg_uart_rx_timeout1[0:1],when no data is received within the rx_timeout period, that is rx timeout, the UART_RXDONE interrupt is generated.
- *            -# reg_uart_rx_timeout0: the maximum value is 0xff,this setting is transfer one bytes need cycles base on uart_clk,for example, if transfer one bytes (1start bit+8bits data+1 priority bit+2stop bits) total 12 bits,
- *               this register setting should be (bpwc+1)*12;
- *            -# reg_uart_rx_timeout1[0:1]: multiple of the reg_uart_rx_timeout0;
+ * @brief  	 Set rx_timeout.
+   @verbatim
+       The effect:
+         - When no data is received within the rx_timeout period, that is rx timeout, the UART_RXDONE interrupt is generated.
+         - The UART_RXDONE interrupt is required to process the remaining data below the threshold(the DMA Operation threshold is fixed at 4,
+            the NDMA threshold can be configured through uart_rx_irq_trig_level)
+       How to set:
+         rx_timeout =(1/baudrate)* bit_cnt* mul(s)
+         note: ((bwpc+1) * bit_cnt)<=0xff, since this is a one byte register.
+   @endverbatim
  * @param[in] uart_num - UART0 or UART1.
- * @param[in] bwpc     - bitwidth, should be set to larger than 2.
- * @param[in] bit_cnt  - bit number.
- * @param[in] mul	     - mul.
+ * @param[in] bwpc     - bitwidth,bwpc range from 3 to 15,it is calculated by the interface uart_cal_div_and_bwpc.
+ * @param[in] bit_cnt  - bit number,conditions that need to be met:
+ *                         - for example, if transferring one bytes (1start bit+8bits data+1 priority bit+2stop bits) total 12 bits,then set it to at least 12;
+ *                         - ((bwpc+1) * bit_cnt)<=0xff;
+ * @param[in] mul	   - mul.
  * @return 	  none
  */
 void uart_set_rx_timeout(uart_num_e uart_num,unsigned char bwpc, unsigned char bit_cnt, uart_timeout_mul_e mul)
@@ -561,6 +581,10 @@ unsigned char uart_send(uart_num_e uart_num, unsigned char * addr, unsigned char
  */
 unsigned char uart_send_dma(uart_num_e uart_num, unsigned char * addr, unsigned int len )
 {
+	dma_chn_dis(uart_dma_tx_chn[uart_num]);/*Use DMA to send data and go to suspend sleep before the data is sent completely . 
+	                                         after the sleep is awakened up, need to call dma_chn_dis() first and then configure DMA,
+	                                         and then DMA will continue to send data. If don't call dma_chn_dis(), configure DMA directly.
+	                                         After configuration, DMA will not work.*/
 	if(len!=0)
 	{
 		//In order to prevent the time between the last piece of data and the next piece of data is less than the set timeout time,

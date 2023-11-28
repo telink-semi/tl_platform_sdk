@@ -32,7 +32,7 @@
 volatile unsigned short adc_temp_val;
 volatile unsigned short adc_vol_mv_val;
 volatile unsigned short adc_code_val;
-volatile unsigned short adc_sample_buffer[ADC_SAMPLE_NUM] __attribute__((aligned(4))) = {0};
+unsigned short adc_sample_buffer[ADC_SAMPLE_NUM] __attribute__((aligned(4))) = {0};
 
 
 unsigned short adc_sort_and_get_average_code(void);
@@ -41,7 +41,7 @@ unsigned short adc_get_temperature_dma(void);
 unsigned short adc_get_voltage(void);
 unsigned short adc_get_temperature(void);
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);

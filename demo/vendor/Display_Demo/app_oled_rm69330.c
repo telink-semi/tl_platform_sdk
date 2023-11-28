@@ -88,7 +88,7 @@ spi_wr_rd_config_t lspi_oled_protocol_config = {
  * @brief    This function serves to reset oled.
  * @return   none
  */
-void oled_reset()
+void oled_reset(void)
 {
 	gpio_set_low_level(OLED_RESET_PIN);
 	delay_ms(120);
@@ -264,7 +264,7 @@ void oled_show_picture(unsigned short x, unsigned short x_delta, unsigned short 
 #endif
 }
 
-void user_init()
+void user_init(void)
 {
 	gpio_output_en(OLED_RESET_PIN);
 	gpio_input_dis(OLED_RESET_PIN);

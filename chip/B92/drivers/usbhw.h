@@ -254,8 +254,9 @@ static inline void usbhw_clr_irq_mask( usb_irq_mask_e mask)
 
 /**
  * @brief     This function servers to get usb irq status.
- * @param[in]  status -the  irq status of usb.
- * @return    the status of irq.
+ * @param[in]  status    - the  irq status of usb.
+ * @retval     non-zero      - the interrupt occurred.
+ * @retval     zero  - the interrupt did not occur.
  */
 static inline unsigned char  usbhw_get_irq_status(usb_irq_status_e status)
 {

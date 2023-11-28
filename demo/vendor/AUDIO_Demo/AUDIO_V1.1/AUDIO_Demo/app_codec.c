@@ -25,8 +25,8 @@
 #if (AUDIO_MODE <=DMA_IRQ_Test)
 #include "app_sin_data.h"
 #define    AUDIO_BUFF_SIZE  4096
-volatile signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
-volatile signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
+signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
+signed short AUDIO_BUFF1[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
 
 #if ((AUDIO_MODE== LINE_INPUT_TO_BUF_TO_LINEOUT)||(AUDIO_MODE== AMIC_INPUT_TO_BUF_TO_LINEOUT)||(AUDIO_MODE== DMIC0_INPUT_TO_BUF_TO_LINEOUT)||(AUDIO_MODE== DMIC1_INPUT_TO_BUF_TO_LINEOUT))
 
@@ -255,7 +255,7 @@ void user_init(void)
 	};
 	 /****dma interrupt init****/
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ5_DMA);
+	plic_interrupt_enable(IRQ_DMA);
 	dma_set_irq_mask(RX_DMA_CHN,TC_MASK);
 	dma_set_irq_mask(TX_DMA_CHN,TC_MASK);
 	/****amic input init****/
@@ -293,6 +293,7 @@ _attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
 		irq_cnt[1]++;
 	}
 }
+PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
 #endif
 
 void main_loop (void)

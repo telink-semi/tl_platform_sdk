@@ -103,6 +103,9 @@ unsigned char  g_cmd_now = 1;      // 1
 unsigned char  g_run = 1;          // 1
 unsigned char  g_hop = 0;          // 0
 unsigned char  g_tx_cnt = 0;       // 0
+#if(MCU_CORE_B92)
+unsigned char  g_pkt_tone = 0;		//0
+#endif
 emi_rf_mode_e  g_mode = ble1m;     // 1
 
 #if EMI_SUPPORT_SETTING
@@ -191,7 +194,7 @@ void rf_emi_rx_current_test(rf_mode_e rf_mode,unsigned char pwr,signed char rf_c
 }
 #endif
 
-void read_calibration_flash()
+void read_calibration_flash(void)
 {
 #if (MCU_CORE_B91||MCU_CORE_B92) //Wait for the B92 calibration function to be added before changing here
 	unsigned char flash_type = (flash_read_mid() >> 16) & 0xff;
@@ -244,8 +247,11 @@ void emi_init(void)
 #endif
 
 	rf_access_code_comm(EMI_ACCESS_CODE);             // access code
-
-    write_sram8(TX_PACKET_MODE_ADDR,g_tx_cnt);        // tx_cnt
+#if(MCU_CORE_B91)
+	write_sram8(TX_PACKET_MODE_ADDR,g_tx_cnt); 		 // tx_cnt,pkt+tone
+#elif(MCU_CORE_B92)
+	write_sram8(TX_PACKET_MODE_ADDR,g_tx_cnt|(g_pkt_tone<<7)); // tx_cnt,pkt+tone
+#endif
     write_sram8(RUN_STATUE_ADDR,g_run);               // run
     write_sram8(TEST_COMMAND_ADDR,g_cmd_now);         // cmd
     write_sram8(POWER_ADDR,g_power_level);            // power
@@ -269,12 +275,36 @@ void emicarrieronly(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 
 	pa_operation(PA_SETTING_STATE_TX);
 	(void)(rf_mode);
+#if(MCU_CORE_B92)
+	unsigned int t0 = reg_system_tick,chnidx = 1;
+#endif
 	rf_power_level_e  power = rf_power_Level_list[pwr];
+	g_hop = read_sram8(CD_MODE_HOPPING_CHN);
 	rf_emi_tx_single_tone(power,rf_chn);
 	while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
 			&& ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
-			&& ((read_sram8(RF_MODE_ADDR)) == g_mode));
+			&& ((read_sram8(RF_MODE_ADDR)) == g_mode))
+	{
+#if(MCU_CORE_B92)
+		if(g_hop)
+		{
+			trng_init();
+			while(!clock_time_exceed(t0,10000))    // run 10ms
+				rf_emi_tx_single_tone(power,chnidx);
+
+			while(!clock_time_exceed(t0,20000));   // stop 20ms
+			t0 = reg_system_tick;
+			rf_emi_stop();
+			chnidx = (trng_rand()&0x7f);
+			if(chnidx>80)
+				chnidx -= 80;
+		}
+#endif
+	}
 	rf_emi_stop();
+	rf_set_tx_rx_off();
+	dma_reset();
+	rf_emi_reset_baseband();
 }
 
 /**
@@ -380,6 +410,16 @@ void emitxprbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 			if(tx_num >= 1000)
 				break;
 		}
+#if(MCU_CORE_B92)
+		if(g_pkt_tone)
+		{
+			rf_set_tx_modulation_index(RF_MI_P0p00);
+			rf_set_power_level_singletone(power);
+			delay_us(40);
+			rf_set_power_off_singletone();
+			rf_set_tx_modulation_index(RF_MI_P0p50);
+		}
+#endif
 	}
 	rf_emi_stop();
 }
@@ -409,6 +449,16 @@ void emitx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 			if(tx_num >= 1000)
 				break;
 		}
+#if(MCU_CORE_B92)
+		if(g_pkt_tone)
+		{
+			rf_set_tx_modulation_index(RF_MI_P0p00);
+			rf_set_power_level_singletone(power);
+			delay_us(40);
+			rf_set_power_off_singletone();
+			rf_set_tx_modulation_index(RF_MI_P0p50);
+		}
+#endif
 	}
 	rf_emi_stop();
 }
@@ -437,6 +487,16 @@ void emitx0f(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 			if(tx_num >= 1000)
 				break;
 		}
+#if(MCU_CORE_B92)
+		if(g_pkt_tone)
+		{
+			rf_set_tx_modulation_index(RF_MI_P0p00);
+			rf_set_power_level_singletone(power);
+			delay_us(40);
+			rf_set_power_off_singletone();
+			rf_set_tx_modulation_index(RF_MI_P0p50);
+		}
+#endif
 	}
 	rf_emi_stop();
 }
@@ -464,6 +524,16 @@ void emitxaa(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 			if(tx_num >= 1000)
 				break;
 		}
+#if(MCU_CORE_B92)
+		if(g_pkt_tone)
+		{
+			rf_set_tx_modulation_index(RF_MI_P0p00);
+			rf_set_power_level_singletone(power);
+			delay_us(40);
+			rf_set_power_off_singletone();
+			rf_set_tx_modulation_index(RF_MI_P0p50);
+		}
+#endif
 	}
 	rf_emi_stop();
 }
@@ -492,6 +562,16 @@ void emitxf0(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 			if(tx_num >= 1000)
 				break;
 		}
+#if(MCU_CORE_B92)
+		if(g_pkt_tone)
+		{
+			rf_set_tx_modulation_index(RF_MI_P0p00);
+			rf_set_power_level_singletone(power);
+			delay_us(40);
+			rf_set_power_off_singletone();
+			rf_set_tx_modulation_index(RF_MI_P0p50);
+		}
+#endif
 	}
 	rf_emi_stop();
 }
@@ -557,8 +637,11 @@ void emi_serviceloop(void)
 		   g_chn = read_sram8(CHANNEL_ADDR);
 		   g_mode = read_sram8(RF_MODE_ADDR);
 		   g_cmd_now = read_sram8(TEST_COMMAND_ADDR);  // get the command!
-		   g_tx_cnt = read_sram8(TX_PACKET_MODE_ADDR);
+		   g_tx_cnt = (read_sram8(TX_PACKET_MODE_ADDR)&0x7f);
 		   g_hop = read_sram8(CD_MODE_HOPPING_CHN);
+#if(MCU_CORE_B92)
+		   g_pkt_tone = (read_sram8(TX_PACKET_MODE_ADDR)&BIT(7));
+#endif
 		   pa_operation(PA_SETTING_STATE_INIT);
 
 		   for (i = 0;i < sizeof(ate_list)/sizeof(test_list_t);i++)

@@ -169,7 +169,7 @@ typedef struct
 	};
 #endif
 
-void user_init()
+void user_init(void)
 {
 	delay_ms(2000);
 	gpio_output_en(LED1); 		//enable output
@@ -323,7 +323,7 @@ volatile unsigned int spi_tx_cntn = 0;
 volatile unsigned int spi_tx_num = 0;
 #endif
 
-void user_init()
+void user_init(void)
 {
 	delay_ms(2000);
 	gpio_output_en(LED1); 		//enable output
@@ -351,10 +351,10 @@ void user_init()
 
 #if (SPI_MODULE_SEL == GSPI_MODULE)
 	gspi_set_pin(&gspi_pin_config);
-	plic_interrupt_enable(IRQ23_GSPI);
+	plic_interrupt_enable(IRQ_GSPI);
 #elif(SPI_MODULE_SEL == LSPI_MODULE)
 	lspi_set_pin(&lspi_pin_config);
-	plic_interrupt_enable(IRQ22_LSPI);
+	plic_interrupt_enable(IRQ_LSPI);
 #endif
 	spi_slave_ready_en(SPI_MODULE_SEL);
 	core_interrupt_enable();
@@ -463,6 +463,13 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 		spi_clr_irq_status(SPI_MODULE_SEL,SPI_TXF_INT);//clr
 	}
 }
+
+#if(SPI_MODULE_SEL == GSPI_MODULE)
+PLIC_ISR_REGISTER(gspi_irq_handler, IRQ_GSPI)
+#elif(SPI_MODULE_SEL == LSPI_MODULE)
+PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
+#endif
+
 #endif
 #endif
 #endif

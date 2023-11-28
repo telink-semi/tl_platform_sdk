@@ -22,18 +22,19 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if((USB_DEMO_TYPE==USB_MASS_STORAGE)&&MCU_CORE_B91)
+#if(MCU_CORE_B91)
+#if((USB_DEMO_TYPE==USB_MASS_STORAGE))
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
 #include "../3rd-party/tiny_usb/tusb.h"
 #include "application/mass_storage/spi_sdnand_driver/sdcard.h"
-#include <string.h>
 
 extern void dcd_int_handler(unsigned char rhport);
 _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 {
 	dcd_int_handler(0);
 }
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
 
 extern	 unsigned int  sdcardblocknum;
 
@@ -58,7 +59,7 @@ void user_init(void)
 
 			usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
 			usb_set_pin_en();
-			plic_interrupt_enable(IRQ11_USB_ENDPOINT);
+			plic_interrupt_enable(IRQ_USB_ENDPOINT);
 			core_interrupt_enable();
 
 
@@ -69,4 +70,5 @@ void main_loop (void)
 	tud_task();
 }
 
+#endif
 #endif

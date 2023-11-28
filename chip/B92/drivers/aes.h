@@ -174,7 +174,8 @@ static inline void aes_clr_irq_mask(aes_irq_e mask)
 /**
  * @brief     This function refer to get aes irq status.
  * @param[in] status - the irq status to get.
- * @return    none.
+ * @retval	  non-zero   -  the interrupt occurred.
+ * @retval	  zero  -  the interrupt did not occur.
  */
 static inline int aes_get_irq_status(aes_irq_e status)
 {

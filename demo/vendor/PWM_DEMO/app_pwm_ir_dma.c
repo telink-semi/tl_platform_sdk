@@ -31,6 +31,10 @@
 #define PWM_ID		PWM0_ID
 #define PWM_PIN		GPIO_FC_PB4
 #define PWM_FUNC     PWM0
+#elif(MCU_CORE_B93)
+#define PWM_ID		PWM0_ID
+#define PWM_PIN		PWM_PWM0_PA0
+#define PWM_FUNC    FC_PWM0
 #endif
 
 #define  DMA_CHN   DMA2
@@ -96,6 +100,7 @@
 
 
 }
+PLIC_ISR_REGISTER(pwm_irq_handler, IRQ_PWM)
 #endif
 
 
@@ -114,7 +119,7 @@ void user_init(void)
 
 #if(MCU_CORE_B91)
         pwm_set_pin(PWM_PIN);
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
         pwm_set_pin(PWM_PIN,PWM_FUNC);
 #endif
 
@@ -146,7 +151,7 @@ void user_init(void)
 
 	 core_interrupt_enable();
 
-	 plic_interrupt_enable(IRQ16_PWM);
+	 plic_interrupt_enable(IRQ_PWM);
 
 #elif(SET_PWM_DMA_MODE  == PWM_CHAIN_DMA)
 

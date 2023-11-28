@@ -22,12 +22,13 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "usbdesc.h"
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+#include "usbdesc.h"
+
 
 enum {
     //  3000 ms
@@ -49,7 +50,7 @@ enum{
 extern unsigned char g_usb_config;
 #if (USB_MIC_ENABLE)
 extern unsigned char usb_alt_intf[USB_INTF_MAX];
-static inline int usb_mic_is_enable(){
+static inline int usb_mic_is_enable(void){
 	return usb_alt_intf[USB_INTF_MIC];
 }
 #endif
@@ -58,7 +59,7 @@ extern unsigned char usb_just_wakeup_from_suspend;
 extern unsigned char usb_has_suspend_irq;
 extern unsigned char edp_toggle[8];
 
-void usb_init();
+void usb_init(void);
 
 #ifndef		USB_SOFTWARE_CRC_CHECK
 #define		USB_SOFTWARE_CRC_CHECK		0

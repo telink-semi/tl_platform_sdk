@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file	emi.c
+ * @file    emi.c
  *
- * @brief	This is the source file for B91
+ * @brief   This is the source file for B91
  *
  * @author  Driver Group
  * @date    2019

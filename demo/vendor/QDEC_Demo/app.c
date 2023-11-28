@@ -22,15 +22,24 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "printf.h"
+
 #define QDEC_CHA 	GPIO_PA2
 #define QDEC_CHB 	GPIO_PA3
 
 volatile signed int total_count;
 volatile signed char qdec_count = 0;
 volatile unsigned int pol = 0x100;
-void user_init()
+void user_init(void)
 {
+		gpio_function_en(LED1);
+		gpio_function_en(LED2);
+		gpio_function_en(LED3);
+		gpio_function_en(LED4);
+		gpio_output_en(LED1);
+		gpio_output_en(LED2);
+		gpio_output_en(LED3);
+		gpio_output_en(LED4);
+
 	gpio_function_en(QDEC_CHA);
 	gpio_output_dis(QDEC_CHA);
 	gpio_input_en(QDEC_CHA);

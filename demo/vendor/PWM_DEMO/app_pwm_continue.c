@@ -30,6 +30,10 @@
 #define PWM_ID		PWM0_ID
 #define PWM_PIN		GPIO_FC_PB4
 #define PWM_FUNC    PWM0
+#elif(MCU_CORE_B93)
+#define PWM_ID		PWM0_ID
+#define PWM_PIN		PWM_PWM0_PA0
+#define PWM_FUNC    FC_PWM0
 #endif
 /*
  *  pwm_clk_source is pclk or 32K
@@ -49,6 +53,7 @@ _attribute_ram_code_sec_ void pwm_irq_handler(void)
 	  gpio_toggle(LED4);
 	}
 }
+PLIC_ISR_REGISTER(pwm_irq_handler, IRQ_PWM)
 
 void user_init(void)
 {
@@ -63,7 +68,7 @@ void user_init(void)
 	gpio_input_dis(LED4);
 #if(MCU_CORE_B91)
 	pwm_set_pin(PWM_PIN);
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
 	pwm_set_pin(PWM_PIN,PWM_FUNC);
 #endif
 
@@ -76,7 +81,7 @@ void user_init(void)
 
 	core_interrupt_enable();
 
-    plic_interrupt_enable(IRQ16_PWM);
+    plic_interrupt_enable(IRQ_PWM);
 #endif
 
     pwm_set_pwm0_mode(PWM_NORMAL_MODE);

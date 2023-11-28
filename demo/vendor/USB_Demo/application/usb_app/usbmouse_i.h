@@ -174,7 +174,7 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 	0xc0, //   END_COLLECTION
 	0xc0, // END_COLLECTION
 
-#if (ONEKEY_WEB==0)
+
 	// begin of media key
 	0x05,0x0c,     //global, usage page (follow 1 bytes) consumer page
 	0x09,0x01,     //local,  usage ID 01  Consumer Control
@@ -186,13 +186,10 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 	0x95,0x02,     //global, report count 2
 	0x15,0x01,     //global, min  0x01
 	0x26,0x9c,0x02,  //global, max  0x29c
-#if CHIP_EOP_ERROR
-	0x19,0x01,     //local, min   0x01
-	0x2a,0xff,0x02,  //local, max    0x2ff
-#else
+
 	0x19,0x01,     //local, min   0x01
 	0x2a,0x8c,0x02,  //local, max    0x28c
-#endif
+
 	0x81,0x00,     //main,  input data variable, absolute
 	0xc0,        //main, end collection
 
@@ -212,7 +209,7 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 	0x81,0x03,     //main input, constant, array
 	0xc0,        //end of collection
 	// end of media key
-#endif
+
 #endif
     //need Jensen's help: report ID 5
     HID_RPT_USAGE_PAGE(8, 0x01),     //global,  USAGE_PAGE 1 (Generic Desktop)0x05 0x01
@@ -230,7 +227,7 @@ static const USB_Descriptor_HIDReport_Datatype_t mouse_report_desc[] = {
 };
 
 static inline unsigned char* usbmouse_get_report_desc(void) {
-	return (unsigned char*) (mouse_report_desc);
+	return (unsigned char*)(unsigned int)(mouse_report_desc);
 }
 
 static inline unsigned short usbmouse_get_report_desc_size(void) {

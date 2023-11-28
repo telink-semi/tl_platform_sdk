@@ -22,11 +22,11 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "calibration.h"
 
 
-extern void user_init();
-extern void main_loop ();
+
+extern void user_init(void);
+extern void main_loop (void);
 
 
 /**
@@ -34,26 +34,16 @@ extern void main_loop ();
  * @param[in]	none
  * @return      none
  */
-int main (void)   //must on ramcode
+int main(void)
 {
-#if(MCU_CORE_B91)
-	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-	//Note: This function can improve the performance of some modules, which is described in the function comments.
-	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
-	user_read_flash_value_calib();
-#elif(MCU_CORE_B92)
-	sys_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6, GPIO_VOLTAGE_3V3);
-	wd_32k_stop();
-	//Note: This function can improve the performance of some modules, which is described in the function comments.
-	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
-	calibration_func(GPIO_VOLTAGE_3V3);
-#endif
-	CCLK_24M_HCLK_24M_PCLK_24M;
-	user_init();
+    PLATFORM_INIT;
+    CLOCK_INIT;
+    user_init();
 
-	while (1) {
-		main_loop ();
-	}
-	return 0;
+    while(1)
+    {
+    	main_loop();
+    }
+    return 0;
 }
 

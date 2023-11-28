@@ -22,19 +22,16 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
+/* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
 
-/* Enable C linkage for C++ Compilers: */
 
 
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
 
 
 #define SPI_NDMA_MODE               1//spi master and slave demo without DMA

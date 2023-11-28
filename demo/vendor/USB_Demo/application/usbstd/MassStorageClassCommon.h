@@ -22,15 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-/* Includes: */
-#include "StdDescriptors.h"
-
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+/* Includes: */
+#include "StdDescriptors.h"
 
 
 #define MS_CBW_SIGNATURE                               0x43425355UL
@@ -114,7 +111,7 @@ typedef struct
 	unsigned char  LUN;
 	unsigned char  SCSICommandLength;
 	unsigned char  SCSICommandData[16];
-}  MS_CommandBlockWrapper_t;
+} __attribute__((packed)) MS_CommandBlockWrapper_t;
 
 typedef struct
 {
@@ -122,7 +119,7 @@ typedef struct
 	unsigned int Tag;
 	unsigned int DataTransferResidue;
 	unsigned char  Status;
-}  MS_CommandStatusWrapper_t;
+} __attribute__((packed)) MS_CommandStatusWrapper_t;
 
 typedef struct
 {
@@ -140,7 +137,7 @@ typedef struct
 	unsigned char  AdditionalSenseQualifier;
 	unsigned char  FieldReplaceableUnitCode;
 	unsigned char  SenseKeySpecific[3];
-} MS_SCSI_Request_Sense_Response_t;
+} __attribute__((packed)) MS_SCSI_Request_Sense_Response_t;
 
 
 typedef struct
@@ -168,7 +165,7 @@ typedef struct
 	unsigned char VendorID[8];
 	unsigned char ProductID[16];
 	unsigned char RevisionID[4];
-} MS_SCSI_Inquiry_Response_t;
+} __attribute__((packed)) MS_SCSI_Inquiry_Response_t;
 
 
 /* Disable C linkage for C++ Compilers: */

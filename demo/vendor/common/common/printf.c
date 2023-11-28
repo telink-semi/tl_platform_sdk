@@ -68,6 +68,10 @@ _attribute_ram_code_sec_noinline_  void dr_putchar(unsigned char byte){
 	unsigned char tmp_bit0 = TX_PIN_OUTPUT_REG & (~(DEBUG_INFO_TX_PIN & 0xff));
 	unsigned char tmp_bit1 = TX_PIN_OUTPUT_REG | (DEBUG_INFO_TX_PIN & 0xff);
 	unsigned char bit[10] = {0};
+#else
+	unsigned short tmp_bit0 = (DEBUG_INFO_TX_PIN & 0xff)<<8;
+	unsigned short tmp_bit1 = DEBUG_INFO_TX_PIN & 0xff;
+	unsigned short bit[10] = {0};
 #endif
 
 

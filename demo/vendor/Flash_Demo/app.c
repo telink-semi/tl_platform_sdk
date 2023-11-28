@@ -44,7 +44,7 @@
 #define FLASH_QE_ENABLE         1
 
 /*
- * @note    It is used to verify the read, erase and write functions, lock and unlock functions，read decrypt of and umid functions of Flash,
+ * @note    It is used to verify the read, erase and write functions, lock and unlock functions, read decrypt of and umid functions of Flash,
  *          and the read, erase and write functions of the security registers.
  *          You can judge which functions pass the test through structures err_status and check_status.
  */
@@ -53,8 +53,8 @@
 
 
 volatile unsigned int  g_qe_status = 0;
-volatile unsigned char Flash_Read_Buff[FLASH_BUFF_LEN]={0};
-volatile unsigned char Flash_Write_Buff[FLASH_BUFF_LEN]=
+unsigned char Flash_Read_Buff[FLASH_BUFF_LEN]={0};
+unsigned char Flash_Write_Buff[FLASH_BUFF_LEN]=
 {		0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
 		0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
 		0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,
@@ -128,7 +128,7 @@ volatile unsigned short status2=0;
 volatile unsigned short status3=0;
 volatile unsigned short status4=0;
 volatile unsigned short status5=0;
-volatile unsigned int  mid=0;
+unsigned int  mid=0;
 unsigned char uid[16]={0};
 
 /*
@@ -549,7 +549,7 @@ void flash_mid1560c8_test(void)
 
 #endif
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);

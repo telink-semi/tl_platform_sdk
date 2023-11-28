@@ -173,6 +173,15 @@ void bqb_serviceloop (void);
  */
 void bqb_uart_send_byte(unsigned char uartData);
 
+
+/**
+ * @brief   	This function is used to initialize the calibration value of rf fast settle
+ * @param[in]   none.
+ * @return  	none.
+ * @note        This function is only used when testing fast settle with BQB
+ */
+void bqb_fast_settle_init(void);
+
 extern void bqb_pa_init();
 
 extern void bqb_pa_set_mode(unsigned char rtx); //0:rx, 1:tx, other:off

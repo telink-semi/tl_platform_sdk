@@ -22,20 +22,21 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "../usbstd/HIDClassCommon.h"
-#include "../usbstd/HIDReportData.h"
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "../usbstd/HIDClassCommon.h"
+#include "../usbstd/HIDReportData.h"
+#include "driver.h"
+
 #define KB_RETURN_KEY_MAX	6
 typedef struct{
 	unsigned char cnt;
 	unsigned char ctrl_key;
 	unsigned char keycode[KB_RETURN_KEY_MAX];
 	//unsigned char padding[2];	//  for  32 bit padding,  if KB_RETURN_KEY_MAX change,  this should be changed
-}kb_data_t;
+} __attribute__((packed)) kb_data_t;
 #define DAT_TYPE_KB			1
 #define DAT_TYPE_MOUSE		2
 
@@ -55,7 +56,7 @@ typedef struct {
                        */
     unsigned char Reserved; /**< Reserved for OEM use, always set to 0. */
     unsigned char KeyCode[KEYBOARD_REPORT_KEY_MAX]; /**< Key codes of the currently pressed keys. */
-} usbkb_hid_report_t;
+} __attribute__((packed)) usbkb_hid_report_t;
 
 int usbkb_hid_report_normal(unsigned char ctrl_key, unsigned char *keycode);
 

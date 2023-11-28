@@ -54,7 +54,7 @@
 	e.g. Read value from on board RTC, read value from cpu clock cycles performance counter etc.
 	Sample implementation for standard time.h and windows.h definitions included.
 */
-CORETIMETYPE barebones_clock() {
+CORETIMETYPE barebones_clock(void) {
 	ee_u32 t = stimer_get_tick();	//read_csr(NDS_MCYCLE);
 	return t;
 	//#error "You must implement a method to measure time in barebones_clock()! This function should return current time.\r\n"

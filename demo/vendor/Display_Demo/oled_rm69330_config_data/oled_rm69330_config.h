@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    oled_rm69330_config.h
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the header file for B91m
  *
  * @author  Driver Group
  * @date    2022
@@ -27,11 +27,11 @@ typedef struct{
 }oled_init_t;
 
 ////rgb configuration parameter
-volatile const oled_init_t oled_rgb565 = {0x003A00, 0x55};
-volatile const oled_init_t oled_rgb666 = {0x003A00, 0x66};
-volatile const oled_init_t oled_rgb888 = {0x003A00, 0x77};
+oled_init_t oled_rgb565 = {0x003A00, 0x55};
+oled_init_t oled_rgb666 = {0x003A00, 0x66};
+oled_init_t oled_rgb888 = {0x003A00, 0x77};
 ////oled configuration parameter
-volatile const oled_init_t oled_init[284] = {
+oled_init_t oled_init[284] = {
 	{0x00FE00, 0x01},
 	{0x000500, 0x00},
 	{0x000600, 0x72},

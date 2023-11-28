@@ -32,20 +32,26 @@
 #define PWM_ID		PWM0_ID
 #define PWM_PIN		GPIO_FC_PB4
 #define PWM_FUNC    PWM0
+
+#elif(MCU_CORE_B93)
+#define PWM_ID		PWM0_ID
+#define PWM_PIN		PWM_PWM0_PA0
+#define PWM_FUNC    FC_PWM0
+
 #endif
 /*
  *  pwm_clk_source is pclk or 32K
  */
 #define	 PWM_PCLK		       1
 #define	 PWM_32K  	           2      //If want to work properly in suspend mode (the wake source:32K_rc/32k_crystal), can set the PWM to use the 32K clock source.
-#define  PWM_CLK             PWM_32K
+#define  PWM_CLK             PWM_PCLK
 
 /*
  *  Set interrupt mode
  */
 #define COUNT_FRAME_INIT    1
 #define COUNT_PNUM_INIT     2
-#define SET_COUNT_INIT_MODE  COUNT_FRAME_INIT
+#define SET_COUNT_INIT_MODE  COUNT_PNUM_INIT
 
 
 #define PWM_PULSE_NUM	0x20
@@ -61,6 +67,7 @@ _attribute_ram_code_sec_  void pwm_irq_handler(void)
 	}
 
 }
+PLIC_ISR_REGISTER(pwm_irq_handler, IRQ_PWM)
 
 
 void user_init(void)
@@ -79,7 +86,7 @@ void user_init(void)
 
 #if(MCU_CORE_B91)
     pwm_set_pin(PWM_PIN);
-#elif(MCU_CORE_B92)
+#elif(MCU_CORE_B92||MCU_CORE_B93)
     pwm_set_pin(PWM_PIN,PWM_FUNC);
 #endif
 
@@ -93,7 +100,7 @@ void user_init(void)
 
 	core_interrupt_enable();
 
-    plic_interrupt_enable(IRQ16_PWM);
+    plic_interrupt_enable(IRQ_PWM);
 #endif
 
 #elif (SET_COUNT_INIT_MODE   == COUNT_PNUM_INIT)
@@ -106,7 +113,7 @@ void user_init(void)
 
 	core_interrupt_enable();
 
-    plic_interrupt_enable(IRQ16_PWM);
+    plic_interrupt_enable(IRQ_PWM);
 #endif
 #endif
 

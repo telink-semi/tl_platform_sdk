@@ -102,7 +102,7 @@ int flash_firmware_protect(void)
 
 }
 
-void user_init()
+void user_init(void)
 {
 
 }

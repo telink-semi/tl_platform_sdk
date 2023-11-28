@@ -23,9 +23,6 @@
  *******************************************************************************************************/
 #pragma once
 
-
-
-
 #include "lib/include/plic.h"
 #include "lib/include/pm.h"
 #include "lib/include/rf.h"
@@ -64,3 +61,5 @@
 #include "sdk_version.h"
 #include "plic_sw.h"
 #include "plmt.h"
+
+#include "ext_peripherals/codec_0581/codec_0581.h"

@@ -40,6 +40,7 @@
  *  ===============
  *    -# Init mtime clk using the function mtime_clk_init().
  *    -# Enable global interrupt using the function core_interrupt_enable().
+ *    -# Enable MTI(machine timer interrupt) using the function core_mie_enable();
  *    -# Set mtime interval using the function mtime_set_interval_ms().
  *    -# Re-implement the mtime_irq_handler() function and set next interval using the function mtime_set_interval_ms().
  *
@@ -50,24 +51,6 @@
 #include "reg_include/register.h"
 #include "core.h"
 #include "clock.h"
-
-/**
- * @brief   This function servers to enable mtime.
- * @return  none
- */
-static inline void mtime_enable(void)
-{
-    set_csr(NDS_MIE, FLD_MIE_MTIE);
-}
-
-/**
- * @brief   This function servers to disable mtime.
- * @return  none
- */
-static inline void mtime_disable(void)
-{
-    clear_csr(NDS_MIE, FLD_MIE_MTIE);
-}
 
 /**
  * @brief     This function servers to get mtimecmp value.

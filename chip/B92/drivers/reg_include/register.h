@@ -46,4 +46,5 @@
 #include "qdec_reg.h"
 #include "plic_sw_reg.h"
 #include "plmt_reg.h"
+#include "codec_0581_reg.h"
 #endif

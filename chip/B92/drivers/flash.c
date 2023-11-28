@@ -34,12 +34,14 @@
 /*
  *	If add flash type, need pay attention to the read uid command and the bit number of status register
  *  Flash trim scheme has been added for P25Q80U.If other types of flash adds this scheme, user need to modify "flash_trim" and "flash_trim_check" function.
-	Flash Type	uid CMD		MID		    Company		Sector Erase Time(MAX)
-	P25Q80U		0x4b		0x146085	PUYA		20ms
-	P25Q16SU    0x4b        0x156085    PUYA        30ms
-	P25Q32SU    0x4b        0x166085    PUYA        30ms
-	P25Q128L    0x4b        0x186085    PUYA        30ms
-    GD25LQ16E   0x4b        0x1560c8    GD          300ms/500ms(85 centigrade/125 centigrade)
+ *  When adding flash, if tRES1 is greater than 25us, update the delay of EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM in the S file.
+ *  If tRES1 is greater than 150us, this flash model cannot be used, because the chip hardware boot program only waits for 150us.
+	Flash Type	uid CMD		MID		    Company		tRES1	Sector Erase Time(MAX)
+	P25Q80U		0x4b		0x146085	PUYA		8us		20ms
+	P25Q16SU    0x4b        0x156085    PUYA        8us		30ms
+	P25Q32SU    0x4b        0x166085    PUYA        8us		30ms
+	P25Q128L    0x4b        0x186085    PUYA        8us		30ms
+    GD25LQ16E   0x4b        0x1560c8    GD          20us	300ms/500ms(85 centigrade/125 centigrade)
  */
 unsigned int flash_support_mid[] = {0x146085,0x156085,0x166085,0x186085,0x1560c8};
 const unsigned int FLASH_CNT = sizeof(flash_support_mid)/sizeof(*flash_support_mid);
@@ -66,15 +68,15 @@ _attribute_data_retention_sec_ preempt_config_t s_flash_preempt_config =
  *												Primary interface
  ******************************************************************************************************************/
 /**
- * @brief 		This function serves to set priority threshold. when the interrupt priority > Threshold flash process will disturb by interrupt.
+ * @brief 		This function serves to set priority threshold. When the interrupt priority is greater than the maximum of the current interrupt threshold and the given interrupt threshold, flash process will disturb by interrupt.
  * @param[in]   preempt_en	- 1 can disturb by interrupt, 0 can disturb by interrupt.
  * @param[in]	threshold	- priority Threshold, .
  * @return    	none.
  * @note
  *              -# The correlation between flash_plic_preempt_config() and the flash functions that call sub-functions (all declared in flash_base.h) is as follows:
  *                  - When preempt_en = 1 and interrupt nesting is enabled (plic_preempt_feature_en):
- *                      - The initialized interrupt threshold can only be 0, because the PLIC threshold will be set to 0 when the flash functions returns.
- *                      - During the flash functions execution, it can be interrupted by external interrupts with priority greater than given threshold
+ *                      - During the flash functions execution, the threshold of the PLIC is set to the maximum of the threshold before calling the interface and the given threshold value. \n
+ *                        This means that when the external interrupt priority is greater than this maximum value, the execution of the flash function is disturbed by this interrupt.
  *                      - machine timer and software interrupt will definitely interrupt the flash functions execution, they are not controlled by the plic interrupt threshold
  *                  - In other cases(preempt_en = 0 or plic_preempt_feature_en = 0), global interrupts (including machine timer and software interrupt) will be turned off during the execution of the flash functions and will be restored when the flash functions exits.
  *              -# If the flash operation may be interrupted by an interrupt, it is necessary to ensure that the interrupt handling function and the function it calls must be in the RAM code. 
@@ -88,7 +90,7 @@ void flash_plic_preempt_config(unsigned char preempt_en,unsigned char threshold)
 
 /**
  * @brief 		This function serves to erase a sector.
- * @param[in]   addr	- the start address of the sector needs to erase.
+ * @param[in]   addr	- must be 0 or a multiple of 0x1000.
  * @return 		none.
  * @note        Attention: The block erase takes a long time, please pay attention to feeding the dog in advance.
  * 				The maximum block erase time is listed at the beginning of this document and is available for viewing.
@@ -114,7 +116,7 @@ _attribute_text_sec_ void flash_erase_sector(unsigned long addr)
 /**
  * @brief 		This function reads the content from a page to the buf with single mode.
  * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  buf		- the start address of the buffer(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:1x, dummy:0
@@ -139,7 +141,7 @@ _attribute_text_sec_ void flash_read_data(unsigned long addr, unsigned long len,
 /**
  * @brief 		This function reads the content from a page to the buf with dual read mode.
  * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  buf		- the start address of the buffer(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:2x, dummy:8
@@ -163,7 +165,7 @@ _attribute_text_sec_ void flash_dread(unsigned long addr, unsigned long len, uns
 /**
  * @brief 		This function reads the content from a page to the buf with 4*IO read mode.
  * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  buf		- the start address of the buffer(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:4x, data:4x, dummy:6
@@ -188,7 +190,7 @@ _attribute_text_sec_ void flash_4read(unsigned long addr, unsigned long len, uns
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in single mode.
  * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
  * @return 		0: check pass; 1: check fail.
  * @note        cmd:1x, addr:1x, data:1x, dummy:0
@@ -207,13 +209,13 @@ _attribute_text_sec_ unsigned char  flash_read_data_decrypt_check(unsigned long 
 	unsigned char check_data=0;
      __asm__("csrci 	mmisc_ctl,8");	//disable BTB
      check_data = flash_mspi_read_decrypt_check_ram(FLASH_READ_CMD,addr,plain_buf,plain_len);
-     __asm__("csrci 	mmisc_ctl,8");	//disable BTB
+     __asm__("csrsi 	mmisc_ctl,8");	//enable BTB
      return check_data;
 }
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in dual read mode.
  * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
  * @return 		0: check pass; 1: check fail.
  * @note        cmd:1x, addr:1x, data:2x, dummy:8
@@ -232,13 +234,13 @@ _attribute_text_sec_ unsigned char flash_dread_decrypt_check(unsigned long addr,
 	unsigned char check_data=0;
 	 __asm__("csrci 	mmisc_ctl,8");	//disable BTB
 	 check_data = flash_mspi_read_decrypt_check_ram(FLASH_DREAD_CMD,addr,plain_buf,plain_len);
-	 __asm__("csrci 	mmisc_ctl,8");	//disable BTB
+	 __asm__("csrsi 	mmisc_ctl,8");	//enable BTB
 	 return check_data;
 }
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in 4*IO read mode.
  * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte) of content needs to read out from the page.
+ * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
  * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
  * @return 		0: check pass; 1: check fail.
  * @note        cmd:1x, addr:4x, data:4x, dummy:6
@@ -257,7 +259,7 @@ _attribute_text_sec_ unsigned char flash_4read_decrypt_check(unsigned long addr,
 	unsigned char check_data=0;
 	 __asm__("csrci 	mmisc_ctl,8");	//disable BTB
 	 check_data = flash_mspi_read_decrypt_check_ram(FLASH_X4READ_CMD,addr,plain_buf,plain_len);
-	 __asm__("csrci 	mmisc_ctl,8");	//disable BTB
+	 __asm__("csrsi 	mmisc_ctl,8");	//enable BTB
 	 return check_data;
 }
 
@@ -266,7 +268,7 @@ _attribute_text_sec_ unsigned char flash_4read_decrypt_check(unsigned long addr,
 /**
  * @brief 		This function writes the buffer's content to the flash.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @param[in]   cmd		- the write command. FLASH_WRITE_CMD or FLASH_QUAD_PAGE_PROGRAM_CMD.
  * @return 		none.
@@ -276,7 +278,7 @@ _attribute_text_sec_ static void flash_write(unsigned long addr, unsigned long l
 	unsigned int ns = PAGE_SIZE - (addr & (PAGE_SIZE-1));
 	int nw = 0;
 
-	do{
+	while(len > 0){
 		nw = len > ns ? ns : len;
 		__asm__("csrci 	mmisc_ctl,8");	//disable BTB
 		flash_mspi_write_ram(cmd,addr,buf, nw);
@@ -285,7 +287,7 @@ _attribute_text_sec_ static void flash_write(unsigned long addr, unsigned long l
 		addr += nw;
 		buf += nw;
 		len -= nw;
-	}while(len > 0);
+	}
 }
 
 /**
@@ -294,7 +296,7 @@ _attribute_text_sec_ static void flash_write(unsigned long addr, unsigned long l
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:1x
@@ -321,7 +323,7 @@ _attribute_text_sec_ void flash_page_program(unsigned long addr, unsigned long l
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:4x
@@ -345,7 +347,7 @@ _attribute_text_sec_ void flash_quad_page_program(unsigned long addr, unsigned l
 /**
  * @brief 		This function writes the buffer's content to the flash in encrypt mode.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @param[in]   cmd		- the write command. FLASH_WRITE_CMD or FLASH_QUAD_PAGE_PROGRAM_CMD.
  * @return 		none.
@@ -355,7 +357,7 @@ _attribute_text_sec_ static void flash_write_encrypt(unsigned long addr, unsigne
 	unsigned int ns = PAGE_SIZE - (addr & (PAGE_SIZE-1));
 	int nw = 0;
 
-	do{
+	while(len > 0){
 		nw = len > ns ? ns : len;
 		__asm__("csrci 	mmisc_ctl,8");	//disable BTB
 		flash_mspi_write_encrypt_ram(cmd,addr,buf, nw);
@@ -364,7 +366,7 @@ _attribute_text_sec_ static void flash_write_encrypt(unsigned long addr, unsigne
 		addr += nw;
 		buf += nw;
 		len -= nw;
-	}while(len > 0);
+	}
 }
 
 /**
@@ -373,7 +375,7 @@ _attribute_text_sec_ static void flash_write_encrypt(unsigned long addr, unsigne
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:1x
@@ -400,7 +402,7 @@ _attribute_text_sec_ void flash_page_program_encrypt(unsigned long addr, unsigne
  * 				and the data will become the wrong value. Note that when erasing, the minimum is erased by sector (4k bytes).
  * 				Do not erase the useful information in other locations of the sector during erasing.
  * @param[in]   addr	- the start address of the area.
- * @param[in]   len		- the length(in byte) of content needs to write into the flash.
+ * @param[in]   len		- the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf		- the start address of the content needs to write into(ram address).
  * @return 		none.
  * @note        cmd:1x, addr:1x, data:4x
@@ -482,7 +484,7 @@ _attribute_text_sec_ void flash_write_status(flash_status_typedef_e type , unsig
 /**
  * @brief 		This function serves to read data from the Security Registers of the flash.
  * @param[in]   addr	- the start address of the Security Registers.
- * @param[in]   len		- the length of the content to be read.
+ * @param[in]   len		- the length(in byte, must be above 0) of the content to be read.
  * @param[out]  buf		- the starting address of the content to be read(ram address).
  * @return 		none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
@@ -505,7 +507,7 @@ _attribute_text_sec_ void flash_read_otp(unsigned long addr, unsigned long len, 
 /**
  * @brief 		This function serves to write data to the Security Registers of the flash you choose.
  * @param[in]   addr	- the start address of the Security Registers.
- * @param[in]   len		- the length of content to be written.
+ * @param[in]   len		- the length(in byte, must be above 0) of content to be written.
  * @param[in]   buf		- the starting address of the content to be written(ram address).
  * @return 		none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
@@ -523,7 +525,7 @@ _attribute_text_sec_ void flash_write_otp(unsigned long addr, unsigned long len,
 	unsigned int ns = PAGE_SIZE_OTP - (addr & (PAGE_SIZE_OTP - 1));
 	int nw = 0;
 
-	do{
+	while(len > 0){
 		nw = len > ns ? ns : len;
 		__asm__("csrci 	mmisc_ctl,8");	//disable BTB
 		flash_mspi_write_ram(FLASH_WRITE_SECURITY_REGISTERS_CMD,addr,buf,nw);
@@ -532,7 +534,7 @@ _attribute_text_sec_ void flash_write_otp(unsigned long addr, unsigned long len,
 		addr += nw;
 		buf += nw;
 		len -= nw;
-	}while(len > 0);
+	}
 }
 
 /**

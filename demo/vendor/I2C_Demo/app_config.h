@@ -22,32 +22,32 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
+
 
 #if(MCU_CORE_B92)
-#define LED3            GPIO_PD0
-#define LED4            GPIO_PD1
-#define LED1            GPIO_PE6
-#define LED2            GPIO_PE7
+
 #define I2C_GPIO_SDA_PIN   GPIO_FC_PB3
 #define I2C_GPIO_SCL_PIN   GPIO_FC_PB2
 #elif(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
+
 #define I2C_GPIO_SDA_PIN   I2C_GPIO_SDA_B3
 #define I2C_GPIO_SCL_PIN   I2C_GPIO_SCL_B2
+#elif(MCU_CORE_B93)
+
+#define I2C_GPIO_SDA_PIN   I2C_GPIO_SDA_B2
+#define I2C_GPIO_SCL_PIN   I2C_GPIO_SCL_B3
 #endif
 
 
 #define     I2C_MASTER_WRITE_READ_NO_DMA                  1  //this mode can read and write data from fifo one byte a time
 #define     I2C_MASTER_WRITE_READ_DMA                     2  //this mode can read and write data through DMA, four byte a time
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||MCU_CORE_B93)
 #define     I2C1_M_MASTER_WRITE_READ_NO_DMA               3  //this mode can read and write data from fifo one byte a time
 #endif
 

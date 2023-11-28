@@ -44,6 +44,13 @@ unsigned char audio_tx_dma_chn;
 unsigned char audio_rx_fifo_chn;
 unsigned char audio_tx_fifo_chn;
 
+/**
+ * @brief Audio power flag.
+ *      - 0 indicates audio power down.
+ *      - 1 indicates audio power on.
+ */
+static unsigned char audio_powered_flag = 0;
+
 dma_chain_config_t g_audio_tx_dma_list_cfg[2];
 dma_chain_config_t g_audio_rx_dma_list_cfg[2];
 
@@ -217,7 +224,7 @@ void audio_set_stream1_dmic_pin(gpio_func_pin_e dmic1_data,gpio_func_pin_e dmic1
  * @param[in] chn          - dma channel
  * @param[in] dst_addr     - Pointer to data buffer, it must be 4-bytes aligned address.
  *                           and the actual buffer size defined by the user needs to be not smaller than the data_len, otherwise there may be an out-of-bounds problem.
- * @param[in] data_len     - Length of DMA in bytes，it must be set to a multiple of 4. The maximum value that can be set is 0x10000. 
+ * @param[in] data_len     - Length of DMA in bytes, it must be set to a multiple of 4. The maximum value that can be set is 0x10000. 
  * @param[in] head_of_list - the head address of dma llp.
  * @return    none
  */
@@ -237,7 +244,7 @@ void audio_rx_dma_config(dma_chn_e chn,unsigned short *dst_addr,unsigned int dat
  * @param[in] llpointer   - the next element of llp_pointer.
  * @param[in] dst_addr    - Pointer to data buffer, it must be 4-bytes aligned address and the actual buffer size defined by the user needs to
  *							be not smaller than the data_len, otherwise there may be an out-of-bounds problem.
- * @param[in] data_len    - Length of DMA in bytes，it must be set to a multiple of 4. The maximum value that can be set is 0x10000.
+ * @param[in] data_len    - Length of DMA in bytes, it must be set to a multiple of 4. The maximum value that can be set is 0x10000.
  * @return 	  none
  */
 void audio_rx_dma_add_list_element(dma_chain_config_t *config_addr,dma_chain_config_t *llpointer ,unsigned short * dst_addr,unsigned int data_len)
@@ -255,7 +262,7 @@ void audio_rx_dma_add_list_element(dma_chain_config_t *config_addr,dma_chain_con
  * @param[in] chn         - dma channel
  * @param[in] in_buff     - Pointer to data buffer, it must be 4-bytes aligned address and the actual buffer size defined by the user needs to
  *						 	be not smaller than the data_len, otherwise there may be an out-of-bounds problem.
- * @param[in] buff_size   - Length of DMA in bytes，it must be set to a multiple of 4. The maximum value that can be set is 0x10000.
+ * @param[in] buff_size   - Length of DMA in bytes, it must be set to a multiple of 4. The maximum value that can be set is 0x10000.
  * @return 	  none
  */
 void audio_rx_dma_chain_init (audio_fifo_chn_e rx_fifo_chn,dma_chn_e chn,unsigned short * in_buff,unsigned int buff_size)
@@ -597,7 +604,7 @@ void audio_set_i2s_fifo_output_mode(audio_i2s_select_e i2s_select,audio_out_mode
 }
 
 /**
- * @brief     This function serves to set fifo output data path.
+ * @brief     This function serves to set fifo input data path.
  * @param[in] fifo_chn - fifo select
  * @param[in] ain_sel  - fifo input source select
  * @return    none
@@ -632,12 +639,15 @@ void audio_power_on(void)
 	 * 4.power on audio power
 	 * 5.wait audio power stabilization
 	 * */
-	pm_set_suspend_power_cfg(PM_POWER_AUDIO, 1);
-	analog_write_reg8(0x7d,analog_read_reg8(0x7d)|(BIT(2)));   //1.audio power down  ,     1:power down 0:power on
-	delay_us(6);                                               //2.wait audio power stabilization
-	analog_write_reg8(0x1e,analog_read_reg8(0x1e) & (~BIT(5)));//3.power switch default 1, 1:switch off 0:switch on
-	analog_write_reg8(0x7d,analog_read_reg8(0x7d) & (~BIT(2)));//4.audio power on          1:power down 0:power on
-	delay_us(6);                                               //5.wait audio power stabilization
+    if (0 == audio_powered_flag) /* repeated power-up can cause abnormal audio functions. */
+    {
+        audio_powered_flag = 1;
+        analog_write_reg8(0x7d,analog_read_reg8(0x7d)|(BIT(2)));   //1.audio power down  ,     1:power down 0:power on
+        delay_us(6);                                               //2.wait audio power stabilization
+        analog_write_reg8(0x1e,analog_read_reg8(0x1e) & (~BIT(5)));//3.power switch default 1, 1:switch off 0:switch on
+        analog_write_reg8(0x7d,analog_read_reg8(0x7d) & (~BIT(2)));//4.audio power on          1:power down 0:power on
+        delay_us(6);                                               //5.wait audio power stabilization
+    }
 }
 
 /**
@@ -646,17 +656,17 @@ void audio_power_on(void)
  * @attention  1.audio digital registers are lost and need to be reinitialized
  *             2.If you only need to turn off adc or dac power, please configure audio_codec_adc_power_down()/audio_codec_dac_power_down().
  */
-void audio_power_down(void)
+_attribute_ram_code_sec_optimize_o2_ void audio_power_down(void)
 {
 	/*The power-down sequence that must be followed
 	 * 1.power down audio power
 	 * 2.switch off audio power switch
 	 * */
-	pm_set_suspend_power_cfg(PM_POWER_AUDIO, 0);
 	analog_write_reg8(0x7d,analog_read_reg8(0x7d) |BIT(2));//audio power        default 1, 1:power down 0:power on
 	analog_write_reg8(0x1e,analog_read_reg8(0x1e) |BIT(5));//codec power switch default 1, 1:switch off 0:switch on
 	audio_codec_adc_power_down();
 	audio_codec_dac_power_down();
+    audio_powered_flag = 0;
 }
 
 /**
@@ -706,7 +716,7 @@ void  audio_codec_adc_power_on(audio_chn_sel_e ch_en,power_switch_e micbias_powe
  * @brief     This function serves to power down codec_adc.
  * @return    none
  */
-void audio_codec_adc_power_down(void)
+_attribute_ram_code_sec_optimize_o2_ void audio_codec_adc_power_down(void)
 {
 	analog_write_reg8(0x1a,analog_read_reg8(0x1a)|BIT(0));//pd_LDO_adc=0(power off)
 	audio_codec_set_micbias(POWER_DOWN,MICBIAS_NORMAL_1V6_MODE);
@@ -783,7 +793,7 @@ void audio_codec_dac_power_on(audio_chn_sel_e ch_en)
  * @brief     This function serves to power down codec_dac.
  * @return    none
  */
-void audio_codec_dac_power_down(void)
+_attribute_ram_code_sec_optimize_o2_ void audio_codec_dac_power_down(void)
 {
 	reg_codec_ana_reg3 |= (BIT_RNG(0,1));                   //pd_PA L/R =1(off)
 	analog_write_reg8(0x1a,analog_read_reg8(0x1a)|BIT(2));  //pd_LDO_pa =0(off))
@@ -797,7 +807,7 @@ void audio_codec_dac_power_down(void)
  * @param[in]  micbias_mode     - micbias output mode
  * @return     none
  */
-void audio_codec_set_micbias(power_switch_e en ,micbias_work_mode_e  micbias_mode)
+_attribute_ram_code_sec_optimize_o2_ void audio_codec_set_micbias(power_switch_e en ,micbias_work_mode_e  micbias_mode)
 {
 	if(en)
 	{
@@ -1206,7 +1216,7 @@ void audio_i2s_config(audio_i2s_select_e i2s_sel,i2s_mode_select_e i2s_format,au
  *                           ||                                       ||
  *           i2s_clk_config[0]/i2s_clk_config[1]                 i2s_clk_config[4]-->lrclk_dac (sampling rate)
  *
- For example:sampling rate=16K，i2s_clk_config[5]={ 8,125,6,64,64}, sampling rate=192M*(8/125)/(2*6)/64=16K
+ For example:sampling rate=16K, i2s_clk_config[5]={ 8,125,6,64,64}, sampling rate=192M*(8/125)/(2*6)/64=16K
 
  * @return    none
  * @attention The default is from pll 192M(default). If the pll is changed, the clk will be changed accordingly.

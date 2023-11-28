@@ -138,26 +138,28 @@ static const MYUDB_USB_Descriptor_Configuration_t
 		};
 
 unsigned char* myudb_usbdesc_get_language(void) {
-	return (unsigned char*) (&language_desc);
+	return (unsigned char*)(unsigned int)(&language_desc);
 }
 
+
 unsigned char* myudb_usbdesc_get_vendor(void) {
-	return (unsigned char*) (&vendor_desc);
+	return (unsigned char*)(unsigned int)(&vendor_desc);
 }
 
 unsigned char* myudb_usbdesc_get_product(void) {
-	return (unsigned char*) (&product_desc);
+	return (unsigned char*)(unsigned int)(&product_desc);
 }
+
 unsigned char* myudb_usbdesc_get_serial(void) {
-	return (unsigned char*) (&serial_desc);
+	return (unsigned char*)(unsigned int)(&serial_desc);
 }
 
 unsigned char* myudb_usbdesc_get_device(void) {
-	return (unsigned char*) (&device_desc);
+	return (unsigned char*)(unsigned int)(&device_desc);
 }
 
 unsigned char* myudb_usbdesc_get_configuration(void) {
-	return (unsigned char*) (&configuration_desc);
+	return (unsigned char*)(unsigned int)(&configuration_desc);
 }
 
 #endif

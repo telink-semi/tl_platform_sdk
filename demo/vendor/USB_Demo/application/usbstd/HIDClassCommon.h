@@ -22,15 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-/* Includes: */
-#include "StdDescriptors.h"
-
-
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+/* Includes: */
+#include "StdDescriptors.h"
 
 #define HID_KEYBOARD_MODIFIER_LEFTCTRL                    BIT(0)
 #define HID_KEYBOARD_MODIFIER_LEFTSHIFT                   BIT(1)
@@ -414,7 +411,7 @@ typedef struct
 	unsigned char TotalReportDescriptors;
 	unsigned char HIDReportType;
 	unsigned char HIDReportLength[2];
-}__attribute__((packed))  USB_HID_Descriptor_HID_t;
+} __attribute__((packed)) USB_HID_Descriptor_HID_t;
 
 typedef struct
 {
@@ -425,14 +422,14 @@ typedef struct
 	unsigned char NumDescriptors;
 	unsigned char DescriptorType2;
 	unsigned char DescriptorLength[2];
-}USB_HID_StdDescriptor_HID_t;
+} __attribute__((packed)) USB_HID_StdDescriptor_HID_t;
 
 typedef struct
 {
 	unsigned char Button;
 	signed char  X;
 	signed char  Y;
-}USB_MouseReport_Data_t;
+} __attribute__((packed)) USB_MouseReport_Data_t;
 
 typedef struct
 {

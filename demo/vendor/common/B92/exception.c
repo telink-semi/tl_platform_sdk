@@ -39,6 +39,11 @@ static volatile long exception_mepc;
 static volatile long exception_mstatus;
 
 /**
+ * @brief The value of the mcause register when the exception is entered.
+ */
+static volatile long exception_mcause;
+
+/**
  * @brief The value of the mdcause register when the exception is entered.
  */
 static volatile long exception_mdcause;
@@ -69,11 +74,12 @@ __attribute__((weak)) void except_handler(void)
     exception_mtval = read_csr(NDS_MTVAL);
     exception_mepc = read_csr(NDS_MEPC);
     exception_mstatus = read_csr(NDS_MSTATUS);
+    exception_mcause = read_csr(NDS_MCAUSE);
     exception_mdcause = read_csr(NDS_MDCAUSE);
 
     while (1)
     {
-        __asm__("nop");
+    	_ASM_NOP_;
     }
 }
 
@@ -101,7 +107,7 @@ void trap_entry(void)
         if (g_plic_preempt_en)
         {
             /* before enable global interrupt,disable the timer interrupt to prevent re-entry */
-            mtime_disable();
+            core_mie_disable(FLD_MIE_MTIE);
             set_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);
         }
 
@@ -111,7 +117,7 @@ void trap_entry(void)
         {
             clear_csr(NDS_MSTATUS, FLD_MSTATUS_MIE);
             /* re-enable the timer interrupt. */
-            mtime_enable();
+            core_mie_enable(FLD_MIE_MTIE);
         }
     }
     else if ((mcause & 0x80000000UL) && ((mcause & 0x7FFFFFFFUL) == 3)) /* machine software interrupt */

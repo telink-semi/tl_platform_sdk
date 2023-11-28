@@ -98,10 +98,11 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 
 
 }
+PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
 
 
 
-void user_init()
+void user_init(void)
 {
 	gpio_function_en(LED1);
 	gpio_output_en(LED1);
@@ -138,11 +139,11 @@ void user_init()
 #endif
 #if(RF_STRX_MODE==TX_FIRST)
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_TX|FLD_RF_IRQ_RX|FLD_RF_IRQ_RX_TIMEOUT);
 #elif(RF_STRX_MODE==RX_FIRST)
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_TX|FLD_RF_IRQ_RX|FLD_RF_IRQ_FIRST_TIMEOUT);
 #endif
 

@@ -180,22 +180,28 @@ void uart_init(uart_num_e uart_num,unsigned short div, unsigned char bwpc, uart_
 }
 
 /**
- * @brief  		Calculate the best bwpc(bit width),bwpc range from 3 to 15,loop and get the minimum one decimal point(BaudRate*(div+1)*(bwpc+1) = pclk).
- * @param[in]	baudrate - baud rate of UART.
- * @param[in]	pclk   -   pclk.
- * @param[out]	div      - UART clock divider.
- * @param[out]	bwpc     - bitwidth, should be set to larger than 2,range[3-15].
- * @return 		none
+ * @brief      Calculate the best bwpc(bit width),bwpc range from 3 to 15,loop and get the minimum one decimal point(BaudRate*(div+1)*(bwpc+1) = pclk).
+ * @param[in]  baudrate - baud rate of UART.
+ * @param[in]  pclk     - pclk.
+ * @param[out] div      - UART clock divider.
+ * @param[out] bwpc     - bitwidth, should be set to larger than 2,range[3-15].
+ * @return     none
  * @note
-   @verbatim
-	   The maximum baud rate depends on the hardware environment (such as cable length, etc.) and pclk/cclk/hclk:
-	   -# pclk is the main factor affecting the upper baud rate of UART
-	   -# cclk and pclk affect interrupt processing times
-	   Using the B92 development board,the test results:
-	   -# CCLK_16M_HCLK_16M_PCLK_16M:in nodma,the maximum speed is 750 kHz; in dma,the maximum speed is 2 MHz;
-	   -# CCLK_24M_HCLK_24M_PCLK_24M:in nodma,the maximum speed is 2 MHz(this is not a garbled code, interrupt processing can not come over);
-                                     in dma,3 MHz can be met, the maximum limit of non-garbled codes has not been confirmed;
-   @endverbatim
+    -# The maximum baud rate depends on the hardware environment (such as cable length, etc.) and pclk/cclk/hclk:
+         - pclk is the main factor affecting the upper baud rate of UART
+         - cclk and pclk affect interrupt processing times(increase the frequency of cclk will increase the maximum baud rate of NDMA, but it has no obvious effect on the maximum baud rate of DMA)
+    -# The maximum baud rate must meet two testing conditions: 
+         - proper parsing by the logic analyzer
+         - successful communication on the development board
+    -# Note on the actual use of the maximum baud rate:
+         - if only communication on the development board is considered, the baud rate can be set higher 
+         - setting a significantly higher baud rate may result in a deviation between the set and actual baud rates, leading to incorrect parsing by the logic analyzer and possible communication failures with other devices
+    -# Using the B92 development board,the test results:
+         - CCLK_16M_HCLK_16M_PCLK_16M: in nodma,the maximum speed is 2 MHz; in dma,the maximum speed is 2 MHz;
+         - CCLK_24M_HCLK_24M_PCLK_24M: in nodma,the maximum speed is 3 MHz; in dma,the maximum speed is 3 MHz;
+         - CCLK_32M_HCLK_32M_PCLK_16M: in nodma,the maximum speed is 2 MHz; in dma,the maximum speed is 2 MHz;
+         - CCLK_48M_HCLK_48M_PCLK_24M: in nodma,the maximum speed is 3 MHz; in dma,the maximum speed is 3 MHz;
+         - CCLK_96M_HCLK_48M_PCLK_24M: in nodma,the maximum speed is 3 MHz; in dma,the maximum speed is 3 MHz;
  */
 void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned short* div, unsigned char *bwpc)
 {
@@ -264,8 +270,8 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned sh
  * @brief  	 Set rx_timeout.
    @verbatim
        The effect:
-         -# When no data is received within the rx_timeout period, that is rx timeout, the UART_RXDONE_IRQ_STATUS interrupt is generated.
-         -# The UART_RXDONE_IRQ_STATUS interrupt is required to process the remaining data below the threshold(the DMA Operation threshold is fixed at 4,
+         - When no data is received within the rx_timeout period, that is rx timeout, the UART_RXDONE_IRQ_STATUS interrupt is generated.
+         - The UART_RXDONE_IRQ_STATUS interrupt is required to process the remaining data below the threshold(the DMA Operation threshold is fixed at 4,
             the NDMA threshold can be configured through uart_rx_irq_trig_level)
        How to set:
          rx_timeout = ((bwpc+1) * bit_cnt)* mul ((bwpc+1) * bit_cnt:the maximum can be set to 0xff).

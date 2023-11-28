@@ -42,7 +42,6 @@ unsigned char usb_fifo[USB_FIFO_NUM][USB_FIFO_SIZE];
 unsigned char usb_ff_rptr = 0;
 unsigned char usb_ff_wptr = 0;
 
-int usbkb_hid_report_normal(unsigned char ctrl_key, unsigned char *keycode);
 void usbkb_hid_report(kb_data_t *data);
 
 static unsigned char vk_sys_map[VK_SYS_CNT] = {
@@ -132,7 +131,7 @@ static void usbkb_release_keys(void){
 	usbkb_release_media_key();
 }
 
-void usbkb_release_check(){
+void usbkb_release_check(void){
 	if(usbkb_not_released && clock_time_exceed(usbkb_data_report_time, USB_KEYBOARD_RELEASE_TIMEOUT)){
 		usbkb_release_keys();	 //  release keys
 	}
@@ -349,7 +348,7 @@ void usbkb_hid_report(kb_data_t *data){
 }
 
 
-void usbkb_init(){
+void usbkb_init(void){
 	//ev_on_poll(EV_POLL_KEYBOARD_RELEASE_CHECK, usbkb_release_check);
 }
 

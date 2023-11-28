@@ -28,10 +28,17 @@
 /* Set to 1, the program includes a non-standard BQB protocol part, which adds new functions for factory testing (single tone, rssi, sending fixed packets)*/
 #define BQB_PRIVATE_AGREEMENT		0
 
+/*
+ * @brief This macro is defined to turn on the fastsettle function
+ * */
+#define RF_FAST_SETTLE      0
+
 #if SUPPORT_CONFIGURATION
 usr_def_t usr_config;
 #endif
 uart_num_redef_e uart_using = UART_NONE;
+rf_fast_settle_t fast_settle;
+
 static unsigned short pkt_cnt =0,cmd_pkt,l, h;
 static unsigned char chn, pkt_type,freq,uart_tx_index,uart_rx_index,para, ctrl;
 static unsigned char bb_mode = 1;
@@ -353,9 +360,15 @@ void bqb_serviceloop (void)
 				rf_set_tx_rx_off_auto_mode();
 				rf_set_ble_chn(freq);
 				rf_set_rx_dma(bqbtest_buffer, 0, 272);
-				rf_start_srx(reg_system_tick);
+#if(RF_FAST_SETTLE)
 
+		rf_set_rx_settle_time(45);
+		rf_rx_fast_settle_en();
+
+#endif
+				rf_start_srx(reg_system_tick);
 				delay_us(30);
+
 				if(rxpara_flag == 1)
 				{
 					rf_set_rxpara();
@@ -457,6 +470,9 @@ void bqb_serviceloop (void)
 				}
 #else
 				rf_set_ble_chn(freq);
+#if(RF_FAST_SETTLE)
+				rf_set_hpmc_cal_val(fast_settle.cal_tbl[freq]);
+#endif
 		#if SUPPORT_CONFIGURATION
 				rf_set_power_level((usr_config.power==0)?BQB_TX_POWER:rf_power_Level_list[usr_config.power-1]);
 		#else
@@ -567,6 +583,10 @@ void bqb_serviceloop (void)
 			}
 		}
 #else
+#if(RF_FAST_SETTLE)
+		rf_set_tx_settle_time(50);
+		rf_tx_fast_settle_en();
+#endif
 		if (clock_time_exceed(tick_tx, pkt_interval) || (pkt_cnt == 0))//pkt_interval
 		{
 			tick_tx =  reg_system_tick;
@@ -592,6 +612,11 @@ void  bqbtest_init()
 	write_reg8(0x140a03,0x1c); //disable first timeout
 	rf_mode_init();
 	rf_set_ble_1M_NO_PN_mode();
+#if(RF_FAST_SETTLE)
+	bqb_fast_settle_init();
+	rf_tx_fast_settle_init(TX_SETTLE_TIME_50US);
+	rf_rx_fast_settle_init(RX_SETTLE_TIME_45US);
+#endif
 	rf_access_code_comm(ACCESS_CODE);
 	rf_pn_disable();
 	bb_mode = 1;
@@ -653,5 +678,49 @@ void bqb_pa_set_mode(unsigned char rtx) //0:rx, 1:tx, other:off
 		gpio_set_low_level(tx_pin);
 	}
 }
+
+/**
+ * @brief   	This function is used to initialize the calibration value of rf fast settle
+ * @param[in]   none.
+ * @return  	none.
+ * @note        This function is only used when testing fast settle with BQB
+ */
+void bqb_fast_settle_init(void)
+{
+
+		unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xa,0xb,0xc,0xd,0xc,0xf};
+		reg_rf_ll_cmd = 0x80;//STOP_RF_STATE_MACHINE;
+		rf_set_tx_rx_off ();
+		rf_clr_irq_status(0xffff);//CLEAR_ALL_RFIRQ_STATUS;
+
+		rf_tx_settle_us(110);//adjust TX settle time
+		rf_set_tx_dma(2,128);
+
+		for(unsigned char i=0;i<40;i++)
+		{
+			rf_set_ble_chn(i);
+			rf_start_stx(ble_tx_packet,stimer_get_tick());
+			delay_us(110);//Wait for the tx packetization action to complete, ensuring that the settle time on each channel
+
+			reg_rf_ll_cmd = 0x80;
+			rf_set_tx_rx_off ();
+			rf_clr_irq_status(0xffff);
+			fast_settle.cal_tbl[i] = rf_get_hpmc_cal_val();
+
+		}
+
+		rf_start_srx(stimer_get_tick());
+		delay_us(85);//Wait for the rx packetization action to complete
+		rf_get_dcoc_cal_val(&fast_settle.dcoc_cal);
+		rf_set_dcoc_cal_val(fast_settle.dcoc_cal);
+		reg_rf_ll_cmd = 0x80;
+		rf_set_tx_rx_off ();
+		rf_clr_irq_status(0xffff);
+
+		rf_get_ldo_trim_val(&fast_settle.ldo_trim);
+		rf_set_ldo_trim_val(fast_settle.ldo_trim);
+
+}
+
 
 #endif

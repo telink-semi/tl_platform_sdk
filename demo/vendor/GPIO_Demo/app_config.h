@@ -22,51 +22,28 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#if(MCU_CORE_B91)
-#define LED1            		GPIO_PB4
-#define LED2            		GPIO_PB5
-#define LED3            		GPIO_PB6
-#define LED4            		GPIO_PB7
-/*
- * Button matrix table:
- * 			KEY3	KEY4
- * 	KEY1	SW2		SW3
- * 	KEY2	SW4		SW5
- */
-#define KEY1           			GPIO_PC2
-#define KEY2           			GPIO_PC0
-#define KEY3           			GPIO_PC3
-#define KEY4           			GPIO_PC1
-#elif(MCU_CORE_B92)
-#define LED3                    GPIO_PD0
-#define LED4                    GPIO_PD1
-#define LED1                    GPIO_PE6
-#define LED2                    GPIO_PE7
-/*
- * Button matrix table:
- * 			KEY3	KEY4
- * 	KEY1	SW2		SW3
- * 	KEY2	SW4		SW5
- */
-#define KEY1           			GPIO_PE2
-#define KEY2           			GPIO_PE3
-#define KEY3           			GPIO_PE4
-#define KEY4           			GPIO_PF0
-#endif
+#include "driver.h"
+#include "common.h"
 
+#define NORMAL_MODE 			1
+#define MANUAL_TEST_MODE 		2 // For internal testing, users need not care
+#define AUTO_TEST_MODE 			3 // For internal testing, users need not care
+#define	DEMO_MODE				NORMAL_MODE
+
+#if(DEMO_MODE == NORMAL_MODE)
 #define GPIO_IRQ				1
 #define GPIO_IRQ_RISC0			2
 #define GPIO_IRQ_RISC1			3
 #define GPIO_HIGH_RESISTOR		4
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||MCU_CORE_B93||MCU_CORE_B95)
 #define GPIO_SEL_IRQ_SRC        5
 #endif
-#define GPIO_MODE 				GPIO_IRQ
+#define GPIO_MODE 				GPIO_HIGH_RESISTOR
+#endif
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

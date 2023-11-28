@@ -22,11 +22,12 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
 
 /* Disable C linkage for C++ Compilers: */

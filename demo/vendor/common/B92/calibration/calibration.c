@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for B92
  *
  * @author  Driver Group
  * @date    2022

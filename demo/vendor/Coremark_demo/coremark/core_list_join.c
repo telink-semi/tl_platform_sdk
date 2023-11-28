@@ -51,7 +51,7 @@ Topic: Description
 	o Bits 3-6 provide input for the operation.
 
 */
-
+#define COMPILER_REQUIRES_SORT_RETURN	0
 /* local functions */
 
 list_head *core_list_find(list_head *list,list_data *info);

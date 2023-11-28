@@ -32,18 +32,15 @@ extern void main_loop (void);
  * @param[in]	none
  * @return      none
  */
-int main (void)   //must on ramcode
+int main(void)
 {
-	sys_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6, GPIO_VOLTAGE_3V3);
-	wd_32k_stop();
-	CCLK_24M_HCLK_24M_PCLK_24M;
+    PLATFORM_INIT;
+    CLOCK_INIT;
+    user_init();
 
-	user_init();
-	while (1) {
-
-
-		main_loop ();
-
-	}
-	return 0;
+    while(1)
+    {
+    	main_loop();
+    }
+    return 0;
 }

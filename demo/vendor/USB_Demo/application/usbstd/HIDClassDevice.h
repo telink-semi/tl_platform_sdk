@@ -39,7 +39,7 @@ typedef struct
 	_Bool ReportINEndpointDoubleBank;
 	void* PrevReportINBuffer;
 	unsigned char  PrevReportINBufferSize;
-} usbhid_config_t;
+} __attribute__((packed)) usbhid_config_t;
 
 typedef struct
 {
@@ -47,7 +47,7 @@ typedef struct
 	unsigned short PrevFrameNum;
 	unsigned short IdleCount;
 	unsigned short IdleMSRemaining;
-} usbhid_state_t;
+} __attribute__((packed)) usbhid_state_t;
 
 
 

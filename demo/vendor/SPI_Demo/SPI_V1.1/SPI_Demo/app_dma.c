@@ -86,7 +86,7 @@ gspi_pin_config_t gspi_pin_config = {
 #if (SPI_SLAVE_NUM == MULTI_SLAVE)
 //39 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
 #define SLAVE_CSN_PIN_NUM    8
-gpio_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, /*GPIO_FC_PA1, GPIO_FC_PA2, GPIO_FC_PA3, */GPIO_FC_PA4,
+gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, /*GPIO_FC_PA1, GPIO_FC_PA2, GPIO_FC_PA3, */GPIO_FC_PA4,
 		/*GPIO_FC_PB0, GPIO_FC_PB1, */GPIO_FC_PB2, GPIO_FC_PB3, GPIO_FC_PB4, GPIO_FC_PB5, GPIO_FC_PB6, GPIO_FC_PB7};
 #endif
 #elif (SPI_MODULE_SEL == LSPI_MODULE)
@@ -112,6 +112,7 @@ lspi_pin_config_t lspi_pin_config = {
  *                                          global variable                                           	 	  *
  *********************************************************************************************************************/
 volatile unsigned char end_irq_flag = 0;
+volatile unsigned char rx_dma_flag = 0;
 #define 	DATA_BYTE_LEN     16
 unsigned char spi_rx_buff[DATA_BYTE_LEN] __attribute__((aligned(4))) = {0x00};
 #if (SPI_PROTOCOL == B85M_SLAVE_PROTOCOL)
@@ -178,7 +179,7 @@ typedef struct
 	};
 #endif
 
-void user_init()
+void user_init(void)
 {
 	delay_ms(2000);
 	gpio_output_en(LED1); 		//enable output
@@ -202,10 +203,10 @@ void user_init()
 	dma_set_spi_burst_size(SPI_RX_DMA_CHN,DMA_BURST_1_WORD);
 #if (SPI_MODULE_SEL == GSPI_MODULE)
 	gspi_set_pin(&gspi_pin_config);
-	plic_interrupt_enable(IRQ23_GSPI);
+	plic_interrupt_enable(IRQ_GSPI);
 #elif(SPI_MODULE_SEL == LSPI_MODULE)
 	lspi_set_pin(&lspi_pin_config);
-	plic_interrupt_enable(IRQ22_LSPI);
+	plic_interrupt_enable(IRQ_LSPI);
 #endif
 
 #if (SPI_PROTOCOL == B85M_SLAVE_PROTOCOL)
@@ -220,6 +221,8 @@ void user_init()
 	spi_master_config_plus(SPI_MODULE_SEL, &spi_b91m_spi_slave_protocol_config);
 #endif
 
+	dma_set_irq_mask(SPI_RX_DMA_CHN,TC_MASK);
+	plic_interrupt_enable(IRQ_DMA);
 	core_interrupt_enable();
 }
 #if(SPI_SLAVE_READY_TEST == 1)
@@ -268,11 +271,15 @@ void main_loop (void)
 	spi_master_write_dma(SPI_MODULE_SEL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff));
 	while(!end_irq_flag);//Wait for spi transmission end interrupt.
 	end_irq_flag = 0;
+	spi_clr_irq_mask(SPI_MODULE_SEL,SPI_END_INT_EN);
+
 	spi_tx_buff.cmd = SPI_B85M_READ_CMD;
 	//Write address and command first, then read.
 	spi_master_write_read_dma(SPI_MODULE_SEL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff.address)+ sizeof(spi_tx_buff.cmd), (unsigned char*)spi_rx_buff , DATA_BYTE_LEN);
-	while(!end_irq_flag);//Wait for spi transmission end interrupt.
-	end_irq_flag = 0;
+	while(!rx_dma_flag);//Wait for rx dma transmission complete interrupt.
+	rx_dma_flag = 0;
+	spi_set_irq_mask(SPI_MODULE_SEL,SPI_END_INT_EN);
+
 	for (unsigned char i = 0; i < DATA_BYTE_LEN; i++)
 	{
 		if(spi_tx_buff.data[i] != (spi_rx_buff[i]))
@@ -296,12 +303,16 @@ void main_loop (void)
 		}
 	}
 #else
-	end_irq_flag = 0;
+
 	spi_master_write_dma_plus(SPI_MODULE_SEL, 	SPI_WRITE_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff), SPI_MODE_WR_DUMMY_WRITE);
 	while(!end_irq_flag);//Wait for spi transmission end interrupt.
 	end_irq_flag = 0;
+	spi_clr_irq_mask(SPI_MODULE_SEL,SPI_END_INT_EN);
+	rx_dma_flag = 0;
 	spi_master_read_dma_plus(SPI_MODULE_SEL, SPI_READ_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)(spi_rx_buff), DATA_BYTE_LEN, SPI_MODE_RD_DUMMY_READ);
-	while(!end_irq_flag);//Wait for spi transmission end interrupt.
+	while(!rx_dma_flag);//Wait for rx dma transmission complete interrupt.
+	rx_dma_flag = 0;
+	spi_set_irq_mask(SPI_MODULE_SEL,SPI_END_INT_EN);
 
 	for (unsigned char i = 0; i < DATA_BYTE_LEN; i++)
 	{
@@ -338,7 +349,7 @@ for(unsigned char i = 0;i < SLAVE_CSN_PIN_NUM-1; i++)
 {
 	if (gspi_pin_config.spi_csn_pin == slave_csn_pin[i])
 		{
-			gspi_change_csn_pin(slave_csn_pin[i],slave_csn_pin[i+1]);
+			gspi_change_csn_pin((gpio_pin_e)slave_csn_pin[i],(gpio_pin_e)slave_csn_pin[i+1]);
 			gspi_pin_config.spi_csn_pin = slave_csn_pin[i+1];
 			break;
 		}
@@ -359,6 +370,22 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 		end_irq_flag = 1;
 	}
 }
+#if(SPI_MODULE_SEL == GSPI_MODULE)
+PLIC_ISR_REGISTER(gspi_irq_handler, IRQ_GSPI)
+#elif(SPI_MODULE_SEL == LSPI_MODULE)
+PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
+#endif
+
+_attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
+{
+	if(dma_get_tc_irq_status(BIT(SPI_RX_DMA_CHN)))
+	{
+		dma_clr_tc_irq_status(BIT(SPI_RX_DMA_CHN));
+		rx_dma_flag = 1;
+	}
+}
+PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
+
 /**********************************************************************************************************************
 	*                                         SPI slave setting 				                                	 	  *
 	*********************************************************************************************************************/
@@ -372,7 +399,7 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 #define DATA_BYTE_OFFSET    8 //must be a multiple 4
 unsigned char spi_slave_rx_buff[SPI_RX_BUFF_LEN+4] __attribute__((aligned(4))) = {0x00};
 #endif
-void user_init()
+void user_init(void)
 {
 	delay_ms(2000);
 	gpio_output_en(LED1); 		//enable output
@@ -398,13 +425,13 @@ void user_init()
 	 * changed by pengxiang.hong 20230328.
 	 */
 	dma_set_irq_mask(SPI_RX_DMA_CHN,TC_MASK);
-	plic_interrupt_enable(IRQ5_DMA);
+	plic_interrupt_enable(IRQ_DMA);
 #if (SPI_MODULE_SEL == GSPI_MODULE)
 	gspi_set_pin(&gspi_pin_config);
-	plic_interrupt_enable(IRQ23_GSPI);
+	plic_interrupt_enable(IRQ_GSPI);
 #elif(SPI_MODULE_SEL == LSPI_MODULE)
 	lspi_set_pin(&lspi_pin_config);
-	plic_interrupt_enable(IRQ22_LSPI);
+	plic_interrupt_enable(IRQ_LSPI);
 #endif
 	spi_set_tx_dma_config(SPI_MODULE_SEL, SPI_TX_DMA_CHN);
 	spi_set_slave_rx_dma_config(SPI_MODULE_SEL, SPI_RX_DMA_CHN);
@@ -462,6 +489,11 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
 		spi_clr_irq_status(SPI_MODULE_SEL, SPI_END_INT);//clr
 	}
 }
+#if(SPI_MODULE_SEL == GSPI_MODULE)
+PLIC_ISR_REGISTER(gspi_irq_handler, IRQ_GSPI)
+#elif(SPI_MODULE_SEL == LSPI_MODULE)
+PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
+#endif
 #endif
 
 /**
@@ -476,5 +508,7 @@ _attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
 		gspi_reset();
 	}
 }
+PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
+
 #endif
 #endif

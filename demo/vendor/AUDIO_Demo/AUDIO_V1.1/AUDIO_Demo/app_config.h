@@ -22,17 +22,14 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
 
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
+
 /**
  *  codec has 2  input data streams
  *  stream 0 support line_in/amic_in/dmic0_in
@@ -53,6 +50,10 @@ extern "C" {
 #define    I2S_OUTPUT_DOUBLE_BUFF               10 /*I2S(I2S0 or I2S1) outputs double buff data: buff_L-->fifo0-->I2S0_L/I2S1_L,buff_R-->fifo1-->I2S0_R/I2S1_R*/
 #define    AUDIO_FIFO_IRQ_Test                 11 //fifo threshold irq
 #define    I2S_TO_EXT_CODEC_WM                 12 //I2S input->buff->I2S out for WM8731 external codec
+
+#if (MCU_CORE_B92)
+#define    I2S_TO_CODEC_0581                   13 //I2S input->buff->I2S out for Telink inside codec 0581
+#endif
 
 #define    AUDIO_MODE                    BUFFER_TO_LINEOUT
 

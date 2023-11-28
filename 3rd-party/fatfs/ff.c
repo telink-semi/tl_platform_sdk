@@ -920,6 +920,7 @@ static FRESULT chk_lock (	/* Check if the file can be accessed */
 	UINT i, be;
 
 	/* Search open object table for the object */
+	i = 0;
 	be = 0;
 	for (i = 0; i < FF_FS_LOCK; i++) {
 		if (Files[i].fs) {	/* Existing entry */
@@ -3190,8 +3191,12 @@ static int test_gpt_header (	/* 0:Invalid, 1:Valid */
 	UINT i;
 	DWORD bcc;
 
+	if (sizeof(gpth) >= GPTH_Sign + 16){
+		if (memcmp(gpth + GPTH_Sign, "EFI PART" "\0\0\1\0" "\x5C\0\0", 16)) return 0;  /* Check sign, version (1.0) and length (92) */
+	} else{
+		return 0;
+	}
 
-	if (memcmp(gpth + GPTH_Sign, "EFI PART" "\0\0\1\0" "\x5C\0\0", 16)) return 0;	/* Check sign, version (1.0) and length (92) */
 	for (i = 0, bcc = 0xFFFFFFFF; i < 92; i++) {		/* Check header BCC */
 		bcc = crc32(bcc, i - GPTH_Bcc < 4 ? 0 : gpth[i]);
 	}
@@ -3581,7 +3586,12 @@ static FRESULT validate (	/* Returns FR_OK or FR_INVALID_OBJECT */
 		}
 #endif
 	}
-	*rfs = (res == FR_OK) ? obj->fs : 0;	/* Corresponding filesystem object */
+	if (obj != NULL) {
+	    *rfs = (res == FR_OK) ? obj->fs : 0;  /* Corresponding filesystem object */
+	} else {
+	    *rfs = 0;
+	}
+
 	return res;
 }
 
@@ -5096,7 +5106,7 @@ FRESULT f_rename (
 				BYTE nf, nn;
 				WORD nh;
 
-				memcpy(buf, fs->dirbuf, SZDIRE * 2);	/* Save 85+C0 entry of old object */
+				if(sizeof(buf) >= SZDIRE * 2)  memcpy(buf, fs->dirbuf, SZDIRE * 2);	/* Save 85+C0 entry of old object */
 				memcpy(&djn, &djo, sizeof djo);
 				res = follow_path(&djn, path_new);		/* Make sure if new object name is not in use */
 				if (res == FR_OK) {						/* Is new name already in use by any other object? */

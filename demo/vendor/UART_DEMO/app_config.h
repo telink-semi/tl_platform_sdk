@@ -22,16 +22,14 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
+
 #if(MCU_CORE_B91)
-#define LED1            GPIO_PB4
-#define LED2            GPIO_PB5
-#define LED3            GPIO_PB6
-#define LED4            GPIO_PB7
 #define UART0_RTX_PIN	UART0_RX_PB3
 #define UART0_TX_PIN    UART0_TX_PB2
 #define UART0_RX_PIN    UART0_RX_PB3
@@ -48,10 +46,6 @@ extern "C" {
 
 
 #elif(MCU_CORE_B92)
-#define LED1            GPIO_PD0
-#define LED2            GPIO_PD1
-#define LED3            GPIO_PE6
-#define LED4            GPIO_PE7
 
 #define UART0_RTX_PIN 			GPIO_FC_PB3
 #define UART0_TX_PIN            GPIO_FC_PB1
@@ -64,12 +58,53 @@ extern "C" {
 #define UART1_RX_PIN            GPIO_FC_PB2
 #define UART1_CTS_PIN           GPIO_FC_PB4
 #define UART1_RTS_PIN           GPIO_FC_PA0
+#elif(MCU_CORE_B93)
+#define UART0_RTX_PIN 			UART0_RX_PB2
+#define UART0_TX_PIN            UART0_TX_PB1
+#define UART0_RX_PIN            UART0_RX_PB2
+#define UART0_CTS_PIN           UART0_CTS_PB3
+#define UART0_RTS_PIN           UART0_RTS_PB4
 
+#define UART1_RTX_PIN 			UART1_RX_PB2
+#define UART1_TX_PIN            UART1_TX_PB1
+#define UART1_RX_PIN            UART1_RX_PB2
+#define UART1_CTS_PIN           UART1_CTS_PB3
+#define UART1_RTS_PIN           UART1_RTS_PB4
+
+#define UART2_RTX_PIN 			UART2_RX_PB2
+#define UART2_TX_PIN            UART2_TX_PB1
+#define UART2_RX_PIN            UART2_RX_PB2
+#define UART2_CTS_PIN           UART2_CTS_PB3
+#define UART2_RTS_PIN           UART2_RTS_PB4
+
+#define UART3_RTX_PIN 			UART3_RX_PB2
+#define UART3_TX_PIN            UART3_TX_PB1
+#define UART3_RX_PIN            UART3_RX_PB2
+#define UART3_CTS_PIN           UART3_CTS_PB3
+#define UART3_RTS_PIN           UART3_RTS_PB4
+#elif(MCU_CORE_B95)
+#define UART0_RTX_PIN           GPIO_FC_PC5
+#define UART0_TX_PIN            GPIO_FC_PC4
+#define UART0_RX_PIN            GPIO_FC_PC5
+#define UART0_CTS_PIN           GPIO_FC_PC6
+#define UART0_RTS_PIN           GPIO_FC_PC7
+
+#define UART1_RTX_PIN           GPIO_FC_PC5
+#define UART1_TX_PIN            GPIO_FC_PC4
+#define UART1_RX_PIN            GPIO_FC_PC5
+#define UART1_CTS_PIN           GPIO_FC_PC6
+#define UART1_RTS_PIN           GPIO_FC_PC7
+
+#define UART2_RTX_PIN           GPIO_FC_PC5
+#define UART2_TX_PIN            GPIO_FC_PC4
+#define UART2_RX_PIN            GPIO_FC_PC5
+#define UART2_CTS_PIN           GPIO_FC_PC6
+#define UART2_RTS_PIN           GPIO_FC_PC7
 #endif
 
 #define UART_DMA  		    1     //uart use dma
 #define UART_NDMA  	   		2     //uart not use dma
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||MCU_CORE_B93||MCU_CORE_B95)
 #define UART_DMA_LLP        3
 #endif
 #define UART_MODE	 	    UART_NDMA

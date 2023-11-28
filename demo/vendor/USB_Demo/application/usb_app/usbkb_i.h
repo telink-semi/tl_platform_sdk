@@ -36,7 +36,7 @@ static const USB_Descriptor_HIDReport_Datatype_t keyboard_report_desc[] = {
 };
 
 static inline unsigned char* usbkb_get_report_desc(void) {
-	return (unsigned char*) (keyboard_report_desc);//todo
+	return (unsigned char*) (unsigned int)(keyboard_report_desc);//todo
 }
 
 static inline unsigned short usbkb_get_report_desc_size(void) {

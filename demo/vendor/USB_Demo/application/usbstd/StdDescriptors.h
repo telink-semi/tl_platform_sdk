@@ -249,14 +249,14 @@ typedef struct
 {
 	USB_Descriptor_Hdr_t Header;
 	unsigned short UnicodeString[100];//If don't set the length here, will get an error. set the length based on the actual situation
-}USB_Descriptor_String_t;
+} __attribute__((packed)) USB_Descriptor_String_t;
 
 typedef struct
 {
 	unsigned char Length;
 	unsigned char DescriptorType;
 	unsigned short bString[];
-}USB_StdDescriptor_String_t;
+} __attribute__((packed)) USB_StdDescriptor_String_t;
 
 #ifndef __GNUC__
 #pragma warning(pop)

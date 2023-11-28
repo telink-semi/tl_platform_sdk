@@ -51,7 +51,7 @@ typedef enum{
 	FLASH_LOCK_LOW_2M_MID166085         =   0x0038,  //000000h-1FFFFFh  //0x007c 0x4018...
 	FLASH_LOCK_UP_4K_MID166085          =   0x0044,  //3FF000h-3FFFFFh
 	FLASH_LOCK_UP_8K_MID166085          =   0x0048,  //3FE000h-3FFFFFh
-	FLASH_LOCK_UP_16K_MID166085         =   0x004c,  //2FC000h-3FFFFFh
+	FLASH_LOCK_UP_16K_MID166085         =   0x004c,  //3FC000h-3FFFFFh
 	FLASH_LOCK_UP_32K_MID166085         =   0x0058,  //3F8000h-3FFFFFh  //0x0050 0x0054
 	FLASH_LOCK_LOW_4K_MID166085         =   0x0064,  //000000h-000FFFh
 	FLASH_LOCK_LOW_8K_MID166085         =   0x0068,  //000000h-001FFFh
@@ -200,7 +200,7 @@ mid166085_lock_block_e flash_get_lock_block_mid166085(void);
  *						the address of the  Security Registers #1 0x001000-0x0013ff
  *						the address of the  Security Registers #2 0x002000-0x0023ff
  *						the address of the  Security Registers #3 0x003000-0x0033ff
- * @param[in]   len		- the length of the content to be read.
+ * @param[in]   len		- the length(in byte, must be above 0) of the content to be read.
  * @param[out]  buf		- the starting address of the content to be read.
  * @return 		none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
@@ -221,7 +221,7 @@ void flash_read_otp_mid166085(unsigned long addr, unsigned long len, unsigned ch
  *						the address of the  Security Registers #1 0x001000-0x0013ff
  *						the address of the  Security Registers #2 0x002000-0x0023ff
  *						the address of the  Security Registers #3 0x003000-0x0033ff
- * @param[in]   len		- the length of content to be written.
+ * @param[in]   len		- the length(in byte, must be above 0) of content to be written.
  * @param[in]   buf		- the starting address of the content to be written.
  * @return 		none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.

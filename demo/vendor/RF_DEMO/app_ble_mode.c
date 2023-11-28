@@ -49,6 +49,12 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 
 #define RF_FREQ				17
 #define ACCESS_CODE        0x29417671//0xd6be898e// 0x898e898e//
+
+/*
+ * @brief This macro is defined to turn on the fastsettle function
+ * */
+#define RF_FAST_SETTLE      0
+
 volatile unsigned int rx_cnt=0;
 volatile unsigned int tx_cnt=0;
 #if(RF_RX_IRQ_EN)
@@ -85,6 +91,7 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 
 
 }
+PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
 #endif
 
 #if(RF_AUTO_MODE == AUTO)
@@ -97,7 +104,10 @@ void user_init(void)
 	rf_set_ble_chn(RF_FREQ);
 #endif
 	rf_access_code_comm(ACCESS_CODE);
-
+#if(RF_FAST_SETTLE)
+	rf_tx_fast_settle_init(TX_SETTLE_TIME_50US);
+	rf_rx_fast_settle_init(RX_SETTLE_TIME_45US);
+#endif
 
 #if(RF_TRX_MODE==TX)
 	rf_set_tx_dma(2,128);
@@ -106,7 +116,7 @@ void user_init(void)
 #if(RF_RX_IRQ_EN)
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_RX);
 	rf_start_srx(stimer_get_tick());
 
@@ -142,6 +152,15 @@ void main_loop(void)
 	ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
 	ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
 	ble_tx_packet[0] = rf_tx_dma_len&0xff;
+#if(RF_FAST_SETTLE)
+	rf_start_stx(ble_tx_packet,stimer_get_tick());
+	delay_us(100);
+	reg_rf_ll_cmd = 0x80;
+	rf_set_tx_rx_off ();
+	rf_clr_irq_status(0xffff);
+	rf_set_tx_settle_time(50);
+	rf_tx_fast_settle_en();
+#endif
 	rf_start_stx(ble_tx_packet,stimer_get_tick());
 
 	while(1)
@@ -160,6 +179,15 @@ void main_loop(void)
 #elif(RF_TRX_MODE==RX)
 #if(!RF_RX_IRQ_EN)
 
+#if(RF_FAST_SETTLE)
+	rf_start_srx(stimer_get_tick());
+	delay_us(85);
+	reg_rf_ll_cmd = 0x80;
+	rf_set_tx_rx_off ();
+	rf_clr_irq_status(0xffff);
+	rf_set_rx_settle_time(45);
+	rf_rx_fast_settle_en();
+#endif
 	rf_start_srx(stimer_get_tick());
 	while(1)
 	{
@@ -209,7 +237,7 @@ void user_init(void)
 #if(RF_RX_IRQ_EN)
 
 	core_interrupt_enable();
-	plic_interrupt_enable(IRQ15_ZB_RT);
+	plic_interrupt_enable(IRQ_ZB_RT);
 	rf_set_irq_mask(FLD_RF_IRQ_RX);
 	rf_set_rxmode();
 	delay_us(85);  //Wait for calibration to stabilize

@@ -22,26 +22,27 @@
  *
  *******************************************************************************************************/
 #pragma once
-
-#include "driver.h"
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
+#include "driver.h"
+#include "common.h"
+
+
 #if(MCU_CORE_B91)
-#define LED1            		GPIO_PB4
-#define LED2            		GPIO_PB5
-#define LED3            		GPIO_PB6
-#define LED4            		GPIO_PB7
 #define TIMER_GPIO_1    		GPIO_PA0
 #define TIMER_GPIO_2     		GPIO_PA1
 
 #elif(MCU_CORE_B92)
-#define LED1            		GPIO_PD0
-#define LED2            		GPIO_PD1
-#define LED3            		GPIO_PE6
-#define LED4            		GPIO_PE7
+#define TIMER_GPIO_1    		GPIO_PA0
+#define TIMER_GPIO_2     		GPIO_PA1
+#elif(MCU_CORE_B93)
+#define TIMER_GPIO_1    		GPIO_PA0
+#define TIMER_GPIO_2     		GPIO_PA1
 #endif
+
+
 
 
 #define TIMER_SYS_CLOCK_MODE 	1
@@ -49,11 +50,11 @@ extern "C" {
 #define TIMER_GPIO_WIDTH_MODE 	3
 #define TIMER_TICK_MODE 		4
 #define TIMER_WATCHDOG_MODE 	5
-#if(MCU_CORE_B92)
+#if(MCU_CORE_B92||  MCU_CORE_B93)
 #define TIMER_32K_WATCHDOG_MODE 6
 #endif
 
-#define TIMER_MODE				TIMER_32K_WATCHDOG_MODE
+#define TIMER_MODE				TIMER_SYS_CLOCK_MODE
 
 
 #define WATCHDOG_32K_XTAL_MODE	1

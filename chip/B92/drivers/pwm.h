@@ -237,12 +237,13 @@ static inline void pwm_clr_irq_mask(pwm_irq_e mask){
 
 /**
  * @brief     This function servers to get the pwm interrupt status.
- * @param[in] status - variable of enum to select the pwm interrupt source.
- * @return	  none.
+ * @param[in] status   - variable of enum to select the pwm interrupt source.
+ * @retval    non-zero     - the interrupt occurred.
+ * @retval    zero  - the interrupt did not occur.
  */
-static inline unsigned char pwm_get_irq_status(pwm_irq_e status){
+static inline unsigned short pwm_get_irq_status(pwm_irq_e status){
 
-	return reg_pwm_irq_sta |=status;
+	return (reg_pwm_irq_sta & status);
 
 }
 

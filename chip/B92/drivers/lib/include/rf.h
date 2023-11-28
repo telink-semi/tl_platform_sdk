@@ -126,6 +126,44 @@ typedef enum{
 	RF_ADV2_HYPER_LENGTH_PACKET = 3
 }rf_pkt_len_mode_e;
 
+typedef enum{
+	RF_RX_ACL_AOA_AOD_EN  = BIT(0),
+	RF_RX_ADV_AOA_AOD_EN  = BIT(1),
+	RF_TX_ACL_AOA_AOD_EN  = BIT(2),
+	RF_TX_ADV_AOA_AOD_EN  = BIT(3),
+	RF_AOA_AOD_OFF        = 0
+}rf_aoa_aod_mode_e;
+
+/*
+ * @brief  Data length type of AOA/AOD sampling.
+ * |                 |                         |
+ * | :-------------- | :---------------------- |
+ * |   	 <15:8>      |          <7:0>          |
+ * |   IQ byte len   |   iq data bit num mode  |
+ */
+typedef enum{
+	IQ_8_BIT_MODE   		= 0x0200,
+	IQ_16_BIT_MODE  		= 0x0401,
+	IQ_16_BIT_LOW_MODE		= 0x0402,
+	IQ_16_BIT_HIGH_MODE		= 0x0403,
+	IQ_20_BIT_MODE			= 0x0504
+}rf_iq_data_mode_e;
+
+
+
+/*
+ * @brief  AOA/AOD sample interval time type enumeration.
+ * @note   Attention:When the time is 0.25us, it cannot be used with the 20bit iq data type, which will cause the sampling data to overflow.
+ *		   In normal mode, the sampling interval of AOA is 4us, and AOD will judge whether the sampling interval is 4us or 2us according to
+ *		   CTE info.
+ */
+typedef enum{
+	SAMPLE_NORMAL_INTERVAL   	= 0,//In this case sample interval of aoa is 4us, and aod will judge sample interval is 4us or 2us according to CTE info.
+	SAMPLE_2US_INTERVAL   		= 3,
+	SAMPLE_1US_INTERVAL  		= 4,
+	SAMPLE_0P5US_INTERVAL 		= 5,
+	SAMPLE_0P25US_INTERVAL 		= 6
+}rf_aoa_aod_sample_interval_time_e;
 
 /**
  *  @brief  set the modulation index.
@@ -155,6 +193,74 @@ typedef enum {
 	RF_MODE_OFF =3		/**<  TXRX OFF mode */
 } rf_status_e;
 
+/**
+ *  @brief  Rx fast settle time
+ *  @note Some notice for timing sequence.
+ *  1:The timing sequence can be configured once during initialization.
+ *  2:The timing sequence of tx and rx can be configured separately.
+ *  3:Call the enable function rf_tx_fast_settle_en or rf_rx_fast_settle_en when using the configured timing sequence.
+ *    To close it, call rf_tx_fast_settle_dis or rf_rx_fast_settle_dis.
+ *  4:According to the different parameters, a normal calibration should be done regularly, such as parameter notes.
+ */
+typedef enum{
+	RX_SETTLE_TIME_45US		 = 0, /**<  disable rx_ldo_trim and rx_dcoc calibration,reduce 44.5us of rx settle time.
+	                                    Receive for a period of time and then do a normal calibration.*/
+	RX_SETTLE_TIME_80US		 = 1  /**<  disable rx_ldo_trim calibration,reduce 4.5us of rx settle time.
+	                                    Do a normal calibration at the beginning.*/
+
+}rf_rx_fast_settle_time_e;
+
+/**
+ *  @brief  Tx fast settle time
+ */
+typedef enum{
+	TX_SETTLE_TIME_50US	 	= 0, /**<  disable tx_ldo_trim function and tx_hpmc,reduce 58us of tx settle time.
+	                                   After frequency hopping, a normal calibration must be done.*/
+	TX_SETTLE_TIME_104US    = 1  /**<  disable tx_ldo_trim function,reduce 4.5us of tx settle time.
+	                                   Do a normal calibration at the beginning.*/
+
+}rf_tx_fast_settle_time_e;
+
+/**
+ *  @brief  LDO trim calibration value
+ */
+typedef struct
+{
+	unsigned char LDO_CAL_TRIM;
+	unsigned char LDO_RXTXHF_TRIM;
+	unsigned char LDO_RXTXLF_TRIM;
+	unsigned char LDO_PLL_TRIM;
+	unsigned char LDO_VCO_TRIM;
+}rf_ldo_trim_t;
+
+/**
+ *  @brief  DCOC calibration value
+ */
+typedef struct
+{
+	unsigned char DCOC_IDAC;
+	unsigned char DCOC_QDAC;
+	unsigned char DCOC_IADC_OFFSET;
+	unsigned char DCOC_QADC_OFFSET;
+}rf_dcoc_cal_t;
+
+/**
+ *  @brief  RCCAL calibration value
+ */
+typedef struct
+{
+	unsigned char RCCAL_CODE;
+	unsigned char CBPF_CCODE_L;
+	unsigned char CBPF_CCODE_H;
+}rf_rccal_cal_t;
+
+typedef struct
+{
+	unsigned short cal_tbl[40];
+	rf_ldo_trim_t	ldo_trim;
+	rf_dcoc_cal_t   dcoc_cal;
+	rf_rccal_cal_t  rccal_cal;
+}rf_fast_settle_t;
 
 /**
  *  @brief  Define power list of RF.
@@ -356,7 +462,7 @@ typedef enum {
 /**********************************************************************************************************************
  *                                         RF global constants                                                        *
  *********************************************************************************************************************/
-extern rf_power_level_e rf_power_Level_list[60];
+extern const rf_power_level_e rf_power_Level_list[60];
 
 
 /**********************************************************************************************************************
@@ -420,7 +526,7 @@ static inline void rf_set_rxpara(void)
  * @return  	-#0:idle
  * 				-#1:rx_busy
  */
-static inline unsigned char rf_receiving_flag(void)
+static _always_inline unsigned char rf_receiving_flag(void)
 {
 	//if the value of [2:0] of the reg_0x170040 isn't 0 , it means that the RF is in the receiving packet phase.(confirmed by junwen).
 	return ((read_reg8(0x170040)&0x07) > 1);
@@ -459,9 +565,10 @@ static inline void rf_clr_irq_mask(rf_irq_e mask)
 
 
 /**
- *	@brief	  	This function serves to judge whether it is in a certain state.
- *	@param[in]	mask 	- RX/TX irq status.
- *	@return	 	Yes: 1, NO: 0.
+ * @brief       This function serves to judge whether it is in a certain state.
+ * @param[in]   mask       - RX/TX irq status.
+ * @retval      non-zero       -  the interrupt occurred.
+ * @retval      zero   -  the interrupt did not occur.
  */
 static inline unsigned short rf_get_irq_status(rf_irq_e status)
 {
@@ -545,7 +652,7 @@ static inline void rf_tx_acc_code_pipe_en(rf_channel_e pipe)
  * @brief 	  This function serves to reset RF Tx/Rx mode.
  * @return 	  none.
  */
-static inline void rf_set_tx_rx_off(void)
+static _always_inline void rf_set_tx_rx_off(void)
 {
 	write_reg8 (0x80170216, 0x29);
 	write_reg8 (0x80170028, 0x80);	// rx disable
@@ -570,7 +677,7 @@ static inline void rf_set_tx_rx_off_auto_mode(void)
  * @brief    This function serves to set CRC advantage.
  * @return   none.
  */
-static inline void rf_set_ble_crc_adv (void)
+static _always_inline void rf_set_ble_crc_adv (void)
 {
 	write_reg32 (0x80170024, 0x555555);
 }
@@ -581,7 +688,7 @@ static inline void rf_set_ble_crc_adv (void)
  * @param[in]  	crc  - CRC value.
  * @return 		none.
  */
-static inline void rf_set_ble_crc_value (unsigned int crc)
+static _always_inline void rf_set_ble_crc_value (unsigned int crc)
 {
 	write_reg32 (0x80170024, crc);
 }
@@ -593,7 +700,7 @@ static inline void rf_set_ble_crc_value (unsigned int crc)
  * @param[in]  byte_len  - The longest of rx packet.
  * @return     none.
  */
-static inline void rf_set_rx_maxlen(unsigned int byte_len)
+static _always_inline void rf_set_rx_maxlen(unsigned int byte_len)
 {
 	reg_rf_rxtmaxlen0 = byte_len&0xff;
 	reg_rf_rxtmaxlen1 = (byte_len>>8)&0xff;
@@ -1037,7 +1144,7 @@ void rf_set_power_level (rf_power_level_e level);
  * @param[in]   idx 	 - The index of power level which you want to set.
  * @return  	none.
  */
-_attribute_ram_code_sec_ void rf_set_power_level_index(rf_power_level_index_e idx);
+void rf_set_power_level_index(rf_power_level_index_e idx);
 
 
 /**
@@ -1257,7 +1364,6 @@ void rf_set_power_level_singletone(rf_power_level_e level);
  */
 void rf_set_rx_modulation_index(rf_mi_value_e mi_value);
 
-
 /**
  * @brief	  	This function is used to  set the modulation index of the sender.
  *              This function is common to all modes,the order of use requirement:configure mode first,
@@ -1268,6 +1374,146 @@ void rf_set_rx_modulation_index(rf_mi_value_e mi_value);
  */
 void rf_set_tx_modulation_index(rf_mi_value_e mi_value);
 
+/**
+ *	@brief	  	This function serve to adjust rx settle timing sequence.
+ *	@param[in]	rx_settle_us  	After adjusting the timing sequence, the time required for rx to settle.
+ *	@return	 	none
+ *	@note		RX_SETTLE_TIME_45US - disable rx_ldo_trim and rx_dcoc calibration,reduce 44.5us of rx settle time.Receive for a period of time and then do a normal calibration.
+ *				RX_SETTLE_TIME_80US - disable rx_ldo_trim calibration,reduce 4.5us of rx settle time. Do a normal calibration at the beginning.
+*/
+void rf_rx_fast_settle_init(rf_rx_fast_settle_time_e rx_settle_us);
+
+/**
+ *	@brief	  	This function serve to adjust tx settle timing sequence.
+ *	@param[in]	tx_settle_us  	After adjusting the timing sequence, the time required for tx to settle.
+ *	@return	 	none
+ *	@note		TX_SETTLE_TIME_50US  - disable tx_ldo_trim function and tx_hpmc,reduce 58us of tx settle time.After frequency hopping, a normal calibration must be done.
+ *	            TX_SETTLE_TIME_104US - disable tx_ldo_trim function,reduce 4.5us of tx settle time. Do a normal calibration at the beginning.
+*/
+void rf_tx_fast_settle_init(rf_tx_fast_settle_time_e tx_settle_us);
+
+/**
+ *	@brief	  	This function serve to enable the tx timing sequence adjusted.
+ *	@param[in]	none
+ *	@return	 	none
+*/
+void rf_tx_fast_settle_en(void);
+
+/**
+ *	@brief	  	This function serve to disable the tx timing sequence adjusted.
+ *	@param[in]	none
+ *	@return	 	none
+*/
+void rf_tx_fast_settle_dis(void);
+
+/**
+ *	@brief	  	This function serve to enable the rx timing sequence adjusted.
+ *	@param[in]	none
+ *	@return	 	none
+*/
+void rf_rx_fast_settle_en(void);
+
+/**
+ *	@brief	  	This function serve to disable the rx timing sequence adjusted.
+ *	@param[in]	none
+ *	@return	 	none
+*/
+void rf_rx_fast_settle_dis(void);
+
+/**
+ *  @brief		This function is mainly used to get LDO Calibration-related values.
+ *	@param[in]	ldo_trim   - ldo trim calibration value address pointer
+ *	@return	 	none
+*/
+void rf_get_ldo_trim_val(rf_ldo_trim_t *ldo_trim);
+
+/**
+ *  @brief		This function is mainly used to set LDO Calibration-related values.
+ *	@param[in]  ldo_trim   - ldo trim Calibration-related values.
+ *	@return	 	none
+*/
+void rf_set_ldo_trim_val(rf_ldo_trim_t ldo_trim);
+
+/**
+ *  @brief		This function is mainly used to get hpmc Calibration-related values.
+ *	@param[in]	none
+ *	@return	 	none
+*/
+_attribute_ram_code_sec_noinline_ unsigned short rf_get_hpmc_cal_val(void);
+
+/**
+ *  @brief		This function is mainly used to set hpmc Calibration-related values.
+ *	@param[in]  value  - hpmc Calibration-related values.
+ *	@return	 	none
+*/
+_attribute_ram_code_sec_noinline_ void rf_set_hpmc_cal_val(unsigned short value);
+
+/**
+ *  @brief		This function is mainly used to get LDO Calibration-related values.
+ *	@param[in]	dcoc_cal   - dcoc calibration value address pointer
+ *	@return	 	none
+*/
+void rf_get_dcoc_cal_val(rf_dcoc_cal_t *dcoc_cal);
+
+/**
+ *  @brief		This function is mainly used to set dcoc Calibration-related values.
+ *	@param[in]  dcoc_cal    - dcoc Calibration-related values.
+ *	@return	 	none
+*/
+void rf_set_dcoc_cal_val(rf_dcoc_cal_t dcoc_cal);
+
+
+/**
+ *  @brief		This function is mainly used to get rccal Calibration-related values.
+ *	@param[in]	rccal_cal  - rccal calibration value address pointer
+ *	@return	 	none
+*/
+void rf_get_rccal_cal_val(rf_rccal_cal_t *rccal_cal);
+
+/**
+ *  @brief		This function is mainly used to set rccal Calibration-related values.
+ *	@param[in]	rccal_cal    - rccal Calibration-related values.
+ *	@return	 	none
+*/
+void rf_set_rccal_cal_val(rf_rccal_cal_t rccal_cal);
+
+/**
+ * @brief		This function is mainly used for the disable hpmc trim function.
+ * @return		none.
+ */
+void rf_dis_hpmc_trim(void);
+
+/**
+ * @brief		This function is mainly used for the disable ldo trim function.
+ * @return		none.
+ */
+void rf_dis_ldo_trim(void);
+
+/**
+ * @brief		This function is mainly used for the disable dcoc trim function.
+ * @return		none.
+ */
+void rf_dis_dcoc_trim(void);
+
+/**
+ * @brief		This function is mainly used for the disable rccal trim function.
+ * @return		none.
+ */
+void rf_dis_rccal_trim(void);
+
+/**
+ * @brief		This function is mainly used for the disable fcal trim function.
+ * @return		none.
+ */
+void rf_dis_fcal_trim(void);
+
+/**
+ * @brief		This function is mainly used to turn off the energy of the tone.
+ * @return		none.
+ * @note		After setting the tone energy with rf_set_power_level_singletone, you need to call
+ * 				rf_set_power_off_singletone to turn off the tone energy if you enter the send packet.
+ */
+void rf_set_power_off_singletone(void);
 
 /****************************************************************************************************************************************
  *                                         RF User-defined package related functions                                  					*
@@ -1387,5 +1633,76 @@ static inline void rf_set_bis_cis_dis(void)
 {
 	BM_CLR(reg_rf_rxtmaxlen1,FLD_RF_RX_ISO_PDU);
 }
+
+/****************************************************************************************************************************************
+ *                                         RF : AOA/AOD related functions                          		 			  					*
+ ****************************************************************************************************************************************/
+
+/**
+ * @brief		This function enables the sending and receiving functions of AOA/AOD in ordinary format packets or ADV format packets.
+ * 				After configuring the RF function, if you want to send or receive a packet with AOA/AOD information, you can call this
+ * 				function to make the chip enter the corresponding mode to receive or send the packet. The default state is a normal
+ * 				package without AOA/AOD information.
+ * @param[in]	mode - AOA/AOD broadcast package or normal package trx mode.
+ * @return		none.
+ */
+static inline void rf_aoa_aod_set_trx_mode(rf_aoa_aod_mode_e mode)
+{
+	reg_rf_rxsupp = ((reg_rf_rxsupp & 0xf0) | mode);
+}
+
+/**
+ * @brief		This function is used to calibrate AOA, AOD sampling frequency offset. By default, sampling is performed at the
+ * 				middle position of iq sample slot, and the sampling point is 0.125us ahead of time for each decrease of 1 code.
+ * 				Each additional code will move the sampling point back by 0.125us
+ * @param[in]	samp_locate:Compare the parameter with the default value, reduce one code to advance 0.125us, increase or decrease 1 to move
+ * 							back 0.125us.
+ * @return		none.
+ */
+static inline void rf_aoa_aod_sample_point_adjust(unsigned char samp_locate)
+{
+	reg_rf_samp_offset = samp_locate;
+}
+
+/**
+ * @brief		This function is used to set the position of the first antenna switch after the reference.The default is in the middle of the
+ * 				first switch_slot; and the switch point is 0.125us ahead of time for each decrease of 1 code.
+ * 				Each additional code will move the switch point back by 0.125us
+ * @param[in]	swt_offset : Compare the parameter with the default value, reduce 1 to advance 0.125us, increase or decrease 1 to move
+ * 							back 0.125us.
+ * @return		none.
+ */
+void rf_aoa_rx_ant_switch_point_adjust(unsigned short swt_offset);
+
+/**
+ * @brief		This function is used to set the position of the first antenna switch after the AOD transmitter reference.The default is in the middle of the
+ * 				first switch_slot; and the switch point is 0.125us ahead of time for each decrease of 1 code. Each additional code will move
+ * 				the switch point back by 0.125us
+ * @param[in]	swt_offset : Compare the parameter with the default value, reduce 1 to advance 0.125us, increase or decrease 1 to move
+ * 							back 0.125us.
+ * @return		none.
+ */
+void rf_aod_tx_ant_switch_point_adjust(unsigned short swt_offset);
+
+/**
+ * @brief		This function is mainly used to set the IQ data sample interval time. In normal mode, the sampling interval of AOA is 4us, and AOD will judge whether
+ * 				the sampling interval is 4us or 2us according to CTE info.The 4us/2us sampling interval corresponds to the 2us/1us slot mode stipulated in the protocol.
+ * 				Due to the current antenna hardware switching only supporting 4us/2us intervals, setting the sampling interval to 1us or less will result in sampling at
+ * 				one antenna switching interval. Therefore, the sampling data needs to be processed by the upper layer as needed. At present, it is mainly used for
+ * 				debugging processes.After configuring RF, you can call this function to configure slot time.
+ * @param[in]	time_us	- AOA or AOD slot time mode.
+ * @return		none.
+ * @note	    Attention:(1)Since only the antenna switching interval of 4us/2us is supported, the sampling interval of 1us and shorter time intervals
+ * 						      will be sampled multiple times in one antenna switching interval. Suggestions can be used according to specific needs.
+ */
+void rf_aoa_aod_sample_interval_time(rf_aoa_aod_sample_interval_time_e time_us);
+
+/**
+ * @brief		This function is mainly used to set the type of AOA/AOD iq data. The default data type is 8bit. This configuration can be done before starting to receive
+ * 				the package.
+ * @param[in]	mode	- The length of each I or Q data.
+ * @return		none.
+ */
+void rf_aoa_aod_iq_data_mode(rf_iq_data_mode_e mode);
 
 #endif

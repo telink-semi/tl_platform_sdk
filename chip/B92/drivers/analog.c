@@ -88,7 +88,7 @@ dma_config_t analog_rx_dma_config={
  * @brief      This function serves to judge whether analog write/read is busy .
  * @return     none.
  */
-static inline void analog_wait();
+static _always_inline void analog_wait(void);
 /**********************************************************************************************************************
  *                                         global function implementation                                             *
  *********************************************************************************************************************/
@@ -102,7 +102,7 @@ static inline void analog_wait();
  * @param[in]  addr - address need to be read.
  * @return     the result of read.
  */
-unsigned char analog_read_reg8(unsigned char addr){
+_attribute_ram_code_sec_optimize_o2_ unsigned char analog_read_reg8(unsigned char addr){
 	unsigned int r=core_interrupt_disable();
 	reg_ana_addr = addr;
 	reg_ana_len=0x1;
@@ -120,7 +120,7 @@ unsigned char analog_read_reg8(unsigned char addr){
  * @param[in]  data - the value need to be write.
  * @return     none.
  */
-void analog_write_reg8(unsigned char addr, unsigned char data){
+_attribute_ram_code_sec_optimize_o2_ void analog_write_reg8(unsigned char addr, unsigned char data){
 	unsigned int r=core_interrupt_disable();
 	reg_ana_len = 1;
 	reg_ana_addr = addr;
@@ -137,7 +137,7 @@ void analog_write_reg8(unsigned char addr, unsigned char data){
  * @param[in]  data - the value need to be write.
  * @return     none.
  */
-void analog_write_reg16(unsigned char addr, unsigned short data)
+_attribute_ram_code_sec_optimize_o2_ void analog_write_reg16(unsigned char addr, unsigned short data)
 {
 	unsigned int r=core_interrupt_disable();
 	reg_ana_len=2;
@@ -153,7 +153,7 @@ void analog_write_reg16(unsigned char addr, unsigned short data)
  * @param[in]  addr - address need to be read.
  * @return     the result of read.
  */
-unsigned short analog_read_reg16(unsigned char addr)
+_attribute_ram_code_sec_noinline_ unsigned short analog_read_reg16(unsigned char addr)
 {
 	unsigned int r=core_interrupt_disable();
 	reg_ana_len=2;
@@ -172,7 +172,7 @@ unsigned short analog_read_reg16(unsigned char addr)
  * @param[in]  addr - address need to be read.
  * @return     the result of read.
  */
-unsigned int analog_read_reg32(unsigned char addr)
+_attribute_ram_code_sec_optimize_o2_ unsigned int analog_read_reg32(unsigned char addr)
 {
 	unsigned int r=core_interrupt_disable();
 	reg_ana_len = 4;
@@ -191,7 +191,7 @@ unsigned int analog_read_reg32(unsigned char addr)
  * @param[in]  data - the value need to be write.
  * @return     none.
  */
-void analog_write_reg32(unsigned char addr, unsigned int data)
+_attribute_ram_code_sec_optimize_o2_ void analog_write_reg32(unsigned char addr, unsigned int data)
 {
 	unsigned int r=core_interrupt_disable();
 	reg_ana_len = 4;
@@ -431,7 +431,7 @@ void analog_write_addr_data_dma(dma_chn_e chn, void *pdat, int len)
  * @brief      This function serves to judge whether analog write/read is busy .
  * @return     none.
  */
-static inline void analog_wait(){
+static _always_inline void analog_wait(void){
 	while(reg_ana_ctrl & FLD_ANA_BUSY){}
 }
 

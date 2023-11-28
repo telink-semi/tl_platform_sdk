@@ -22,7 +22,6 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "printf.h"
 
 volatile unsigned int cur_32k_tick[200];
 volatile unsigned int cur_32k_tick_step[200];
@@ -47,7 +46,29 @@ void user_init(void)
 #if (STIMER_MODE == STIMER_IRQ)
 	stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
 	stimer_set_irq_mask(FLD_SYSTEM_IRQ);	//irq enable
-	plic_interrupt_enable(IRQ1_SYSTIMER);
+	plic_interrupt_enable(IRQ_SYSTIMER);
+	core_interrupt_enable();
+
+#elif(MCU_CORE_B93 && (STIMER_MODE == STIMER_IRQ_D25))
+
+	stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
+	stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK_D25F);	//irq enable
+	plic_interrupt_enable(IRQ_SYSTIMER);
+	core_interrupt_enable();
+
+	sys_n22_set_startup_addr(0x20080000);
+    sys_n22_init();
+
+    //enable dsp
+	sys_dsp_init();
+
+#elif(MCU_CORE_B93 && (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
+
+	stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
+	stimer_set_irq_capture_n22(stimer_get_tick() + (500*SYSTEM_TIMER_TICK_1MS));
+	stimer_set_irq_capture_dsp(stimer_get_tick() + (200*SYSTEM_TIMER_TICK_1MS));
+	stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK_D25F | FLD_SYSTEM_IRQ_MASK_N22 | FLD_SYSTEM_IRQ_MASK_DSP);	//irq enable
+	plic_interrupt_enable(IRQ_SYSTIMER);
 	core_interrupt_enable();
 
 #elif (STIMER_MODE == STIMER_GET_32K_TICK)
@@ -57,7 +78,13 @@ void user_init(void)
 #elif (STIMER_MODE == STIMER_SET_32K_TICK)
 	clock_set_32k_tick(clock_get_32k_tick() + 32000);	//1s
 	analog_write_reg8(0x64, 0xff);
-	plic_interrupt_enable(IRQ45_PM_IRQ);
+#if (MCU_CORE_B91)
+	plic_interrupt_enable(IRQ_PM_TM);
+#elif (MCU_CORE_B92)
+	plic_interrupt_enable(IRQ_PM_IRQ);
+#elif (MCU_CORE_B93)
+	plic_interrupt_enable(IRQ_PM_WKUP);
+#endif
 	core_interrupt_enable();
 
 #elif (STIMER_MODE == STIMER_TRACK_32K_TICK)
@@ -76,6 +103,20 @@ void main_loop(void)
 	delay_ms(500);
 	gpio_toggle(LED1);
 
+#elif(MCU_CORE_B93 && (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
+	delay_ms(20);
+	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_N22))
+	{
+		gpio_toggle(LED3);
+		stimer_clr_irq_status(FLD_SYSTEM_IRQ_N22);
+		stimer_set_irq_capture_n22(stimer_get_tick() + (500*SYSTEM_TIMER_TICK_1MS));
+	}
+	if(stimer_get_irq_status(FLD_SYSTEM_IRQ_DSP))
+	{
+		gpio_toggle(LED4);
+		stimer_clr_irq_status(FLD_SYSTEM_IRQ_DSP);
+		stimer_set_irq_capture_dsp(stimer_get_tick() + (200*SYSTEM_TIMER_TICK_1MS));
+	}
 
 #elif (STIMER_MODE == STIMER_GET_32K_TICK)
 	cur_32k_tick[0] = clock_get_32k_tick();
@@ -113,7 +154,7 @@ void main_loop(void)
 	}
 
 #elif (STIMER_MODE == STIMER_GET_TICK)
-	if(stimer_get_tick()&0x07 != 0x00)
+	if((stimer_get_tick()&(0x07))!= 0x00)
 	{
 		stimer_tick_low3bit = 1;
 		gpio_set_high_level(LED1);

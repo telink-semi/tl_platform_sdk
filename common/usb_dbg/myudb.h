@@ -41,7 +41,7 @@ void 	myudb_register_hci_cb (void *p);
 
 void 	myudb_usb_init(unsigned short id, void *p);
 
-void 	myudb_usb_bulkout_ready ();
+void 	myudb_usb_bulkout_ready (void);
 
 void 	myudb_usb_handle_irq(void);
 
@@ -53,7 +53,7 @@ void 	myudb_capture_enable (int en);
 
 void 	usb_send_str_data (char *str, unsigned char *ph, int n);
 
-void	myudb_set_txfifo_local ();
+void	myudb_set_txfifo_local (void);
 
 void	myudb_set_txfifo (void *p);
 

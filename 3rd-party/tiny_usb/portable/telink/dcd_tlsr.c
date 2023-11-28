@@ -77,14 +77,14 @@ void dcd_init(unsigned char rhport)
 void dcd_int_enable(unsigned char rhport)
 {
   (void) rhport;
-  plic_interrupt_enable(IRQ11_USB_ENDPOINT);
+  plic_interrupt_enable(IRQ_USB_ENDPOINT);
 }
 
 // Disable device interrupt
 void dcd_int_disable(unsigned char rhport)
 {
   (void) rhport;
-  plic_interrupt_disable(IRQ11_USB_ENDPOINT);
+  plic_interrupt_disable(IRQ_USB_ENDPOINT);
 }
 
 // Receive Set Address request, mcu port must also include status IN response
@@ -295,6 +295,7 @@ static void receive_packet(unsigned char ep_num)
 
 static void transmit_packet(unsigned char ep_num)
 {
+  if(ep_num >= EP_MAX)  return;
   xfer_ctl_t *xfer = XFER_CTL_BASE(ep_num, TUSB_DIR_IN);
 
   // First, determine whether we should even send a packet or finish
