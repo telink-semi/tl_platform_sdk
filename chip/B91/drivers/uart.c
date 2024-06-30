@@ -648,7 +648,7 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
   * @return    none
   * @note      In the case that the DMA transfer is not completed(bit 0 of reg_dma_ctr0(chn): 1-the transmission has not been completed,0-the transmission is completed), re-calling the DMA-related functions may cause problems.
   *            If you must do this, you must perform the following sequence:
-  *            1. dma_chn_dis(uart_dma_tx_chn[uart_num]) 2.uart_reset() 3.uart_send_dma()
+  *            1. dma_chn_dis(uart_dma_tx_chn[uart_num]) 2.uart_hw_fsm_reset() 3.uart_send_dma()
   */
  void uart_set_tx_dma_config(uart_num_e uart_num, dma_chn_e chn)
  {
@@ -663,7 +663,7 @@ unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
   * @return    none
   * @note      In the case that the DMA transfer is not completed(bit 0 of reg_dma_ctr0(chn): 1-the transmission has not been completed,0-the transmission is completed), re-calling the DMA-related functions may cause problems.
   *            If you must do this, you must perform the following sequence:
-  *            1. dma_chn_dis(uart_dma_rx_chn[uart_num]) 2.uart_reset() 3.uart_receive_dma()
+  *            1. dma_chn_dis(uart_dma_rx_chn[uart_num]) 2.uart_hw_fsm_reset() 3.uart_receive_dma()
   */
  void uart_set_rx_dma_config(uart_num_e uart_num, dma_chn_e chn)
  {

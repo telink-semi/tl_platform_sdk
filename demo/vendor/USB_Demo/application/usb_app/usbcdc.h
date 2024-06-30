@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    usbcdc.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -46,10 +46,10 @@ extern unsigned char LineCoding[7];
 
 
 /**
- * @brief		This function serves to send data to USB host in CDC device
- * @param[in] 	data_ptr -  the pointer of data, which need to be sent.
- * @param[in] 	data_len -  the length of data, which need to be sent.
- * @return 		none
+ * @brief       This function serves to send data to USB host in CDC device
+ * @param[in]   data_ptr -  the pointer of data, which need to be sent.
+ * @param[in]   data_len -  the length of data, which need to be sent.
+ * @return      none
  */
  void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len);
 

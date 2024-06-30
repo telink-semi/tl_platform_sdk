@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    image_4bitram_ivo1_6.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2022

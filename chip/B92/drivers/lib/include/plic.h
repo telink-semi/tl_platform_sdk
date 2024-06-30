@@ -148,7 +148,7 @@ extern _attribute_data_retention_sec_ volatile unsigned char g_plic_preempt_en;
 #define IRQ_GPIO_SRC6               40 /* GPIO_GROUP_IRQ[6], - gpio_src6_irq_handler */
 #define IRQ_GPIO_SRC7               41 /* GPIO_GROUP_IRQ[7], - gpio_src7_irq_handler */
 
-#define IRQ_PM_WKUP                 44 /* PM_WKUP_IRQ: PM wakeup interrupt, - pm_wkup_irq_handler */
+#define IRQ_PM_LVL                  44 /* PM_LVL_IRQ: PM level interrupt, - pm_level_irq_handler */
 #define IRQ_PM_IRQ                  45 /* PM_MIX_IRQ: PM mixed interrupt, - pm_irq_handler */
 #define IRQ_DPR_IRQ                 46 /* DPR_IRQ: dynamic power reduction, - dpr_irq_handler */
 
@@ -196,7 +196,7 @@ extern _attribute_data_retention_sec_ volatile unsigned char g_plic_preempt_en;
 #define IRQ40_GPIO_SRC6             IRQ_GPIO_SRC6            /* GPIO_GROUP_IRQ[6], - gpio_src6_irq_handler */
 #define IRQ41_GPIO_SRC7             IRQ_GPIO_SRC7            /* GPIO_GROUP_IRQ[7], - gpio_src7_irq_handler */
 
-#define IRQ44_PM_WKUP               IRQ_PM_WKUP              /* PM_WKUP_IRQ: PM wakeup interrupt, - pm_wkup_irq_handler */
+#define IRQ44_PM_LVL                IRQ_PM_LVL               /* PM_LVL_IRQ: PM level interrupt, - pm_level_irq_handler */
 #define IRQ45_PM_IRQ                IRQ_PM_IRQ               /* PM_MIX_IRQ: PM mixed interrupt, - pm_irq_handler */
 #define IRQ46_DPR_IRQ               IRQ_DPR_IRQ              /* DPR_IRQ: dynamic power reduction, - dpr_irq_handler */
 /**

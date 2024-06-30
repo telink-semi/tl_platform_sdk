@@ -36,7 +36,7 @@
 #define OPT_MCU_NONE                0
 
 // Telink TLSR9
-#define OPT_MCU_TLSR9x1x       	 1500 ///< Telink TLSR9x1x
+#define OPT_MCU_TLSR9x1x         1500 ///< Telink TLSR9x1x
 /** @} */
 
 /** \defgroup group_supported_os Supported RTOS

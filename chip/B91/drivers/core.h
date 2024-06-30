@@ -25,6 +25,10 @@
 #define CORE_H
 #include "lib/include/sys.h"
 #include "nds_intrinsic.h"
+
+#define DISABLE_BTB __asm__("csrci mmisc_ctl,8")
+#define ENABLE_BTB  __asm__("csrsi mmisc_ctl,8")
+
 	/* Machine mode MHSP_CTL */
 typedef enum{
 
@@ -58,8 +62,8 @@ typedef enum
  */
 typedef enum {
     CORE_PREEMPT_PRI_MODE0 = FLD_MIE_MSIE | FLD_MIE_MTIE, /**< MTI and MSI cannot interrupt MEI, MSI and MTI can be nested within each other. */
-    CORE_PREEMPT_PRI_MODE1 = FLD_MIE_MTIE,                /**< MTI cannot interrupt MEI, MSI and MTI can be nested within each other. */
-    CORE_PREEMPT_PRI_MODE2 = FLD_MIE_MSIE,                /**< MSI cannot interrupt MEI, MSI and MTI can be nested within each other. */
+    CORE_PREEMPT_PRI_MODE1 = FLD_MIE_MTIE,                /**< MTI cannot interrupt MEI, MSI and MTI can be nested within each other, MSI and MEI can be nested within each other. */
+    CORE_PREEMPT_PRI_MODE2 = FLD_MIE_MSIE,                /**< MSI cannot interrupt MEI, MSI and MTI can be nested within each other, MTI and MEI can be nested within each other. */
     CORE_PREEMPT_PRI_MODE3 = BIT(1),                      /**< MEI, MSI and MTI can be nested within each other(MIE register bit1 is an invalid bit). */
 }core_preempt_pri_e;
 
@@ -306,4 +310,31 @@ static inline  unsigned int core_get_current_pc(void)
 	__asm__ ("auipc %0, 0":"=r"(current_pc)::"a0");
 	return current_pc;
 }
+
+/**
+ * @brief     This function performs to get cclk tick.
+ * @return    cclk timer tick value.
+ */
+__attribute__((always_inline)) static inline unsigned long long rdmcycle(void)
+{
+#if __riscv_xlen == 32
+	do {
+		unsigned long hi = read_csr(NDS_MCYCLEH);
+		unsigned long lo = read_csr(NDS_MCYCLE);
+
+		if (hi == read_csr(NDS_MCYCLEH))
+			return ((unsigned long long)hi << 32) | lo;
+	} while(1);
+#else
+	return read_csr(NDS_MCYCLE);
+#endif
+}
+
+/**
+ * @brief       This function performs to set delay time by cclk tick.
+ * @param[in]   core_cclk_tick - Number of ticks in cclk
+ * @return      none
+ */
+_attribute_ram_code_sec_optimize_o2_noinline_ void core_cclk_delay_tick(unsigned long long core_cclk_tick);
+
 #endif

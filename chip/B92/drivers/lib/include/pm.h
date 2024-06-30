@@ -50,7 +50,12 @@
  * @brief these analog register can store data in deep sleep mode or deep sleep with SRAM retention mode.
  * 	      Reset these analog registers by watchdog, software reboot (sys_reboot()), RESET Pin, power cycle, 32k watchdog, vbus detect.
  */
-#define PM_ANA_REG_WD_CLR_BUF0			0x35 // initial value 0xff. [Bit0] is already occupied. The customer cannot change!
+/**
+ * Customers cannot use analog register 0x35 because driver and chip functions are occupied, details are as follows:
+ * [Bit0]: If this bit is 1, it means that reboot or power on has occurred. If this bit is 0, it means that sleep has occurred.
+ * [Bit1~7]: These bits are used by the driver and cannot be used by the customer.
+ */
+#define PM_ANA_REG_WD_CLR_BUF0			0x35 // initial value 0xff.
 #define PM_ANA_REG_WD_CLR_BUF1			0x36 // initial value 0x00.
 #define PM_ANA_REG_WD_CLR_BUF2			0x37 // initial value 0x00
 #define PM_ANA_REG_WD_CLR_BUF3			0x38 // initial value 0x00
@@ -60,9 +65,15 @@
  * @brief analog register below can store information when MCU in deep sleep mode or deep sleep with SRAM retention mode.
  * 	      Reset these analog registers by power cycle, 32k watchdog, RESET Pin,vbus detect.
  */
-//[Bit1]: If this bit is 1, it means that the software calls the function sys_reboot() when the crystal oscillator does not start up normally, The customer cannot change!
-//[Bit2]: If this bit is 1, it means that the pm_sleep_wakeup function failed to clear the pm wake flag bit when using the deep wake source, and the software called sys_reboot(),The customer cannot change!
-#define PM_ANA_REG_POWER_ON_CLR_BUF0	0x3a // initial value 0x00 [Bit0] is already occupied. The customer cannot change!
+/**
+ * Customers cannot use analog register 0x3a because driver and chip functions are occupied, details are as follows:
+ * [Bit0]: If this bit is 1, it means that reboot has occurred.
+ * [Bit1]: If this bit is 1, it means that the software calls the function sys_reboot() when the crystal oscillator does not start up normally.
+ * [Bit2]: If this bit is 1, it means that the pm_sleep_wakeup function failed to clear the pm wake flag bit when using the deep wake source, and the software called sys_reboot().
+ * [Bit3~6]: These bits are used by the driver and cannot be used by the customer.
+ * [Bit7]: The bootrom is used.
+ */
+#define PM_ANA_REG_POWER_ON_CLR_BUF0	0x3a // initial value 0x00
 #define PM_ANA_REG_POWER_ON_CLR_BUF1	0x3b // initial value 0x00
 #define PM_ANA_REG_POWER_ON_CLR_BUF2	0x3c // initial value 0xff
 
@@ -136,7 +147,7 @@ typedef enum {
 											2.When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV, otherwise can not enter sleep normally, crash occurs.
 										  */
 //	 PM_WAKEUP_MDEC		 	= BIT(4),
-//	 PM_WAKEUP_CTB 			= BIT(5),
+	 PM_WAKEUP_CTB 			= BIT(5),     //For internal testing only, this function is not available externally
 //	 PM_WAKEUP_VAD 			= BIT(6),
 //	 PM_WAKEUP_SHUTDOWN		= BIT(7),
 }pm_sleep_wakeup_src_e;
@@ -150,8 +161,9 @@ typedef enum {
 	WAKEUP_STATUS_TIMER 			= BIT(2),
 	WAKEUP_STATUS_COMPARATOR    	= BIT(3),
 //	WAKEUP_STATUS_MDEC    			= BIT(4),
-//	WAKEUP_STATUS_CTB    			= BIT(5),
+	WAKEUP_STATUS_CTB    			= BIT(5),			//For internal testing only, this function is not available externally
 //	WAKEUP_STATUS_VAD   			= BIT(6),
+	WAKEUP_STATUS_ALL  				= 0xff,
 
 	STATUS_GPIO_ERR_NO_ENTER_PM		= BIT(8), /**<Bit8 is used to determine whether the wake source is normal.*/
 	STATUS_CLEAR_FAIL	  			= BIT(29),
@@ -177,6 +189,7 @@ typedef enum {
  */
 typedef enum{
 	MCU_STATUS_POWER_ON			= BIT(0), /**<	power on, vbus detect or reset pin */
+	//BIT(1) RSVD
 	MCU_STATUS_REBOOT_BACK		= BIT(2), /**<	the reboot specific categories,see pm_reboot_event_e:
 												1.If want to know which reboot it is, call the pm_get_mcu_reboot_status() interface to determine after calling sys_init().
 												2.If determine whether is 32k watchdog/timer watchdog,can also use the interface wd_32k_get_status()/wd_get_status() to determine.
@@ -202,10 +215,10 @@ typedef enum{
  * @brief	early wakeup time
  */
 typedef struct {
-	unsigned short  suspend_early_wakeup_time_us;	/**< suspend_early_wakeup_time_us = deep_ret_r_delay_us + xtal_stable_time + early_time*/
-	unsigned short  deep_ret_early_wakeup_time_us;  /**< deep_ret_early_wakeup_time_us = deep_ret_r_delay_us + early_time*/
-	unsigned short  deep_early_wakeup_time_us;		/**< deep_early_wakeup_time_us = suspend_ret_r_delay_us*/
-	unsigned short  sleep_min_time_us;				/**< sleep_min_time_us = suspend_early_wakeup_time_us + 200*/
+	unsigned short  suspend_early_wakeup_time_us;	/**< suspend_early_wakeup_time_us = suspend_ret_r_delay_us + xtal_stable_time + early_time*/
+	unsigned short  deep_ret_early_wakeup_time_us;  /**< deep_ret_early_wakeup_time_us = suspend_ret_r_delay_us + early_time*/
+	unsigned short  deep_early_wakeup_time_us;		/**< deep_early_wakeup_time_us = deep_r_delay_us + early_time*/
+	unsigned short  sleep_min_time_us;				/**< sleep_min_time_us = the maximum value of suspend and deep + code + margin*/
 }pm_early_wakeup_time_us_s;
 
 extern volatile pm_early_wakeup_time_us_s g_pm_early_wakeup_time_us;
@@ -260,6 +273,16 @@ static _always_inline pm_wakeup_status_e pm_get_wakeup_src(void)
 static inline void pm_clr_irq_status(pm_wakeup_status_e status)
 {
 	analog_write_reg8(0x64, status);/*add by weihua.zhang, confirmed by jianzhi.chen*/
+}
+
+/**
+ * @brief		This function serves to set the wakeup source.
+ * @param[in]	wakeup_src	- wake up source select.
+ * @return		none.
+ */
+static inline void pm_set_wakeup_src(pm_sleep_wakeup_src_e wakeup_src)
+{
+	analog_write_reg8(0x4b, wakeup_src);
 }
 
 /**

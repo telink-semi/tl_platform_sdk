@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -28,45 +28,45 @@
 
 
 static void led_task(void *pvParameters){
-	reg_gpio_pb_oen &= ~ GPIO_PB7;
-	while(1){
-		reg_gpio_pb_out |= GPIO_PB7;
-		vTaskDelay(1000);
-		reg_gpio_pb_out &= ~GPIO_PB7;
-		vTaskDelay(1000);
-	}
-	(void)(pvParameters);
+    reg_gpio_pb_oen &= ~ GPIO_PB7;
+    while(1){
+        reg_gpio_pb_out |= GPIO_PB7;
+        vTaskDelay(1000);
+        reg_gpio_pb_out &= ~GPIO_PB7;
+        vTaskDelay(1000);
+    }
+    (void)(pvParameters);
 }
 
 static void led_task1(void *pvParameters){
-	reg_gpio_pb_oen &= ~ GPIO_PB4;
-	while(1){
-		reg_gpio_pb_out |= GPIO_PB4;
-		vTaskDelay(500);
-		reg_gpio_pb_out &= ~GPIO_PB4;
-		vTaskDelay(1000);
-	}
-	(void)(pvParameters);
+    reg_gpio_pb_oen &= ~ GPIO_PB4;
+    while(1){
+        reg_gpio_pb_out |= GPIO_PB4;
+        vTaskDelay(500);
+        reg_gpio_pb_out &= ~GPIO_PB4;
+        vTaskDelay(1000);
+    }
+    (void)(pvParameters);
 }
 
 extern void vPortRestoreTask();
 
 /**
- * @brief		This is main function
+ * @brief       This is main function
  * @return      none
  */
 int main (void)
 {
-	PLATFORM_INIT;
-	CLOCK_INIT;
+    PLATFORM_INIT;
+    CLOCK_INIT;
 
-	if(0 ){						// deepRetWakeUp
-		vPortRestoreTask();
-	}else{
-		xTaskCreate( led_task, "tLed", configMINIMAL_STACK_SIZE, (void*)0, (tskIDLE_PRIORITY+1), 0 );
-		xTaskCreate( led_task1, "tLed1", configMINIMAL_STACK_SIZE, (void*)0, (tskIDLE_PRIORITY+1), 0 );
-		vTaskStartScheduler();
-	}
+    if(0 ){                     // deepRetWakeUp
+        vPortRestoreTask();
+    }else{
+        xTaskCreate( led_task, "tLed", configMINIMAL_STACK_SIZE, (void*)0, (tskIDLE_PRIORITY+1), 0 );
+        xTaskCreate( led_task1, "tLed1", configMINIMAL_STACK_SIZE, (void*)0, (tskIDLE_PRIORITY+1), 0 );
+        vTaskStartScheduler();
+    }
 
-	return 0;
+    return 0;
 }

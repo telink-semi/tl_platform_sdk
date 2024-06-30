@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -30,14 +30,7 @@ extern "C"
 #endif
 #include "driver.h"
 #include "common.h"
-
-#define HASH_TEST                           1
-#define HMAC_TEST                           2
-#define SAMPLE_HASH_HMAC_TEST               3
-#define PBKDF2_TEST                         4
-
-
-#define HASH_TEST_MODE                      HASH_TEST
+#include "hash_hmac_test/app_test.h"
 
 #ifdef HASH_DMA_FUNCTION
 extern int buf_hash_dma[0x600];

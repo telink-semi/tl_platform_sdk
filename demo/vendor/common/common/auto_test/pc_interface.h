@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    pc_interface.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2023
@@ -33,30 +33,35 @@
  * -2.a block of continuous address is created in ram,which is divided into two parts :one part is used to receive command
  * from the upper monitor,another part is used to send result waited to read by the upper monitor
  *
- * -3.In order to advance the speed of the whole system,we consider to use Multi-layer fifo	to upload or download data.
+ * -3.In order to advance the speed of the whole system,we consider to use Multi-layer fifo to upload or download data.
  *
 ****************************************************************************************************************************/
 
 /**
  * @brief  Those macro definition to save parameter and test result according to base address.
  */
-#if(MCU_CORE_B91|MCU_CORE_B92)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
 #define  PARA_BASE_ADDR   0x00000004
-#elif(MCU_CORE_B93)
-#define  PARA_BASE_ADDR   0x00020004	// D25
-//#define  PARA_BASE_ADDR   0x00000004	// N22
-#elif(MCU_CORE_B95)
+#elif defined(MCU_CORE_TL751X)
+#define  PARA_BASE_ADDR   0x00020004    // D25
+// #define PARA_BASE_ADDR    0x50020004    // N22
+#elif defined(MCU_CORE_B931)
+#define PARA_BASE_ADDR    0x00020004    // D25
+// #define PARA_BASE_ADDR    0x50020004    // N22
+#elif defined(MCU_CORE_TL721X)
 #define  PARA_BASE_ADDR   0x00040004
-#elif(MCU_CORE_B96)
+#elif defined(MCU_CORE_TL321X)
 #define  PARA_BASE_ADDR   0x00068004
+#elif defined(MCU_CORE_W92)
+#define  PARA_BASE_ADDR   0x00020004    // D25
 #endif
 /*
  * Since data conflicts occur on the B85M in the form of fixed addresses,
- * the B91M is also managed in the form of dynamically allocated memory addresses in order to consider compatibility.
+ * the Telink RISC-V MCU is also managed in the form of dynamically allocated memory addresses in order to consider compatibility.
  * This form finds a 4-byte aligned starting address in the data area,
  * and then assigns address to each parameter according to this address.
  */
-#define  PARA_BUF_CHECK	  (par_addr+0x0) // save the address of par_addr to be checked by the upper monitor
+#define  PARA_BUF_CHECK   (par_addr+0x0) // save the address of par_addr to be checked by the upper monitor
 #define  PARA_BUF_ADDR    (par_addr+0x4) // set the address of buffer of command from the upper monitor
 #define  PARA_BUF_SIZE    (par_addr+0x8) // set the size of address of buffer of command from the upper monitor
 #define  PARA_BUF_CNT     (par_addr+0x9) // set layers of fifo
@@ -81,53 +86,53 @@ extern unsigned char para_buff[COMMAND_BUFF_SIZE];
 extern volatile unsigned char par_addr[20]__attribute__((aligned(4)));
 
 /**
- * @brief      	This struct define the format of command/result package.
- * @note  		payload        - 60 byte.
- *      		payload_length - 2 byte
- *      		crc            - 2 byte
+ * @brief       This struct define the format of command/result package.
+ * @note        payload        - 60 byte.
+ *              payload_length - 2 byte
+ *              crc            - 2 byte
  */
 typedef struct{
-	unsigned char payload[60];
-	unsigned int payload_length:16;
-	unsigned char crc[2];
+    unsigned char payload[60];
+    unsigned int payload_length:16;
+    unsigned char crc[2];
 }autotest_package_t, *autotest_package_t_ptr;
 
-#if(MCU_CORE_B91 || MCU_CORE_B92)
+#if defined(MCU_CORE_B91) ||defined(MCU_CORE_B92)
 /**
- * @brief      	This function is used to convert cpu address to bus address.
- * @param[in]  	addr - the addr need to be converted.
- * @return     	bus_addr
+ * @brief       This function is used to convert cpu address to bus address.
+ * @param[in]   addr - the addr need to be converted.
+ * @return      bus_addr
  */
 extern unsigned int convert_addr2bus (unsigned int addr);
 #endif
 
 /**
- * @brief      	This function is used to initiate the buffer of command.
- * @param[in]  	none
- * @return     	none
+ * @brief       This function is used to initiate the buffer of command.
+ * @param[in]   none
+ * @return      none
  */
 extern void para_buff_init(void);
 /**
- * @brief      	This function is used to get the command from the upper monitor.
- * @return     	none
+ * @brief       This function is used to get the command from the upper monitor.
+ * @return      none
  */
 extern unsigned int para_buff_have_data(void);
 /**
- * @brief      	This function is used to read command from the upper monitor.
- * @param[in]  	*dest_buf - save the command to the specified location waiting to be executed.
- * @param[in]  	len       - set the length of command waiting to read.
- * @return     	crc_flag  - 1(CRC correct)  -1(CRC error)
+ * @brief       This function is used to read command from the upper monitor.
+ * @param[in]   *dest_buf - save the command to the specified location waiting to be executed.
+ * @param[in]   len       - set the length of command waiting to read.
+ * @return      crc_flag  - 1(CRC correct)  -1(CRC error)
  */
 extern int para_buff_read(unsigned char *dest_buf, unsigned char len);
 /**
- * @brief      	This function is used to initiate the result buffer.
- * @param[in]  	none
- * @return     	none
+ * @brief       This function is used to initiate the result buffer.
+ * @param[in]   none
+ * @return      none
  */
 extern void result_buff_init(void);
 /**
- * @brief      	This function is used to clear the result buffer.
- * @return     	none
+ * @brief       This function is used to clear the result buffer.
+ * @return      none
  */
 extern void result_buff_clear(void);
 /**

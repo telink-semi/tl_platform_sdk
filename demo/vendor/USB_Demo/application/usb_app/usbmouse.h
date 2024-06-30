@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    usbmouse.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -24,7 +24,7 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-	extern "C" {
+    extern "C" {
 #endif
 
 #include "../usbstd/HIDClassCommon.h"
@@ -36,11 +36,11 @@
 
 
 #define MOUSE_REPORT_DATA_LEN     (sizeof(mouse_data_t))
-#define MEDIA_REPORT_DATA_LEN		4
+#define MEDIA_REPORT_DATA_LEN       4
 int usbmouse_hid_report(unsigned char report_id, unsigned char *data, int cnt);
 
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-	}
+    }
 #endif

@@ -105,16 +105,16 @@ enum
 #define   reg_audio_dec0_sel            REG_ADDR8(REG_AUDIO_APB_BASE+0x60)
 enum
 {
-		FLD_AUDIO_DEC0_AIN0_COME            =  BIT_RNG(0,1),
-		FLD_AUDIO_DEC0_AIN1_COME            =  BIT_RNG(2,3),
+		FLD_AUDIO_DEC0_AINL_COME            =  BIT_RNG(0,1),
+		FLD_AUDIO_DEC0_AINR_COME            =  BIT_RNG(2,3),
 		FLD_AUDIO_INT_AOUT_COME            =  BIT_RNG(4,7),
 };
 
 #define   reg_audio_dec1_sel            REG_ADDR8(REG_AUDIO_APB_BASE+0x56)
 enum
 {
-		FLD_AUDIO_DEC1_AIN0_COME            =  BIT_RNG(0,2),
-		FLD_AUDIO_DEC1_AIN1_COME            =  BIT_RNG(4,6),
+		FLD_AUDIO_DEC1_AINL_COME            =  BIT_RNG(0,2),
+		FLD_AUDIO_DEC1_AINR_COME            =  BIT_RNG(4,6),
 };
 
 #define   reg_audio_sel1				REG_ADDR8(REG_AUDIO_APB_BASE+0x05)

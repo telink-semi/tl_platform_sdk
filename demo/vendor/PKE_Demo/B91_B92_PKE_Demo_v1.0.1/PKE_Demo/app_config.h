@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -31,15 +31,15 @@ extern "C" {
 #include "common.h"
 
 
-#define	 PKE_ECDH			1
-#define	 PKE_ECDSA			2
-#define	 PKE_X25519			3
-#if(MCU_CORE_B92||  MCU_CORE_B93)
-#define  PKE_RSA			4
+#define  PKE_ECDH           1
+#define  PKE_ECDSA          2
+#define  PKE_X25519         3
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)
+#define  PKE_RSA            4
 #endif
 
 
-#define	 PKE_TEST_MODE		PKE_ECDH
+#define  PKE_TEST_MODE      PKE_ECDH
 
 
 

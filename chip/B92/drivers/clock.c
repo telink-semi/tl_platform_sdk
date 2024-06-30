@@ -25,7 +25,7 @@
 #include "clock.h"
 #include "mspi.h"
 #include "stimer.h"
-
+#include "error_handler/error_handler.h"
 
 unsigned char rc_24m_power;
 unsigned char bbpll_power;
@@ -146,6 +146,16 @@ unsigned char clock_kick_32k_xtal(unsigned char xtal_times)
 }
 
 /**
+ * @brief      This function serves to 24m rc calibration wait..
+ * @return     1:busy  0:not busy
+ */
+static bool clock_24m_rc_cal_busy(void)
+{
+	return ((analog_read_reg8(0xcf) &BIT(7)) == 0x00);
+
+}
+
+/**
  * @brief     This function performs to select 24M as the system clock source.
  * 			  24M RC is inaccurate, and it is greatly affected by temperature, if need use it so real-time calibration is required
  *			  The 24M RC needs to be calibrated before the pm_sleep_wakeup function,
@@ -162,7 +172,7 @@ void clock_cal_24m_rc(void)
 
 	analog_write_reg8(0xc7, 0x0e);
 	analog_write_reg8(0xc7, 0x0f);
-    while((analog_read_reg8(0xcf) & 0x80) == 0);
+	wait_condition_fails_or_timeout(clock_24m_rc_cal_busy,g_drv_api_error_timeout_us,drv_timeout_handler,(unsigned int)DRV_API_ERROR_TIMEOUT_RC_24M_CAL);
     unsigned char cap = analog_read_reg8(0xcb);
     analog_write_reg8(0x52, cap);		//write 24m cap into manual register
 
@@ -170,6 +180,17 @@ void clock_cal_24m_rc(void)
 
     analog_write_reg8(0xc7, 0x0e);
 	tl_24mrc_cal = analog_read_reg8(0x52);
+}
+
+
+/**
+ * @brief      This function serves to 32k rc calibration wait.
+ * @return     1:busy  0: not busy
+ */
+static bool clock_32k_rc_cal_busy(void)
+{
+	return ((analog_read_reg8(0xcf) & BIT(6)) == 0x00);
+
 }
 
 /**
@@ -181,7 +202,7 @@ void clock_cal_32k_rc(void)
 	analog_write_reg8(0x4f, ((analog_read_reg8(0x4f) & 0x3f) | 0x40));
 	analog_write_reg8(0xc6, 0xf6);
 	analog_write_reg8(0xc6, 0xf7);
-    while(0 == (analog_read_reg8(0xcf) & BIT(6))){};
+	wait_condition_fails_or_timeout(clock_32k_rc_cal_busy,g_drv_api_error_timeout_us,drv_timeout_handler,(unsigned int)DRV_API_ERROR_TIMEOUT_RC_32K_CAL);
 	unsigned char res1 = analog_read_reg8(0xc9);	//read 32k res[13:6]
 	analog_write_reg8(0x51, res1);		//write 32k res[13:6] into manual register
 	unsigned char res2 = analog_read_reg8(0xca);	//read 32k res[5:0]
@@ -210,7 +231,7 @@ _attribute_ram_code_sec_optimize_o2_ void clock_set_32k_tick(unsigned int tick)
 	 * wait 0.25us before you can use wr_busy signal for judgment, jianzhi suggested that this time to 1us is enough.
 	 * add by bingyu.li, confirmed by jianzhi.chen 20231115
 	 */
-	CLOCK_NOP_DLY_1US;
+	core_cclk_delay_tick(sys_clk.cclk);
 	while(reg_system_st & FLD_SYSTEM_CMD_SYNC);	//wait wr_busy = 0
 
 }
@@ -372,9 +393,9 @@ void clock_init(sys_pll_clk_e pll,
 				sys_hclk_div_to_pclk_e pclk_div,
 				sys_pll_div_to_mspi_clk_e mspi_clk_div)
 {
-	__asm__("csrci 	mmisc_ctl,8");	//disable BTB
+	DISABLE_BTB;
 	clock_init_ram(pll, src, cclk_div, hclk_div, pclk_div, mspi_clk_div);
-	__asm__("csrsi 	mmisc_ctl,8");	//enable BTB
+	ENABLE_BTB;
 }
 
 /**

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    assert.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,13 +29,13 @@
 #else
 
 static inline void bad_assertion(const char *mess) {
-	printf(mess);
-	while(1);
+    printf(mess);
+    while(1);
 }
 
-#define  __str(x)  	# x
+#define  __str(x)   # x
 #define  __xstr(x)  __str(x)
 #define  assert(expr)  ((expr)? (void)0 : \
-		 bad_assertion("Assertion failed, file "__xstr(__FILE__)", line" __xstr(__LINE__) "\n"))
+         bad_assertion("Assertion failed, file "__xstr(__FILE__)", line" __xstr(__LINE__) "\n"))
 #endif
 #endif

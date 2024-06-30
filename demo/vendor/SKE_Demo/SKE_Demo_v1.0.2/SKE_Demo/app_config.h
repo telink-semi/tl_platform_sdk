@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -30,15 +30,7 @@ extern "C"
 #endif
 #include "driver.h"
 #include "common.h"
-
-#define SKE_SAMPLE_TEST                    1
-#define SKE_TEST                           2
-#define SKE_CCM_TEST                       3
-#define SKE_GCM_TEST                       4
-#define SKE_GMAC_TEST                      5
-
-
-#define	 SKE_TEST_MODE                     SKE_SAMPLE_TEST
+#include "ske_test/app_test.h"
 
 #ifdef SKE_LP_DMA_FUNCTION
 extern int buf_ske_dma[0xC00];

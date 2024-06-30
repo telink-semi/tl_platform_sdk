@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    sdcard.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -92,7 +92,6 @@ unsigned char SD_GetCSD(unsigned char *csd_data);
 unsigned char SD_WriteDisk_lba512(unsigned char*buf,unsigned int sector);
 unsigned char SD_ReadDisk_lba512(unsigned char*buf,unsigned int sector);
 unsigned char SD_WriteDisk_lba512_continue(unsigned char*buf,unsigned int sector,unsigned char cnt);
-unsigned char SD_SPI_ReadByte();
 void sd_read_data(unsigned char *data_buff, unsigned int length);
 #ifdef __cplusplus
 }

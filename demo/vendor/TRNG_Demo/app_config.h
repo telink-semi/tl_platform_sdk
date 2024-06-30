@@ -1,12 +1,12 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2024
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ extern "C" {
 #include "common.h"
 
 
-#define CLOCK_AHB_CLOCK_HZ  	48000000
+#define CLOCK_AHB_CLOCK_HZ      48000000
 
-#define CLOCK_APB_CLOCK_HZ  	48000000
+#define CLOCK_APB_CLOCK_HZ      48000000
 
 
 

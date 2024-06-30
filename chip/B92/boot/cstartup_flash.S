@@ -33,8 +33,16 @@
  *	        If developers evaluate that the above scheme (set "DP_THROUGH_SWIRE_DIS" as "1") cannot be used, they can only set "DP_THROUGH_SWIRE_DIS" to "0" to enable the "dp_through_swire" function. However, be careful not to make DP and DM pin trigger "dp_through_swire" timing.
  */
 #ifndef DP_THROUGH_SWIRE_DIS
-#define DP_THROUGH_SWIRE_DIS      1
+#define DP_THROUGH_SWIRE_DIS		1
 #endif
+
+/**
+ * @brief	The A3 chip has a problem (the A4 doesn't) :
+ 			If the hardware board has 1.4V dcdc inductor component and uses 1.8V GPIO,
+ 			it is necessary to set 1P4V to DCDC mode as soon as possible after the chip is powered on,
+ 			otherwise there will be a voltage pulse in vdd1v2 and vddo3.
+ */
+#define CHIP_A3_VERSION_DCDC_1P4_LDO_2P0_EN			0
 
 .extern pm_retention_register_recover
 
@@ -113,7 +121,6 @@ _RESET_ENTRY:
     .align 2
 
 _START:
-
 #if 0
 	// add debug, PB4 output 1
 	lui		t0, 0x80140
@@ -121,6 +128,89 @@ _START:
 	li		t2, 0x10
 	sb		t1, 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
 	sb		t2, 0x30b(t0)		 //0x8014030b  PB output  =  0x10
+#endif
+
+    /* timer rst enable. */
+    li      t0, 0x801401e2 /* reg_rst2 register address. */
+    li      t1, 0x39       /* bit0=1 timer enable(reset velue 0x38). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e2))= 0x39. */
+
+    /* timer clk enable. */
+    li      t0, 0x801401e6 /* tim_ctrl2 register address. */
+    li      t1, 0x31       /* bit0=1 timer enable(reset velue 0x30). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e6))= 0x31. */
+
+    /* set timer watchdog value: 10s. */
+    li      t0, 0x8014014c /* wt_target register address. */
+    li      t1, 0xe4e1c00  /* watchdog value = 0xe4e1c00(10s * 24000000) */
+    sw      t1, 0x0(t0)    /* (*(volatile unsigned long*)(0x8014014c))= 0xe4e1c00. */
+
+    /* start timer watchdog. */
+    li      t0, 0x80140142 /* tim_ctrl2 register address. */
+    li      t1, 0x80       /* bit7=1 watchdog enable(reset velue 0x00). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x80140142))= 0x80. */
+
+#if CHIP_A3_VERSION_DCDC_1P4_LDO_2P0_EN
+	/* Set the power supply mode to DCDC_LDO. */
+	li		t0, 0x801401e0
+	li		t1, 0x903888a0
+	sw		t1, 0x0(t0)		//reg_rst = 0x903888a0;
+
+	li		t0, 0x801401e4
+	li		t1, 0x1030a8a0
+	sw		t1, 0x0(t0)		//reg_clk_en = 0x1030a8a0;
+
+	li		t0, 0x80140183
+	li		t1, 0x01
+	sb		t1, 0x0(t0)		//reg_ana_len = 1;
+
+	li		t0, 0x80140180
+	li		t1, 0x0a
+	sb		t1, 0x0(t0)		//reg_ana_addr = 0x0a;
+
+	li		t0, 0x80140184
+	li		t1, 0x91
+	sb		t1, 0x0(t0)		//reg_ana_data(0) = 0x91;
+
+	li		t0, 0x80140188
+	li		t2, 0xf0
+	li		t4, 0x10
+	li		t5, 0
+	li		t6, 10000
+_ANA_CNT_WAIT:
+	addi	t5, t5, 1
+	bgeu	t5, t6, _ANA_TIMEROUT
+	lb		t1, 0x0(t0)
+	and		t3, t1, t2
+	bne		t4, t3, _ANA_CNT_WAIT	//while(wait_count++ < 10000 && (!(reg_ana_buf_cnt & FLD_ANA_TX_BUFCNT))){}
+
+_ANA_CYC_W:
+	li		t0, 0x80140182
+	li		t1, 0x60
+	sb		t1, 0x0(t0)			//reg_ana_ctrl = (FLD_ANA_CYC | FLD_ANA_RW);
+
+	li		t0, 0x80140182
+	li		t2, 0x80
+	li		t5, 0
+	li		t6, 10000
+_ANA_W_WAIT:
+	addi	t5, t5, 1
+	bgeu	t5, t6, _ANA_TIMEROUT
+	lb		t1, 0x0(t0)
+	and		t3, t1, t2
+	beq		t3, t2, _ANA_W_WAIT	//while(wait_count++ < 10000 && (reg_ana_ctrl & FLD_ANA_BUSY)){}
+
+_ANA_W_END:
+	li		t0, 0x80140182
+	li		t1, 0x00
+	sb		t1, 0x0(t0)			//reg_ana_ctrl = 0x00;
+	j		_ANA_TIMEROUT_END
+
+_ANA_TIMEROUT:
+	li		t0, 0x801401ef
+	li		t1, 0x20
+	sb		t1, 0x0(t0)		//0x1401ef = 0x20; reboot
+_ANA_TIMEROUT_END:
 #endif
 
 	/* Initialize global pointer */
@@ -252,8 +342,8 @@ _FILL_STK:
 #if 0
     lui    t0, 0x55555
     addi   t0, t0, 0x555
-    la     t2, _BSS_VMA_END
-    la     t3, _STACK_TOP
+    la     t2, _BSS_VMA_END   //_BSS_VMA_END must be 4-byte aligned
+    la     t3, _STACK_TOP     //_STACK_TOP   must be 4-byte aligned
 _FILL_STK_BEGIN:
     bleu   t3, t2, _MAIN_FUNC
     sw     t0, 0(t2)
@@ -298,8 +388,28 @@ _ISTART:
 	sb		t1, 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
 	sb		t2, 0x30b(t0)		 //0x8014030b  PB output  =  0x10
 #endif
-	/* Initialize global pointer */
 
+    /* timer rst enable. */
+    li      t0, 0x801401e2 /* reg_rst2 register address. */
+    li      t1, 0x39       /* bit0=1 timer enable(reset velue 0x38). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e2))= 0x39. */
+
+    /* timer clk enable. */
+    li      t0, 0x801401e6 /* tim_ctrl2 register address. */
+    li      t1, 0x31       /* bit0=1 timer enable(reset velue 0x30). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e6))= 0x31. */
+
+    /* set timer watchdog value: 10s. */
+    li      t0, 0x8014014c /* wt_target register address. */
+    li      t1, 0xe4e1c00  /* watchdog value = 0xe4e1c00(10s * 24000000) */
+    sw      t1, 0x0(t0)    /* (*(volatile unsigned long*)(0x8014014c))= 0xe4e1c00. */
+
+    /* start timer watchdog. */
+    li      t0, 0x80140142 /* tim_ctrl2 register address. */
+    li      t1, 0x80       /* bit7=1 watchdog enable(reset velue 0x00). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x80140142))= 0x80. */
+
+	/* Initialize global pointer */
     la     gp, __global_pointer$
     .option pop
 
@@ -422,8 +532,8 @@ _IFILL_STK:
 #if 0
     lui    t0, 0x55555
     addi   t0, t0, 0x555
-    la     t2, _BSS_VMA_END
-    la     t3, _STACK_TOP
+    la     t2, _BSS_VMA_END   //_BSS_VMA_END must be 4-byte aligned
+    la     t3, _STACK_TOP     //_STACK_TOP   must be 4-byte aligned
 _IFILL_STK_BEGIN:
     bleu   t3, t2, _IDATA_INIT
     sw     t0, 0(t2)

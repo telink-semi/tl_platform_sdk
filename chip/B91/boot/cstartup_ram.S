@@ -130,8 +130,8 @@ _RAM_FILL_STK:
 #if 0
     lui    t0, 0x55555
     addi   t0, t0, 0x555
-    la     t2, _BSS_VMA_END
-    la     t3, _STACK_TOP
+    la     t2, _BSS_VMA_END   //_BSS_VMA_END must be 4-byte aligned
+    la     t3, _STACK_TOP     //_STACK_TOP   must be 4-byte aligned
 _RAM_FILL_STK_BEGIN:
     bleu   t3, t2, _RAM_MAIN_FUNC
     sw     t0, 0(t2)

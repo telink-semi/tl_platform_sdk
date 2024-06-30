@@ -1,12 +1,12 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2024
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -23,12 +23,13 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
+
 extern void user_init(void);
 extern void main_loop (void);
 
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 int main(void)
@@ -39,7 +40,7 @@ int main(void)
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
     return 0;
 }

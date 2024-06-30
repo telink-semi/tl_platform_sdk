@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -22,35 +22,45 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
+#include "coremark/core_portme.h"
 
 extern void user_init(void);
 extern void main_loop (void);
 extern int main_coremark (void);
+
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 extern float coremark_result;
 
-
+unsigned char cpu_mhz;/* Note:  This gets the current main frequency of the running cores,
+                                if you find that the score data is not correct you can check this parameter.*/
 int main(void)
 {
+#if !defined(MCU_CORE_TL751X_N22)
     PLATFORM_INIT;
     CLOCK_INIT;
-	user_init();
-	while ((read_reg8(0x10080b) & 0x7f) == 0);
-	reg_usb_ep8_send_thres = 0x1;
-	printf ("\r\n\r\n Core Mark Starts(wait about 10s~20s...) ...\r\n");
-	delay_ms (100);
-	reg_usb_ep8_send_thres = 0x40;
-	main_coremark ();
-	reg_usb_ep8_send_thres = 1;
-	printf("coremark result = %f (24M)\r\n",coremark_result);
-	printf("coremark result/clk(Mhz) = %f \r\n",(coremark_result/24));
+#endif
+    user_init();
+    printf ("\r\n\r\n Core Mark Starts(wait about 10s~20s...) ...\r\n");
+    delay_ms (100);
+#if defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL751X_N22)
+    cpu_mhz = sys_clk.cclk_hclk;
+#else
+    cpu_mhz = sys_clk.n22_clk;
+#endif
+#else
+    cpu_mhz = sys_clk.cclk;
+#endif
+    main_coremark ();
+    printf("coremark result = %f (%dM)\r\n",coremark_result,cpu_mhz);
+    printf("coremark result/clk(Mhz) = %f \r\n",(coremark_result/cpu_mhz));
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
 
     return 0;

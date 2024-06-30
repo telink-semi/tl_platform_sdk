@@ -1,12 +1,13 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
  *
  * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,23 +23,24 @@
  *
  *******************************************************************************************************/
 #pragma once
-/* Enable C linkage for C++ Compilers: */
+#include "driver.h"
+#include "common.h"
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#include "driver.h"
-#include "common.h"
 
 
-
+/* Enable C linkage for C++ Compilers: */
 
 
 
 #define SPI_NDMA_MODE               1//spi master and slave demo without DMA
 #define SPI_DMA_MODE                2//spi master and slave demo with DMA
+#if !defined(MCU_CORE_B92)
+#define SPI_DMA_LLP_MODE            3//spi rx with DMA chain transmission
+#endif
 
-#define SPI_MODE                   SPI_NDMA_MODE
-
+#define SPI_MODE                   SPI_DMA_MODE
 
 
 

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    ext_codec_wm.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019

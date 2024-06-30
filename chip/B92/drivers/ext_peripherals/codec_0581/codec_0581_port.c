@@ -102,7 +102,7 @@ codec_0581_error_e codec_0581_init(void)
 
     spi_master_init(GSPI_MODULE, sys_clk.pll_clk * 1000000 / 12000000, SPI_MODE0);
     gspi_set_pin(&spi_pin_config);
-    spi_master_config(GSPI_MODULE,(spi_io_mode_e)SPI_NORMAL);
+    spi_master_config(GSPI_MODULE, SPI_NORMAL);
 
     /**** set pin high to power on codec_0581 ****/
     codec_0581_power_on(GPIO_PC1, CODEC_BOOL_TRUE);

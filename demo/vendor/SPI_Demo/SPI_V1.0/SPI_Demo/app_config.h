@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -39,7 +39,7 @@ extern "C" {
 #define SPI_XIP_MODE               3
 
 #define SPI_MODE                   SPI_NDMA_MODE
-#define	CCLK_96M_HCLK_48M_PCLK_24M	clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
+#define CCLK_96M_HCLK_48M_PCLK_24M  clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

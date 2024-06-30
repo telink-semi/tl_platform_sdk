@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,22 +29,34 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
-#define NORMAL_MODE 			1
-#define MANUAL_TEST_MODE 		2 // For internal testing, users need not care
-#define AUTO_TEST_MODE 			3 // For internal testing, users need not care
-#define	DEMO_MODE				NORMAL_MODE
+#define NORMAL_MODE             1
+#define TEST_MODE               2 // For internal testing, users need not care
+#define DEMO_MODE               NORMAL_MODE
 
 #if(DEMO_MODE == NORMAL_MODE)
-#define GPIO_IRQ				1
-#define GPIO_IRQ_RISC0			2
-#define GPIO_IRQ_RISC1			3
-#define GPIO_HIGH_RESISTOR		4
-#if(MCU_CORE_B92||MCU_CORE_B93||MCU_CORE_B95)
+#define IRQ_PIN                 KEY1
+#define GPIO_HIGH_RESISTOR      1
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#define GPIO_IRQ                2
+#define GPIO_IRQ_RISC0          3
+#define GPIO_IRQ_RISC1          4
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
 #define GPIO_SEL_IRQ_SRC        5
 #endif
-#define GPIO_MODE 				GPIO_HIGH_RESISTOR
+#define GPIO_MODE               GPIO_IRQ
+#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+//GPIO_MODE can be configured as GPIO_IRQ0~7, 8 interrupts can be used at the same time.
+#define GPIO_IRQ_NUM0               6
+#define GPIO_IRQ_NUM1               7
+#define GPIO_MODE               GPIO_IRQ_NUM1
 #endif
 
+
+#define GPIO_DEMO_KEY           1    //Short press SW2 intermittent trigger interrupts,short press KEY3 to generate an edge signal.
+#define GPIO_DEMO_SQUARE_WAVE   2    //long presses SW2 to continuously trigger interrupts,IRQ_PIN connects to KEY3, toggle KEY3 to generate a square wave signal.
+#define GPIO_DEMO_MODE          GPIO_DEMO_KEY
+
+#endif
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

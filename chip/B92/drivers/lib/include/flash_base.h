@@ -21,6 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#pragma once
 #include "compiler.h"
 #include "flash.h"
 /**

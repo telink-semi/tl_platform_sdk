@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    usbkb_i.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -36,11 +36,11 @@ static const USB_Descriptor_HIDReport_Datatype_t keyboard_report_desc[] = {
 };
 
 static inline unsigned char* usbkb_get_report_desc(void) {
-	return (unsigned char*) (unsigned int)(keyboard_report_desc);//todo
+    return (unsigned char*) (unsigned int)(keyboard_report_desc);//todo
 }
 
 static inline unsigned short usbkb_get_report_desc_size(void) {
-	return sizeof(keyboard_report_desc);//todo
+    return sizeof(keyboard_report_desc);//todo
 }
 
 

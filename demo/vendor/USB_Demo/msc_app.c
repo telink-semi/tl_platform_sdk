@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    msc_app.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if(MCU_CORE_B91)
+#if defined(MCU_CORE_B91)
 #if((USB_DEMO_TYPE==USB_MASS_STORAGE))
 #include "usb_default.h"
 #include "application/usbstd/usb.h"
@@ -32,42 +32,45 @@
 extern void dcd_int_handler(unsigned char rhport);
 _attribute_ram_code_sec_ void  usb_endpoint_irq_handler (void)
 {
-	dcd_int_handler(0);
+    dcd_int_handler(0);
 }
 PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
 
-extern	 unsigned int  sdcardblocknum;
+extern   unsigned int  sdcardblocknum;
 
 void user_init(void)
 {
 #if (SD_NAND_FLASH_SUPPORT)
-			while(sd_nand_flash_init())
-			{
-				delay_ms(500);
-			}
-			sdcardblocknum=SD_GetSectorCount();
+            while(sd_nand_flash_init())
+            {
+                delay_ms(500);
+            }
+            sdcardblocknum=SD_GetSectorCount();
 #endif
 
 
-			tusb_init();
-			usb_init_interrupt();
-			reg_usb_ep_max_size = 8;
+            tusb_init();
+            usb_init();
+            /* enable data endpoint USB_EDP_MS_IN and USB_EDP_MS_OUT. */
+            usbhw_set_eps_en(BIT(USB_EDP_MS_IN & 7) | BIT(USB_EDP_MS_OUT));
 
-			reg_usb_ep_buf_addr(USB_EDP_MS_IN)=0X00;
-			reg_usb_ep_buf_addr(USB_EDP_MS_OUT)=0X40;
-			usbhw_set_eps_irq_mask(BIT(USB_EDP_MS_IN)|BIT(USB_EDP_MS_OUT));
+            usbhw_set_eps_max_size(64); /* max 64 */
 
-			usbhw_set_irq_mask(USB_IRQ_RESET_MASK|USB_IRQ_SUSPEND_MASK);
-			usb_set_pin_en();
-			plic_interrupt_enable(IRQ_USB_ENDPOINT);
-			core_interrupt_enable();
+            usbhw_set_ep_addr(USB_EDP_MS_IN, 0x00);
+            usbhw_set_ep_addr(USB_EDP_MS_OUT, 0x40);
+
+            usbhw_set_eps_irq_mask(BIT(USB_EDP_MS_IN & 7)|BIT(USB_EDP_MS_OUT));
+
+            plic_interrupt_enable(IRQ_USB_ENDPOINT);
+            core_interrupt_enable();
+            usb_set_pin_en();
 
 
 }
 void main_loop (void)
 {
-	usb_handle_irq();
-	tud_task();
+    usb_handle_irq();
+    tud_task();
 }
 
 #endif

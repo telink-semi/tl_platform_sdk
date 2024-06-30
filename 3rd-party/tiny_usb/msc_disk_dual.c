@@ -232,18 +232,18 @@ void tud_msc_capacity_cb(unsigned char lun, unsigned int* block_count, unsigned 
   if(lun==0)
   {
 #if SYS_NOR_FLASH_SUPPORT
-	  *block_count = SYS_NORFLASH_DISK_SIZE/512;
-	  *block_size  = DISK_BLOCK_SIZE;
+      *block_count = SYS_NORFLASH_DISK_SIZE/512;
+      *block_size  = DISK_BLOCK_SIZE;
 #else
-	  *block_count = sdcardblocknum;//DISK_BLOCK_NUM;
-	  *block_size  = DISK_BLOCK_SIZE;
+      *block_count = sdcardblocknum;//DISK_BLOCK_NUM;
+      *block_size  = DISK_BLOCK_SIZE;
 #endif
   }
 #if (SYS_NOR_FLASH_SUPPORT)&&(SD_NAND_FLASH_SUPPORT)
   else
   {
-	  *block_count = sdcardblocknum;//DISK_BLOCK_NUM;
-	  *block_size  = DISK_BLOCK_SIZE;
+      *block_count = sdcardblocknum;//DISK_BLOCK_NUM;
+      *block_size  = DISK_BLOCK_SIZE;
   }
 #endif
 
@@ -275,21 +275,21 @@ bool tud_msc_start_stop_cb(unsigned char lun, unsigned char power_condition, boo
 // Copy disk's data to buffer (up to bufsize) and return number of copied bytes.
 int tud_msc_read10_cb(unsigned char lun, unsigned int lba, unsigned int offset, void* buffer, unsigned int bufsize)
 {
-	(void)offset;
+    (void)offset;
  // unsigned char const* addr = (lun ? msc_disk1[lba] : msc_disk0[lba]) + offset;
   if(lun == 0)
   {
 #if SYS_NOR_FLASH_SUPPORT
-	  sys_norflash_read_lba(buffer, lba,1);
-	  return bufsize;
+      sys_norflash_read_lba(buffer, lba,1);
+      return bufsize;
 #else
-	  SD_ReadDisk(buffer, lba, 1);
+      SD_ReadDisk(buffer, lba, 1);
 #endif
   }
 #if (SYS_NOR_FLASH_SUPPORT)&&(SD_NAND_FLASH_SUPPORT)
   else
   {
-	  SD_ReadDisk(buffer, lba, 1);
+      SD_ReadDisk(buffer, lba, 1);
   }
 #endif
 
@@ -300,20 +300,20 @@ int tud_msc_read10_cb(unsigned char lun, unsigned int lba, unsigned int offset, 
 // Process data in buffer to disk's storage and return number of written bytes
 int tud_msc_write10_cb(unsigned char lun, unsigned int lba, unsigned int offset, unsigned char* buffer, unsigned int bufsize)
 {
-	(void)offset;
+    (void)offset;
   if(lun == 0)
   {
 #if SYS_NOR_FLASH_SUPPORT
-	  sys_norflash_write_lba(buffer, lba,1);
-	  return bufsize;
+      sys_norflash_write_lba(buffer, lba,1);
+      return bufsize;
 #else
-	  SD_WriteDisk(buffer, lba, 1);
+      SD_WriteDisk(buffer, lba, 1);
 #endif
   }
 #if (SYS_NOR_FLASH_SUPPORT)&&(SD_NAND_FLASH_SUPPORT)
   else
   {
-	  SD_WriteDisk(buffer, lba, 1);
+      SD_WriteDisk(buffer, lba, 1);
   }
 #endif
   return bufsize;
@@ -379,19 +379,19 @@ int tud_msc_scsi_cb (unsigned char lun, unsigned char const scsi_cmd[16], void* 
 
 void tud_msc_write10_start_cb(unsigned char lun, unsigned int lba, unsigned int total_bytes)
 {
-	(void)lun;
+    (void)lun;
 #if (SYS_NOR_FLASH_SUPPORT)
-	if(lun == 0)
-		sys_norflash_erase_lba(lba, total_bytes);
+    if(lun == 0)
+        sys_norflash_erase_lba(lba, total_bytes);
 #else
-	(void)lba;
-	(void)total_bytes;
+    (void)lba;
+    (void)total_bytes;
 #endif
 
 }
 void tud_msc_read10_start_cb(unsigned char lun, unsigned int lba, unsigned int total_bytes)
 {
-	(void)lun;
-	(void)lba;
-	(void)total_bytes;
+    (void)lun;
+    (void)lba;
+    (void)total_bytes;
 }

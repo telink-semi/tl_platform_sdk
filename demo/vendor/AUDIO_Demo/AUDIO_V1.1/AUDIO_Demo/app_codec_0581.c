@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_codec_0581.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2023
@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if (AUDIO_MODE == I2S_TO_CODEC_0581)
+#if defined(MCU_CORE_B92) && (AUDIO_MODE == I2S_TO_CODEC_0581)
 
 #include "driver.h"
 #include "app_sin_data.h"
@@ -35,7 +35,7 @@
 #define FDSP_ANC_SAMPLE                             (5) /* data route: input : adc0 -> asrco0 -> i2s left -> mcu
                                                                                adc1 -> asrco1 -> i2s right -> mcu
                                                                        output: adc0 after filtering   \
-                                                                               adc1 after filtering    ¡ª¡ª mix -> dac output
+                                                                               adc1 after filtering     -> mix -> dac output
                                                                                asrci after filtering  /
                                                         */
 

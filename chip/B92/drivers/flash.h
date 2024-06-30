@@ -49,31 +49,32 @@
 
 /**
  * @brief     flash command definition
- * |   --        |     --        |    --    |    --    |
- * | <23:16>     | <15:12>       |  <11:8>  |   <7:0>  |
- * |   command   | transfer mode |   dummy  |   format |
+ * |     --      |     --      |     --        |    --    |    --    |
+ * |   <31:24>   |   <23:16>   |   <15:12>     |  <11:8>  |   <7:0>  |
+ * |   command   |   reserve   | transfer mode |   dummy  |   format |
  */
 typedef enum{
+	//The command called by the flash_mspi_read_ram() function and flash_set_xip_config() function.
+	FLASH_READ_CMD								    = 0x030020a8,
+	FLASH_DREAD_CMD								    = 0x3b0097a9,
+	FLASH_X4READ_CMD								= 0xeb0095ba,
 	//The command called by the flash_mspi_read_ram() function.
-	FLASH_READ_CMD								    = 0x0320a8,
-	FLASH_DREAD_CMD								    = 0x3b97a9,
-	FLASH_X4READ_CMD								= 0xeb95ba,
-	FLASH_READ_SECURITY_REGISTERS_CMD               = 0x4897a8,
-	FLASH_READ_UID_CMD_GD_PUYA_ZB_TH			    = 0x4b97a8,
-	FLASH_GET_JEDEC_ID							    = 0x9f2080,
-	FLASH_READ_STATUS_CMD_LOWBYTE					= 0x052080,
-	FLASH_READ_STATUS_CMD_HIGHBYTE					= 0x352080,
-	FLASH_READ_CONFIGURE_CMD                        = 0x152080,
+	FLASH_READ_SECURITY_REGISTERS_CMD               = 0x480097a8,
+	FLASH_READ_UID_CMD_GD_PUYA_ZB_TH			    = 0x4b0097a8,
+	FLASH_GET_JEDEC_ID							    = 0x9f002080,
+	FLASH_READ_STATUS_CMD_LOWBYTE					= 0x05002080,
+	FLASH_READ_STATUS_CMD_HIGHBYTE					= 0x35002080,
+	FLASH_READ_CONFIGURE_CMD                        = 0x15002080,
 	//The command called by the flash_mspi_write_ram() function.
-	FLASH_WRITE_CMD						            = 0x0210a8,
-	FLASH_QUAD_PAGE_PROGRAM_CMD					    = 0x3210aa,
-	FLASH_SECT_ERASE_CMD						    = 0x2070a8,
-	FLASH_WRITE_SECURITY_REGISTERS_CMD              = 0x4210a8,
-	FLASH_ERASE_SECURITY_REGISTERS_CMD              = 0x4470a8,
-	FLASH_WRITE_STATUS_CMD_LOWBYTE					= 0x011080,
-	FLASH_WRITE_STATUS_CMD_HIGHBYTE	                = 0x311080,    // Flash Type = P25Q16SU/P25Q32SU for write status register-1;
-	FLASH_WRITE_CONFIGURE_CMD_1                     = 0x311080,    // Flash Type = P25Q80U  for write configure register;
-	FLASH_WRITE_CONFIGURE_CMD_2                     = 0x111080,    // Flash Type = P25Q16SU/P25Q32SU  for write configure register;
+	FLASH_WRITE_CMD						            = 0x020010a8,
+	FLASH_QUAD_PAGE_PROGRAM_CMD					    = 0x320010aa,
+	FLASH_SECT_ERASE_CMD						    = 0x200070a8,
+	FLASH_WRITE_SECURITY_REGISTERS_CMD              = 0x420010a8,
+	FLASH_ERASE_SECURITY_REGISTERS_CMD              = 0x440070a8,
+	FLASH_WRITE_STATUS_CMD_LOWBYTE					= 0x01001080,
+	FLASH_WRITE_STATUS_CMD_HIGHBYTE	                = 0x31001080,    // Flash Type = P25Q16SU/P25Q32SU for write status register-1;
+	FLASH_WRITE_CONFIGURE_CMD_1                     = 0x31001080,    // Flash Type = P25Q80U  for write configure register;
+	FLASH_WRITE_CONFIGURE_CMD_2                     = 0x11001080,    // Flash Type = P25Q16SU/P25Q32SU  for write configure register;
 	// other command called by flash_send_cmd() function,no need to configure:transfer mode/dummy/format.
 	FLASH_WRITE_DISABLE_CMD 			        = 	0x04,
 	FLASH_WRITE_ENABLE_CMD 			         	= 	0x06,
@@ -106,6 +107,7 @@ typedef enum{
  *			Example is as follows:
  *			unsigned int mid = flash_read_mid();
  *			The value of (mid&0x00ff0000)>>16 reflects flash capacity.
+ * @note    If there is a new flash with different capacity, you need to add the corresponding calibration interface to user_read_flash_value_calib().
  */
 typedef enum {
     FLASH_SIZE_64K     = 0x10,
@@ -128,6 +130,8 @@ typedef enum{
 	MID1560c8   =   0x1560c8,//GD25LQ16E
 	MID166085   =   0x166085,//P25Q32SU
 	MID186085   =   0x186085,//P25Q128L
+	MID1460c8   =   0x1460c8,//GD25LQ80E
+    MID1660C8   =   0x1660c8,//GD25LQ32E/GD25LE32E
 }flash_mid_e;
 
 
@@ -460,7 +464,7 @@ _attribute_text_sec_ void flash_plic_preempt_config(unsigned char preempt_en, un
  * @param[in]	config	- xip configuration,reference structure flash_xip_config_t
  * @return none
  */
-_attribute_text_sec_ void flash_set_xip_config(flash_xip_config_t config);
+_attribute_text_sec_ void flash_set_xip_config(flash_command_e config);
 
 
 
@@ -469,30 +473,18 @@ _attribute_text_sec_ void flash_set_xip_config(flash_xip_config_t config);
  ******************************************************************************************************************/
 
 /**
- * @brief		This function serves to read flash mid and uid,and check the correctness of mid and uid.
- * @param[out]	flash_mid	- Flash Manufacturer ID.
- * @param[out]	flash_uid	- Flash Unique ID.
- * @return		0: flash no uid or not a known flash model 	 1:the flash model is known and the uid is read.
- * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
- *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
- *              Taking into account the factors such as power supply fluctuations, the safe voltage value needs to be greater
- *              than the minimum chip operating voltage. For the specific value, please make a reasonable setting according
- *              to the specific application and hardware circuit.
- *
- *              Risk description: When the chip power supply voltage is relatively low, due to the unstable power supply,
- *              there may be a risk of error in the operation of the flash (especially for the write and erase operations.
- *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
- */
-_attribute_text_sec_ int flash_read_mid_uid_with_check(unsigned int *flash_mid, unsigned char *flash_uid);
-
-/**
  * @brief		This function serves to get flash vendor.
- * @param[in]	none.
+ * @param[in]	flash_mid - MID of the flash(4 bytes).
  * @return		0 - err, other - flash vendor.
  */
 unsigned int flash_get_vendor(unsigned int flash_mid);
 
-
+/**
+ * @brief		This function serves to get flash capacity.
+ * @param[in]	flash_mid - MID of the flash(4 bytes).
+ * @return		flash capacity.
+ */
+flash_capacity_e  flash_get_capacity(unsigned int flash_mid);
 
 
 

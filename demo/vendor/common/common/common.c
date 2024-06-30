@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    common.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2023
@@ -22,24 +22,127 @@
  *
  *******************************************************************************************************/
 #include "common.h"
+/*
+ * @note The flash protection size has been allocated by default, refer to the comment FLASH_PROTECT_MODIFY_CONFIG for details.
+ */
+flash_user_defined_list_t flash_init_list[] = {
+#if defined(MCU_CORE_B91)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    //16M
+    {0x182085, FLASH_LOCK_LOW_8M_MID182085}
 
-#if(MCU_CORE_B91)
-void platform_init(power_mode_e power_mode, vbat_type_e vbat_v)
-#elif(MCU_CORE_B92)
-void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e gpio_v)
+#elif defined(MCU_CORE_B92)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    {0x1460c8, FLASH_LOCK_LOW_512K_MID1460c8},
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    {0x1560c8, FLASH_LOCK_LOW_1M_MID1560c8},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    {0x1660c8, FLASH_LOCK_LOW_2M_MID1660C8},
+    //16M
+    {0x186085, FLASH_LOCK_LOW_8M_MID186085},
+#elif defined(MCU_CORE_TL751X)
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085}
+#elif defined(MCU_CORE_B931)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085}
+#elif defined(MCU_CORE_TL721X)
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+
+#elif defined(MCU_CORE_TL321X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+#elif defined(MCU_CORE_W92)
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085}
+
 #else
-void platform_init(void)
+    {0, 0}
+#endif
+};
+#if FLASH_PROTECT_MODIFY_CONFIG
+#define list_fp     flash_init_list
+#else
+#define  list_fp    NULL
+#endif
+
+
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+
+flash_hal_user_handler_t flash_handler = {
+        .list= list_fp,
+        .flash_cnt = (sizeof(flash_init_list)/sizeof(flash_user_defined_list_t)),
+};
+#elif  defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
+flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
+        {
+             .list= list_fp,
+             .flash_cnt = (sizeof(flash_init_list)/sizeof(flash_user_defined_list_t)),
+             .slave_size = SLAVE_SIZE_64M,
+        },
+        {
+            .list= list_fp,
+            .flash_cnt = (sizeof(flash_init_list)/sizeof(flash_user_defined_list_t)),
+            .slave_size = SLAVE_SIZE_NONE,
+        },
+        {
+            .list= list_fp,
+            .flash_cnt = (sizeof(flash_init_list)/sizeof(flash_user_defined_list_t)),
+            .slave_size = SLAVE_SIZE_NONE,
+        },
+        {
+            .list= list_fp,
+            .flash_cnt = (sizeof(flash_init_list)/sizeof(flash_user_defined_list_t)),
+            .slave_size = SLAVE_SIZE_NONE,
+        },
+};
+#endif
+
+
+#if defined(MCU_CORE_B91)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
+#elif  defined(MCU_CORE_B92)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e gpio_v, cap_typedef_e cap,unsigned char flash_protect_en)
+#elif  defined(MCU_CORE_TL751X)
+void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL721X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL321X)
+void platform_init(vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
+#elif defined(MCU_CORE_W92)
+void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en)
+#else
+void platform_init(unsigned char flash_protect_en)
 #endif
 {
 /**
-	===============================================================================
-						 ##### sys_init #####
-	===============================================================================
+    ===============================================================================
+                         ##### sys_init #####
+    ===============================================================================
 */
-#if (MCU_CORE_B91)
-    sys_init(power_mode, vbat_v);
-#elif (MCU_CORE_B92)
-    sys_init(power_mode, vbat_v, gpio_v);
+#if defined(MCU_CORE_B91)
+    sys_init(power_mode, vbat_v, cap);
+#elif  defined(MCU_CORE_B92)
+    sys_init(power_mode, vbat_v, gpio_v, cap);
+#elif  defined(MCU_CORE_TL751X)
+    sys_init(vbat_v);
+#elif defined(MCU_CORE_TL721X)
+    sys_init(power_mode, vbat_v, cap);
+#elif defined(MCU_CORE_TL321X)
+    sys_init(vbat_v, cap);
+#elif defined(MCU_CORE_W92)
+    sys_init(vbat_v);
 #else
     sys_init();
 #endif
@@ -47,41 +150,109 @@ void platform_init(void)
     ===============================================================================
                          ##### set SWS pull #####
     ===============================================================================
-    If SWS is not set up,SWS will be floating,
-    causing abnormal sleep currents of suspend,
+    If SWS is not connected to the analog pull up and down,it is in a suspended state and may be in a level indeterminate state,
+    which will affect the electric leakage of digital and lead to higher current than normal during suspend sleep.
     there may be the risk of SWS miswriting the chip registers or sram causing a crash.
     ===============================================================================
 */
     gpio_set_up_down_res(GPIO_SWS, GPIO_PIN_PULLUP_1M);
 
 /**
-	===============================================================================
-						 ##### 32k watchdog stop #####
-	===============================================================================
-	For chips with 32K watchdog function, the 32K watchdog function is enabled by default.
-	If the program does not handle the watchdog, the chip will reset in 5s,
-	and the driver will turn it off by default. If you want to use this function,
-	you can replace this place with the dog feeder interface.
-	===============================================================================
+    ===============================================================================
+                         ##### 32k watchdog stop #####
+    ===============================================================================
+    For chips with 32K watchdog function, the 32K watchdog function is enabled by default.
+    If the program does not handle the watchdog, the chip will reset in 5s,
+    and the driver will turn it off by default. If you want to use this function,
+    you can replace this place with the dog feeder interface.
+    ===============================================================================
 */
-#if (!MCU_CORE_B91 )
+#if !defined(MCU_CORE_B91)
     wd_32k_stop();
 #endif
+
+
 /**
-	===============================================================================
-						 ##### calibration #####
-	===============================================================================
-	This function can improve the performance of some modules,
-	which is described in the function comments.
-	Called immediately after sys_init,set in other positions,
-	some calibration values may not take effect.
-	===============================================================================
+    ===============================================================================
+                        ##### timer watchdog stop #####
+    ===============================================================================
+    For chips with timer watchdog function, the timer watchdog function is enabled by startup.S.
+    If the program does not handle the watchdog, the chip will reset in 10s,
+    and the driver will turn it off by default. If you want to use this function,
+    you can replace this place with the dog feeder interface.
+    ===============================================================================
 */
-#if (MCU_CORE_B91)
+    wd_stop();
+
+/**
+    ===============================================================================
+                         ##### calibration #####
+    ===============================================================================
+    This function can improve the performance of some modules,
+    which is described in the function comments.
+    Called immediately after sys_init,set in other positions,
+    some calibration values may not take effect.
+    ===============================================================================
+*/
+#if defined(MCU_CORE_B91)
     user_read_flash_value_calib();
-#elif(MCU_CORE_B92)
+#elif defined(MCU_CORE_B92)
     calibration_func(gpio_v);
 #endif
 
+    //The A0 chip's AVDD1/AVDD2/DVDD1/DVDD2 voltages will be on the high side and need to be set to the correct gear according to the following requirements:
+    //1.DVDD2>DVDD1>0.8V
+    //2.Plus or minus 10% of the design value is safe.
+//#if defined(MCU_CORE_TL751X)
+//  pm_set_avdd1(PM_AVDD1_VOLTAGE_1V050);//AVDD1 voltage select(LDO) 000:1.050V,design value:1.15V
+//  pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V750);//DVDD2 voltage select(LDO) 000:0.750V,design value:0.8V
+//  pm_set_avdd2(PM_AVDD2_VOLTAGE_2V346);//AVDD2 voltage select(LDO) 000:2.346V,design value:1.8V
+//  pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V725);//DVDD1 voltage select(LDO) 000:0.725V,design value:0.8V
+//#endif
+
+    /*
+    * For the current A0 version, it is important to focus on whether the following voltage outputs meet expectations before testing, 
+    * especially before conducting performance or stability tests.
+    * A1 has fixed the issue of low voltage, so the trim code here was commented out.
+    */
+#if defined(MCU_CORE_TL721X)
+    // pm_set_dig_ldo_voltage(DIG_LDO_TRIM_0P850V);
+#endif
+
+/**
+    ===============================================================================
+                        ##### driver sdk firmware protection #####
+    ===============================================================================
+    Flash write protection must be added, the size of the protected area is decided according to the application bin file,
+    the principle is as follows:
+    1.The program area is protected (to prevent the program area from being erased by mistake);
+    2.the program will modify the data area is not protected (if write-protected, each time before erasing the need to unprotect,
+      so that there is a risk that the status register of the flash has been mistakenly rewritten);
+
+    @note if flash protection fails, LED1 lights up long, and keeps while.
+    ===============================================================================
+*/
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+    unsigned char flash_init_flag = hal_flash_init(&flash_handler);
+#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
+    unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t*)flash_handler);
+#endif
+   if(flash_init_flag!=0){
+       gpio_set_high_level(LED1);
+       while(1);
+   }
+    if(flash_protect_en)
+    {
+
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+     unsigned char lock_flag = hal_flash_lock();
+#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
+    unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
+#endif
+        if(!(lock_flag==1)){
+            gpio_set_high_level(LED1);
+            while(1);
+        }
+    }
 }
 

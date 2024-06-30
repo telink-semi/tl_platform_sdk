@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "app_config.h"
 #include "calibration.h"
-#if TEST_DEMO == BQB_DEMO
+#if(TEST_DEMO == BQB_DEMO)
 #include "BQB/bqb.h"
 #endif
 
@@ -35,171 +35,110 @@ extern emi_setting_t g_emi_setting;
 
 extern void user_init(void);
 extern void main_loop (void);
-#if TEST_DEMO==BQB_DEMO && SUPPORT_CONFIGURATION
+#if((TEST_DEMO==BQB_DEMO)&&(SUPPORT_CONFIGURATION))
 extern void rd_usr_definition(unsigned char _s);
 #endif
 
-#if(MCU_CORE_B91)
-#define POWER_MODE_LDO1V4_LDO1V8		0
-#define POWER_MODE_DCDC1V4_DCDC1V8		1
-#define POWER_MODE_DCDC1V4_LDO1V8		2
+#if((TEST_DEMO == EMI_DEMO)&&(!EMI_SUPPORT_SETTING))
+#define POWER_MODE_LDO                  0
+#define POWER_MODE_DCDC                 1
+#define POWER_MODE_DCDC_LDO              2
 
 /**
- * @brief		This is macro used to set the initialize power mode.
+ * @brief        This is macro used to set the initialize power mode.
  */
-#define POWER_MODE_SELECT		POWER_MODE_LDO1V4_LDO1V8
-#elif(MCU_CORE_B92)
-#define POWER_MODE_LDO1V2_LDO2V0		0
-#define POWER_MODE_DCDC1V2_LDO2V0		1
-#define POWER_MODE_DCDC1V2_DCDC2V0	2
+#define POWER_MODE_SELECT        POWER_MODE_LDO
+#endif
 
-/**
- * @brief		This is macro used to set the initialize power mode.
- */
-#define POWER_MODE_SELECT		POWER_MODE_LDO1V2_LDO2V0
+#if defined(MCU_CORE_B91)
+//#define PLATFORM_INIT_DCDC         platform_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6,1)  //Because DCDC mode has been deleted, it is temporarily unavailable here.
+#define PLATFORM_INIT_LDO         platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6,INTERNAL_CAP_XTAL24M,1)
+#define PLATFORM_INIT_DCDC_LDO     platform_init(DCDC_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6,INTERNAL_CAP_XTAL24M,1)
+#elif defined(MCU_CORE_B92)
+#define PLATFORM_INIT_DCDC         platform_init(DCDC_1P4_DCDC_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3,INTERNAL_CAP_XTAL24M,1);
+#define PLATFORM_INIT_LDO         platform_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3,INTERNAL_CAP_XTAL24M,1);
+#define PLATFORM_INIT_DCDC_LDO     platform_init(DCDC_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3,INTERNAL_CAP_XTAL24M,1);
+#elif defined(MCU_CORE_TL721X)
+// #define PLATFORM_INIT_DCDC         platform_init(DCDC_0P94_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
+#define PLATFORM_INIT_LDO             platform_init(LDO_0P94_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
+// #define PLATFORM_INIT_DCDC_LDO     platform_init(DCDC_0P94_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
+#elif defined(MCU_CORE_TL321X)
+#define PLATFORM_INIT_LDO             platform_init(VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
 #endif
 
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 int main(void)
 {
-#if TEST_DEMO==BQB_DEMO
-	#if SUPPORT_CONFIGURATION
-		rd_usr_definition(1);
-		if(usr_config.power_mode == 0)
-		{
-#if(MCU_CORE_B91)
-			sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif(MCU_CORE_B92)
-			sys_init(LDO_1P4_LDO_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-#endif
-		}
-		else if(usr_config.power_mode == 1)
-		{
-#if(MCU_CORE_B91)
-			sys_init(DCDC_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif(MCU_CORE_B92)
+#if(TEST_DEMO==BQB_DEMO)
 
-			sys_init(DCDC_1P4_LDO_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-
-#endif
-		}
-		else
-		{
-#if(MCU_CORE_B91)
-			sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif(MCU_CORE_B92)
-
-			sys_init(DCDC_1P4_DCDC_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-
-#endif
-		}
-	#else
-		#if SWITCH_POWER_MODE
-#if(MCU_CORE_B91)
-			sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif(MCU_CORE_B92)
-			sys_init(LDO_1P4_LDO_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-#endif
-		#else
-#if(MCU_CORE_B91)
-			sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif(MCU_CORE_B92)
-
-			sys_init(DCDC_1P4_DCDC_2P0,VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-
-#endif
-		#endif
-	#endif
-#if(MCU_CORE_B92)
-			wd_32k_stop();
-#endif	
+#if(SUPPORT_CONFIGURATION)
+    rd_usr_definition(1);
+    if(usr_config.power_mode == 0)
+    {
+        PLATFORM_INIT_LDO;
+    }
+    else if(usr_config.power_mode == 1)
+    {
+        PLATFORM_INIT_DCDC_LDO;
+    }
+    else
+    {
+        PLATFORM_INIT_DCDC;
+    }
 #else
-#if(MCU_CORE_B91)
 
-#if TEST_DEMO==EMI_DEMO && EMI_SUPPORT_SETTING
-	emi_setting_init();
-	if(g_emi_setting.general_setting.power_mode == 1)
-	{
-		sys_init(DCDC_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-	}
-	else if(g_emi_setting.general_setting.power_mode == 2)
-	{
-		sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-	}
-	else
-	{
-		sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-	}
-#elif TEST_DEMO==EMI_DEMO
-
-
-#if POWER_MODE_SELECT == POWER_MODE_LDO1V4_LDO1V8
-	sys_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V4_DCDC1V8
-	sys_init(DCDC_1P4_DCDC_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
-#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V4_LDO1V8
-	sys_init(DCDC_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6);
+#if(SWITCH_POWER_MODE)
+    PLATFORM_INIT_LDO;
+#else
+    PLATFORM_INIT_DCDC;
+#endif
 #endif
 
+#else//TEST_DEMO==EMI_DEMO
+
+#if(EMI_SUPPORT_SETTING)
+    emi_setting_init();
+    if(g_emi_setting.general_setting.power_mode == 1)
+    {
+        PLATFORM_INIT_DCDC_LDO;
+    }
+    else if(g_emi_setting.general_setting.power_mode == 2)
+    {
+#if(!defined(MCU_CORE_B91))
+        {
+            PLATFORM_INIT_DCDC;
+        }
+#else
+        {
+            PLATFORM_INIT_DCDC_LDO;
+        }
 #endif
-
-
-	//Note: This function can improve the performance of some modules, which is described in the function comments.
-	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
-	user_read_flash_value_calib();
-#elif(MCU_CORE_B92)
-
-#if TEST_DEMO==EMI_DEMO && EMI_SUPPORT_SETTING
-	emi_setting_init();
-
-	if(g_emi_setting.general_setting.power_mode == 1)
-	{
-		sys_init(DCDC_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-	}
-	else if(g_emi_setting.general_setting.power_mode == 2)
-	{
-		sys_init(DCDC_1P4_DCDC_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-	}
-	else
-	{
-		sys_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-	}
-
-#elif TEST_DEMO==EMI_DEMO
-
-#if POWER_MODE_SELECT == POWER_MODE_LDO1V2_LDO2V0
-	sys_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V2_LDO2V0
-	sys_init(DCDC_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-#elif POWER_MODE_SELECT == POWER_MODE_DCDC1V2_DCDC2V0
-	sys_init(DCDC_1P4_DCDC_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6,GPIO_VOLTAGE_3V3);
-
+    }
+    else
+    {
+        PLATFORM_INIT_LDO;
+    }
+#else
+#if POWER_MODE_SELECT == POWER_MODE_LDO
+    PLATFORM_INIT_LDO;
+#elif POWER_MODE_SELECT == POWER_MODE_DCDC
+    PLATFORM_INIT_DCDC;
+#elif POWER_MODE_SELECT == POWER_MODE_DCDC_LDO
+    PLATFORM_INIT_DCDC_LDO;
+#endif
 #endif
 
 #endif
 
-#if(MCU_CORE_B92)
-	wd_32k_stop();
-	//Note: This function can improve the performance of some modules, which is described in the function comments.
-	//Called immediately after sys_init, set in other positions, some calibration values may not take effect.
-	calibration_func(GPIO_VOLTAGE_3V3);
-#endif
-#endif
-#endif
-
-	CCLK_24M_HCLK_24M_PCLK_24M;
-    // Note: This is to set SWS pull. If SWS is not set up, SWS will be floating, causing abnormal sleep currents of suspend,
-    // there may be the risk of sws miswriting the chip registers or sram causing a crash.
-    gpio_set_up_down_res(GPIO_SWS, GPIO_PIN_PULLUP_1M);
+    CLOCK_INIT;
     user_init();
-
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
     return 0;
 }

@@ -185,8 +185,9 @@ static inline unsigned short usbhw_get_ep_ptr(usb_ep_index ep) {
 }
 
 /**
- * @brief     This function servers to get the pointer of Endpoint.
- * @param[in] ep - select the Endpoint
+ * @brief     This function servers to set the buffer address of data endpoint.
+ * @param[in] ep - select the data endpoint.
+ * @param[in] addr - data endpoint buffer address.
  * @return    none.
  */
 static inline void usbhw_set_ep_addr(usb_ep_index ep,unsigned short addr)
@@ -350,7 +351,15 @@ static inline void usbhw_set_printer_threshold(unsigned char th) {
 	reg_usb_ep8_send_thres = th;
 }
 
-
+/**
+ * @brief     This function servers to set in endpoint buffer max size(except 7 aiso mode).
+ * @param[in] max_size - in endpoint max size.
+ * @return    none.
+ */
+static inline void usbhw_set_eps_max_size(unsigned int max_size)
+{
+    reg_usb_ep_max_size = max_size >> 3;
+}
 
 /**
  * @brief      This function disables the manual interrupt

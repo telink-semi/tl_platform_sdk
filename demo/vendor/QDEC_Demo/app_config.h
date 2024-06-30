@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -37,8 +37,8 @@ extern "C" {
 
 
 enum{
-	CLOCK_QDEC_32K_1S = QDEC_32K_SPEED,
-	CLOCK_QDEC_32K_1MS = (CLOCK_QDEC_32K_1S  / 1000),
+    CLOCK_QDEC_32K_1S = QDEC_32K_SPEED,
+    CLOCK_QDEC_32K_1MS = (CLOCK_QDEC_32K_1S  / 1000),
 };
 
 

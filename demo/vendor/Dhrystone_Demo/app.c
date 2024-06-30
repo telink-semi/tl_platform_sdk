@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -23,38 +23,53 @@
  *******************************************************************************************************/
 #include "app_config.h"
 #include "nds_intrinsic.h"
-
-
+#if !defined(MCU_CORE_TL321X) || (DEMO_MODE == MANUAL_TEST_MODE)
 
 void user_init(void)
 {
-	usb_set_pin_en();
-	reg_usb_ep8_send_thres = 0x40;
-	reg_usb_ep8_fifo_mode = 1;
+#if defined(MCU_CORE_TL321X)&&(CURRENT_PER_MHZ_TEST)
+#if(CLOCK_FREQUENCY == CCLK_24M_HCLK_12M_PCLK_12M)
+    PLL_192M_CCLK_24M_HCLK_12M_PCLK_12M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_12M)
+    PLL_192M_CCLK_24M_HCLK_24M_PCLK_12M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_24M)
+    PLL_192M_CCLK_24M_HCLK_24M_PCLK_24M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_24M)
+    PLL_192M_CCLK_48M_HCLK_24M_PCLK_24M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_24M)
+    PLL_192M_CCLK_48M_HCLK_48M_PCLK_24M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_24M)
+    PLL_192M_CCLK_96M_HCLK_48M_PCLK_24M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_48M)
+    PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M;
+#elif(CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_48M)
+    PLL_192M_CCLK_96M_HCLK_48M_PCLK_48M_MSPI_48M;
+#endif
 
-	gpio_function_en(LED1);
-	gpio_output_en(LED1);
-	gpio_input_dis(LED1);
-	gpio_function_en(LED2);
-	gpio_output_en(LED2);
-	gpio_input_dis(LED2);
-	gpio_function_en(LED3);
-	gpio_output_en(LED3);
-	gpio_input_dis(LED3);
-	gpio_function_en(LED4);
-	gpio_output_en(LED4);
-	gpio_input_dis(LED4);
+    gpio_shutdown(GPIO_ALL);
+    for (int i=0; i<10; i++)
+    {
+        dhry_main();
+    }
+
+#else
+    CLOCK_INIT;
+    printf ("\r\n\r\n Drystone Benchmark %d Starts ...", 1);
+    dhry_main();
+#endif
+
+    printf("\r\n[dhrystone] : %6.2f\r\n",Dhrystone_DMIPS_Per_MHz);
+    delay_ms (100);
+
+    gpio_function_en(LED2);
+    gpio_output_en(LED2);
 }
 
 
 void main_loop(void)
 {
-
-
-	delay_ms(200);
-	gpio_toggle(LED1);
-
-
-
+    delay_ms(200);
+    gpio_toggle(LED2);
 }
 
+#endif

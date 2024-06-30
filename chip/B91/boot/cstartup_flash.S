@@ -75,15 +75,35 @@ _RESET_ENTRY:
     .align 2
 
 _START:
-
 #if 0
 	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
+	lui		t0, 0x80140 		//0x8014030a
 	li		t1, 0xef
 	li		t2, 0x10
-	sb		t1 , 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
-	sb		t2 , 0x30b(t0)		 //0x8014030b  PB output  =  0x10
+	sb		t1, 0x30a(t0)		//0x8014030a  PB oen     =  0xef
+	sb		t2, 0x30b(t0)		//0x8014030b  PB output  =  0x10
 #endif
+
+    /* timer rst enable. */
+    li      t0, 0x801401e2 /* reg_rst2 register address. */
+    li      t1, 0x39       /* bit0=1 timer enable(reset velue 0x38). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e2))= 0x39. */
+
+    /* timer clk enable. */
+    li      t0, 0x801401e6 /* tim_ctrl2 register address. */
+    li      t1, 0x31       /* bit0=1 timer enable(reset velue 0x30). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e6))= 0x31. */
+
+    /* set timer watchdog value: 10s. */
+    li      t0, 0x8014014c /* wt_target register address. */
+    li      t1, 0xe4e1c00  /* watchdog value = 0xe4e1c00(10s * 24000000) */
+    sw      t1, 0x0(t0)    /* (*(volatile unsigned long*)(0x8014014c))= 0xe4e1c00. */
+
+    /* start timer watchdog. */
+    li      t0, 0x80140142 /* tim_ctrl2 register address. */
+    li      t1, 0x80       /* bit7=1 watchdog enable(reset velue 0x00). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x80140142))= 0x80. */
+
 	/* Initialize global pointer */
     .option push
     .option norelax
@@ -217,8 +237,8 @@ _FILL_STK:
 #if 0
     lui    t0, 0x55555
     addi   t0, t0, 0x555
-    la     t2, _BSS_VMA_END
-    la     t3, _STACK_TOP
+    la     t2, _BSS_VMA_END  //_BSS_VMA_END must be 4-byte aligned
+    la     t3, _STACK_TOP    //_STACK_TOP   must be 4-byte aligend
 _FILL_STK_BEGIN:
     bleu   t3, t2, _MAIN_FUNC
     sw     t0, 0(t2)
@@ -256,14 +276,34 @@ _IRESET_ENTRY:
 _ISTART:
 #if 0
 	// add debug, PB4 output 1
-	lui		t0,0x80140 			//0x8014030a
+	lui		t0, 0x80140 		//0x8014030a
 	li		t1, 0xef
 	li		t2, 0x10
-	sb		t1 , 0x30a(t0)		 //0x8014030a  PB oen     =  0xef
-	sb		t2 , 0x30b(t0)		 //0x8014030b  PB output  =  0x10
+	sb		t1, 0x30a(t0)		//0x8014030a  PB oen     =  0xef
+	sb		t2, 0x30b(t0)		//0x8014030b  PB output  =  0x10
 #endif
-	/* Initialize global pointer */
 
+    /* timer rst enable. */
+    li      t0, 0x801401e2 /* reg_rst2 register address. */
+    li      t1, 0x39       /* bit0=1 timer enable(reset velue 0x38). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e2))= 0x39. */
+
+    /* timer clk enable. */
+    li      t0, 0x801401e6 /* tim_ctrl2 register address. */
+    li      t1, 0x31       /* bit0=1 timer enable(reset velue 0x30). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x801401e6))= 0x31. */
+
+    /* set timer watchdog value: 10s. */
+    li      t0, 0x8014014c /* wt_target register address. */
+    li      t1, 0xe4e1c00  /* watchdog value = 0xe4e1c00(10s * 24000000) */
+    sw      t1, 0x0(t0)    /* (*(volatile unsigned long*)(0x8014014c))= 0xe4e1c00. */
+
+    /* start timer watchdog. */
+    li      t0, 0x80140142 /* tim_ctrl2 register address. */
+    li      t1, 0x80       /* bit7=1 watchdog enable(reset velue 0x00). */
+    sb      t1, 0x0(t0)    /* (*(volatile unsigned char*)(0x80140142))= 0x80. */
+
+	/* Initialize global pointer */
     la     gp, __global_pointer$
     .option pop
 
@@ -387,8 +427,8 @@ _IFILL_STK:
 #if 0
     lui    t0, 0x55555
     addi   t0, t0, 0x555
-    la     t2, _BSS_VMA_END
-    la     t3, _STACK_TOP
+    la     t2, _BSS_VMA_END     //_BSS_VMA_END  must be 4-byte aligned
+    la     t3, _STACK_TOP       //_STACK_TOP    must be 4-byte aligned
 _IFILL_STK_BEGIN:
     bleu   t3, t2, _IDATA_INIT
     sw     t0, 0(t2)

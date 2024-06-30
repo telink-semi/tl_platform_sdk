@@ -23,13 +23,33 @@
  *******************************************************************************************************/
 /**	@page AES
  *
- *	Introduction
- *	===============
- *	B92 supports hardware AES function.
- *
  *	API Reference
  *	===============
  *	Header File: aes.h
+ *
+ *  How to use this driver
+ *  ===============
+ *
+ *	- Use the follow functions for encryption and decryption:
+ *
+ *	(#) When BT is not connected, API's are:
+ *		(+) aes_encrypt()
+ * 		(+) aes_decrypt()
+ *
+ *	(#) When BT is connected, API's are:
+ * 		(+) aes_encrypt_bt_en()
+ * 		(+) aes_decrypt_bt_en()
+ *
+ *	- Two ways to get if the encryption or decryption process is done:
+ *	(#) By polling, API is:
+ *		(+) aes_wait_done()
+ *
+ *	(#) By interrupt mode should initialize interrupt first, then the interrupt service function
+ *		will be triggered when the encryption or decryption process done.
+ *
+ *	- Use the function aes_set_em_base_addr() can modify the aes module em_base_address, but it's not recommended to call when using a BT-related SDK.
+ *
+ *
  */
 #ifndef _AES_H_
 #define _AES_H_
@@ -57,6 +77,19 @@ typedef enum{
 	AES_ENCRYPT_MODE	=  0,
 	AES_DECRYPT_MODE	=  2,
 }aes_mode_e;
+
+// aes api error code
+typedef enum {
+	AES_API_ERROR_TIMEOUT_NONE               = 0x00,
+	AES_API_ERROR_TIMEOUT_ENCRYPT			 = 0x01,
+	AES_API_ERROR_TIMEOUT_DECRYPT            = 0x02,
+} aes_api_error_code_e;
+
+/**
+ * aes error timeout(us),a large value is set by default,can set it by aes_set_error_timeout().
+ */
+extern unsigned int g_aes_error_timeout_us;
+
 /**********************************************************************************************************************
  *                                     global variable declaration                                                    *
  *********************************************************************************************************************/
@@ -64,40 +97,71 @@ typedef enum{
 /**********************************************************************************************************************
  *                                      global function prototype                                                     *
  *********************************************************************************************************************/
- /* @brief     This function refer to encrypt. AES module register must be used by word. , all data need big endian.
- * @param[in] key       - the key of encrypt.
- * @param[in] plaintext - the plaintext of encrypt.
- * @param[in] result    - the result of encrypt.
- * @return    none
+/**
+ * @brief     This function serves to aes finite state machine reset(the configuration register is still there and does not need to be reconfigured).
+ * @return    none.
+ */
+ void aes_hw_fsm_reset(void);
+
+ /**
+  * @brief     This function serves to set the aes timeout(us).
+  * @param[in] timeout_us - the timeout(us).
+  * @return    none.
+  * @note      The default timeout (g_aes_error_timeout_us) is the larger value.If the timeout exceeds the feed dog time and triggers a watchdog restart,
+  *            g_aes_error_timeout_us can be changed to a smaller value via this interface, depending on the application.
+  *            g_aes_error_timeout_us the minimum time must meet the following conditions:
+  *            1. at least 100us;
+  *            2. maximum interrupt processing time;
+  *            3. Consider the conflict time of aes encryption and decryption by ble/bt;
+  */
+void aes_set_error_timeout(unsigned int timeout_us);
+
+/**
+ * @brief     This function serves to record the api status.
+ * @param[in] aes_api_status - aes_api_error_code_e.
+ * @return    none.
+ * @note      This function can be rewritten according to the application scenario,can read the parameters of the interface to obtain details about the timeout reason(aes_api_error_code_e),
+ *            aes_hw_fsm_reset() must be called.
+ */
+__attribute__((weak)) void aes_timeout_handler(unsigned int aes_error_timeout_code);
+
+/**
+ * @brief      This function servers to perform aes_128 encryption for 16-Byte input data with specific 16-Byte key.
+ * @param[in]  key       - the key of encrypt, big--endian.
+ * @param[in]  plaintext - the plaintext of encrypt, big--endian.
+ * @param[out] result    - the result of encrypt, big--endian.
+ * @return     1: operation successful;
+ *             DRV_API_TIMEOUT: timeout exit(g_aes_error_timeout_us refer to the note for aes_set_error_timeout,the solution processing is already done in aes_timeout_handler, so just re-invoke the interface);
  */
 int aes_encrypt(unsigned char *key, unsigned char* plaintext, unsigned char *result);
 
 /**
- * @brief     This function refer to encrypt when BT is connected. AES module register must be used by word, all data need big endian.
- * @param[in] key       - the key of encrypt.
- * @param[in] plaintext - the plaintext of encrypt.
- * @param[in] result    - the result of encrypt.
- * @return    none
- * @note      Invoking this interface avoids the risk of AES conflicts when BT is connected.
+ * @brief      This function servers to perform aes_128 encryption for 16-Byte input data with specific 16-Byte key when BT is connected.
+ * @param[in]  key       - the key of encrypt, big--endian.
+ * @param[in]  plaintext - the plaintext of encrypt, big--endian.
+ * @param[out] result    - the result of encrypt, big--endian.
+ * @return     DRV_API_TIMEOUT: timeout exit(g_aes_error_timeout_us refer to the note for aes_set_error_timeout,the solution processing is already done in aes_timeout_handler, so just re-invoke the interface);
+ * @note       Invoking this interface avoids the risk of AES conflicts when BT is connected.
  */
 int aes_encrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned char *result);
 
 /**
- * @brief     This function refer to decrypt. AES module register must be used by word., all data need big endian.
- * @param[in] key         - the key of decrypt.
- * @param[in] decrypttext - the decrypttext of decrypt.
- * @param[in] result      - the result of decrypt.
- * @return    none.
+ * @brief      This function servers to perform aes_128 decryption for 16-Byte input data with specific 16-Byte key.
+ * @param[in]  key         - the key of decrypt, big--endian.
+ * @param[in]  decrypttext - the text of decrypt, big--endian.
+ * @param[out] result      - the result of decrypt, big--endian.
+ * @return     1: operation successful;
+ *             DRV_API_TIMEOUT: timeout exit(g_aes_error_timeout_us refer to the note for aes_set_error_timeout,the solution processing is already done in aes_timeout_handler, so just re-invoke the interface);
  */
 int aes_decrypt(unsigned char *key, unsigned char* decrypttext, unsigned char *result);
 
 /**
- * @brief     This function refer to decrypt when BT is connected. AES module register must be used by word.all data need big endian.
- * @param[in] key         - the key of decrypt.
- * @param[in] decrypttext - the text of decrypt.
- * @param[in] result      - the result of decrypt.
- * @return    none.
- * @note      Invoking this interface avoids the risk of AES conflicts when BT is connected.
+ * @brief      This function servers to perform aes_128 decryption for 16-Byte input data with specific 16-Byte key when BT is connected.
+ * @param[in]  key         - the key of decrypt, big--endian.
+ * @param[in]  decrypttext - the text of decrypt, big--endian.
+ * @param[out] result      - the result of decrypt, big--endian.
+ * @return     DRV_API_TIMEOUT: timeout exit(g_aes_error_timeout_us refer to the note for aes_set_error_timeout,the solution processing is already done in aes_timeout_handler, so just re-invoke the interface);
+ * @note       Invoking this interface avoids the risk of AES conflicts when BT is connected.
  */
 int aes_decrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned char *result);
 
@@ -113,33 +177,20 @@ int aes_decrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned cha
 void aes_set_em_base_addr(unsigned int addr);
 
 /**
- * @brief     This function refer to encrypt/decrypt to set key and data. AES module register must be used by word.
- * 				All data need Little endian.
- * @param[in] key  - the key of encrypt/decrypt.
- * @param[in] data - the data which to do encrypt/decrypt. The address is 32 bits, but only the lower 16 bits are used.
+ * @brief     This function refer to set key and data for encryption/decryption. 
+ * @param[in] key  - the key of encrypt/decrypt, big--endian.
+ * @param[in] data - the data which to do encrypt/decrypt, big--endian. 
  * @return    none.
- * @note	  reg_embase_addr (32bit) +reg_aes_ptr (16bit) is the actual access address.
- * 			  reg_aes_ptr is only 16bit, so access space is only 64K. Adjusting reg_embase_addr changes the initial address of 64K.
+ * @note	  The AES module register must be used by word and the key and data lengths must be 16 bytes.
  */
 void aes_set_key_data(unsigned char *key, unsigned char* data);
 
 /**
- * @brief     This function refer to encrypt/decrypt to get result. AES module register must be used by word.
- * @param[in] result - the result of encrypt/decrypt. Little endian
- * @return    none.
+ * @brief      This function refer to encrypt/decrypt to get result. AES module register must be used by word.
+ * @param[out] result - the result of encrypt/decrypt, big--endian.
+ * @return     none.
  */
 void aes_get_result(unsigned char *result);
-
-/**
- * @brief     This function refer to match the rpa.
- * @param[in] irk         - the irk sequence, max 16 group(16byte a group). The address is 32 bits, but only the lower 16 bits are used.
- * @param[in] irk_len	  - the irk group num.
- * @param[in] rpa      	  - the rpa which want to match.
- * @return    0xff-not matched, (0x0-0x0f)-the match group index.
- * @note	  reg_embase_addr (32bit) +reg_aes_irk_ptr (16bit) is the actual access address.
- * 			  reg_aes_irk_ptr is only 16bit, so access space is only 64K. Adjusting reg_embase_addr changes the initial address of 64K.
- */
-unsigned char aes_rpa_match(unsigned char *irk, unsigned char irk_len, unsigned char *rpa);
 
 /**
  * @brief     This function refer to set aes mode.
@@ -174,8 +225,8 @@ static inline void aes_clr_irq_mask(aes_irq_e mask)
 /**
  * @brief     This function refer to get aes irq status.
  * @param[in] status - the irq status to get.
- * @retval	  non-zero   -  the interrupt occurred.
- * @retval	  zero  -  the interrupt did not occur.
+ * @return	  non-zero   -  the interrupt occurred.
+ * 			  zero  -  the interrupt did not occur.
  */
 static inline int aes_get_irq_status(aes_irq_e status)
 {

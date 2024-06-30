@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,38 +29,25 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
+#define TIMER_GPIO_1            GPIO_PA0
+#define TIMER_GPIO_2            GPIO_PA1
 
-#if(MCU_CORE_B91)
-#define TIMER_GPIO_1    		GPIO_PA0
-#define TIMER_GPIO_2     		GPIO_PA1
-
-#elif(MCU_CORE_B92)
-#define TIMER_GPIO_1    		GPIO_PA0
-#define TIMER_GPIO_2     		GPIO_PA1
-#elif(MCU_CORE_B93)
-#define TIMER_GPIO_1    		GPIO_PA0
-#define TIMER_GPIO_2     		GPIO_PA1
-#endif
-
-
-
-
-#define TIMER_SYS_CLOCK_MODE 	1
+#define TIMER_SYS_CLOCK_MODE    1
 #define TIMER_GPIO_TRIGGER_MODE 2
-#define TIMER_GPIO_WIDTH_MODE 	3
-#define TIMER_TICK_MODE 		4
-#define TIMER_WATCHDOG_MODE 	5
-#if(MCU_CORE_B92||  MCU_CORE_B93)
+#define TIMER_GPIO_WIDTH_MODE   3
+#define TIMER_TICK_MODE         4
+#define TIMER_WATCHDOG_MODE     5
+#if !defined(MCU_CORE_B91)
 #define TIMER_32K_WATCHDOG_MODE 6
 #endif
 
-#define TIMER_MODE				TIMER_SYS_CLOCK_MODE
+#define TIMER_MODE              TIMER_SYS_CLOCK_MODE
 
 
-#define WATCHDOG_32K_XTAL_MODE	1
-#define WATCHDOG_32K_RC_MODE	2
+#define WATCHDOG_32K_XTAL_MODE  1 //The TL751X A0 version not support 32k xtal.
+#define WATCHDOG_32K_RC_MODE    2
 
-#define WATCHDOG_MODE			WATCHDOG_32K_RC_MODE
+#define WATCHDOG_MODE           WATCHDOG_32K_RC_MODE
 
 
 

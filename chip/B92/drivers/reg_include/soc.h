@@ -24,6 +24,7 @@
 #pragma once
 
 #include "bit.h"
+#include "error_handler/error_handler.h"
 
 /*Attention: for all the 2-byte address operation (like REG_ADDR16,write_reg16,read_reg16) ,
  *           the address parameter should  be multiple of 2. For example:REG_ADDR16(0x2),REG_ADDR16(0x4).

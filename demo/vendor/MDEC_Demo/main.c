@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -28,7 +28,7 @@ extern void user_init(void);
 extern void main_loop (void);
 
 /**
- * @brief		This is main function
+ * @brief       This is main function
  * @return      none
  */
 int main(void)
@@ -39,7 +39,7 @@ int main(void)
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
     return 0;
 }

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,27 +29,28 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
+#if defined(MCU_CORE_TL321X)
+#define MANUAL_TEST_MODE        1 // For internal testing, users need not care
+#define AUTO_TEST_MODE          2 // For internal testing, users need not care
+#define GPIO_TEST_MODE          MANUAL_TEST_MODE
 
 
-#define TIMER_SYS_CLOCK_MODE 	1
-#define TIMER_GPIO_TRIGGER_MODE 2
-#define TIMER_GPIO_WIDTH_MODE 	3
-#define TIMER_TICK_MODE 		4
-#define TIMER_WATCHDOG_MODE 	5
+#define CURRENT_PER_MHZ_TEST                1
 
-#define TIMER_MODE				TIMER_GPIO_TRIGGER_MODE
+#define CCLK_24M_HCLK_12M_PCLK_12M          1
+#define CCLK_24M_HCLK_24M_PCLK_12M          2
+#define CCLK_24M_HCLK_24M_PCLK_24M          3
+#define CCLK_48M_HCLK_24M_PCLK_24M          4
+#define CCLK_48M_HCLK_48M_PCLK_24M          5
+#define CCLK_96M_HCLK_48M_PCLK_24M          6
+#define CCLK_48M_HCLK_48M_PCLK_48M          7
+#define CCLK_96M_HCLK_48M_PCLK_48M          8
+#define CLOCK_FREQUENCY                     CCLK_24M_HCLK_24M_PCLK_12M
 
+#endif
 
-
-
-
-
-
-
-
-
-
-
+extern void dhry_main (void);
+extern float Dhrystone_DMIPS_Per_MHz;
 
 
 
