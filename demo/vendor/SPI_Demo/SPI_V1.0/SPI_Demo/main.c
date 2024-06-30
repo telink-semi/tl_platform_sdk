@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,26 +29,26 @@ extern void main_loop(void);
 
 
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 int main (void)
 {
-	PLATFORM_INIT;
+    PLATFORM_INIT;
 
 
 #if(SPI_MODE == SPI_XIP_MODE)//SPI_XIP_MODE need fast frequent
-	CCLK_96M_HCLK_48M_PCLK_24M;
+    CCLK_96M_HCLK_48M_PCLK_24M;
 #else
-	CCLK_24M_HCLK_24M_PCLK_24M;
+    CCLK_24M_HCLK_24M_PCLK_24M;
 #endif
 
-	user_init();
+    user_init();
 
-	while (1) {
-		main_loop ();
-	}
-	return 0;
+    while (1) {
+        main_loop ();
+    }
+    return 0;
 }
 

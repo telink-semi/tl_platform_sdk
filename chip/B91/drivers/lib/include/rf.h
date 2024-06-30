@@ -21,6 +21,18 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+/**@page RF
+ *
+ *    Header File: rf.h
+ *
+ *    Attention
+ *    ==============
+     -# Precautions when using RF and pm functions in combination:
+        -suspend mode        :In this mode RF related digital registers are lost and need to re-call the RF related function interfaces after waking up.
+        -deep retention mode :In this mode RF related digital registers are lost and need to re-call the RF related function interfaces after waking up.
+        -deep mode           :In this mode RF related digital registers are lost and need to re-call the RF related function interfaces after waking up.
+
+ */
 #ifndef     RF_H
 #define     RF_H
 
@@ -30,6 +42,19 @@
 /**********************************************************************************************************************
  *                                         RF  global macro                                                           *
  *********************************************************************************************************************/
+/**
+ *  @brief This define serve to restore the enabled state of the Rx secondary filter in different RF modes
+ *  @note  Attention:
+ *          1.This macro is for test use only.
+ *          Set to 0 :(1)BLE 125K and 250K mode have turned on the secondary filter, which is used to improve the chip's Out-of-Band Interference Immunity (interference including DC- offset).
+ *                        After turning it on, the sensitivity performance of chips with poor interference immunity can be restored to the normal range.
+ *                        However, turning it on will tighten the chip's anti-frequency offset range to within +/-150kHz.
+ *                    (2)Secondary filter off for all modes except BLE 125K and 250K modes
+ *          Set to 1: Restore the settings of the previous version's secondary filtering, only as a reserved configuration for testing, and cannot be used in actual scenarios
+ *
+ */
+#define  RF_RX_SEC_FLT_CONFIG                  0
+
 /**
  *  @brief This define serve to calculate the DMA length of packet.
  */
@@ -291,33 +316,42 @@ typedef enum {
 } rf_status_e;
 
 /**
- *  @brief  Rx fast settle time
- *  @note Some notice for timing sequence.
- *  1:The timing sequence can be configured once during initialization.
- *  2:The timing sequence of tx and rx can be configured separately.
- *  3:Call the enable function rf_tx_fast_settle_en or rf_rx_fast_settle_en when using the configured timing sequence.
- *    To close it, call rf_tx_fast_settle_dis or rf_rx_fast_settle_dis.
- *  4:According to the different parameters, a normal calibration should be done regularly, such as parameter notes.
+ *  @brief  RX fast settle time
+ *  @note 
+ *  1:Call rf_fast_settle_config to configure timing during initialization.
+ *  2:Call the enable function rf_rx_fast_settle_en when using the configured timing sequence.
+ *    To close it, call rf_rx_fast_settle_dis.
+ *  3:The deleted hardware calibration values are influenced by environmental temperature and require periodic recalibration.
+ *	  Calibration method: Call rf_rx_fast_settle_dis, then set any frequency point (calibration value is independent of the frequency point):
+ *	  stop RF-related states, enable RX, wait for packet transmission to end -> rf_rx_fast_settle_update_cal_val.
  */
 typedef enum{
-	RX_SETTLE_TIME_45US		 = 0, /**<  disable rx_ldo_trim and rx_dcoc calibration,reduce 44.5us of rx settle time.
+	RX_SETTLE_TIME_45US		 = 0, /**<  reduce 44.5us of rx settle time.
 	                                    Receive for a period of time and then do a normal calibration. */
-	RX_SETTLE_TIME_80US		 = 1  /**<  disable rx_ldo_trim calibration,reduce 4.5us of rx settle time.
+	RX_SETTLE_TIME_80US		 = 1, /**<  reduce 4.5us of rx settle time.
 	                                    Do a normal calibration at the beginning.*/
-
+	RX_FAST_SETTLE_NONE		 = 2
 }rf_rx_fast_settle_time_e;
 
 /**
- *  @brief  Tx fast settle time
+ *  @brief  TX fast settle time
+ *  @note
+ *  1:Call rf_fast_settle_config to configure timing during initialization.
+ *  2:Call the enable function rf_tx_fast_settle_en when using the configured timing sequence.
+ *    To close it, call rf_tx_fast_settle_dis.
+ *  3:The deleted hardware calibration values are influenced by environmental temperature and require periodic recalibration.
+ *	  Calibration method: Call rf_tx_fast_settle_dis->stop RF-related states, enable TX, wait for packet transmission to end ->
+ *	  rf_tx_fast_settle_update_cal_val.
  */
 typedef enum{
-	TX_SETTLE_TIME_50US	 	= 0, /**<  disable tx_ldo_trim function and tx_hpmc,reduce 58us of tx settle time.
-	                                   After frequency hopping, a normal calibration must be done.*/
-	TX_SETTLE_TIME_104US    = 1  /**<  disable tx_ldo_trim function,reduce 4.5us of tx settle time.
-	                                   Do a normal calibration at the beginning.*/
+	TX_SETTLE_TIME_50US	 	= 0, /**<  reduce 58us of tx settle time.
+	                                   note: Related to frequency points, requires setting the calibration values for the used frequency points.*/
+	TX_SETTLE_TIME_104US    = 1, /**<  reduce 4.5us of tx settle time.
+	                                   Do a normal calibration at the beginning.
+	                                   note: Independent of frequency points, calibration values can be obtained by setting any frequency point.*/
+	TX_FAST_SETTLE_NONE		= 2,
 
 }rf_tx_fast_settle_time_e;
-
 /**
  *  @brief  LDO trim calibration value
  */
@@ -330,23 +364,23 @@ typedef struct
 	unsigned char LDO_VCO_TRIM;
 }rf_ldo_trim_t;
 
+#if 0
 /**
  *  @brief  DCOC calibration value
  */
 typedef struct
 {
-	unsigned char DCOC_IDAC;
-	unsigned char DCOC_QDAC;
-	unsigned char DCOC_IADC_OFFSET;
-	unsigned char DCOC_QADC_OFFSET;
+    unsigned char DCOC_IDAC;
+    unsigned char DCOC_QDAC;
+    unsigned char DCOC_IADC_OFFSET;
+    unsigned char DCOC_QADC_OFFSET;
 }rf_dcoc_cal_t;
-
+#endif
 
 typedef struct
 {
-	unsigned short cal_tbl[40];
+	unsigned short cal_tbl[81];
 	rf_ldo_trim_t	  ldo_trim;
-	rf_dcoc_cal_t   dcoc_cal;
 
 }rf_fast_settle_t ;
 
@@ -496,7 +530,6 @@ typedef enum {
  *                                         RF global constants                                                        *
  *********************************************************************************************************************/
 extern const rf_power_level_e rf_power_Level_list[30];
-
 
 /**********************************************************************************************************************
  *                                         RF function declaration                                                    *
@@ -791,7 +824,7 @@ static inline void rf_set_tx_dma_fifo_size(unsigned short fifo_byte_size)
 }
 /**
  * @brief   This function serves to set RF tx settle time.
- * @tx_stl_us  tx settle time,the unit is us.The max value of this param is 0xfff;The default settling time value is 150us.
+ * @param[in]  tx_stl_us  tx settle time,the unit is us.The max value of this param is 0xfff;The default settling time value is 150us.
  * 			   The typical value is 113us (tx_settle time should not be less than this value).
  * @return  none.
  * @note		Attention:It is not necessary to call this function to adjust the settling time in the normal sending state.
@@ -803,7 +836,7 @@ static inline void rf_set_tx_settle_time(unsigned short tx_stl_us )
 }
 /**
  * @brief   This function serves to set RF tx settle time and rx settle time.
- * @rx_stl_us  rx settle time,the unit is us.The max value of this param is 0xfff;The default settling time value is 150us.
+ * @param[in]  rx_stl_us  rx settle time,the unit is us.The max value of this param is 0xfff;The default settling time value is 150us.
  * 			   The typical value is 85us (rx_settle time should not be less than this value).
  * @return  none.
  * @note	   Attention:It is not necessary to call this function to adjust the settling time in the normal packet receiving state.
@@ -918,8 +951,40 @@ static inline void rf_set_ptx_pid(unsigned char pipe_pid)
 
 
 /**
+ * @brief        This function is used to set whether or not to use the rx DCOC software calibration in rf_mode_init();
+ * @param[in]     en:This value is used to set whether or not rx DCOC software calibration is performed.
+ *                -#1:enable the DCOC software calibration;
+ *                -#0:disable the DCOC software calibration;
+ * @return         none.
+ * @note        Attention:
+ *                 1.Driver default enable to solve the problem of poor receiver sensitivity performance of some chips with large DC offset
+ *                 2.The following conditions should be noted when using this function:
+ *                   If you use the RX function, it must be enabled, otherwise it will result in a decrease in RX sensitivity.
+ *                   If you only use tx and not rx, and want to save code execution time for rf_mode_init(), you can disable it
+ */
+void rf_set_rx_dcoc_cali_by_sw(unsigned char en);
+
+/**
+ * @brief        This function is used to update the rx DCOC calibration value.
+ * @param[in]   calib_code - Value of iq_code after calibration.(The code is a combination value,you need to fill in the combined iq value)
+ *                 <0> is used to control the switch of bypass dcoc calibration iq code, the value should be 1;
+ *                 <6-1>:the value of I code, the range of value is 1~62;
+ *                 <12-7>:the value of Q code, the range of value is 1~62.
+ * @return         none.
+ */
+void rf_update_rx_dcoc_calib_code(unsigned short calib_code);
+
+/**
  * @brief      This function serves to initiate information of RF.
- * @return	   none.
+ * @return       none.
+ * @note          Attention:
+ *                 In order to solve the problem of poor receiver sensitivity performance of some chips with large DC offset:
+ *                 1.Added DCOC software calibration scheme to the rf_mode_init() interface to get the smallest DC-offset for the chip.
+ *                 2.Turn on the RX secondary filter in BLE S2 S8 modes to filter out DC offset and noise as much as possible,
+ *                   in order to improve the chip's out of band anti-interference ability (including DC offset).
+ *                But there are two things to note:
+ *                (1)Using DCOC software calibration will increase the software execution time of rf_mode_init().
+ *                (2)After turning on the RX secondary filter, the anti frequency offset range of the chip will be reduced to within +/-150kHz.
  */
 void rf_mode_init(void);
 
@@ -1297,9 +1362,9 @@ _attribute_ram_code_sec_noinline_ void rf_start_stx(void* addr, unsigned int tic
 
 
 /**
- * @brief     	This function serves to RF trigger stx2rx
- * @param[in] 	addr  	- DMA tx buffer.
- * @param[in] 	tick  	- Send after tick delay.
+ * @brief     	This function serves to RF trigger stx2rx.
+ * @param[in] 	addr  - DMA tx buffer.
+ * @param[in] 	tick  - Trigger tx send packet after tick delay.
  * @return	    none.
  * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
@@ -1328,7 +1393,7 @@ _attribute_ram_code_sec_noinline_ void rf_set_rxmode(void);
  *				Timeout duration is set by the parameter "tick".
  *				The address to store received data is set by the function "addr".
  * @param[in]	addr   - The address to store received data.
- * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215)
+ * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215).
  * @return	 	none
  * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
@@ -1336,12 +1401,12 @@ _attribute_ram_code_sec_noinline_ void rf_start_brx  (void* addr, unsigned int t
 
 
 /**
- * @brief	  	This function serves to start tx of auto mode. In this mode,
- *				RF module stays in tx status until a packet is sent or it fails to sent packet when timeout expires.
+ * @brief	  	This function serves to start Rx of auto mode. In this mode,
+ *				RF module stays in Rx status until a packet is received or it fails to receive packet when timeout expires.
  *				Timeout duration is set by the parameter "tick".
- *				The address to store send data is set by the function "addr".
- * @param[in]	addr   - The address to store send data.
- * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215)
+ *				The address to store received data is set by the function "addr".
+ * @param[in]	addr   - The address to store received data.
+ * @param[in]	tick   - It indicates timeout duration in Rx status.Max value: 0xffffff (16777215).
  * @return	 	none
  * @note		addr:must be aligned by word (4 bytes), otherwise the program will enter an exception.
  */
@@ -1375,22 +1440,12 @@ void rf_set_rx_modulation_index(rf_mi_value_e mi_value);
 void rf_set_tx_modulation_index(rf_mi_value_e mi_value);
 
 /**
- *	@brief	  	This function serve to adjust rx settle timing sequence.
+ *	@brief	  	This function serve to adjust tx/rx settle timing sequence.
+ *	@param[in]	tx_settle_us  	After adjusting the timing sequence, the time required for tx to settle.
  *	@param[in]	rx_settle_us  	After adjusting the timing sequence, the time required for rx to settle.
  *	@return	 	none
- *	@note		RX_SETTLE_TIME_45US - disable rx_ldo_trim and rx_dcoc calibration,reduce 44.5us of rx settle time.Receive for a period of time and then do a normal calibration.
- *				RX_SETTLE_TIME_80US - disable rx_ldo_trim calibration,reduce 4.5us of rx settle time. Do a normal calibration at the beginning.
-*/
-void rf_rx_fast_settle_init(rf_rx_fast_settle_time_e rx_settle_us);
-
-/**
- *	@brief	  	This function serve to adjust tx settle timing sequence.
- *	@param[in]	tx_settle_us  	After adjusting the timing sequence, the time required for tx to settle.
- *	@return	 	none
- *	@note		TX_SETTLE_TIME_50US  - disable tx_ldo_trim function and tx_hpmc,reduce 58us of tx settle time.After frequency hopping, a normal calibration must be done.
- *	            TX_SETTLE_TIME_104US - disable tx_ldo_trim function,reduce 4.5us of tx settle time. Do a normal calibration at the beginning.
-*/
-void rf_tx_fast_settle_init(rf_tx_fast_settle_time_e tx_settle_us);
+ */
+void rf_fast_settle_config(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us);
 
 /**
  *	@brief	  	This function serve to enable the tx timing sequence adjusted.
@@ -1421,47 +1476,21 @@ void rf_rx_fast_settle_en(void);
 void rf_rx_fast_settle_dis(void);
 
 /**
- *  @brief		This function is mainly used to get LDO Calibration-related values.
- *	@param[in]	ldo_trim   - ldo trim calibration value address pointer
- *	@return	 	none
+ *  @brief		This function is used to set the tx fast_settle calibration value.
+ *	@param[in]	tx_settle_us  	After adjusting the timing sequence, the time required for tx to settle.
+ *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Only applicable to TX_SETTLE_TIME_50US, other parameters are invalid.
+ *								(When tx_settle_us is 50us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
 */
-void rf_get_ldo_trim_val(rf_ldo_trim_t *ldo_trim);
+void rf_tx_fast_settle_update_cal_val(rf_tx_fast_settle_time_e tx_settle_time,unsigned char chn);
 
 /**
- *  @brief		This function is mainly used to set LDO Calibration-related values.
- *	@param[in]  ldo_trim   - ldo trim Calibration-related values.
+ *  @brief		This function is used to set the rx fast_settle calibration value.
+ *	@param[in]	rx_settle_us  	After adjusting the timing sequence, the time required for rx to settle.
+ *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80.
+								Reserved for future functionality. Currently, this parameter has no effect.
  *	@return	 	none
 */
-void rf_set_ldo_trim_val(rf_ldo_trim_t ldo_trim);
-
-/**
- *  @brief		This function is mainly used to get hpmc Calibration-related values.
- *	@param[in]	none
- *	@return	 	Returns the hpmc_gain value
-*/
-_attribute_ram_code_sec_noinline_ unsigned short rf_get_hpmc_cal_val();
-
-/**
- *  @brief		This function is mainly used to set hpmc Calibration-related values.
- *	@param[in]  hpmc_gain  - hpmc Calibration-related values.
- *	@return	 	none
-*/
-_attribute_ram_code_sec_noinline_ void rf_set_hpmc_cal_val(unsigned short hpmc_gain);
-
-
-/**
- *  @brief		This function is mainly used to get DCOC Calibration-related values.
- *	@param[in]  dcoc_cal    - dcoc calibration value address pointer
- *	@return	 	none
-*/
-void rf_get_dcoc_cal_val(rf_dcoc_cal_t *dcoc_cal);
-
-/**
- *  @brief		This function is mainly used to set dcoc Calibration-related values.
- *	@param[in]  dcoc_cal    - dcoc Calibration-related values.
- *	@return	 	none
-*/
-void rf_set_dcoc_cal_val(rf_dcoc_cal_t dcoc_cal);
+void rf_rx_fast_settle_update_cal_val(rf_rx_fast_settle_time_e rx_settle_time,unsigned char chn);
 
 /**
  * @brief      This function serves to init the 2-wire-PTA.

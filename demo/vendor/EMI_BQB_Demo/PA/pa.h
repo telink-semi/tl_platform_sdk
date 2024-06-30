@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    pa.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2023
@@ -26,57 +26,57 @@
 #include "../app_config.h"
 
 /**
- * @brief		Enumeration type of PA state.
+ * @brief       Enumeration type of PA state.
  */
 typedef enum{
-	PA_SETTING_STATE_INIT = 0x01,
-	PA_SETTING_STATE_TX = 0x02,
-	PA_SETTING_STATE_RX = 0x03,
-	PA_SETTING_STATE_BYPASS = 0x04,
+    PA_SETTING_STATE_INIT = 0x01,
+    PA_SETTING_STATE_TX = 0x02,
+    PA_SETTING_STATE_RX = 0x03,
+    PA_SETTING_STATE_BYPASS = 0x04,
 }pa_setting_state_e;
 
 /**
- * @brief		This function serves to execute PA operations according to the state.
+ * @brief       This function serves to execute PA operations according to the state.
  * @param[in]   state      - PA working state.
- * @return 		none
+ * @return      none
  */
 extern void pa_operation(pa_setting_state_e state);
 
 
 #if(EMI_SUPPORT_SETTING)
 /**
- * @brief		This function serves to converts the pin value of a single byte to the actual pin value.
- * @para[in]	value  - One-byte pin value.
- * @return		Result of actual pin value.
+ * @brief       This function serves to converts the pin value of a single byte to the actual pin value.
+ * @para[in]    value  - One-byte pin value.
+ * @return      Result of actual pin value.
  */
 #define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
 
 /**
- * @brief		This function serves to read data saved in binary file.
+ * @brief       This function serves to read data saved in binary file.
  * @param[in]   addr   - Position in binary file.
- * @return 		One-byte result data.
+ * @return      One-byte result data.
  */
 extern unsigned char read_data8(unsigned int addr);
 
 /**
- * @brief		This function serves to read data saved in binary file.
+ * @brief       This function serves to read data saved in binary file.
  * @param[in]   addr   - Position in binary file.
- * @return 		Two-byte result data.
+ * @return      Two-byte result data.
  */
 extern unsigned short read_data16(unsigned int addr);
 
 /**
- * @brief		This function serves to read data saved in binary file.
+ * @brief       This function serves to read data saved in binary file.
  * @param[in]   addr   - Position in binary file.
- * @return 		Four-byte result data.
+ * @return      Four-byte result data.
  */
 extern unsigned int read_data32(unsigned int addr);
 
 /**
- * @brief		This function serves to initialize PA setting.
+ * @brief       This function serves to initialize PA setting.
  * @param[in]   addr       - Address to save PA related operations.
  * @param[in]   bypass_en  - To set PA bypass mode, 0:disable 1:enable.
- * @return 		none
+ * @return      none
  */
 extern void pa_setting_init(unsigned int addr, unsigned char bypass_en);
 

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -30,7 +30,7 @@ extern "C"
 #endif
 #include "driver.h"
 #include "common.h"
-
+#include "chacha20_play1305/app_test.h"
 
 #ifdef CHACHA20_POLY1305_DMA_FUNCTION
 extern int buf_chacha20_dma[0x2000];

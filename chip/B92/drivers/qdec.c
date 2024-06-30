@@ -74,10 +74,11 @@ void qdec_clk_en(void)
  */
 signed char qdec_get_count_value(void)
 {
-	//before reading the hardware counting value,write 1 to reg_qdec_load.
-	reg_qdec_load |= FLD_QDEC_COUNT0_RELOAD;
-	return reg_qdec_count0;
-
+    //before reading the hardware counting value,write 1 to reg_qdec_load.
+    reg_qdec_load |= FLD_QDEC_COUNT0_RELOAD;
+    // Wait for the count0_reload register to change from 1 to 0 before reading the value, otherwise it will read the old value
+    while(FLD_QDEC_COUNT0_RELOAD == (reg_qdec_load & FLD_QDEC_COUNT0_RELOAD)){}
+    return reg_qdec_count0;
 }
 
 /**

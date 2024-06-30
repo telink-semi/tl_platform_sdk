@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,21 +29,10 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
+#define AES_ECB_MODE    1
+#define AES_CBC_MODE    2
 
-
-
-#define	AES_CRYPT_MODE			0
-#if(MCU_CORE_B92)
-#define	AES_RPA_MODE			1
-#endif
-
-#define AES_MODE			AES_CRYPT_MODE
-
-
-
-
-
-
+#define AES_MODE    AES_ECB_MODE
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

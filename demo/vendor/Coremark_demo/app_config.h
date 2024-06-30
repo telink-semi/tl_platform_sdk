@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -31,13 +31,13 @@ extern "C" {
 
 
 
-#define TIMER_SYS_CLOCK_MODE 	1
+#define TIMER_SYS_CLOCK_MODE    1
 #define TIMER_GPIO_TRIGGER_MODE 2
-#define TIMER_GPIO_WIDTH_MODE 	3
-#define TIMER_TICK_MODE 		4
-#define TIMER_WATCHDOG_MODE 	5
+#define TIMER_GPIO_WIDTH_MODE   3
+#define TIMER_TICK_MODE         4
+#define TIMER_WATCHDOG_MODE     5
 
-#define TIMER_MODE				2
+#define TIMER_MODE              2
 
 
 

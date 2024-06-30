@@ -44,6 +44,12 @@ enum
 #define reg_ana_addr_data16		REG_ADDR16(ALG_BASE_ADDR+0x04)
 #define reg_ana_addr_data32		REG_ADDR32(ALG_BASE_ADDR+0x04)
 
+#define reg_ana_buf_cnt         REG_ADDR8(ALG_BASE_ADDR+0x08)
+enum{
+	FLD_ANA_RX_BUFCNT =  BIT_RNG(0,3),
+	FLD_ANA_TX_BUFCNT =  BIT_RNG(4,7),
+};
+
 #define reg_ana_sta             REG_ADDR8(ALG_BASE_ADDR+0x09)
 enum
 {

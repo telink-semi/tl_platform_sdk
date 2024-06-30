@@ -26,6 +26,7 @@
 #include "compiler.h"
 #include "gpio.h"
 #include "reg_include/mspi_reg.h"
+#include "error_handler/error_handler.h"
 
 /**
  * @brief  Define the MSPI work mode.
@@ -97,16 +98,34 @@ typedef enum{
 	MSPI_ERASE      = 2,
 }mspi_func_e;
 
+/********************************************************************************************************
+ *											internal
+ *******************************************************************************************************/
+
+/********************************************************************************************************
+ * 				this is only internal interface, customers do not need to care.
+ *******************************************************************************************************/
+
 /**
- * @brief 		This function to determine whether the bus is busy.
- * @param[in] 	none.
- * @return   	1:Indicates that the bus is busy. 0:Indicates that the bus is free.
+ * @brief      This function serves to judge whether mspi is busy.
+ * @return     0:not busy   1:busy.
  */
-_attribute_ram_code_sec_ static _always_inline unsigned char mspi_is_busy(void)
+static _attribute_ram_code_sec_optimize_o2_ inline bool mspi_busy(void)
 {
-	return  (reg_mspi_status & FLD_MSPI_BUSY);
+	return reg_mspi_status & FLD_MSPI_BUSY;
+
 }
 
+/**
+ * @brief 		This function servers to set the spi wait.
+ * @param[in] 	none.
+ * @return   	none.
+ */
+#define mspi_wait()   wait_condition_fails_or_timeout(mspi_busy,g_drv_api_error_timeout_us,drv_timeout_handler,(unsigned int)DRV_API_ERROR_TIMEOUT_MSPI_WAIT);
+
+/********************************************************************************************************
+ *											external
+ *******************************************************************************************************/
 /**
  * @brief 		This function set hspi command content.
  * @param[in] 	cmd 		- command content.
@@ -385,7 +404,7 @@ _attribute_ram_code_sec_optimize_o2_ static inline void mspi_stop_xip(void)
 
 	while(0 != (reg_mspi_status & 0x30));
 
-	while (mspi_is_busy());
+	mspi_wait();
 	mspi_set_xip_dis();
 }
 

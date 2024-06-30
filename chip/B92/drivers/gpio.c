@@ -183,6 +183,10 @@ void gpio_set_input(gpio_pin_e pin, unsigned char value)
  * @brief      This function servers to set the specified GPIO as high resistor.
  * @param[in]  pin  - select the specified GPIO, GPIOG group is not included in GPIO_ALL
  * @return     none.
+ * @note       -# gpio_shutdown(GPIO_ALL) is a debugging method only and is not recommended for use in applications.
+ *             -# gpio_shutdown(GPIO_ALL) set all GPIOs to high impedance except SWS and MSPI.
+ *             -# If you want to use JTAG/USB in active state, or wake up the MCU with a specific pin,
+ *                you can enable the corresponding pin after calling gpio_shutdown(GPIO_ALL).
  */
 void gpio_shutdown(gpio_pin_e pin)
 {

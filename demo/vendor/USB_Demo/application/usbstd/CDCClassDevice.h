@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    CDCClassDevice.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -31,34 +31,34 @@
 
 typedef struct
 {
-	struct
-	{
-		unsigned char ControlInterfaceNumber;
-		unsigned char DataINEndpointNumber;
-		unsigned short DataINEndpointSize;
-		_Bool DataINEndpointDoubleBank;
-		unsigned char DataOUTEndpointNumber;
-		unsigned short DataOUTEndpointSize;
-		_Bool DataOUTEndpointDoubleBank;
-		unsigned char NotificationEndpointNumber;
-		unsigned short NotificationEndpointSize;
-		_Bool NotificationEndpointDoubleBank;
-	} __attribute__((packed)) Config;
+    struct
+    {
+        unsigned char ControlInterfaceNumber;
+        unsigned char DataINEndpointNumber;
+        unsigned short DataINEndpointSize;
+        _Bool DataINEndpointDoubleBank;
+        unsigned char DataOUTEndpointNumber;
+        unsigned short DataOUTEndpointSize;
+        _Bool DataOUTEndpointDoubleBank;
+        unsigned char NotificationEndpointNumber;
+        unsigned short NotificationEndpointSize;
+        _Bool NotificationEndpointDoubleBank;
+    } __attribute__((packed)) Config;
 
-	struct
-	{
-		struct
-		{
-			unsigned short HostToDevice;
-			unsigned short DeviceToHost;
-		} ControlLineStates;
+    struct
+    {
+        struct
+        {
+            unsigned short HostToDevice;
+            unsigned short DeviceToHost;
+        } ControlLineStates;
 
-		CDC_LineEncoding_t LineEncoding;
-	} __attribute__((packed)) State;
+        CDC_LineEncoding_t LineEncoding;
+    } __attribute__((packed)) State;
 } __attribute__((packed)) USB_ClassInfo_CDC_Device_t;
 
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-	}
+    }
 #endif

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-#if(MCU_CORE_B92)
+#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL751X) || defined(MCU_CORE_B931)
 volatile unsigned int g_vbus_timer_turn_off_start_tick = 0;
 volatile unsigned int g_vbus_timer_turn_off_flag = 0;
 #endif
@@ -31,8 +31,8 @@ volatile unsigned int g_vbus_timer_turn_off_flag = 0;
 extern void user_init(void);
 extern void main_loop (void);
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 int main(void)
@@ -43,7 +43,7 @@ int main(void)
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
     return 0;
 }

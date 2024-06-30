@@ -1,12 +1,12 @@
 /********************************************************************************************************
  * @file    app.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2024
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -21,19 +21,22 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "driver.h"
+#include <stdio.h>
+#include "app_config.h"
+#include "printf.h"
+
 
 volatile  unsigned long   g_rns_val_trng;
 
 void user_init(void)
 {
-	//sys_clock_init(SYS_CLK_48M);
-	trng_init();
+    trng_init();
 }
 
 
 void main_loop(void)
 {
-	g_rns_val_trng = trng_rand();
+    g_rns_val_trng = trng_rand();
+    printf("g_rns_val_trng = 0x%x\r\n",(unsigned int)g_rns_val_trng);
 }
 

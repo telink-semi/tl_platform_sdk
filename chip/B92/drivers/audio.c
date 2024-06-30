@@ -349,6 +349,7 @@ void audio_set_codec_stream1_sample_rate(audio_sample_rate_e rate)
  */
 void audio_set_codec_dac_sample_rate(audio_sample_rate_e rate)
 {
+	reg_codec_clk_ctr2 &= (~FLD_AUDIO_CODEC_INT_EN);
 	reg_codec_clk_ctr2 = (reg_codec_clk_ctr2&(~FLD_AUDIO_CODEC_INT_CLK_SR))|FLD_AUDIO_CODEC_INT_EN |((audio_codec_rate[rate])<<3);
 }
 
@@ -469,7 +470,15 @@ void audio_set_codec_stream0_input_mode(audio_stream0_input_mode_e input_mode)
  */
 void audio_set_stream0_fifo_input_mode(audio_fifo_chn_e fifo_chn,audio_codec_in_mode_e ain_mode)
 {
-	reg_audio_dec0_sel = (fifo_chn== FIFO0)?((reg_audio_dec0_sel&(~FLD_AUDIO_DEC0_AIN0_COME))|(ain_mode)):((reg_audio_dec0_sel&(~FLD_AUDIO_DEC0_AIN1_COME))|(ain_mode<<2));
+    if ((ain_mode == CODEC_BIT_16_STEREO) || (ain_mode == CODEC_BIT_20_STEREO))
+    {
+         reg_audio_dec0_sel = (reg_audio_dec0_sel & (~(FLD_AUDIO_DEC0_AINL_COME | FLD_AUDIO_DEC0_AINR_COME))) |
+                                   MASK_VAL(FLD_AUDIO_DEC0_AINL_COME, ain_mode, FLD_AUDIO_DEC0_AINR_COME, ain_mode);
+    }
+    else
+    {
+        reg_audio_dec0_sel = (fifo_chn== FIFO0)?((reg_audio_dec0_sel&(~FLD_AUDIO_DEC0_AINL_COME))|(ain_mode)):((reg_audio_dec0_sel&(~FLD_AUDIO_DEC0_AINR_COME))|(ain_mode<<2));
+    }
 }
 
 /**
@@ -501,7 +510,15 @@ void audio_codec_set_stream0_fifo_input_mode(audio_fifo_chn_e fifo_chn,codec_str
  */
 void audio_set_stream1_fifo_input_mode(audio_fifo_chn_e fifo_chn,audio_codec_in_mode_e ain_mode)
 {
-	reg_audio_dec1_sel = (fifo_chn== FIFO0)?((reg_audio_dec1_sel&(~FLD_AUDIO_DEC1_AIN0_COME))|(ain_mode)):(reg_audio_dec1_sel&(~FLD_AUDIO_DEC1_AIN1_COME))|(ain_mode<<4);
+    if ((ain_mode == CODEC_BIT_16_STEREO) || (ain_mode == CODEC_BIT_20_STEREO) || (ain_mode == CODEC_BIT_16_STEREO_STREAM0_STREAM1))
+    {
+         reg_audio_dec1_sel = (reg_audio_dec1_sel & (~(FLD_AUDIO_DEC1_AINL_COME | FLD_AUDIO_DEC1_AINR_COME))) |
+                                   MASK_VAL(FLD_AUDIO_DEC1_AINL_COME, ain_mode, FLD_AUDIO_DEC1_AINR_COME, ain_mode);
+    }
+    else
+    {
+        reg_audio_dec1_sel = (fifo_chn== FIFO0)?((reg_audio_dec1_sel&(~FLD_AUDIO_DEC1_AINL_COME))|(ain_mode)):(reg_audio_dec1_sel&(~FLD_AUDIO_DEC1_AINR_COME))|(ain_mode<<4);
+    }
 }
 
 /**
@@ -903,11 +920,15 @@ void audio_codec_swap_stream0_data(audio_fifo_chn_e fifo_chn,codec_stream0_input
 	 * (2) mono:fifo0->ch0_l on
 	 *          fifo1->ch1_r on
 	 */
+
+	codec_stream0_input_src_e input_src;
+	input_src = source;
+
 	switch(source)
  {
 	case LINE_STREAM0_MONO_L:
 	case AMIC_STREAM0_MONO_L:
-	case DMIC_STREAM0_MONO_L:if(rate == AUDIO_44P1K || rate == AUDIO_48K){
+	case DMIC_STREAM0_MONO_L:if((rate == AUDIO_44P1K || rate == AUDIO_48K)&&(input_src == DMIC_STREAM0_MONO_L)){
 		                        (fifo_chn == FIFO1)?(audio_swap_stream0_data(DATA_INVERT_DIS)):(audio_swap_stream0_data(DATA_INVERT_EN));
 	                         }
 	                         else{
@@ -916,7 +937,7 @@ void audio_codec_swap_stream0_data(audio_fifo_chn_e fifo_chn,codec_stream0_input
 		                     break;
 	case LINE_STREAM0_MONO_R:
 	case AMIC_STREAM0_MONO_R:
-	case DMIC_STREAM0_MONO_R:if(rate == AUDIO_44P1K || rate == AUDIO_48K){
+	case DMIC_STREAM0_MONO_R:if((rate == AUDIO_44P1K || rate == AUDIO_48K)&&(input_src == DMIC_STREAM0_MONO_R)){
                                (fifo_chn == FIFO0)?(audio_swap_stream0_data(DATA_INVERT_DIS)):(audio_swap_stream0_data(DATA_INVERT_EN));
                              }
                              else{

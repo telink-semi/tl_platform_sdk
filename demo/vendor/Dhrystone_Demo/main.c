@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -25,36 +25,24 @@
 
 extern void user_init(void);
 extern void main_loop (void);
-extern void dhry_main (void);
+
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 
-extern float Dhrystone_DMIPS_Per_MHz;
-
 int main(void)
 {
+#if !defined(MCU_CORE_TL751X_N22)
     PLATFORM_INIT;
-    CLOCK_INIT;
+#endif
 
-	user_init();
-	while ((read_reg8(0x10080b) & 0x7f) == 0);
-
-	for (int i=0; i<1; i++)
-	{
-		printf ("\r\n\r\n Drystone Benchmark %d Starts ...", i);
-		dhry_main();
-	}
-	printf("\r\n[dhrystone] : %6.2f\r\n",Dhrystone_DMIPS_Per_MHz);
-	delay_ms (100);
-	reg_usb_ep8_send_thres = 1;
-
+    user_init();
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
 
     return 0;

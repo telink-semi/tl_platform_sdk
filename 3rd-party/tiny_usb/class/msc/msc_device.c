@@ -122,7 +122,7 @@ void mscd_reset(unsigned char rhport)
 
 unsigned short mscd_open(unsigned char rhport, tusb_desc_interface_t const * itf_desc, unsigned short max_len)
 {
-	(void) max_len;
+    (void) max_len;
   // only support SCSI's BOT protocol
   // msc driver length is fixed
   unsigned short const drv_len = sizeof(tusb_desc_interface_t) + 2*sizeof(tusb_desc_endpoint_t);
@@ -137,7 +137,7 @@ unsigned short mscd_open(unsigned char rhport, tusb_desc_interface_t const * itf
   // Prepare for Command Block Wrapper
   if ( !usbd_edpt_xfer(rhport, p_msc->ep_out, (unsigned char*) &p_msc->cbw, sizeof(msc_cbw_t)) )
   {
-	while(1);
+    while(1);
   }
 
   return drv_len;
@@ -145,7 +145,7 @@ unsigned short mscd_open(unsigned char rhport, tusb_desc_interface_t const * itf
 
 bool mscd_xfer_cb(unsigned char rhport, unsigned char ep_addr, xfer_result_t event, unsigned int xferred_bytes)
 {
-	(void)event;
+    (void)event;
   mscd_interface_t* p_msc = &_mscd_itf;
   msc_cbw_t const * p_cbw = &p_msc->cbw;
   msc_csw_t       * p_csw = &p_msc->csw;
@@ -168,13 +168,13 @@ bool mscd_xfer_cb(unsigned char rhport, unsigned char ep_addr, xfer_result_t eve
 
       if (SCSI_CMD_READ_10 == p_cbw->command[0])
       {
-    	 /* if ( tud_msc_read10_start_cb )*/ tud_msc_read10_start_cb(p_cbw->lun, rdwr10_get_lba(p_cbw->command), p_cbw->total_bytes);
-    	  proc_read10_cmd(rhport, p_msc);
+         /* if ( tud_msc_read10_start_cb )*/ tud_msc_read10_start_cb(p_cbw->lun, rdwr10_get_lba(p_cbw->command), p_cbw->total_bytes);
+          proc_read10_cmd(rhport, p_msc);
       }
       else if (SCSI_CMD_WRITE_10 == p_cbw->command[0])
       {
-    	  /*if ( tud_msc_write10_start_cb )*/ tud_msc_write10_start_cb(p_cbw->lun, rdwr10_get_lba(p_cbw->command), p_cbw->total_bytes);
-    	  proc_write10_cmd(rhport, p_msc);
+          /*if ( tud_msc_write10_start_cb )*/ tud_msc_write10_start_cb(p_cbw->lun, rdwr10_get_lba(p_cbw->command), p_cbw->total_bytes);
+          proc_write10_cmd(rhport, p_msc);
       }
       else
       {

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -22,29 +22,18 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "nds_intrinsic.h"
 
 void user_init(void)
 {
-	usb_set_pin_en();
-	reg_usb_ep8_send_thres = 0x40;
-	reg_usb_ep8_fifo_mode = 1;
-
-	gpio_function_en(LED1);
-	gpio_output_en(LED1);
-	gpio_function_en(LED2);
-	gpio_output_en(LED2);
-	gpio_function_en(LED3);
-	gpio_output_en(LED3);
-	gpio_function_en(LED4);
-	gpio_output_en(LED4);
+    gpio_function_en(LED2);
+    gpio_output_en(LED2);
 }
 
 void main_loop(void)
 {
 
-	delay_ms(200);
-	gpio_toggle(LED1);
+    delay_ms(200);
+    gpio_toggle(LED2);
 
 
 

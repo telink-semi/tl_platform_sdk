@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -66,12 +66,22 @@ extern "C" {
 #define S7816_UART_CHN      S7816_UART0
 
 
-#if(MCU_CORE_B91)
+#if defined(MCU_CORE_B91)
 #define S7816_TRX_PIN    S7816_UART1_RTX_E2
 #define S7816_VCC_PIN    GPIO_PE0
 #define S7816_RST_PIN    GPIO_PB1
 #define S7816_CLK_PIN    S7817_CLK_PA0
-#elif(MCU_CORE_B92)
+#elif defined(MCU_CORE_B92)
+#define S7816_TRX_PIN    GPIO_FC_PB3
+#define S7816_VCC_PIN    GPIO_PB4
+#define S7816_RST_PIN    GPIO_PB1
+#define S7816_CLK_PIN    GPIO_FC_PA0
+#elif defined(MCU_CORE_TL751X)
+#define S7816_TRX_PIN    GPIO_FC_PB3
+#define S7816_VCC_PIN    GPIO_PB4
+#define S7816_RST_PIN    GPIO_PB1
+#define S7816_CLK_PIN    GPIO_FC_PA0
+#elif defined(MCU_CORE_TL721X)
 #define S7816_TRX_PIN    GPIO_FC_PB3
 #define S7816_VCC_PIN    GPIO_PB4
 #define S7816_RST_PIN    GPIO_PB1

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    usbkb.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -30,18 +30,18 @@ extern "C" {
 #include "../usbstd/HIDReportData.h"
 #include "driver.h"
 
-#define KB_RETURN_KEY_MAX	6
+#define KB_RETURN_KEY_MAX   6
 typedef struct{
-	unsigned char cnt;
-	unsigned char ctrl_key;
-	unsigned char keycode[KB_RETURN_KEY_MAX];
-	//unsigned char padding[2];	//  for  32 bit padding,  if KB_RETURN_KEY_MAX change,  this should be changed
+    unsigned char cnt;
+    unsigned char ctrl_key;
+    unsigned char keycode[KB_RETURN_KEY_MAX];
+    //unsigned char padding[2]; //  for  32 bit padding,  if KB_RETURN_KEY_MAX change,  this should be changed
 } __attribute__((packed)) kb_data_t;
-#define DAT_TYPE_KB			1
-#define DAT_TYPE_MOUSE		2
+#define DAT_TYPE_KB         1
+#define DAT_TYPE_MOUSE      2
 
-#define USB_FIFO_NUM		4
-#define USB_FIFO_SIZE		8
+#define USB_FIFO_NUM        4
+#define USB_FIFO_SIZE       8
 
 extern unsigned char usb_fifo[USB_FIFO_NUM][USB_FIFO_SIZE];
 extern unsigned char usb_ff_rptr;

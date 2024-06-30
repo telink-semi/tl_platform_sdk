@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    dhry_1.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -25,10 +25,8 @@
 #include "driver.h"
 #include "dhry.h"
 #include <string.h>
+#include "../app_config.h"
 
-
-#define  HZ            16000000
-#define  CPU_MHz       24
 
 /* Global Variables: */
 
@@ -41,8 +39,9 @@ char            Ch_1_Glob,
 int             Arr_1_Glob [50];
 int             Arr_2_Glob [50] [50];
 
+
 //extern char     *malloc ();
-Enumeration     Func_1 (Capital_Letter Ch_1_Par_Val, Capital_Letter Ch_2_Par_Val);
+Enumeration     Func_1 ();
   /* forward declaration necessary since Enumeration may not simply be int */
 
 #ifndef REG
@@ -80,25 +79,32 @@ float           Microseconds,
 /* end of variables for time measurement */
 
 
-
-
-
-//#define  printf  my_printf
+unsigned char cpu_mhz; /* Note:  This gets the current main frequency of the running cores,
+                                 if you find that the score data is not correct you can check this parameter.*/
 
 unsigned long memory1[128];
 unsigned long memory2[128];
 
 #define  _attribute_ram_code_  __attribute__((section(".ram_code")))
 
-extern _attribute_ram_code_ void Proc_4 (void);
-extern _attribute_ram_code_ void Proc_5 (void);
+_attribute_ram_code_ void Proc_1 (Rec_Pointer Ptr_Val_Par);
+
+_attribute_ram_code_ void Proc_2 (One_Fifty   *Int_Par_Ref);
+
+_attribute_ram_code_ void Proc_3 (Rec_Pointer *Ptr_Ref_Par);
+
+_attribute_ram_code_ void Proc_4 (); /* without parameters */
+
+_attribute_ram_code_ void Proc_5 (); /* without parameters */
+
+extern _attribute_ram_code_ void Proc_6 (Enumeration Enum_Val_Par,Enumeration * Enum_Ref_Par);
+
+extern _attribute_ram_code_ void Proc_7 (One_Fifty Int_1_Par_Val,One_Fifty Int_2_Par_Val,One_Fifty *Int_Par_Ref);
+
+extern _attribute_ram_code_ void Proc_8 (Arr_1_Dim Arr_1_Par_Ref, Arr_2_Dim Arr_2_Par_Ref,int Int_1_Par_Val,int Int_2_Par_Val);
+
 extern _attribute_ram_code_ Boolean Func_2 (Str_30 Str_1_Par_Ref, Str_30 Str_2_Par_Ref);
-extern _attribute_ram_code_ void Proc_1 (REG Rec_Pointer Ptr_Val_Par);
-_attribute_ram_code_ void Proc_2 (One_Fifty* Int_Par_Ref);
-_attribute_ram_code_ void Proc_3 (Rec_Pointer* Ptr_Ref_Par);
-extern _attribute_ram_code_ void Proc_6 (Enumeration Enum_Val_Par, Enumeration* Enum_Ref_Par);
-extern _attribute_ram_code_ void Proc_7 (One_Fifty Int_1_Par_Val, One_Fifty Int_2_Par_Val, One_Fifty* Int_Par_Ref);
-extern _attribute_ram_code_ void Proc_8 (Arr_1_Dim Arr_1_Par_Ref, Arr_2_Dim Arr_2_Par_Ref, int Int_1_Par_Val, int Int_2_Par_Val);
+
 
 _attribute_ram_code_ void dhry_main (void)
 /*****/
@@ -106,7 +112,6 @@ _attribute_ram_code_ void dhry_main (void)
   /* main program, corresponds to procedures        */
   /* Main and Proc_0 in the Ada version             */
 {
-
 
         One_Fifty       Int_1_Loc;
   REG   One_Fifty       Int_2_Loc;
@@ -117,8 +122,16 @@ _attribute_ram_code_ void dhry_main (void)
         Str_30          Str_2_Loc;
   REG   int             Run_Index;
   REG   int             Number_Of_Runs;
-
   /* Initializations */
+#if defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL751X_N22)
+    cpu_mhz = sys_clk.cclk_hclk;
+#else
+    cpu_mhz = sys_clk.n22_clk;
+#endif
+#else
+    cpu_mhz = sys_clk.cclk;
+#endif
 
   Next_Ptr_Glob = (Rec_Pointer)memory1;
   Ptr_Glob = (Rec_Pointer) memory2;
@@ -136,7 +149,8 @@ _attribute_ram_code_ void dhry_main (void)
         /* Arr_2_Glob [8][7] would have an undefined value.             */
         /* Warning: With 16-Bit processors and Number_Of_Runs > 32000,  */
         /* overflow may occur for this array element.                   */
-
+    Number_Of_Runs = 100000;
+#if !CURRENT_PER_MHZ_TEST
   printf ("\r\n");
   printf ("Dhrystone Benchmark, Version 2.1 (Language: C)\r\n");
   printf ("\r\n");
@@ -151,17 +165,16 @@ _attribute_ram_code_ void dhry_main (void)
     printf ("\r\n");
   }
 
-    Number_Of_Runs = 100000;
   printf ("\r\n");
 
   printf ("Execution starts, %d runs through Dhrystone\r\n", Number_Of_Runs);
-
+#endif
   /***************/
   /* Start timer */
   /***************/
 
 
-  Begin_Time = stimer_get_tick();	//read_csr(NDS_MCYCLE);
+  Begin_Time = stimer_get_tick();   //read_csr(NDS_MCYCLE);
   for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
   {
 
@@ -214,9 +227,9 @@ _attribute_ram_code_ void dhry_main (void)
 
 
 
-  End_Time = stimer_get_tick();		//read_csr(NDS_MCYCLE);
+  End_Time = stimer_get_tick();     //read_csr(NDS_MCYCLE);
 
-
+#if !CURRENT_PER_MHZ_TEST
   printf ("Execution ends\r\n");
   printf ("\r\n");
   printf ("Final values of the variables used in the benchmark:\r\n");
@@ -269,7 +282,7 @@ _attribute_ram_code_ void dhry_main (void)
   printf ("Str_2_Loc:           %s\r\n", Str_2_Loc);
   printf ("        should be:   DHRYSTONE PROGRAM, 2'ND STRING\r\n");
   printf ("\r\n");
-
+#endif
   User_Time = End_Time - Begin_Time;
 
   if (User_Time < Too_Small_Time)
@@ -286,8 +299,8 @@ _attribute_ram_code_ void dhry_main (void)
     Dhrystones_Per_Second = (float) Number_Of_Runs / (float) User_Time;
 #else
     Microseconds = (float) User_Time * Mic_secs_Per_Second
-                        / ((float) HZ * ((float) Number_Of_Runs));
-    Dhrystones_Per_Second = ((float) HZ * (float) Number_Of_Runs)
+                        / ((float) SYSTEM_TIMER_TICK_1S * ((float) Number_Of_Runs));
+    Dhrystones_Per_Second = ((float) SYSTEM_TIMER_TICK_1S * (float) Number_Of_Runs)
                         / (float) User_Time;
 #endif
 
@@ -296,17 +309,17 @@ _attribute_ram_code_ void dhry_main (void)
     Microseconds = (float) User_Time / (float) Number_Of_Runs  ;
     Dhrystones_Per_Second = (float) Number_Of_Runs *Micro_secs_Per_Second / (float) User_Time ;
 #endif
-    Dhrystone_DMIPS_Per_MHz = Dhrystones_Per_Second / ((float) (1757) * CPU_MHz);
+    Dhrystone_DMIPS_Per_MHz = Dhrystones_Per_Second / ((float) (1757) * cpu_mhz);
 
-
-   // printf ("%6.1f \r\n", Microseconds);
-   // printf ("Microseconds for one run through Dhrystone: ");
-   // printf ("%6.1f \r\n", Microseconds);
-    //printf ("%d \r\n", Microseconds);
-    printf ("User_Time:  %d\r\n",(unsigned int)User_Time);
-   // printf ("%6.1f \r\n", Dhrystones_Per_Second);
-    //printf ("%d \r\n", Dhrystones_Per_Second);
-    //printf ("\r\n");
+#if !CURRENT_PER_MHZ_TEST
+    printf ("%6.1f \r\n", Microseconds);
+    printf ("Microseconds for one run through Dhrystone: ");
+    printf ("%6.1f \r\n", Microseconds);
+    printf ("%d \r\n", Microseconds);
+    printf ("User_Time:  %ld\r\n",User_Time);
+    printf ("%6.1f \r\n", Dhrystones_Per_Second);
+    printf ("%d \r\n", Dhrystones_Per_Second);
+    printf ("\r\n");
 
     int dmips_i = Dhrystone_DMIPS_Per_MHz;
     int dmips_f = (Dhrystone_DMIPS_Per_MHz - dmips_i) * 100;
@@ -314,6 +327,7 @@ _attribute_ram_code_ void dhry_main (void)
     printf ("%6.1f \r\n", Dhrystone_DMIPS_Per_MHz);
     printf ("%d.%d \r\n", dmips_i, dmips_f);
     printf ("\r\n");
+#endif
   }
 
 
@@ -321,9 +335,11 @@ _attribute_ram_code_ void dhry_main (void)
 }
 
 
-_attribute_ram_code_ void Proc_1 (REG Rec_Pointer Ptr_Val_Par)
+_attribute_ram_code_ void Proc_1 (Ptr_Val_Par)
 /******************/
 
+REG Rec_Pointer Ptr_Val_Par;
+//Rec_Pointer Ptr_Val_Par;
     /* executed once */
 {
   REG Rec_Pointer Next_Record = Ptr_Val_Par->Ptr_Comp;
@@ -354,10 +370,12 @@ _attribute_ram_code_ void Proc_1 (REG Rec_Pointer Ptr_Val_Par)
 } /* Proc_1 */
 
 
-_attribute_ram_code_ void Proc_2 (One_Fifty* Int_Par_Ref)
+_attribute_ram_code_ void Proc_2 (Int_Par_Ref)
 /******************/
     /* executed once */
     /* *Int_Par_Ref == 1, becomes 4 */
+
+One_Fifty   *Int_Par_Ref;
 {
   One_Fifty  Int_Loc;
   Enumeration   Enum_Loc;
@@ -375,10 +393,12 @@ _attribute_ram_code_ void Proc_2 (One_Fifty* Int_Par_Ref)
 } /* Proc_2 */
 
 
-_attribute_ram_code_ void Proc_3 (Rec_Pointer* Ptr_Ref_Par)
+_attribute_ram_code_ void Proc_3 (Ptr_Ref_Par)
 /******************/
     /* executed once */
     /* Ptr_Ref_Par becomes Ptr_Glob */
+
+Rec_Pointer *Ptr_Ref_Par;
 
 {
   if (Ptr_Glob != Null)
@@ -388,7 +408,7 @@ _attribute_ram_code_ void Proc_3 (Rec_Pointer* Ptr_Ref_Par)
 } /* Proc_3 */
 
 
-_attribute_ram_code_ void Proc_4 (void) /* without parameters */
+_attribute_ram_code_ void Proc_4 () /* without parameters */
 /*******/
     /* executed once */
 {
@@ -400,7 +420,7 @@ _attribute_ram_code_ void Proc_4 (void) /* without parameters */
 } /* Proc_4 */
 
 
-_attribute_ram_code_ void Proc_5 (void) /* without parameters */
+_attribute_ram_code_ void Proc_5 () /* without parameters */
 /*******/
     /* executed once */
 {

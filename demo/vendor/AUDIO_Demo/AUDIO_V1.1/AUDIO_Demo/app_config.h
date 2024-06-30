@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -36,11 +36,11 @@ extern "C" {
  *  stream 1 support dmic1_in
  */
 #define    LINE_INPUT_TO_BUF_TO_LINEOUT        1  //stream 0
-#define	   AMIC_INPUT_TO_BUF_TO_LINEOUT        2  //stream 0
-#define	   DMIC0_INPUT_TO_BUF_TO_LINEOUT       3  //stream 0
-#define	   DMIC1_INPUT_TO_BUF_TO_LINEOUT       4  //stream 1
-#define	   AMIC_AND_DMIC1_INPUT_TO_TWO_BUF     5  //amic stream 0 and dmic1 stream 1 to two buff independently
-#define	   DMIC0_AND_DMIC1_INPUT_TO_ONE_BUF    6  //dmic0 stream 0 and dmic1 stream 1 share one fifo  to one buff
+#define    AMIC_INPUT_TO_BUF_TO_LINEOUT        2  //stream 0
+#define    DMIC0_INPUT_TO_BUF_TO_LINEOUT       3  //stream 0
+#define    DMIC1_INPUT_TO_BUF_TO_LINEOUT       4  //stream 1
+#define    AMIC_AND_DMIC1_INPUT_TO_TWO_BUF     5  //amic stream 0 and dmic1 stream 1 to two buff independently
+#define    DMIC0_AND_DMIC1_INPUT_TO_ONE_BUF    6  //dmic0 stream 0 and dmic1 stream 1 share one fifo  to one buff
 #define    BUFFER_TO_LINEOUT                   7  //buff to line_out
 #define    DMA_IRQ_Test                        8  //dma llp_irq
 /**
@@ -51,7 +51,7 @@ extern "C" {
 #define    AUDIO_FIFO_IRQ_Test                 11 //fifo threshold irq
 #define    I2S_TO_EXT_CODEC_WM                 12 //I2S input->buff->I2S out for WM8731 external codec
 
-#if (MCU_CORE_B92)
+#if defined(MCU_CORE_B92)
 #define    I2S_TO_CODEC_0581                   13 //I2S input->buff->I2S out for Telink inside codec 0581
 #endif
 

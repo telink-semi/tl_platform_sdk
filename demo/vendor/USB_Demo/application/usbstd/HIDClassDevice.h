@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    HIDClassDevice.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -28,32 +28,32 @@
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-	extern "C" {
+    extern "C" {
 #endif
 
 typedef struct
 {
-	unsigned char  InterfaceNumber;
-	unsigned char  ReportINEndpointNumber;
-	unsigned short ReportINEndpointSize;
-	_Bool ReportINEndpointDoubleBank;
-	void* PrevReportINBuffer;
-	unsigned char  PrevReportINBufferSize;
+    unsigned char  InterfaceNumber;
+    unsigned char  ReportINEndpointNumber;
+    unsigned short ReportINEndpointSize;
+    _Bool ReportINEndpointDoubleBank;
+    void* PrevReportINBuffer;
+    unsigned char  PrevReportINBufferSize;
 } __attribute__((packed)) usbhid_config_t;
 
 typedef struct
 {
-	_Bool UsingReportProtocol;
-	unsigned short PrevFrameNum;
-	unsigned short IdleCount;
-	unsigned short IdleMSRemaining;
+    _Bool UsingReportProtocol;
+    unsigned short PrevFrameNum;
+    unsigned short IdleCount;
+    unsigned short IdleMSRemaining;
 } __attribute__((packed)) usbhid_state_t;
 
 
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-	}
+    }
 #endif
 
 

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    types.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -35,11 +35,6 @@ typedef unsigned int u32 ;
 typedef signed char s8 ;
 typedef signed short s16 ;
 typedef signed int s32 ;
-
-#ifdef __GNUC__
-typedef	unsigned short	wchar_t;
-#endif
-
 
 #endif /* TYPES_H_ */
 

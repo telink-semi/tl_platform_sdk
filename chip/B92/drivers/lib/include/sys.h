@@ -48,7 +48,7 @@
  * @brief instruction delay
  */
 
-#define	_ASM_NOP_					 __asm__ __volatile__("nop")
+#define	_ASM_NOP_					__asm__ __volatile__("nop")
 
 #define	CLOCK_DLY_1_CYC				_ASM_NOP_
 #define	CLOCK_DLY_2_CYC				_ASM_NOP_;_ASM_NOP_
@@ -60,26 +60,28 @@
 #define	CLOCK_DLY_8_CYC				_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_
 #define	CLOCK_DLY_9_CYC				_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_
 #define	CLOCK_DLY_10_CYC			_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_;_ASM_NOP_
+#define CLOCK_DLY_24_CYC			CLOCK_DLY_6_CYC;CLOCK_DLY_6_CYC;CLOCK_DLY_6_CYC;CLOCK_DLY_6_CYC
 #define	CLOCK_DLY_64_CYC			CLOCK_DLY_10_CYC;CLOCK_DLY_10_CYC;CLOCK_DLY_10_CYC;CLOCK_DLY_10_CYC;CLOCK_DLY_10_CYC;CLOCK_DLY_10_CYC;CLOCK_DLY_4_CYC
 
-#define CLOCK_NOP_DLY_1US			CLOCK_DLY_6_CYC;CLOCK_DLY_6_CYC;CLOCK_DLY_6_CYC;CLOCK_DLY_6_CYC
-#define CLOCK_NOP_DLY_2US			CLOCK_NOP_DLY_1US;CLOCK_NOP_DLY_1US
-#define CLOCK_NOP_DLY_3US			CLOCK_NOP_DLY_1US;CLOCK_NOP_DLY_1US;CLOCK_NOP_DLY_1US
-#define CLOCK_NOP_DLY_4US			CLOCK_NOP_DLY_2US;CLOCK_NOP_DLY_2US
-#define CLOCK_NOP_DLY_5US			CLOCK_NOP_DLY_2US;CLOCK_NOP_DLY_2US;CLOCK_NOP_DLY_1US
-#define CLOCK_NOP_DLY_10US			CLOCK_NOP_DLY_5US;CLOCK_NOP_DLY_5US
-#define CLOCK_NOP_DLY_20US			CLOCK_NOP_DLY_10US;CLOCK_NOP_DLY_10US
-#define CLOCK_NOP_DLY_40US			CLOCK_NOP_DLY_20US;CLOCK_NOP_DLY_20US
-#define CLOCK_NOP_DLY_100US			CLOCK_NOP_DLY_40US;CLOCK_NOP_DLY_40US;CLOCK_NOP_DLY_20US
-#define CLOCK_NOP_DLY_500US			CLOCK_NOP_DLY_100US;CLOCK_NOP_DLY_100US;CLOCK_NOP_DLY_100US;CLOCK_NOP_DLY_100US;CLOCK_NOP_DLY_100US
-#define CLOCK_NOP_DLY_1MS			CLOCK_NOP_DLY_500US;CLOCK_NOP_DLY_500US
-#define CLOCK_NOP_DLY_4MS			CLOCK_NOP_DLY_1MS;CLOCK_NOP_DLY_1MS;CLOCK_NOP_DLY_1MS;CLOCK_NOP_DLY_1MS
-#define CLOCK_NOP_DLY_10MS			CLOCK_NOP_DLY_4MS;CLOCK_NOP_DLY_4MS;CLOCK_NOP_DLY_1MS;CLOCK_NOP_DLY_1MS
-#define CLOCK_NOP_DLY_70MS			CLOCK_NOP_DLY_10MS;CLOCK_NOP_DLY_10MS;CLOCK_NOP_DLY_10MS;CLOCK_NOP_DLY_10MS;CLOCK_NOP_DLY_10MS;CLOCK_NOP_DLY_10MS;CLOCK_NOP_DLY_10MS
 
 /**********************************************************************************************************************
  *                                         global data type                                                           *
  *********************************************************************************************************************/
+
+
+/**
+ * @brief:	External 24M crystal using internal or external capacitors
+ * @note:	If the software configuration and hardware board does not match,
+ *          it may lead to the following problems:
+ *          crystal clock frequency is not allowed,  slow crystal vibration caused by the chip reset, etc.
+ */
+typedef enum{
+	INTERNAL_CAP_XTAL24M = 0, /**<    Use the chip's internal crystal capacitors,
+	                             <p>  hardware boards can not have 24M crystal matching capacitors */
+	EXTERNAL_CAP_XTAL24M = 1, /**<    Use an external crystal capacitor,
+	                             <p>  the hardware board needs to have a matching capacitor for the 24M crystal,
+	                             <p>  the program will turn off the chip's internal capacitor */
+}cap_typedef_e;
 
 /**
  * @brief 	Power type for different application
@@ -158,11 +160,16 @@ _attribute_text_sec_ void sys_reboot(void);
  * 							  For other GPIO models the voltage is configurable:
  * 							  Requires hardware configuration: 3v3 (CFG_VIO connects to VSS) or 1V8 (CFG_VIO connects to VDDO3/AVDD3)),
  * 							  please configure this parameter correctly according to the chip data sheet and the corresponding board design.
+ * @param[in]	cap		- This parameter is used to determine whether to close the internal capacitor.
  * @attention	If vbat_v is set to VBAT_MAX_VALUE_LESS_THAN_3V6, then gpio_v can only be set to GPIO_VOLTAGE_3V3.
  * @return  	none
+ * @note		For crystal oscillator with slow start-up or poor quality, after calling this function, 
+ * 				a reboot will be triggered(whether a reboot has occurred can be judged by using PM_ANA_REG_POWER_ON_CLR_BUF0[bit1]).
+ * 				For the case where the crystal oscillator used is very slow to start-up, you can call the pm_set_xtal_stable_timer_param interface 
+ * 				to adjust the waiting time for the crystal oscillator to start before calling the sys_init interface.
+ * 				When this time is adjusted to meet the crystal oscillator requirements, it will not reboot.
  */
-void sys_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e gpio_v);
-
+void sys_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e gpio_v, cap_typedef_e cap);
 /**
  * @brief      This function performs a series of operations of writing digital or analog registers
  *             according to a command table
@@ -179,4 +186,29 @@ int write_reg_table(const tbl_cmd_set_t * pt, int size);
  * @return 	   1 - the calibration value update, 0 - the calibration value is not update.
  */
 unsigned char efuse_calib_adc_vref(gpio_voltage_e gpio_type);
+
+/**
+ * @brief     this function servers to manual set crystal.
+ * @return    none.
+ * @note	  This function can only used when cclk is 24M RC cause the function execution process will power down the 24M crystal.
+ */
+_attribute_ram_code_sec_optimize_o2_ void crystal_manual_settle(void);
+
+/**
+ * @brief	This function servers to set dcdc 1.4V ldo 2.0V.
+ * @return	none.
+ * @note	The A3 chip has an issue (A4 does not have): If there is a 1.4V dcdc inductor component on the hardware board and a 1.8V GPIO is used, 
+ * 			it is necessary to set 1P4V to DCDC mode as soon as possible after the chip is powered on. 
+ * 			Otherwise, there is a voltage pulse on vdd1v2 and vddo3, and this interface is used to solve this problem.	
+ */
+void sys_set_dcdc_1pP4_ldo_2p0(void);
+
+/**
+* @brief      This function servers to get chip id from EFUSE.
+* @param[in]  chip_id_buff - store chip id. Chip ID is 16 bytes.
+* @return     1 - operation completed,  0 - operation failed.
+* @note       Only A3 and later are written as chip id values.
+*/
+unsigned char efuse_get_chip_id(unsigned char *chip_id_buff);
+
 #endif

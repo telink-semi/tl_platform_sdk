@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -23,9 +23,8 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-
 extern void user_init(void);
-extern void main_loop(void);
+extern void main_loop (void);
 
 #ifdef HASH_DMA_FUNCTION
 int buf_hash_dma[0x600]__attribute__((aligned(4)));
@@ -44,7 +43,7 @@ int main(void)
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
     return 0;
 }

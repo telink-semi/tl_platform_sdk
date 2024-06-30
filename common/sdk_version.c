@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    sdk_version.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2022

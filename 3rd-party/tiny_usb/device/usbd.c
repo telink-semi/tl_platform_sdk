@@ -228,10 +228,10 @@ void tud_task (void)
 {
   // Skip if stack is not initialized
   if ( !tusb_inited() )
-	  {
-	  //tusb_init();
-	  return;
-	  }
+      {
+      //tusb_init();
+      return;
+      }
 
   // Loop until there is no more events in the queue
   while (1)

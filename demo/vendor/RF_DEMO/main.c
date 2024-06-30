@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -27,62 +27,118 @@ extern void user_init(void);
 extern void main_loop (void);
 
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 int main(void)
 {
     PLATFORM_INIT;
-	rf_mode_init();
+    CLOCK_INIT;
+    rf_mode_init();
 #if(RF_MODE==RF_BLE_1M)//1
-	rf_set_ble_1M_mode();
+    rf_set_ble_1M_mode();
 #elif(RF_MODE==RF_BLE_1M_NO_PN)//2
- 	rf_set_ble_1M_NO_PN_mode();
+    rf_set_ble_1M_NO_PN_mode();
 #elif(RF_MODE==RF_BLE_2M)//3
- 	rf_set_ble_2M_mode();
+    rf_set_ble_2M_mode();
 #elif(RF_MODE==RF_BLE_2M_NO_PN)//4
- 	rf_set_ble_2M_NO_PN_mode();
+    rf_set_ble_2M_NO_PN_mode();
 #elif(RF_MODE==RF_LR_S2_500K)//5
- 	rf_set_ble_500K_mode();
+    rf_set_ble_500K_mode();
 #elif(RF_MODE==RF_LR_S8_125K)//6
- 	rf_set_ble_125K_mode();
-#elif(RF_MODE==RF_ZIGBEE_250K)//7
- 	rf_set_zigbee_250K_mode();
-#elif(RF_MODE==RF_PRIVATE_250K)//8
- 	rf_set_pri_250K_mode();
-#elif(RF_MODE==RF_PRIVATE_500K)//9
- 	rf_set_pri_500K_mode();
-#elif(RF_MODE==RF_PRIVATE_1M)
-	 rf_set_pri_1M_mode();
-#elif(RF_MODE==RF_PRIVATE_2M)
- 	rf_set_pri_2M_mode();
-#elif(RF_MODE==RF_HYBEE_500K)
- 	rf_set_hybee_500K_mode();
-#elif(RF_MODE==RF_HYBEE_1M)
- 	rf_set_hybee_1M_mode();
-#elif(RF_MODE==RF_HYBEE_2M)
- 	rf_set_hybee_2M_mode();
-#elif(RF_MODE==RF_ANT)
- 	rf_set_ant_mode();
+    rf_set_ble_125K_mode();
+#elif(RF_MODE==RF_ZIGBEE_250K)//TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+    rf_set_zigbee_250K_mode();
+#elif(RF_MODE==RF_PRIVATE_1M)//TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+     rf_set_pri_1M_mode();
+#elif(RF_MODE==RF_PRIVATE_2M)//TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+    rf_set_pri_2M_mode();
 #elif(RF_MODE==RF_BLE_STX2RX)
- 	rf_set_ble_1M_mode();
+    rf_set_ble_1M_mode();
 #elif(RF_MODE==RF_BLE_SDK_TEST)
- 	rf_set_ble_1M_mode();
+    rf_set_ble_1M_mode();
 #endif
 
-#if(MCU_CORE_B92)
+#if !defined(MCU_CORE_TL751X)
+#if(RF_MODE==RF_PRIVATE_250K)
+    rf_set_pri_250K_mode();
+#elif(RF_MODE==RF_PRIVATE_500K)
+    rf_set_pri_500K_mode();
+#elif(RF_MODE==RF_HYBEE_500K)
+    rf_set_hybee_500K_mode();
+#elif(RF_MODE==RF_HYBEE_1M)
+    rf_set_hybee_1M_mode();
+#elif(RF_MODE==RF_HYBEE_2M)
+    rf_set_hybee_2M_mode();
+#elif(RF_MODE==RF_ANT)//TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
+    rf_set_ant_mode();
+#endif
+#endif
+
+#if defined(MCU_CORE_B92)
 #if(RF_MODE==RF_USER_DEFINE_PKT)
- 	rf_set_ble_1M_NO_PN_mode();
-#elif(RF_MODE == RF_BLE_1M_HYPER_LENGTH)
- 	rf_set_ble_1M_mode();
+    rf_set_ble_1M_NO_PN_mode();
 #endif
 #endif
+
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)
+#if(RF_MODE == RF_BLE_1M_HYPER_LENGTH)
+    rf_set_ble_1M_mode();
+#endif
+#endif
+
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+ //TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
+#if(RF_MODE==RF_PRI_GENERIC_1M)
+    rf_set_pri_generic_1M_mode();
+#elif(RF_MODE==RF_PRI_GENERIC_2M)
+    rf_set_pri_generic_2M_mode();
+#elif(RF_MODE==RF_PRI_GENERIC_250K)
+    rf_set_pri_generic_250K_mode();
+#elif(RF_MODE==RF_PRI_GENERIC_500K)
+    rf_set_pri_generic_500K_mode();
+//TODO:TL321X The above mode has been verified currently.
+#elif(RF_MODE==RF_LR_S2_500K_NEW)//BLE S2 new data path
+    rf_set_ble_500K_new_mode();
+#elif(RF_MODE==RF_LR_S8_125K_NEW)//BLE S8 new data path
+    rf_set_ble_125K_new_mode();
+#elif(RF_MODE==RF_HYBEE_1M_OLD)
+    rf_set_hybee_1M_old_mode();
+#elif(RF_MODE==RF_HYBEE_2M_OLD)
+    rf_set_hybee_2M_old_mode();
+#elif(RF_MODE==RF_HYBEE_500K_NEW)
+    rf_set_hybee_500K_new_mode();
+#elif(RF_MODE==RF_HYBEE_1M_NEW)
+    rf_set_hybee_1M_new_mode();
+#elif(RF_MODE==RF_HYBEE_2M_NEW)
+    rf_set_hybee_2M_new_mode();
+#elif(RF_MODE==RF_HYBEE_500K_2BYTE_SFD)
+    rf_set_hybee_500K_2byte_sfd_mode();
+#elif(RF_MODE==RF_HYBEE_1M_2BYTE_SFD)
+    rf_set_hybee_1M_2byte_sfd_mode();
+#elif(RF_MODE==RF_HYBEE_2M_2BYTE_SFD)
+    rf_set_hybee_2M_2byte_sfd_mode();
+#elif(RF_MODE==RF_HYBEE_2M_2BYTE_SFD_NEW)
+    rf_set_hybee_2M_2byte_sfd_new_mode();
+#elif(RF_MODE==RF_HR_2M)
+    rf_set_zigbee_hr_2m_mode();
+#elif(RF_MODE==RF_LOWRATE_20K)
+    rf_set_lowrate_20K_mode();
+#elif(RF_MODE==RF_LOWRATE_25K)
+    rf_set_lowrate_25K_mode();
+#elif(RF_MODE==RF_LOWRATE_100K)
+    rf_set_lowrate_100K_mode();
+#elif(RF_MODE==RF_PRI_1M_PTX_PRX_TEST)
+     rf_set_pri_1M_mode();
+#endif
+#endif
+
     user_init();
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
     return 0;
 }

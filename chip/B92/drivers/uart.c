@@ -108,6 +108,19 @@ dma_config_t uart_rx_dma_config[2]={
  static unsigned char uart_dma_rx_chn[2];
  static unsigned int uart_dma_rev_size[2];
  dma_chain_config_t g_uart_rx_dma_list_cfg;
+
+ uart_timeout_error_t g_uart_timeout_error[2]={
+ 	{ 	.g_uart_error_timeout_us 		= 0xffffffff,
+ 		.uart_timeout_handler 		    = uart0_timeout_handler,
+ 		.g_uart_error_timeout_code 	    = UART_API_ERROR_TIMEOUT_NONE,
+ 	},
+	{ 	.g_uart_error_timeout_us 		= 0xffffffff,
+		.uart_timeout_handler 		    = uart1_timeout_handler,
+		.g_uart_error_timeout_code   	= UART_API_ERROR_TIMEOUT_NONE,
+	 }
+ };
+
+
 /**********************************************************************************************************************
  *                                          local function prototype                                               *
  *********************************************************************************************************************/
@@ -290,18 +303,98 @@ void uart_set_rx_timeout(uart_num_e uart_num,unsigned char bwpc, unsigned char b
 
  unsigned char uart_tx_byte_index[2] = {0};
  /**
-   * @brief     Send UART data by byte in no_dma mode.
-   * @param[in] uart_num - UART0 or UART1.
-   * @param[in] tx_data  - the data to be send.
-   * @return    none
-   */
-void uart_send_byte(uart_num_e uart_num, unsigned char tx_data)
-{
-	while(uart_get_txfifo_num(uart_num)>7);
+  * @brief     This function serves to record the api status.
+  * @param[in] uart_error_timeout_code - uart_api_error_timeout_code_e.
+  * @return    none.
+  * @note      This function can be rewritten according to the application scenario,can by error_timeout_code to obtain details about the timeout reason,
+  *            for the solution, refer to the uart_set_error_timeout note.
+  */
+ __attribute__((weak)) void uart0_timeout_handler(unsigned int uart_error_timeout_code)
+ {
+	 g_uart_timeout_error[UART0].g_uart_error_timeout_code = uart_error_timeout_code;
+ }
+ __attribute__((weak)) void uart1_timeout_handler(unsigned int uart_error_timeout_code)
+ {
+	 g_uart_timeout_error[UART1].g_uart_error_timeout_code = uart_error_timeout_code;
+ }
 
+ /**
+  * @brief     This function serves to set the uart timeout(us).
+  * @param[in] uart_num - UART0 or UART1.
+  * @param[in] timeout_us - the timeout(us).
+  * @return    none.
+  * @note      The default timeout (g_uart_error_timeout_us) is the larger value.If the timeout exceeds the feed dog time and triggers a watchdog restart,
+  *            g_uart_error_timeout_us can be changed to a smaller value via this interface, depending on the application.
+  *            g_uart_error_timeout_us the minimum time must meet the following conditions:
+  *            When not using cts flow control:
+  *            1. eight uart data;
+  *            2. maximum interrupt processing time;
+  *            When using cts flow control:
+  *            1. eight uart data;
+  *            2. maximum interrupt processing time;
+  *            3. The maximum normal cts flow control time;
+  *            when timeout exits, solution:
+  *            1.uart_hw_fsm_reset;
+  *            2.solve why cts has been held up(When using cts flow control);
+  */
+ void uart_set_error_timeout(uart_num_e uart_num,unsigned int timeout_us){
+	 g_uart_timeout_error[uart_num].g_uart_error_timeout_us = timeout_us;
+ }
+
+ /**
+  * @brief     This function serves to return the uart api error code.
+  * @param[in] uart_num - UART0 or UART1.
+  * @return    none.
+  */
+ uart_api_error_timeout_code_e uart_get_error_timeout_code(uart_num_e uart_num)
+ {
+     return g_uart_timeout_error[uart_num].g_uart_error_timeout_code;
+ }
+
+/**
+* @brief     Check whether tx_fifo is full(byte).
+* @param[in] uart_num - UART0 or UART1.
+* @return    0: not full  1:full
+*/
+static bool uart_byte_txfifo_is_full(uart_num_e uart_num){
+    return (uart_get_txfifo_num(uart_num)>7);
+}
+/**
+* @brief     Check whether tx_fifo is full(byte).
+* @param[in] uart_num - UART0 or UART1.
+* @return    0: not full  1:full
+*/
+static bool uart_hword_txfifo_is_full(uart_num_e uart_num){
+    return (uart_get_txfifo_num(uart_num)>6);
+}
+/**
+* @brief     Check whether tx_fifo is full(byte).
+* @param[in] uart_num - UART0 or UART1.
+* @return    0: not full  1:full
+*/
+static bool uart_word_txfifo_is_full(uart_num_e uart_num){
+	return (uart_get_txfifo_num(uart_num)>4);
+}
+
+
+#define UART_WAIT(condition,uart_num,g_uart_error_timeout_us,uart_timeout_handler,uart_api_error_code)                wait_condition_fails_or_timeout_with_param(condition,(unsigned int)uart_num,g_uart_error_timeout_us,uart_timeout_handler,(unsigned int)uart_api_error_code)
+
+/**
+  * @brief     Send UART data by byte in no_dma mode.
+  * @param[in] uart_num - UART0 or UART1.
+  * @param[in] tx_data  - the data to be send.
+  * @return    DRV_API_SUCCESS: operation successful;
+  *            DRV_API_TIMEOUT: timeout exit(solution refer to the note for uart_set_error_timeout);
+  */
+drv_api_status_e uart_send_byte(uart_num_e uart_num, unsigned char tx_data)
+{
+	if(UART_WAIT(uart_byte_txfifo_is_full,uart_num,g_uart_timeout_error[uart_num].g_uart_error_timeout_us,g_uart_timeout_error[uart_num].uart_timeout_handler,UART_API_ERROR_TIMEOUT_SEND_BYTE)){
+		return DRV_API_TIMEOUT;
+	}
 	reg_uart_data_buf(uart_num, uart_tx_byte_index[uart_num]) = tx_data;
 	uart_tx_byte_index[uart_num] ++;
 	(uart_tx_byte_index[uart_num]) &= 0x03;
+	return DRV_API_SUCCESS;
 }
 
 unsigned char uart_rx_byte_index[2]={0};
@@ -322,6 +415,8 @@ unsigned char uart_read_byte(uart_num_e uart_num)
  * @brief     Judge if the transmission of UART is done.
  * @param[in] uart_num - UART0 or UART1.
  * @return    0:tx is done     1:tx isn't done
+ * @note      If upper-layer application calls the interface, if the timeout mechanism is used, the status cannot be detected because the uart send data is abnormal,
+ *            see uart_set_error_timeout(time setting requirement).
  */
 unsigned char uart_tx_is_busy(uart_num_e uart_num)
 {
@@ -332,30 +427,36 @@ unsigned char uart_tx_is_busy(uart_num_e uart_num)
  * @brief     Send UART data by halfword in no_dma mode.
  * @param[in] uart_num - UART0 or UART1.
  * @param[in] data  - the data to be send.
- * @return    none
+ * @return    DRV_API_SUCCESS: operation successful;
+ *            DRV_API_TIMEOUT: timeout exit(solution refer to the note for uart_set_error_timeout);
  */
-void uart_send_hword(uart_num_e uart_num, unsigned short data)
+drv_api_status_e uart_send_hword(uart_num_e uart_num, unsigned short data)
 {
 	static unsigned char uart_tx_hword_index[2]={0};
-
-	while(uart_get_txfifo_num(uart_num)>6);
+	if(UART_WAIT(uart_hword_txfifo_is_full,uart_num,g_uart_timeout_error[uart_num].g_uart_error_timeout_us,g_uart_timeout_error[uart_num].uart_timeout_handler,UART_API_ERROR_TIMEOUT_SEND_HWORD)){
+		return DRV_API_TIMEOUT;
+	}
 
 	reg_uart_data_hword_buf(uart_num, uart_tx_hword_index[uart_num]) = data;
 	uart_tx_hword_index[uart_num]++ ;
 	uart_tx_hword_index[uart_num] &= 0x01 ;
+	return DRV_API_SUCCESS;
 }
 
 /**
  * @brief     Send UART data by word in no_dma mode.
  * @param[in] uart_num - UART0 or UART1.
  * @param[in] data - the data to be send.
- * @return    none
+ * @return    DRV_API_SUCCESS: operation successful;
+ *            DRV_API_TIMEOUT: timeout exit(solution refer to the note for uart_set_error_timeout);
  */
-void uart_send_word(uart_num_e uart_num, unsigned int data)
-{
-	while (uart_get_txfifo_num(uart_num)>4);
+drv_api_status_e uart_send_word(uart_num_e uart_num, unsigned int data)
+{	
+	if(UART_WAIT(uart_word_txfifo_is_full,uart_num,g_uart_timeout_error[uart_num].g_uart_error_timeout_us,g_uart_timeout_error[uart_num].uart_timeout_handler,UART_API_ERROR_TIMEOUT_SEND_WORD)){
+	     return DRV_API_TIMEOUT;
+	}
 	reg_uart_data_word_buf(uart_num) = data;
-
+    return DRV_API_SUCCESS;
 }
 
 /**

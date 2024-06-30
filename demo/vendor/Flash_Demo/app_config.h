@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -23,14 +23,30 @@
  *******************************************************************************************************/
 #pragma once
 
+#include "driver.h"
+#include "common.h"
+
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C" {
 #endif
-#include "driver.h"
-#include "common.h"
 
+/*
+ * @note    Because the flash enabled QE function is not compatible with each flash chip, when adding a new flash chip,
+ *          the ram bin that enables QE needs to be stored in svn and used for factory enabling flash QE function of ATE
+ *          and it also can be used for if the ATE does not receive the notification of enabling flash QE function,
+ *          however it needs to be enabled by Lidong and the fixture department in the future.
+ */
+#define FLASH_QE_ENABLE         1
 
+/*
+ * @note    It is used to verify the read, erase and write functions, lock and unlock functions��read decrypt of and umid functions of Flash,
+ *          and the read, erase and write functions of the security registers.
+ *          You can judge which functions pass the test through structures err_status and check_status.
+ */
+#define FLASH_TEST              2
+
+#define FLASH_FUNCTION_MODE     FLASH_TEST
 
 
 /* Enable C linkage for C++ Compilers: */

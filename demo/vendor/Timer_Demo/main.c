@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -25,43 +25,59 @@
 
 extern void user_init(void);
 extern void main_loop (void);
-int timer0_irq_cnt = 0;
-int timer1_irq_cnt = 0;
+volatile int timer0_irq_cnt = 0;
+volatile int timer1_irq_cnt = 0;
 volatile unsigned int timer0_gpio_width =0;
 volatile unsigned int timer1_gpio_width =0;
 
 _attribute_ram_code_sec_ void timer0_irq_handler(void)
 {
 #if( TIMER_MODE == TIMER_SYS_CLOCK_MODE )
-
-	if(timer_get_irq_status(TMR_STA_TMR0))
-	{
-		timer_clr_irq_status(TMR_STA_TMR0);
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    if(timer_get_irq_status(FLD_TMR0_MODE_IRQ))
+#else
+    if(timer_get_irq_status(TMR_STA_TMR0))
+#endif
+    {
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+        timer_clr_irq_status(FLD_TMR0_MODE_IRQ);//clear irq status
+#else
+        timer_clr_irq_status(TMR_STA_TMR0);//clear irq status
+#endif
         gpio_toggle(LED2);
-		timer0_irq_cnt ++;
-	}
-
+        timer0_irq_cnt ++;
+    }
 #elif(TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-
-	if(timer_get_irq_status(TMR_STA_TMR0))
-	{
-		timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
-
-		gpio_toggle(LED2);
-
-		timer0_irq_cnt ++;
-	}
-
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    if(timer_get_irq_status(FLD_TMR0_MODE_IRQ))
+#else
+    if(timer_get_irq_status(TMR_STA_TMR0))
+#endif
+    {
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+        timer_clr_irq_status(FLD_TMR0_MODE_IRQ);//clear irq status
+#else
+        timer_clr_irq_status(TMR_STA_TMR0);//clear irq status
+#endif
+        gpio_toggle(LED2);
+        timer0_irq_cnt ++;
+    }
 #elif(TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-
-	if(timer_get_irq_status(TMR_STA_TMR0))
-	{
-		timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    if(timer_get_irq_status(FLD_TMR0_MODE_IRQ))
+#else
+    if(timer_get_irq_status(TMR_STA_TMR0))
+#endif
+    {
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+        timer_clr_irq_status(FLD_TMR0_MODE_IRQ);//clear irq status
+#else
+        timer_clr_irq_status(TMR_STA_TMR0);//clear irq status
+#endif
         timer0_gpio_width = timer0_get_gpio_width();
         timer0_set_tick(0);
-		gpio_toggle(LED2);
-	}
-
+        gpio_toggle(LED2);
+    }
 #endif
 }
 PLIC_ISR_REGISTER(timer0_irq_handler, IRQ_TIMER0)
@@ -69,40 +85,59 @@ PLIC_ISR_REGISTER(timer0_irq_handler, IRQ_TIMER0)
 _attribute_ram_code_sec_ void timer1_irq_handler(void)
 {
 #if( TIMER_MODE == TIMER_SYS_CLOCK_MODE )
-
-	if(timer_get_irq_status(TMR_STA_TMR1))
-	{
-		timer_clr_irq_status(TMR_STA_TMR1);
-		gpio_toggle(LED3);
-		timer1_irq_cnt ++;
-	}
-
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    if(timer_get_irq_status(FLD_TMR1_MODE_IRQ))
+#else
+    if(timer_get_irq_status(TMR_STA_TMR1))
+#endif
+    {
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+        timer_clr_irq_status(FLD_TMR1_MODE_IRQ);//clear irq status
+#else
+        timer_clr_irq_status(TMR_STA_TMR1);//clear irq status
+#endif
+        gpio_toggle(LED3);
+        timer1_irq_cnt ++;
+    }
 #elif(TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-
-	if(timer_get_irq_status(TMR_STA_TMR1))
-	{
-		timer_clr_irq_status(TMR_STA_TMR1);//clear irq status
-		gpio_toggle(LED3);
-		timer1_irq_cnt ++;
-	}
-
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    if(timer_get_irq_status(FLD_TMR1_MODE_IRQ))
+#else
+    if(timer_get_irq_status(TMR_STA_TMR1))
+#endif
+    {
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+        timer_clr_irq_status(FLD_TMR1_MODE_IRQ);//clear irq status
+#else
+        timer_clr_irq_status(TMR_STA_TMR1);//clear irq status
+#endif
+        gpio_toggle(LED3);
+        timer1_irq_cnt ++;
+    }
 #elif(TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-
-	if(timer_get_irq_status(TMR_STA_TMR1))
-	{
-		timer_clr_irq_status(TMR_STA_TMR1);//clear irq status
-		timer1_gpio_width = timer1_get_gpio_width();
-		timer1_set_tick(0);
-		gpio_toggle(LED3);
-	}
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    if(timer_get_irq_status(FLD_TMR1_MODE_IRQ))
+#else
+    if(timer_get_irq_status(TMR_STA_TMR1))
+#endif
+    {
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+        timer_clr_irq_status(FLD_TMR1_MODE_IRQ);//clear irq status
+#else
+        timer_clr_irq_status(TMR_STA_TMR1);//clear irq status
+#endif
+        timer1_gpio_width = timer1_get_gpio_width();
+        timer1_set_tick(0);
+        gpio_toggle(LED3);
+    }
 
 #endif
 }
 PLIC_ISR_REGISTER(timer1_irq_handler, IRQ_TIMER1)
 
 /**
- * @brief		This is main function
- * @param[in]	none
+ * @brief       This is main function
+ * @param[in]   none
  * @return      none
  */
 int main(void)
@@ -113,7 +148,7 @@ int main(void)
 
     while(1)
     {
-    	main_loop();
+        main_loop();
     }
 
     return 0;

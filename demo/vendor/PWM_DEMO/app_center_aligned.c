@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_center_aligned.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -23,21 +23,19 @@
  *******************************************************************************************************/
 #include "app_config.h"
 #if(SET_PWM_MODE==PWM_CENTER_ALIGNED)
-#define PWM_ID		PWM1_ID
-#if(MCU_CORE_B92)
-#define PWM_PIN		GPIO_FC_PB4
-#elif(MCU_CORE_B93)
-#define PWM_PIN		PWM_PWM1_PA1
-#endif
+#define PWM_ID      PWM1_ID
+#define PWM_ID1     PWM2_ID
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+#define PWM_PIN     GPIO_FC_PB4
+#define PWM_PIN1    GPIO_FC_PB5
 #define PWM_FUNC    PWM1
-
-#define PWM_ID1		PWM2_ID
-#if(MCU_CORE_B92)
-#define PWM_PIN1	GPIO_FC_PB5
-#elif(MCU_CORE_B93)
-#define PWM_PIN1	PWM_PWM2_PA2
-#endif
 #define PWM_FUNC1   PWM2
+#elif defined(MCU_CORE_TL751X)
+#define PWM_PIN     PWM_PWM1_PA1
+#define PWM_PIN1    PWM_PWM2_PA2
+#define PWM_FUNC    FC_PWM1
+#define PWM_FUNC1   FC_PWM2
+#endif
 
 
 #define ALIGNED_NEGATION      1
@@ -46,42 +44,36 @@
 
 void user_init(void)
 {
-	gpio_function_en(LED2);
-	gpio_output_en(LED2);
-	gpio_input_dis(LED2);
-	gpio_function_en(LED3);
-	gpio_output_en(LED3);
-	gpio_input_dis(LED3);
-	gpio_function_en(LED4);
-	gpio_output_en(LED4);
-	gpio_input_dis(LED4);
+    gpio_function_en(LED1);
+    gpio_output_en(LED1);
+    gpio_input_dis(LED1);
 
-	pwm_set_pin(PWM_PIN,PWM_FUNC);
-	pwm_set_pin(PWM_PIN1,PWM_FUNC1);
+    pwm_set_pin(PWM_PIN,PWM_FUNC);
+    pwm_set_pin(PWM_PIN1,PWM_FUNC1);
 
-	pwm_set_clk((unsigned char) (sys_clk.pclk*1000*1000/PWM_PCLK_SPEED-1));
+    pwm_set_clk((unsigned char) (sys_clk.pclk*1000*1000/PWM_PCLK_SPEED-1));
 
-	pwm_set_tcmp(PWM_ID1,40 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tcmp(PWM_ID1,40 * CLOCK_PWM_CLOCK_1US);
 
-	pwm_set_tmax(PWM_ID1,50 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tmax(PWM_ID1,50 * CLOCK_PWM_CLOCK_1US);
 #if(ALIGNED_MODE==ALIGNED_NEGATION )
-	pwm_set_tcmp(PWM_ID,10 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tcmp(PWM_ID,10 * CLOCK_PWM_CLOCK_1US);
 
-	pwm_set_tmax(PWM_ID,50 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tmax(PWM_ID,50 * CLOCK_PWM_CLOCK_1US);
     //aligned
-	pwm_set_align_en(PWM_ID1);
-	pwm_set_align_en(PWM_ID);
-	//negation
-	pwm_set_polarity_en(PWM_ID1);
-	pwm_set_polarity_en(PWM_ID);
+    pwm_set_align_en(PWM_ID1);
+    pwm_set_align_en(PWM_ID);
+    //negation
+    pwm_set_polarity_en(PWM_ID1);
+    pwm_set_polarity_en(PWM_ID);
 
 
 #elif(ALIGNED_MODE==DELAY)
-	pwm_set_tcmp(PWM_ID,40 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tcmp(PWM_ID,40 * CLOCK_PWM_CLOCK_1US);
 
-	pwm_set_tmax(PWM_ID,50 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tmax(PWM_ID,50 * CLOCK_PWM_CLOCK_1US);
 
-	pwm_set_shift_time(PWM_ID1,CLOCK_PWM_CLOCK_1US * 50/2);
+    pwm_set_shift_time(PWM_ID1,CLOCK_PWM_CLOCK_1US * 50/2);
 
 
 #endif
@@ -92,9 +84,9 @@ void user_init(void)
 
 void main_loop(void)
 {
-	delay_ms(500);
+    delay_ms(500);
 
-	gpio_toggle(LED1);
+    gpio_toggle(LED1);
 }
 
 #endif

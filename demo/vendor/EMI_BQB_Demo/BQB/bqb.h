@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    bqb.h
  *
- * @brief   This is the header file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2019
@@ -29,64 +29,72 @@
 #if(TEST_DEMO==BQB_DEMO)
 
 /*Set to 1, open the code related to BQB tool configuration (uart port, CAP value, TX Power, PA port, calibration position, etc.).*/
-#define SUPPORT_CONFIGURATION	0
+#define SUPPORT_CONFIGURATION   0
 
 /* set power of Tx */
-#if(MCU_CORE_B91)
-#define BQB_TX_POWER		RF_POWER_P6p98dBm
+#if defined(MCU_CORE_B91)
+#define BQB_TX_POWER        RF_POWER_P6p98dBm
+#elif defined(MCU_CORE_TL321X)
+#define BQB_TX_POWER        RF_POWER_P7p11dBm
 #else
-#define BQB_TX_POWER		RF_POWER_P7p00dBm
+#define BQB_TX_POWER        RF_POWER_P7p00dBm
 #endif
 
-#define ACCESS_CODE        	0x29417671
+#define ACCESS_CODE         0x29417671
 
 /* set configuration flash address */
 #if SUPPORT_CONFIGURATION
-#define CONFIGURATION_ADDR_UART_TX		0x12
-#define	CONFIGURATION_ADDR_UART_RX		0x13
-#define CONFIGURATION_ADDR_PA_TX		0x14
-#define	CONFIGURATION_ADDR_PA_RX		0x15
-#define CONFIGURATION_ADDR_CAP			0x16
-#define	CONFIGURATION_ADDR_POWER		0x17
+#define CONFIGURATION_ADDR_UART_TX      0x12
+#define CONFIGURATION_ADDR_UART_RX      0x13
+#define CONFIGURATION_ADDR_PA_TX        0x14
+#define CONFIGURATION_ADDR_PA_RX        0x15
+#define CONFIGURATION_ADDR_CAP          0x16
+#define CONFIGURATION_ADDR_POWER        0x17
 #endif
-#define CALIBRATION_CAP_RAM_ADDR		0x06
+#define CALIBRATION_CAP_RAM_ADDR        0x06
 
 /* set flash address to set internal cap value and switch internal/external cap */
 #define CAP_SET_FLASH_ADDR_4M       0x3fe000
-#define CAP_SET_FLASH_ADDR_2M 		0x1fe000
-#define CAP_SET_FLASH_ADDR_1M 		0xfe000
-#define CAP_SET_FLASH_ADDR_512K 	0x7e000//B85m:0x77000 B91m:0x7e000
-#define CAP_SET_FLASH_ADDR_128K 	0x1e000
-#define CAP_SET_FLASH_ADDR_64K		0xe000
+#define CAP_SET_FLASH_ADDR_2M       0x1fe000
+#define CAP_SET_FLASH_ADDR_1M       0xfe000
+#define CAP_SET_FLASH_ADDR_512K     0x7e000//B85m:0x77000 Telink RISC-V MCU:0x7e000
+#define CAP_SET_FLASH_ADDR_128K     0x1e000
+#define CAP_SET_FLASH_ADDR_64K      0xe000
 #if !SUPPORT_CONFIGURATION
-#define SWITCH_INTERNAL_CAP 		1		// 0: external cap, 1: internal cap
-#define CAP_SET_FLASH_ADDR 			0xfe000 // 512K Flash: 0x7e000, 1M FLASH: 0xfe000, 2M FLASH: 0x1fe000
+#define SWITCH_INTERNAL_CAP         1       // 0: external cap, 1: internal cap
+#define CAP_SET_FLASH_ADDR          0xfe000 // 512K Flash: 0x7e000, 1M FLASH: 0xfe000, 2M FLASH: 0x1fe000
 #endif
 
 /* set uart port */
-#if(MCU_CORE_B91)
-#define BQB_UART_TX_PORT   	UART0_TX_PB2
-#define BQB_UART_RX_PORT   	UART0_RX_PB3
-#elif(MCU_CORE_B92)
-#define BQB_UART_TX_PORT   	GPIO_FC_PB1
-#define BQB_UART_RX_PORT   	GPIO_FC_PB2
+#if defined(MCU_CORE_B91)
+#define BQB_UART_TX_PORT    UART0_TX_PB2
+#define BQB_UART_RX_PORT    UART0_RX_PB3
+#elif defined(MCU_CORE_B92)
+#define BQB_UART_TX_PORT       GPIO_FC_PB1
+#define BQB_UART_RX_PORT       GPIO_FC_PB2
+#elif defined(MCU_CORE_TL721X)
+#define BQB_UART_TX_PORT       GPIO_FC_PF5
+#define BQB_UART_RX_PORT       GPIO_FC_PF6
+#elif defined(MCU_CORE_TL321X)
+#define BQB_UART_TX_PORT       GPIO_FC_PC4
+#define BQB_UART_RX_PORT       GPIO_FC_PC5
 #endif
-#define BQB_UART_BAUD	   	115200
+#define BQB_UART_BAUD       115200
 
 /* set pa port */
 #if !SUPPORT_CONFIGURATION
-#define BQB_PA_TX_PORT   	GPIO_PA0
-#define BQB_PA_RX_PORT   	GPIO_PA0
+#define BQB_PA_TX_PORT      GPIO_PA0
+#define BQB_PA_RX_PORT      GPIO_PA0
 #endif
 
 /* choose calibration position */
 #if !SUPPORT_CONFIGURATION
-#define SWITCH_CALIBRATION_POSITION		1	//0:SRAM 1:FLASH
+#define SWITCH_CALIBRATION_POSITION     1   //0:SRAM 1:FLASH
 #endif
 
 /* switch power mode */
 #if !SUPPORT_CONFIGURATION
-#define SWITCH_POWER_MODE				1	//0:DCDC 1:LDO
+#define SWITCH_POWER_MODE               1   //0:DCDC(B91 not support) 1:LDO
 #endif
 /* set TX return result */
 #define RETURN_TX_LEN_EN    0      //1: return tx length, 0:do not return tx length
@@ -96,27 +104,27 @@
  *  @brief  command type for BQB Test
  */
 typedef enum{
-	CMD_SETUP=0,
-	CMD_RX_TEST=1,
-	CMD_TX_TEST=2,
-	CMD_END=3,
+    CMD_SETUP=0,
+    CMD_RX_TEST=1,
+    CMD_TX_TEST=2,
+    CMD_END=3,
 }Test_Command_e;
 
 /**
  *  @brief  command status for BQB Test
  */
 typedef enum {
-	SETUP_STATE=0x10,
-	RX_STATE,
-	TX_STATE,
-	END_STATE
+    SETUP_STATE=0x10,
+    RX_STATE,
+    TX_STATE,
+    END_STATE
 }Test_Status_e;
 
 typedef enum
 {
-	UART_NUM0 = UART0,
-	UART_NUM1 = UART1,
-	UART_NONE,
+    UART_NUM0 = UART0,
+    UART_NUM1 = UART1,
+    UART_NONE,
 }uart_num_redef_e;
 
 #if SUPPORT_CONFIGURATION
@@ -125,15 +133,15 @@ typedef enum
  */
 typedef struct
 {
-	unsigned char uart_tx;
-	unsigned char uart_rx;
-	unsigned char pa_tx;
-	unsigned char pa_rx;
-	unsigned char flash:7;
-	unsigned char cap:1;
-	unsigned char cal_pos:2;
-	unsigned char power_mode:2;
-	unsigned char power;
+    unsigned char uart_tx;
+    unsigned char uart_rx;
+    unsigned char pa_tx;
+    unsigned char pa_rx;
+    unsigned char flash:7;
+    unsigned char cap:1;
+    unsigned char cal_pos:2;
+    unsigned char power_mode:2;
+    unsigned char power;
 }usr_def_t;
 
 /* global value for configuration */
@@ -149,11 +157,11 @@ extern uart_num_redef_e uart_using;
 
 
 /**
- * @brief   	This function serves to initialize  BQB
+ * @brief       This function serves to initialize  BQB
  * @param[in]   flash_size - flash size: 0->512K, 1->2M, 2-0xff->1M.
- * @return  	none.
+ * @return      none.
  */
-void  bqbtest_init();
+void  bqbtest_init(void);
 
 
 /**
@@ -175,14 +183,14 @@ void bqb_uart_send_byte(unsigned char uartData);
 
 
 /**
- * @brief   	This function is used to initialize the calibration value of rf fast settle
+ * @brief       This function is used to initialize the calibration value of rf fast settle
  * @param[in]   none.
- * @return  	none.
+ * @return      none.
  * @note        This function is only used when testing fast settle with BQB
  */
 void bqb_fast_settle_init(void);
 
-extern void bqb_pa_init();
+extern void bqb_pa_init(void);
 
 extern void bqb_pa_set_mode(unsigned char rtx); //0:rx, 1:tx, other:off
 #endif

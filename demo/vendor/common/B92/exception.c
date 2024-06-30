@@ -79,7 +79,7 @@ __attribute__((weak)) void except_handler(void)
 
     while (1)
     {
-    	_ASM_NOP_;
+        _ASM_NOP_;
     }
 }
 
