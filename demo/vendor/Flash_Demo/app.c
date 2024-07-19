@@ -133,6 +133,7 @@ volatile unsigned short status2=0;
 volatile unsigned short status3=0;
 volatile unsigned short status4=0;
 volatile unsigned short status5=0;
+unsigned int  mid=0;
 unsigned char uid[16]={0};
 #if defined(MCU_CORE_B91)
 unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_2M, FLASH_SIZE_4M, FLASH_SIZE_16M};
@@ -156,9 +157,9 @@ const unsigned char FLASH_CAP_CNT = sizeof(flash_support_capacity)/sizeof(*flash
  * @brief       This function is used to set the use of four lines when reading and writing flash.
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported.
  */
-unsigned char flash_set_4line_read_write()
+unsigned char flash_set_4line_read_write(unsigned int flash_mid)
 {
-    unsigned char status = hal_flash_4line_en();
+    unsigned char status = flash_4line_en(flash_mid);
     if(status == 1)
     {
         flash_read_page = flash_4read;
@@ -172,9 +173,9 @@ unsigned char flash_set_4line_read_write()
  * @brief       This function is used to set the use of four lines when reading and writing flash.
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported.
  */
-unsigned char flash_set_4line_read_write(void)
+unsigned char flash_set_4line_read_write(unsigned int flash_mid)
 {
-    unsigned char status = hal_flash_4line_en();
+    unsigned char status = flash_4line_en(flash_mid);
     if(status == 1)
     {
         flash_read_page = flash_4read;
@@ -188,9 +189,9 @@ unsigned char flash_set_4line_read_write(void)
  * @brief       This function is used to set the use of four lines when reading and writing flash.
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported.
  */
-unsigned char flash_set_4line_read_write(void)
+unsigned char flash_set_4line_read_write(unsigned int flash_mid)
 {
-    unsigned char status = hal_flash_4line_en();
+    unsigned char status = flash_4line_en(flash_mid);
     if(status == 1)
     {
         flash_read_page = flash_4read;
@@ -205,9 +206,9 @@ unsigned char flash_set_4line_read_write(void)
  * @param[in]   device_num  - the number of slave device.
  * @return      1: success, 0: error, 2: mid is not supported.
  */
-unsigned char flash_set_4line_read_write_with_device_num(mspi_slave_device_num_e device_num)
+unsigned char flash_set_4line_read_write_with_device_num(mspi_slave_device_num_e device_num,unsigned int flash_mid)
 {
-    unsigned char status = hal_flash_4line_en_with_device_num(device_num);
+    unsigned char status = flash_4line_en_with_device_num(device_num,flash_mid);
     if(status == 1)
     {
         flash_read_page = flash_4read;
@@ -967,7 +968,7 @@ void user_init(void)
     delay_ms(1000);
 
 #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
-    if(flash_set_4line_read_write() != 1)
+    if(flash_set_4line_read_write(g_flash_handler.mid) != 1)
     {
         err_status.set_4line_err = 1;
         while(1);
@@ -978,9 +979,8 @@ void user_init(void)
 #if defined(MCU_CORE_B931)
     flash_mspi_set_48Mclk();
 #endif
-
 #if defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
-    if(flash_set_4line_read_write_with_device_num(SLAVE_N) != 1)
+    if(flash_set_4line_read_write_with_device_num(SLAVE_N, g_flash_handler[SLAVE_N].mid) != 1)
     {
         err_status.set_4line_err = 1;
         while(1);
@@ -1001,7 +1001,7 @@ void user_init(void)
     }
     check_status.erase_check = 1;
 
-    flash_read_page = flash_read_data;
+    flash_read_page = flash_dread;
     flash_write_page = flash_page_program;
     flash_write_page(FLASH_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Write_Buff);
     flash_read_page(FLASH_ADDR+0x80,FLASH_BUFF_LEN,(unsigned char *)Flash_Read_Buff);
@@ -1205,7 +1205,7 @@ void user_init(void)
 #endif
 
 #if defined(MCU_CORE_B91)
-    switch(mid)
+    switch(g_flash_handler.mid)
     {
     case MID146085:
         flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
@@ -1227,7 +1227,7 @@ void user_init(void)
         break;
     }
 #elif  defined(MCU_CORE_B92)
-    switch(mid)
+    switch(g_flash_handler.mid)
     {
     case MID146085:
         flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
@@ -1261,7 +1261,7 @@ void user_init(void)
         break;
     }
 #elif  defined(MCU_CORE_TL751X)
-    switch(mid)
+    switch(g_flash_handler[SLAVE_N].mid)
     {
     case MID166085:
         flash_write_status_mid166085_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID166085);
@@ -1271,7 +1271,7 @@ void user_init(void)
         break;
     }
 #elif defined(MCU_CORE_TL721X)
-    switch(mid)
+    switch(g_flash_handler[SLAVE_N].mid)
     {
     case MID156085:
         flash_write_status_mid156085_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID156085);
@@ -1281,7 +1281,7 @@ void user_init(void)
         break;
     }
 #elif  defined(MCU_CORE_B931)
-    switch(mid)
+    switch(g_flash_handler[SLAVE_N].mid)
     {
     case MID146085:
         flash_write_status_mid146085_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID146085);
@@ -1295,7 +1295,7 @@ void user_init(void)
         break;
     }
 #elif  defined(MCU_CORE_TL321X)
-    switch(mid)
+    switch(g_flash_handler.mid)
     {
     case MID146085:
         flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
@@ -1315,6 +1315,6 @@ void user_init(void)
 void main_loop (void)
 {
     delay_ms(500);
-    gpio_toggle(LED1);
+    gpio_toggle(LED2);
 }
 

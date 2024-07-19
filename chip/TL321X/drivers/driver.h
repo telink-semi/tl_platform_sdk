@@ -31,10 +31,7 @@
 #include "lib/include/rf/rf_common.h"
 #include "lib/include/sys.h"
 #include "lib/include/trng/trng_algorithm.h"
-
-
-
-#include "lib/include/ske/ske.h"
+#include "lib/include/pke/pke_algorithm.h"
 #include "lib/include/ske/ske_algorithm.h"
 
 #include "analog.h"

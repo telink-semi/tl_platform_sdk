@@ -102,44 +102,57 @@ void user_init(void)
     //The 24M RC needs to be calibrated before the pm_sleep_wakeup function,
     //because this clock will be used to kick 24m xtal start after wake up,
     //The more accurate this time, the faster the crystal will start.Calibration cycle depends on usage
-    clock_cal_24m_rc();
-    pm_cal_24mrc_counter = stimer_get_tick();
+    if(g_pm_status_info.mcu_status == MCU_STATUS_DEEPRET_BACK){
+        if(clock_time_exceed(pm_cal_24mrc_counter, 10*1000*1000)){
+            clock_cal_24m_rc();
+            pm_cal_24mrc_counter = stimer_get_tick();
+        }
+    }else{
+        clock_cal_24m_rc();
+        pm_cal_24mrc_counter = stimer_get_tick();
+
     //If it is timer or mdec wake up, you need to initialize 32K
-
 #if defined(MCU_CORE_B91)
-    if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP \
-    || PM_MODE == SUSPEND_MDEC_WAKEUP || PM_MODE == DEEP_MDEC_WAKEUP || PM_MODE == DEEP_RET32K_MDEC_WAKEUP || PM_MODE == DEEP_RET64K_MDEC_WAKEUP \
-    || PM_MODE == SUSPEND_COMPARATOR_WAKEUP || PM_MODE == DEEP_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP )
-    {
-        clock_32k_init(CLK_32K_RC);
-        clock_cal_32k_rc(); //6.68ms
-    }
-    else if(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP)
-    {
-        clock_32k_init(CLK_32K_XTAL);
-        clock_kick_32k_xtal(10);
-    }
+        if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP \
+        || PM_MODE == SUSPEND_MDEC_WAKEUP || PM_MODE == DEEP_MDEC_WAKEUP || PM_MODE == DEEP_RET32K_MDEC_WAKEUP || PM_MODE == DEEP_RET64K_MDEC_WAKEUP \
+        || PM_MODE == SUSPEND_COMPARATOR_WAKEUP || PM_MODE == DEEP_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP )
+        {
+            clock_32k_init(CLK_32K_RC);
+            clock_cal_32k_rc(); //6.68ms
+        }
+        else if(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP)
+        {
+            clock_32k_init(CLK_32K_XTAL);
+            clock_kick_32k_xtal(10);
+        }
 #elif defined(MCU_CORE_B92)
-    if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET96K_32K_RC_WAKEUP \
-    || PM_MODE == SUSPEND_COMPARATOR_WAKEUP || PM_MODE == DEEP_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET96K_COMPARATOR_WAKEUP)
-    {
-        clock_32k_init(CLK_32K_RC);
-        clock_cal_32k_rc(); //6.68ms
-    }
-    else if(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET96K_32K_XTAL_WAKEUP)
-    {
-        clock_32k_init(CLK_32K_XTAL);
-        clock_kick_32k_xtal(10);
-    }
+        if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET96K_32K_RC_WAKEUP \
+        || PM_MODE == SUSPEND_COMPARATOR_WAKEUP || PM_MODE == DEEP_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET32K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET64K_COMPARATOR_WAKEUP || PM_MODE == DEEP_RET96K_COMPARATOR_WAKEUP)
+        {
+            clock_32k_init(CLK_32K_RC);
+            clock_cal_32k_rc(); //6.68ms
+        }
+        else if(PM_MODE == SUSPEND_32K_XTAL_WAKEUP || PM_MODE == DEEP_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP || PM_MODE == DEEP_RET96K_32K_XTAL_WAKEUP)
+        {
+            clock_32k_init(CLK_32K_XTAL);
+            clock_kick_32k_xtal(10);
+        }
 #elif defined(MCU_CORE_TL721X)
-    if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP \
-        || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET128K_32K_RC_WAKEUP || PM_MODE == DEEP_RET256K_32K_RC_WAKEUP)
-    {
-        clock_32k_init(CLK_32K_RC);
-        clock_cal_32k_rc(); //6.68ms
-    }
+        if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP \
+            || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET128K_32K_RC_WAKEUP || PM_MODE == DEEP_RET256K_32K_RC_WAKEUP)
+        {
+            clock_32k_init(CLK_32K_RC);
+            clock_cal_32k_rc(); //6.68ms
+        }
+#elif defined(MCU_CORE_TL321X)
+        if(PM_MODE == SUSPEND_32K_RC_WAKEUP || PM_MODE == DEEP_32K_RC_WAKEUP || PM_MODE == DEEP_RET32K_32K_RC_WAKEUP \
+            || PM_MODE == DEEP_RET64K_32K_RC_WAKEUP || PM_MODE == DEEP_RET96K_32K_RC_WAKEUP)
+        {
+            clock_32k_init(CLK_32K_RC);
+            clock_cal_32k_rc(); //6.68ms
+        }
 #endif
-
+    }
 
 #if(PM_MODE == SUSPEND_PAD_WAKEUP)    //Caution: if wake-up source is only pad, 32K clock source MUST be 32K RC.
     pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
@@ -150,19 +163,19 @@ void user_init(void)
     gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
     pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
-#elif(defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X))&&(PM_MODE == DEEP_RET32K_PAD_WAKEUP)
+#elif(defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X))&&(PM_MODE == DEEP_RET32K_PAD_WAKEUP)
     retention_data_test++;
     pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
     gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
     pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
-#elif(defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X))&&(PM_MODE == DEEP_RET64K_PAD_WAKEUP)
+#elif(defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X))&&(PM_MODE == DEEP_RET64K_PAD_WAKEUP)
     retention_data_test++;
     pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
     gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
     pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
-#elif((defined(MCU_CORE_B92))&&(PM_MODE == DEEP_RET96K_PAD_WAKEUP))
+#elif((defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X))&&(PM_MODE == DEEP_RET96K_PAD_WAKEUP))
     retention_data_test++;
     pm_set_gpio_wakeup(WAKEUP_PAD, WAKEUP_LEVEL_HIGH, 1);
     gpio_set_up_down_res(WAKEUP_PAD, GPIO_PIN_PULLDOWN_100K);
@@ -183,17 +196,18 @@ void user_init(void)
 #elif(PM_MODE==DEEP_32K_RC_WAKEUP||((defined(MCU_CORE_B91)||defined(MCU_CORE_B92))&&PM_MODE==DEEP_32K_XTAL_WAKEUP))
     pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
-#elif((defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X))&&PM_MODE == DEEP_RET32K_32K_RC_WAKEUP)\
+#elif((defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X))&&PM_MODE == DEEP_RET32K_32K_RC_WAKEUP)\
     || ((defined(MCU_CORE_B91)||defined(MCU_CORE_B92))&&PM_MODE == DEEP_RET32K_32K_XTAL_WAKEUP)
     retention_data_test++;
     pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW32K, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
-#elif((defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X))&&PM_MODE == DEEP_RET64K_32K_RC_WAKEUP)\
+#elif((defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X))&&PM_MODE == DEEP_RET64K_32K_RC_WAKEUP)\
     || ((defined(MCU_CORE_B91)||defined(MCU_CORE_B92))&&PM_MODE == DEEP_RET64K_32K_XTAL_WAKEUP)
     retention_data_test++;
     pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW64K, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
-#elif(defined(MCU_CORE_B92))&&(PM_MODE == DEEP_RET96K_32K_RC_WAKEUP || PM_MODE == DEEP_RET96K_32K_XTAL_WAKEUP)
+#elif((defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X))&&PM_MODE == DEEP_RET96K_32K_RC_WAKEUP)\
+    || (defined(MCU_CORE_B92)&&PM_MODE == DEEP_RET96K_32K_XTAL_WAKEUP)
     retention_data_test++;
     pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW96K, PM_WAKEUP_TIMER, PM_TICK_STIMER, (stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS));
 
@@ -343,9 +357,8 @@ void main_loop(void)
     pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_PAD, PM_TICK_STIMER, 0);
 
 #elif(PM_MODE == SUSPEND_32K_RC_WAKEUP) || ((defined(MCU_CORE_B91)||defined(MCU_CORE_B92))&&(PM_MODE == SUSPEND_32K_XTAL_WAKEUP))
-    gpio_set_low_level(GPIO_PB3);
-    pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 10*SYSTEM_TIMER_TICK_1MS);
-    gpio_set_high_level(GPIO_PB3);
+    pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 4000*SYSTEM_TIMER_TICK_1MS);
+
 #elif((defined(MCU_CORE_B91) || defined(MCU_CORE_B92)) && (PM_MODE == SUSPEND_COMPARATOR_WAKEUP))
     //When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
     //otherwise can not enter sleep normally, crash occurs.

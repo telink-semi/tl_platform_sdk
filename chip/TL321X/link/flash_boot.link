@@ -34,12 +34,7 @@ SECTIONS
     PROVIDE (_RETENTION_RESET_VMA_START = ADDR(.retention_reset));
     PROVIDE (_RETENTION_RESET_LMA_START = LOADADDR(.retention_reset));
     PROVIDE (_RETENTION_RESET_VMA_END = .); 
-    /* By default,the aes_data section can only be used in the first 64K of IRAM, */
-    /* please do not change the position of this section,unless you know the correct way to use */ 
-    . = ALIGN(8);
-    PROVIDE (_AES_VMA_START = .);
-    .aes_data   (NOLOAD)    : { KEEP(*(.aes_data )) }
-    PROVIDE (_AES_VMA_END = .);
+
     . = ALIGN(8);
     .retention_data : AT( ALIGN(LOADADDR (.retention_reset) + SIZEOF (.retention_reset),8)) 
         { KEEP(*(.retention_data )) }

@@ -1,12 +1,12 @@
 /********************************************************************************************************
- * @file    main.c
+ * @file    pke_algorithm.h
  *
- * @brief   This is the source file for Telink RISC-V MCU
+ * @brief   This is the header file for TL321X
  *
  * @author  Driver Group
  * @date    2024
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -21,26 +21,17 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#ifndef PKE_ALGORITHM_H
+#define PKE_ALGORITHM_H
 
-extern void user_init(void);
-extern void main_loop(void);
+#include "lib/include/crypto_common/utility.h"
+#include "lib/include/crypto_common/eccp_curve.h"
+#include "lib/include/pke/pke_portable.h"
+#include "ecdh.h"
+#include "ecdsa.h"
+#include "pke.h"
+#include "pke_prime.h"
+#include "rsa.h"
 
-/**
- * @brief       This is main function
- * @param[in]   none
- * @return      none
- */
-int main(void)
-{
-    PLATFORM_INIT;
-    CLOCK_INIT;
-    user_init();
 
-    while (1)
-    {
-        main_loop();
-    }
-
-    return 0;
-}
+#endif

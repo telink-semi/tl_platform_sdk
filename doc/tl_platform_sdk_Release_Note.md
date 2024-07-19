@@ -1,3 +1,145 @@
+## V3.0.1
+
+### Version
+
+* SDK version: tl_platform_sdk V3.0.1
+* This version of the SDK supports TLSR921x/TLSR951x(A0/A1/A2),TLSR922x/TLSR952x(A3/A4),TL721X(A1),TL321X(A0) chips.
+* Toolchain version
+  - TLSR921x/TLSR951x: gcc7
+  - TLSR922x/TLSR952x: gcc12
+  - TL721x: gcc12
+  - TL321x: gcc12
+
+
+### Bug Fixes
+
+* **pm**
+  * (TL721x)Solved the problem of exiting the sleep function or causing a reset due to the incorrect position of the clear wake source state operation.Clear the wake source status after setting the wake tick.The process of setting the wake up tick value may generate an intermediate value. If the intermediate value is the same as the 32k tick value, the state of the timer wake up source will be set, causing the exit of the sleep function or a reset.[2b4ddd52](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1147/commits?commit_id=2b4ddd52a79331bd344548bd5bed1d5f1847f6f8)
+  * (B91/B92)Solved the problem that pm_set_wakeup_time_param and pm_set_xtal_stable_timer_param interfaces calculate the early wake time of sleep incorrectly. If you call either of these interfaces, you may not be able to sleep properly.[2f9b7be4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1159/commits?commit_id=2f9b7be4ff8e2c0018180a9df7d85d6b4c1f0db3)
+* **i2c1_m** 
+  * (TLSR922x/TLSR952x/TL721X/TL321X)I2C1_M_WAIT:xxx_timeout_handler error passing parameter.[5fbb0b](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1162/commits?commit_id=5fbb0bc295c5a7e9e1b976a48dea8dc72333ac61)
+* **RF_Demo** 
+  * (TL721X/TL321X)Fixed data overflow during header variable assignment in app_pri_generic_mode.c[0d5bc4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1160/commits?commit_id=0d5bc466a3c121324dee848c4f245b1080d592ae)
+  * (TL721x/TL321x)Fixed rf_set_irq_mask parameter passing error in app_pri_generic_mode.c[0d5bc4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1160/commits?commit_id=0d5bc466a3c121324dee848c4f245b1080d592ae)
+* **rf** 
+  * (TL721X/TL321X)Fixed issue where switching between different RF modes using rf_set_xx_mode could be unsuccessful (in cases where the rf_reset_register_value interface was not called before switching modes)[0d5bc4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1160/commits?commit_id=0d5bc466a3c121324dee848c4f245b1080d592ae)
+  * (TL321x) Fix the rf_mode_init configuration error to avoid triggering RF DMA and state machine reset during invocation.[373c5d](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1149/commits?commit_id=373c5dd45fc45afab5b38f5ea572afadcd7428a0)
+
+### BREAKING CHANGES 
+
+* **rf**
+  * (TL321x) Close the stimer_bb module in `rf_rode_init`interface; Delete the interfaces `rf_bb_timer_sync_to_stimer_en`, `rf_bb_timer_sync_to_stimer_trig`, `rf_bb_timer_get_tick`and `rf_set_timer_source`.
+* **flash**
+  * (B91/B92/TL721x/TL321X)Removed flash_read_data()/flash_read_data_decrypt_check(), and changed the default single-wire of flash_read_page() interface in flash.c to default two-wire to prevent the mismatch between the maximum frequency supported by flash single-wire read and the frequency configured by the chip from leading to flash read error. 
+
+### Features
+
+* **TL321X**
+  * PKE/PM
+* **pm**
+  * (TL721x) Added interface pm_set_cfg_for_os_compile_opt(), added enumeration pm_optimize_sel_e, and added code related to os optimization options.
+  * (TL721X) In the return value of the pm_sleep_wakeup interface, add two bit definitions, indicating that the stimer tick value is greater than the maximum value and less than the minimum value respectively.
+* **sys**
+  * (TL721x) Added the DCDC_0P94_LDO_1P8 and DCDC_0P94_DCDC_1P8 modes.
+* **pm demo**
+  * Added 24M RC calibration and 32K clock recommended usage.
+* **core**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X) The core_mie_disable interface adds a return value to return the value of the MIE register before interrupts were disabled.
+* **trap**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X) Added plic_all_interrupt_save_and_disable interface to save and disable all interrupt sources of PLIC, plic_all_interrupt_restore interface to restore all PLIC interrupt sources.
+* **flash**
+  * (B91/B92/TL721x/TL321X)add flash_4line_en() and flash_4line_dis().
+
+### Refactoring
+
+* **USB_Demo**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X)The usb_cdc_tx_data_to_host function supports sending data of arbitrary length in a blocking fashion. usb_cdc_tx_data_to_host_non_block is added as a new non-blocking function, and sample code is provided.
+* **rf**
+  * (TL721x) Switch stimer_bb to manual mode in `rf_rode_init`, which triggers tick earlier.
+* **aes**
+  * (TL721x/TL321X)The AES section was deleted because it was not needed.
+
+### Performance Improvements
+
+* N/A
+
+### Note
+
+* N/A
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+
+### 版本
+
+* SDK版本: tl_platform_sdk V3.0.1
+* 此版本SDK支持 TLSR921x/TLSR951x(A0/A1/A2),TLSR922x/TLSR952x(A3/A4),TL721X(A1),TL321X(A0) 芯片。
+* 工具链版本
+  - TLSR921x/TLSR951x: gcc7
+  - TLSR922x/TLSR952x: gcc12
+  - TL721x: gcc12
+  - TL321x: gcc12
+
+
+### Bug Fixes
+
+* **pm**
+  * (TL721X)解决了因为清唤醒源状态操作的位置不对引发的退出睡眠函数或者产生复位的问题。清唤醒源状态的操作需要放在设置唤醒tick之后。设置唤醒tick值的过程可能会产生中间值，如果中间值和32k tick值相同会把timer唤醒源的状态置起来，从而引发退出睡眠函数或者产生复位。[2b4ddd52](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1147/commits?commit_id=2b4ddd52a79331bd344548bd5bed1d5f1847f6f8)
+  * (B91/B92)解决了pm_set_wakeup_time_param和pm_set_xtal_stable_timer_param接口对于睡眠的提前唤醒时间计算错误的问题。如果调用过这两个接口中的任意一个，可能会导致不能正常睡眠。[2f9b7be4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1159/commits?commit_id=2f9b7be4ff8e2c0018180a9df7d85d6b4c1f0db3)
+* **i2c1_m** 
+  * (TLSR922x/TLSR952x/TL721X/TL321X)I2C1_M_WAIT:xxx_timeout_handler传参错误.[5fbb0b](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1162/commits?commit_id=5fbb0bc295c5a7e9e1b976a48dea8dc72333ac61)
+* **RF_Demo** 
+  * (TL721X/TL321X)修复了app_pri_generic_mode.c中header变量赋值过程中的数据溢出问题[0d5bc4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1160/commits?commit_id=0d5bc466a3c121324dee848c4f245b1080d592ae)
+  * (TL721x/TL321x)修复了app_pri_generic_mode.c中rf_set_irq_mask传参错误[0d5bc4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1160/commits?commit_id=0d5bc466a3c121324dee848c4f245b1080d592ae)
+* **rf**
+  * (TL721x/TL321x)修复了使用rf_set_xx_mode切换不同RF模式可能不成功的问题（在切换模式之前没有调用rf_reset_register_value接口的情况）[0d5bc4](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1160/commits?commit_id=0d5bc466a3c121324dee848c4f245b1080d592ae)
+  * (TL321x) 修复了rf_mode_init配置错误，避免调用时触发RF DMA和状态机复位。[373c5d](http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1149/commits?commit_id=373c5dd45fc45afab5b38f5ea572afadcd7428a0)
+
+### BREAKING CHANGES
+
+* **rf**
+  * (TL321x) `rf_mode_init`接口中关闭stimer_bb模块；删除`rf_bb_timer_sync_to_stimer_en`、`rf_bb_timer_sync_to_stimer_trig`、`rf_set_timer_source`、`rf_bb_timer_get_tick`接口。
+* **flash**
+  * (B91/B92/TL721x/TL321X)删除了flash_read_data()/flash_read_data_decrypt_check()，同时将flash.c中的flash_read_page()接口默认单线更改为默认两线，防止flash单线读支持的最大频率和芯片配置的频率不匹配导致flash读错误。
+
+### Features
+
+* **TL321X**
+  * PKE/PM
+* **pm**
+  * (TL721x)添加接口pm_set_cfg_for_os_compile_opt()，添加枚举pm_optimize_sel_e，添加os优化选项相关的代码。
+  * (TL721X)在pm_sleep_wakeup接口的返回值中，增加两个bit的定义，分别表示stimer tick值大于最大值和小于最小值。
+* **sys**
+  * (TL721X)新增DCDC_0P94_LDO_1P8模式和DCDC_0P94_DCDC_1P8模式。
+* **pm demo**
+  * 添加24M RC校准和32K时钟推荐使用方法。
+* **core**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X) core_mie_disable 接口增加一个返回值，用来返回中断禁止前 MIE 寄存器的值。
+* **trap**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X) 添加 plic_all_interrupt_save_and_disable 接口保存和禁止 PLIC 所有中断源，plic_all_interrupt_restore 接口恢复所有 PLIC 中断源。
+* **flash**
+  * (B91/B92/TL721x/TL321X)新增了flash_4line_en()/flash_4line_dis()。
+
+### Refactoring
+
+* **USB_Demo**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X)usb_cdc_tx_data_to_host 函数支持以阻塞的方式发送任意长度数据，新增非阻塞发送函数 usb_cdc_tx_data_to_host_non_block 并提供示例代码。
+* **rf**
+  * (TL721x) `rf_mode_init`中切换stimer_bb为手动模式，手动模式更早触发tick。
+* **aes**
+  * (TL721x/TL321X)删掉了AES段，因为不需要这个段。
+
+### Performance Improvements
+
+* N/A
+
+### Note
+
+* N/A
+
+----
+
+  
 ## V3.0.0
 
 ### Version

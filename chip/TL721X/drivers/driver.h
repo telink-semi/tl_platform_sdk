@@ -30,7 +30,6 @@
 #include "lib/include/pm/pm.h"
 #include "lib/include/rf/rf_common.h"
 #include "lib/include/sys.h"
-#include "lib/include/pm/pm_internal.h"
 #include "lib/include/trng/trng_algorithm.h"
 #include "lib/include/pke/pke_algorithm.h"
 #include "lib/include/hash/hash_algorithm.h"

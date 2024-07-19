@@ -31,7 +31,7 @@ unsigned char  Private_generic_tx_packet[48] __attribute__ ((aligned (4))) ={3,0
 
 #define TX                  1
 #define RX                  2
-#define RF_TRX_MODE         TX
+#define RF_TRX_MODE         RX
 
 #define AUTO                1
 #define MANUAL              2
@@ -53,12 +53,13 @@ volatile unsigned int rx_cnt=0;
 volatile unsigned int math_cnt=0;
 volatile unsigned int unmath_cnt=0;
 volatile unsigned int tx_cnt=0;
-unsigned int  h0_size=5;
-unsigned int  h1_size=4;
-unsigned int  length_size=15;
-unsigned int  h0_val = 26;
-unsigned int  h1_val = 14;
+unsigned char  h0_size=5;
+unsigned char  h1_size=4;
+unsigned char  length_size=15;
+unsigned short  h0_val = 26;
+unsigned short  h1_val = 14;
 
+#if(PRI_GENERIC_FLT_MODE_EN)
 /**
  *  @note  The rf_pkt_flt function matches from the high bit,
  *         You need to configure rf_pkt_mask and rf_pkt_match from the high bit when configuring it.
@@ -72,7 +73,7 @@ rf_pkt_flt_t rf_pkt_flt = {
         .rf_pkt_mask_low=0x00000000,
         .rf_pkt_mask_high=0xff00ff00,
 };
-
+#endif
 #if(RF_RX_IRQ_EN)
 _attribute_ram_code_sec_ void rf_irq_handler(void)
 {
@@ -126,7 +127,7 @@ void user_init(void)
 #if(RF_RX_IRQ_EN)
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_ZB_RT);
-    rf_set_irq_mask(FLD_RF_IRQ_RX||FLD_RF_IRQ_PKT_UNMATCH||FLD_RF_IRQ_PKT_MATCH);
+    rf_set_irq_mask(FLD_RF_IRQ_RX|FLD_RF_IRQ_PKT_UNMATCH|FLD_RF_IRQ_PKT_MATCH);
     rf_start_srx(rf_stimer_get_tick());
 #endif
 #endif
@@ -153,7 +154,7 @@ void main_loop(void)
 
     unsigned char header_len = (h0_size+h1_size+length_size) >> 3;
     unsigned int rf_data_len = TX_PKT_PAYLOAD + header_len;
-    unsigned long long header = h0_val | (TX_PKT_PAYLOAD<<h0_size) | (h1_val<<(h0_size+length_size));
+    unsigned long long header = h0_val | ((unsigned long long)TX_PKT_PAYLOAD<<h0_size) | ((unsigned long long)h1_val<<(h0_size+length_size));
     for(unsigned char i = 0; i < header_len;i++)
     {
         Private_generic_tx_packet[4+i] = (header>>(8*i))&0xff;
