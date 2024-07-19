@@ -31,6 +31,42 @@ extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
 #endif
 
+#define DEVICE_SEND_DATA_BLOCK     (0) /* blocking send data. */
+#define DEVICE_SEND_DATA_NON_BLOCK (1) /* non-blocking send data. */
+#define DEVICE_SEND_DATA_MODE      DEVICE_SEND_DATA_BLOCK
+
+#if (DEVICE_SEND_DATA_MODE == DEVICE_SEND_DATA_NON_BLOCK)
+/**
+ * @brief       This function serves to send data to USB host in CDC device.
+ * @param[in]   data_ptr -  the pointer of data, which need to be sent.
+ * @param[in]   data_len -  the length of data, which need to be sent.
+ * @retval      0 - success.
+ * @retval      1 - parameters error.
+ * @note
+ *              - The maximum transmit length supported by this function is CDC_TXRX_EPSIZE;
+ *              - This function is non-blocking and returns immediately after the data is filled into the USB buffer.
+ */
+unsigned int usb_cdc_tx_data_to_host_non_block(unsigned char *data_ptr, unsigned int data_len)
+{
+    if (data_len > CDC_TXRX_EPSIZE)
+    {
+        return 1;
+    }
+
+    usbhw_reset_ep_ptr(USB_PHYSICAL_EDP_CDC_IN);
+    while (data_len-- > 0)
+    {
+        reg_usb_ep_dat(USB_PHYSICAL_EDP_CDC_IN) = (*data_ptr);
+
+        ++data_ptr;
+    }
+    usbhw_data_ep_ack(USB_PHYSICAL_EDP_CDC_IN);
+
+    return 0;
+}
+
+#endif
+
 void user_init(void)
 {
     usb_init();
@@ -69,6 +105,7 @@ void user_init(void)
     usb_set_pin_en();
 }
 
+
 void main_loop(void)
 {
     /**
@@ -99,10 +136,60 @@ void main_loop(void)
 #endif
 
     usb_handle_irq();
-    
+
     if (usb_cdc_data_len != 0)
     {
+#if (DEVICE_SEND_DATA_MODE == DEVICE_SEND_DATA_BLOCK)
         usb_cdc_tx_data_to_host(usb_cdc_data, usb_cdc_data_len);
+#else
+        unsigned char *ptr  = usb_cdc_data;
+        unsigned int div    = usb_cdc_data_len / CDC_TXRX_EPSIZE;
+        unsigned int remain = usb_cdc_data_len % CDC_TXRX_EPSIZE;
+        /* send divisor data of CDC_TXRX_EPSIZE.*/
+        for (unsigned int i = 0; i < div; i++)
+        {
+            usb_cdc_tx_data_to_host_non_block(ptr, CDC_TXRX_EPSIZE);
+            /* If the endpoint is busy, you can either work on other tasks or wait for the endpoint to idle. */
+            if (usbhw_is_ep_busy(USB_PHYSICAL_EDP_CDC_IN))
+            {
+                unsigned int ref_tick = stimer_get_tick();
+                while (usbhw_is_ep_busy(USB_PHYSICAL_EDP_CDC_IN)) /* waiting for endpoint to not be busy. */
+                {
+                    if (clock_time_exceed(ref_tick, 1000))
+                    {
+                        /* some exceptions occur, such as the usb disconnecting. */
+                    }
+                }
+            }
+            ptr += CDC_TXRX_EPSIZE;
+        }
+
+        /* send remainder data of CDC_TXRX_EPSIZE.*/
+        if (remain)
+        {
+            usb_cdc_tx_data_to_host_non_block(ptr, remain);
+            /* If the endpoint is busy, you can either work on other tasks or wait for the endpoint to idle. */
+            if (usbhw_is_ep_busy(USB_PHYSICAL_EDP_CDC_IN))
+            {
+                unsigned int ref_tick = stimer_get_tick();
+                while (usbhw_is_ep_busy(USB_PHYSICAL_EDP_CDC_IN)) /* waiting for endpoint to not be busy. */
+                {
+                    if (clock_time_exceed(ref_tick, 1000))
+                    {
+                        /* some exceptions occur, such as the usb disconnecting. */
+                    }
+                }
+            }
+            ptr += remain;
+        }
+        else
+        {
+            /* send zero length packet. */
+            usbhw_reset_ep_ptr(USB_PHYSICAL_EDP_CDC_IN);
+            usbhw_data_ep_ack(USB_PHYSICAL_EDP_CDC_IN);
+        }
+
+#endif
         usb_cdc_data_len = 0;
     }
 }

@@ -67,7 +67,6 @@ _RESET_ENTRY:
 /* in the original configuration, set bit[22] to 1, enable timeout:
  * when xip reaches a certain time without fetching instructions, cs will not be pulled down, saving power consumption.
  */
-//  .word (0x034020A8)          //READ:    cmd:1x, addr:1x, data:1x, dummy cycle:0
     .word (0x3b4097a9)          //DREAD:   cmd:1x, addr:1x, data:2x, dummy cycle:8
 //  .word (0xeb4493ba)          //X4READ:  cmd:1x, addr:4x, data:4x, dummy cycle:6
 
@@ -213,21 +212,10 @@ _ZERO_BSS:
     la     t2, _BSS_VMA_START
     la     t3, _BSS_VMA_END
 _ZERO_BSS_BEGIN:
-    bleu   t3, t2, _ZERO_AES
-    sw     t0, 0(t2)
-    addi   t2, t2, 4
-    j      _ZERO_BSS_BEGIN
-
-    /* Zero .aes section in sram */
-_ZERO_AES:
-    lui    t0, 0
-    la     t2, _AES_VMA_START
-    la     t3, _AES_VMA_END
-_ZERO_AES_BEGIN:
     bleu   t3, t2, _FILL_STK
     sw     t0, 0(t2)
     addi   t2, t2, 4
-    j      _ZERO_AES_BEGIN
+    j      _ZERO_BSS_BEGIN
 
     /* Fill the remaining section in sram */
 _FILL_STK:
@@ -358,12 +346,6 @@ _MSPI_WAIT_1:
     addi    t0, t0, 0x790
     li      t1, 0x06
     sb      t1, 0x78c(t0)       //xip_disable       :0xA3FFFF1c = 0x06
-    lui     t0, 0x80140
-    addi    t0, t0, 0x790
-    li      t1, 0x3f
-    sb      t1, 0x4c1(t0)       //mspi ie enable    :0x80140c51 = 0x3f
-    lui     t0, 0xA3FFF
-    addi    t0, t0, 0x790
     li      t2, 0x00
     sb      t2, 0x77c(t0)       //mspi_ctrl1        :0xA3FFFF0c = 0x00
     li      t2, 0x80
@@ -412,21 +394,10 @@ _IZERO_BSS:
     la     t2, _BSS_VMA_START
     la     t3, _BSS_VMA_END
 _IZERO_BSS_BEGIN:
-    bleu   t3, t2, _IZERO_AES
-    sw     t0, 0(t2)
-    addi   t2, t2, 4
-    j      _IZERO_BSS_BEGIN
-
-    /* Zero .aes section in sram */
-_IZERO_AES:
-    lui    t0, 0
-    la     t2, _AES_VMA_START
-    la     t3, _AES_VMA_END
-_IZERO_AES_BEGIN:
     bleu   t3, t2, _IFILL_STK
     sw     t0, 0(t2)
     addi   t2, t2, 4
-    j      _IZERO_AES_BEGIN
+    j      _IZERO_BSS_BEGIN
 
     /* Fill the remaining section in sram */
 _IFILL_STK:

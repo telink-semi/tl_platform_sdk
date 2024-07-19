@@ -55,7 +55,9 @@
  */
 typedef enum{
 	//The command called by the flash_mspi_read_ram() function and flash_set_xip_config() function.
-	FLASH_READ_CMD								    = 0x030020a8,
+ /* attention: The maximum frequency of some flash single line reads may be smaller than the mspi frequency configured by the chip, it is not recommended to use the function of single line reads,
+  * if you have to use it, please refer to the flash datasheet to ensure that the maximum frequency of flash single line reads is larger than the mspi frequency configured by the chip.(added by xiaobin.huang 20240717)
+  */
 	FLASH_DREAD_CMD								    = 0x3b0097a9,
 	FLASH_X4READ_CMD								= 0xeb0095ba,
 	//The command called by the flash_mspi_read_ram() function.
@@ -196,26 +198,6 @@ static inline void flash_change_rw_func(flash_handler_t read, flash_handler_t wr
  */
 _attribute_text_sec_ void flash_erase_sector(unsigned long addr);
 
-
-/**
- * @brief 		This function reads the content from a page to the buf with single mode.
- * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
- * @param[out]  buf		- the start address of the buffer(ram address).
- * @return 		none.
- * @note        cmd:1x, addr:1x, data:1x, dummy:0
- * 				Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
- *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
- *              Taking into account the factors such as power supply fluctuations, the safe voltage value needs to be greater
- *              than the minimum chip operating voltage. For the specific value, please make a reasonable setting according
- *              to the specific application and hardware circuit.
- *
- *              Risk description: When the chip power supply voltage is relatively low, due to the unstable power supply,
- *              there may be a risk of error in the operation of the flash (especially for the write and erase operations.
- *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
- */
-_attribute_text_sec_ void flash_read_data(unsigned long addr, unsigned long len, unsigned char *buf);
-
 /**
  * @brief 		This function reads the content from a page to the buf with dual read mode.
  * @param[in]   addr	- the start address of the page.
@@ -254,24 +236,6 @@ _attribute_text_sec_ void flash_dread(unsigned long addr, unsigned long len, uns
  */
 _attribute_text_sec_ void flash_4read(unsigned long addr, unsigned long len, unsigned char *buf);
 
-/**
- * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in single mode.
- * @param[in]   addr	        - the start address of the page.
- * @param[in]   plain_len		- the length(in byte, must be above 0) of content needs to read out from the page.
- * @param[out]  plain_buf		- the start address of the plain buffer(ram address).
- * @return 		0: check pass; 1: check fail.
- * @note        cmd:1x, addr:1x, data:1x, dummy:0
- * 				Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
- *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
- *              Taking into account the factors such as power supply fluctuations, the safe voltage value needs to be greater
- *              than the minimum chip operating voltage. For the specific value, please make a reasonable setting according
- *              to the specific application and hardware circuit.
- *
- *              Risk description: When the chip power supply voltage is relatively low, due to the unstable power supply,
- *              there may be a risk of error in the operation of the flash (especially for the write and erase operations.
- *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
- */
-_attribute_text_sec_ unsigned char  flash_read_data_decrypt_check(unsigned long addr,unsigned long plain_len,unsigned char* plain_buf);
 /**
  * @brief 		This function serves to decrypt the read data from the flash at the specified address and compare it with the plain text in dual read mode.
  * @param[in]   addr	        - the start address of the page.

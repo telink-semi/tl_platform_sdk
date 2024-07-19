@@ -81,7 +81,7 @@ extern "C" {
 #endif
 
 /* DEEP SLEEP WITH RETENTION MODE */
-#if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)|| defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)|| defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)
 #define DEEP_RET32K_PAD_WAKEUP          30
 #define DEEP_RET32K_32K_RC_WAKEUP       31
 #if (defined(MCU_CORE_B91)||defined(MCU_CORE_B92))
@@ -97,7 +97,7 @@ extern "C" {
 #endif
 #endif
 
-#if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)|| defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)|| defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)
 #define DEEP_RET64K_PAD_WAKEUP          40
 #define DEEP_RET64K_32K_RC_WAKEUP       41
 #if (defined(MCU_CORE_B91)||defined(MCU_CORE_B92))
@@ -113,13 +113,15 @@ extern "C" {
 #endif
 #endif
 
-#if defined(MCU_CORE_B92)
+#if defined(MCU_CORE_B92)|| defined(MCU_CORE_TL321X)
 #define DEEP_RET96K_PAD_WAKEUP          50
 #define DEEP_RET96K_32K_RC_WAKEUP       51
+#if defined(MCU_CORE_B92)
 #define DEEP_RET96K_32K_XTAL_WAKEUP     52
 #define DEEP_RET96K_COMPARATOR_WAKEUP   53
 // CTB mode : For internal testing only, this function is not available externally
 #define DEEP_RET96K_CTB_WAKEUP          54
+#endif
 #endif
 
 #if defined(MCU_CORE_TL721X)
@@ -132,7 +134,7 @@ extern "C" {
 #define DEEP_RET256K_32K_RC_WAKEUP      71
 #endif
 
-#define PM_MODE                         SUSPEND_32K_RC_WAKEUP
+#define PM_MODE                         DEEP_PAD_WAKEUP
 
 
 /* Enable C linkage for C++ Compilers: */

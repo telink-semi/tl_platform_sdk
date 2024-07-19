@@ -250,30 +250,6 @@ _attribute_text_sec_ void flash_erase_sector(unsigned long addr)
 }
 
 /**
- * @brief 		This function reads the content from a page to the buf with single mode.
- * @param[in]   addr	- the start address of the page.
- * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.
- * @param[out]  buf		- the start address of the buffer(ram address).
- * @return 		none.
- * @note        cmd:1x, addr:1x, data:1x, dummy:0
- * 				Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
- *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
- *              Taking into account the factors such as power supply fluctuations, the safe voltage value needs to be greater
- *              than the minimum chip operating voltage. For the specific value, please make a reasonable setting according
- *              to the specific application and hardware circuit.
- *
- *              Risk description: When the chip power supply voltage is relatively low, due to the unstable power supply,
- *              there may be a risk of error in the operation of the flash (especially for the write and erase operations.
- *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
- */
-_attribute_text_sec_ void flash_read_data(unsigned long addr, unsigned long len, unsigned char *buf)
-{
-	DISABLE_BTB;
-	flash_mspi_read_ram(FLASH_READ_CMD, addr, 1, 0, buf, len);
-	ENABLE_BTB;
-}
-
-/**
  * @brief 		This function reads the content from a page to the buf with dual read mode.
  * @param[in]   addr	- the start address of the page.
  * @param[in]   len		- the length(in byte, must be above 0) of content needs to read out from the page.

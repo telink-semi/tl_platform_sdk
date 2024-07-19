@@ -80,6 +80,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/PKE_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo/PKE_Demo_Telink_2023Q3-v1.1.0-a/PKE_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/PM_DEMO</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PM_DEMO</locationURI>
+		</link>
+		<link>
 			<name>vendor/PWM_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PWM_DEMO</locationURI>
@@ -93,6 +103,11 @@
 			<name>vendor/RF_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_DEMO</locationURI>
+		</link>
+		<link>
+			<name>vendor/SKE_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/SKE_Demo/SKE_Demo_v1.0.2/SKE_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/SPI_Demo</name>

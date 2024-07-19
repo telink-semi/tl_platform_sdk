@@ -82,22 +82,10 @@ _RAM_ZERO_BSS:
     la     t2, _BSS_VMA_START
     la     t3, _BSS_VMA_END
 _RAM_ZERO_BSS_BEGIN:
-    bleu   t3, t2, _RAM_ZERO_AES
-    sw     t0, 0(t2)
-    addi   t2, t2, 4
-    j      _RAM_ZERO_BSS_BEGIN
-
-    /* Zero .aes section in sram */
-_RAM_ZERO_AES:
-    lui    t0, 0
-    la     t2, _AES_VMA_START
-    la     t3, _AES_VMA_END
-_RAM_ZERO_AES_BEGIN:
     bleu   t3, t2, _RAM_FILL_STK
     sw     t0, 0(t2)
     addi   t2, t2, 4
-    j      _RAM_ZERO_AES_BEGIN
-
+    j      _RAM_ZERO_BSS_BEGIN
 
     /* Fill the remaining section in sram */
 _RAM_FILL_STK:

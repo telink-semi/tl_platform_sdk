@@ -46,12 +46,16 @@ extern unsigned char LineCoding[7];
 
 
 /**
- * @brief       This function serves to send data to USB host in CDC device
+ * @brief       This function serves to send data to USB host in CDC device.
  * @param[in]   data_ptr -  the pointer of data, which need to be sent.
  * @param[in]   data_len -  the length of data, which need to be sent.
- * @return      none
+ * @retval      0 - success.
+ * @retval      1 - fail.
+ * @note
+ *              - This function supports sending an arbitrary length to the host;
+ *              - This function is blocking and will not return until all data has been sent.
  */
- void usb_cdc_tx_data_to_host(unsigned char * data_ptr, unsigned short data_len);
+unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data_len);
 
 void usb_cdc_rx_data_from_host(unsigned char* rx_buff);
 

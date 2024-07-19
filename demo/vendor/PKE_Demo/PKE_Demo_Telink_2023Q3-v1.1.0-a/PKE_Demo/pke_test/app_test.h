@@ -1,12 +1,12 @@
 /********************************************************************************************************
- * @file    app_config.h
+ * @file    app_test.h
  *
  * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -21,18 +21,24 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#pragma once
+#ifndef __APP_TEST__H_
+#define __APP_TEST__H_
+/* Enable C linkage for C++ Compilers: */
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
 #include "driver.h"
 #include "common.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+unsigned int ECCp_get_key_all_test(void);
+unsigned int ECDH_all_test(void);
+unsigned int ECDSA_all_test(void);
+unsigned int RSA_all_test(void);
 
-#define I2S_DEMO        (1)
-#define CODEC0_DEMO     (2)
-#define AUDIO_MODE      CODEC0_DEMO
-
+/* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }
 #endif
+
+#endif /* __APP_TEST__H_ */
