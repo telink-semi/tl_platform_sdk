@@ -1,8 +1,8 @@
-## V3.0.1
+## V3.1.0
 
 ### Version
 
-* SDK version: tl_platform_sdk V3.0.1
+* SDK version: tl_platform_sdk V3.1.0
 * This version of the SDK supports TLSR921x/TLSR951x(A0/A1/A2),TLSR922x/TLSR952x(A3/A4),TL721X(A1),TL321X(A0) chips.
 * Toolchain version
   - TLSR921x/TLSR951x: gcc7
@@ -72,7 +72,7 @@
 
 ### 版本
 
-* SDK版本: tl_platform_sdk V3.0.1
+* SDK版本: tl_platform_sdk V3.1.0
 * 此版本SDK支持 TLSR921x/TLSR951x(A0/A1/A2),TLSR922x/TLSR952x(A3/A4),TL721X(A1),TL321X(A0) 芯片。
 * 工具链版本
   - TLSR921x/TLSR951x: gcc7
