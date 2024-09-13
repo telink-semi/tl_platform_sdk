@@ -102,7 +102,7 @@ void user_init(void)
 #endif
 
     // enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 

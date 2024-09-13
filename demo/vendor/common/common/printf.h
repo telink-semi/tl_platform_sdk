@@ -23,7 +23,11 @@
  *******************************************************************************************************/
 #pragma once
 #include "gpio.h"
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#include "lib/include/stimer.h"
+#else
 #include "stimer.h"
+#endif
 #include <stdio.h>
 #define DEBUG_MODE  1
 

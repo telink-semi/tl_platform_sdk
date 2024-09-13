@@ -34,10 +34,10 @@ volatile unsigned int dcache[16];
 static void sys_norflash_clear_dcachetag(void)
 {
     unsigned int i;
-    __nds__csrw(0,0x7cb);
+    write_csr(0x7cb,0);
     for(i = 0; i < 256; i++){
-        __nds__csrw(0,0x7cd);
-        __nds__csrw(0x15,0x7cc);
+        write_csr(0x7cd,0);
+        write_csr(0x7cc,0x15);
     }
 }
 

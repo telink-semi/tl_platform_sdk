@@ -155,7 +155,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);        // enable usb endpoint interrupt
     usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 
 #if(AUDIO_IN_MODE==AUDIO_LINE_IN)
    // set in path digital and analog gain, must be set before audio_init();
@@ -351,7 +351,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);        // enable usb endpoint interrupt
     usbhw_set_eps_irq_mask(FLD_USB_EDP7_IRQ);
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 
 #if(AUDIO_IN_MODE==AUDIO_LINE_IN)
     audio_codec_stream0_input_t audio_codec_input =
@@ -684,7 +684,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 static unsigned int t1 = 0;
@@ -781,7 +781,7 @@ void user_init(void)
 #endif
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 static unsigned int t1 = 0;
@@ -878,7 +878,7 @@ void user_init(void)
 #endif
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 static unsigned int t1 = 0;

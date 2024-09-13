@@ -37,10 +37,10 @@ unsigned short adc_sample_buffer[ADC_SAMPLE_NUM] __attribute__((aligned(4))) = {
 
 unsigned short adc_sort_and_get_average_code(void);
 unsigned short adc_get_voltage_dma(void);
-unsigned short adc_get_temperature_dma(void);
 unsigned short adc_get_voltage(void);
+#if INTERNAL_TEST_FUNC_EN
 unsigned short adc_get_temperature(void);
-
+#endif
 void user_init(void)
 {
     gpio_function_en(LED1);
@@ -62,7 +62,7 @@ void user_init(void)
     adc_gpio_sample_init(ADC_SAMPLE_PIN, ADC_VREF_1P2V, ADC_PRESCALE_1F4, ADC_SAMPLE_FREQ);
 #elif(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_battery_voltage_sample_init();
-#elif(ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
+#elif( INTERNAL_TEST_FUNC_EN && (ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE))
     adc_temperature_sample_init();
 #endif
     adc_power_on();
@@ -71,16 +71,12 @@ void user_init(void)
 void main_loop (void)
 {
 #if (ADC_MODE == ADC_DMA_MODE)
-#if (ADC_SAMPLE_MODE != ADC_TEMP_SENSOR_SAMPLE)
     adc_vol_mv_val = adc_get_voltage_dma();
-#else
-    adc_temp_val = adc_get_temperature_dma();
-#endif
 #elif(ADC_MODE == ADC_NDMA_MODE)
-#if (ADC_SAMPLE_MODE != ADC_TEMP_SENSOR_SAMPLE)
-    adc_vol_mv_val = adc_get_voltage();
-#else
+#if ( INTERNAL_TEST_FUNC_EN && (ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE))
     adc_temp_val = adc_get_temperature();
+#else
+    adc_vol_mv_val = adc_get_voltage();
 #endif
 #endif
     delay_ms(1000);
@@ -160,21 +156,7 @@ unsigned short adc_get_voltage(void)
     adc_vol_mv_average = adc_calculate_voltage(adc_code_average);
     return adc_vol_mv_average;
 }
-/**
- * @brief This function serves to get temperature sensor adc sample code by dma and temperature value.
- * @return      adc_temp_average    - the average value of temperature value.
- */
-unsigned short adc_get_temperature_dma(void)
-{
-    unsigned short adc_temp_average = 0;
-    unsigned short adc_code_average = 0;
-
-    adc_get_code_dma((unsigned short *)adc_sample_buffer, ADC_SAMPLE_NUM);
-    adc_code_average = adc_sort_and_get_average_code();
-    adc_temp_average = adc_calculate_temperature(adc_code_average);
-    return adc_temp_average;
-}
-
+#if INTERNAL_TEST_FUNC_EN
 /**
  * @brief This function serves to get adc sample code by manual and convert to temperature value.
  * @return      adc_temp_average    - the average value of temperature value.
@@ -198,6 +180,7 @@ unsigned short adc_get_temperature(void)
     adc_temp_average = adc_calculate_temperature(adc_code_average);
     return adc_temp_average;
 }
+#endif
 
 
 

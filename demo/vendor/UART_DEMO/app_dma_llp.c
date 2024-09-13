@@ -108,7 +108,7 @@ void user_init(void)
     uart_set_rx_timeout(UART_MODULE_SEL, bwpc, 12, UART_BW_MUL2,0);
 #endif
     uart_init(UART_MODULE_SEL, div, bwpc, UART_PARITY_NONE, UART_STOP_BIT_ONE);
-    dma_set_llp_int_mode(UART_DMA_CHANNEL_RX,DMA_INTERRUPT_MODE);
+    dma_set_llp_irq_mode(UART_DMA_CHANNEL_RX,DMA_INTERRUPT_MODE);
     dma_set_irq_mask(UART_DMA_CHANNEL_RX, TC_MASK);
     plic_interrupt_enable(IRQ_DMA);
     core_interrupt_enable();

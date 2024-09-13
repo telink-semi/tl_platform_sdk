@@ -35,6 +35,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/common</locationURI>
 		</link>
 		<link>
+			<name>config</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>drivers</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/chip/TL721X/drivers</locationURI>
@@ -50,6 +55,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>config/secure_boot_tool_cfg.ini</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/tools/secure_boot_tool/config/TL721X/secure_boot_tool_cfg.ini</locationURI>
+		</link>
+		<link>
 			<name>vendor/ADC_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/ADC_Demo/ADC_V1.1/ADC_Demo</locationURI>
@@ -60,6 +70,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/ALG_REG_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/AUDIO_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/AUDIO_Demo/AUDIO_V1.3/AUDIO_Demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/CHACHA20_POLY1305_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/CHACHA20_POLY1305_Demo/CHACHA20_POLY1305_Demo_v1.0.2/CHACHA20_POLY1305_Demo</locationURI>
@@ -68,6 +83,11 @@
 			<name>vendor/Debug_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Debug_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/EMI_BQB_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/EMI_BQB_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/Flash_Demo</name>
@@ -90,6 +110,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/IR_LEARN_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/IR_LEARN_Demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/PKE_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo/PKE_Demo_v1.0.2/PKE_Demo</locationURI>
@@ -108,6 +133,11 @@
 			<name>vendor/QDEC_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/QDEC_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/RF_Certification</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_Certification</locationURI>
 		</link>
 		<link>
 			<name>vendor/RF_DEMO</name>

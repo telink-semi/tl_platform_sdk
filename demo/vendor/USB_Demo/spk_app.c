@@ -102,7 +102,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);        // enable usb endpoint interrupt
     usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 
     audio_init(BUF_TO_LINE_OUT ,SPK_SAMPLING_RATE,SPK_MONO_STEREO);
     audio_tx_dma_chain_init(SPK_DMA_CHN,(unsigned short*)&iso_out_buff,SPK_BUFFER_SIZE*2);
@@ -273,7 +273,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);// enable usb endpoint interrupt
     usbhw_set_eps_irq_mask(FLD_USB_EDP6_IRQ);
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 #if(SPK_MODE == CODEC_SPK_MODE)
     audio_codec_stream_output_init(&audio_codec_output);
     audio_tx_dma_chain_init(audio_codec_output.fifo_num,audio_codec_output.dma_num,(unsigned short*)audio_codec_output.data_buf,audio_codec_output.data_buf_size);
@@ -464,7 +464,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 #if (USB_MODE == INT)
@@ -552,7 +552,7 @@ void user_init(void)
 #endif
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 #if (USB_MODE == INT)
@@ -641,7 +641,7 @@ void user_init(void)
 #endif
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 #if (USB_MODE == INT)

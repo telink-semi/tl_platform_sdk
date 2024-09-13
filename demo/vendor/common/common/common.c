@@ -61,8 +61,14 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
 
 #elif defined(MCU_CORE_TL321X)
+    //512K
+    {0x136085, FLASH_LOCK_LOW_256K_MID136085},
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
 #elif defined(MCU_CORE_W92)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
@@ -78,7 +84,7 @@ flash_user_defined_list_t flash_init_list[] = {
 #endif
 
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
 
 flash_hal_user_handler_t flash_handler = {
         .list= list_fp,
@@ -119,7 +125,7 @@ void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL721X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL321X)
-void platform_init(vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
 #elif defined(MCU_CORE_W92)
 void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en)
 #else
@@ -140,12 +146,34 @@ void platform_init(unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL721X)
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_TL321X)
-    sys_init(vbat_v, cap);
+    sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_W92)
     sys_init(vbat_v);
 #else
     sys_init();
 #endif
+
+/**
+    ===============================================================================
+                 ##### shut down all GPIOs except SWS and MSPI #####
+    ===============================================================================
+    To prevent leakage, all GPIOs are set to high resistance except the MSPI pins and SWS.
+    ===============================================================================
+*/
+    gpio_shutdown(GPIO_ALL);
+    
+/**
+    ===============================================================================
+                         ##### update system status #####
+    ===============================================================================
+    After each initialization, you need to update the system status and set it to a fixed value.
+    Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
+    ===============================================================================
+*/
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+    pm_update_status_info(1);
+#endif
+
 /**
     ===============================================================================
                          ##### set SWS pull #####
@@ -232,10 +260,13 @@ void platform_init(unsigned char flash_protect_en)
     @note if flash protection fails, LED1 lights up long, and keeps while.
     ===============================================================================
 */
+#if (!defined(DUT_TEST) && defined(MCU_STARTUP_FLASH))
 #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
     unsigned char flash_init_flag = hal_flash_init(&flash_handler);
 #elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
     unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t*)flash_handler);
+#else
+    unsigned char flash_init_flag =0;
 #endif
    if(flash_init_flag!=0){
        gpio_set_high_level(LED1);
@@ -244,7 +275,7 @@ void platform_init(unsigned char flash_protect_en)
     if(flash_protect_en)
     {
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
      unsigned char lock_flag = hal_flash_lock();
 #elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
     unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
@@ -254,5 +285,8 @@ void platform_init(unsigned char flash_protect_en)
             while(1);
         }
     }
+#else
+    (void)flash_protect_en;
+#endif
 }
 

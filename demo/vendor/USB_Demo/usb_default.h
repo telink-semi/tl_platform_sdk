@@ -125,7 +125,11 @@
 #if(USB_CDC_ENABLE)
 #define ID_PRODUCT              0x8002
 #else
+#if(USB_PRINTER_ENABLE)
+#define ID_PRODUCT              0x5320
+#else
 #define ID_PRODUCT              0x8006
+#endif
 #endif
 
 #define  ID_VERSION             0x0100
@@ -171,7 +175,13 @@
 #define STRING_SERIAL               "MS Demo"
 #endif
 
-#if((!(USB_MIC_ENABLE||USB_SPEAKER_ENABLE))&&(!USB_KEYBOARD_ENABLE)&&(!USB_MOUSE_ENABLE)&&(!USB_CDC_ENABLE)&&(!USB_MASS_STORAGE_ENABLE))
+#if(USB_PRINTER_ENABLE)
+#define STRING_VENDOR               "Telink Semi-conductor Ltd, Co"
+#define STRING_PRODUCT              "USB DevSys"
+#define STRING_SERIAL               "USB DevSys"
+#endif
+
+#if((!(USB_MIC_ENABLE||USB_SPEAKER_ENABLE))&&(!USB_KEYBOARD_ENABLE)&&(!USB_MOUSE_ENABLE)&&(!USB_CDC_ENABLE)&&(!USB_MASS_STORAGE_ENABLE)&&(!USB_PRINTER_ENABLE))
 #define STRING_VENDOR               "Telink Semi-conductor Ltd, Co"
 #define STRING_PRODUCT              "Telink No Product"
 #define STRING_SERIAL               "USB demo"

@@ -24,3 +24,75 @@
 #include "calibration.h"
 
 
+/**
+ * @brief      This function serves to update rf frequency offset.
+ * @param[in]  addr - the frequency offset value address of flash.
+ * @return     1 - the frequency offset update, 0 - the frequency offset is not update.
+ */
+unsigned char user_calib_freq_offset(unsigned int addr)
+{
+    unsigned char frequency_offset_value = 0xff;
+
+    flash_read_page(addr, 1, &frequency_offset_value);
+
+    if((0xff != frequency_offset_value)&&(frequency_offset_value<=63))
+    {
+        rf_update_internal_cap(frequency_offset_value);
+        return 1;
+    }
+
+    return 0;
+}
+
+/**
+ * @brief       This function is used to calibrate the user's parameters.
+ *              This function is to read the calibration value stored in efuse and flash,
+ *              and use the calibration value to configure the chip to improve chip performance.
+ *              (reduce adc measurement error, reduce frequency offset, etc.)
+ * @param[in]   device_num  - the number of slave device.
+ * @return      none.
+ */
+void calibration_func(mspi_slave_device_num_e device_num)
+{
+    unsigned char flash_mid[4];
+    unsigned char flash_uid[16];
+    unsigned char flash_mid_sure = 0;
+
+
+    /******check for flash mid********/
+    flash_mid_sure = flash_read_mid_uid_with_check_with_device_num(device_num,(unsigned int *)flash_mid, flash_uid);
+
+    if (1 == flash_mid_sure)
+    {
+        switch (flash_mid[2])
+        {
+            case FLASH_SIZE_64K:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_64K);
+                break;
+            case FLASH_SIZE_128K:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_128K);
+                break;
+            case FLASH_SIZE_512K:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_512K);
+                break;
+            case FLASH_SIZE_1M:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_1M);
+                break;
+            case FLASH_SIZE_2M:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_2M);
+                break;
+            case FLASH_SIZE_4M:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_4M);
+                break;
+            case FLASH_SIZE_16M:
+                user_calib_freq_offset(FLASH_CAP_VALUE_ADDR_16M);
+                break;
+            default:
+                break;
+        }
+    }
+    else
+    {
+
+    }
+}

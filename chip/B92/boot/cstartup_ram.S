@@ -32,9 +32,18 @@
  *	        1. During fixture production, burning a firmware program that disables the "dp_through_swire"function into unprogrammed chip will cause the problem that chip can not be burned again due to swire communication failure.
  *	        2. Burning a firmware program that disables the "dp_through_swire" function with BDT tool may result in failure of debugging due to swire communication failure.
  *	        If developers evaluate that the above scheme (set "DP_THROUGH_SWIRE_DIS" as "1") cannot be used, they can only set "DP_THROUGH_SWIRE_DIS" to "0" to enable the "dp_through_swire" function. However, be careful not to make DP and DM pin trigger "dp_through_swire" timing.
+ *          In USB applications, 1. calling the usb_set_pin(1) interface (equivalent to usb_set_pin_en) will re-enable the dp_through_swire function 2. calling the usb_set_pin(0) interface will disable the dp_through_swire function.
  */
 #ifndef DP_THROUGH_SWIRE_DIS
 #define DP_THROUGH_SWIRE_DIS      1
+#endif
+
+/* If using Andes toolchain, these two Macro are defined in it's toolchain */
+/* If using std gcc toolchain, these two core registers(not standard risc-v core registers)
+    should be defined here. */
+#ifdef STD_GCC
+#define mmisc_ctl  0x7D0
+#define mcache_ctl 0x7CA
 #endif
 
 //	According to the different ram size of the chip, the corresponding configuration values are as follows:
@@ -63,6 +72,12 @@ _RAM_RESET_ENTRY:
 	/* Decide whether this is an NMI or cold reset */
 	j 		_RAM_START
 	/* Limit the the size of ram code  in DUT_Test_Demo */
+    /* This configuration is specifically for RF_Certification and does not need to be enabled for other scenarios */
+#ifdef RF_CERTIFICATION_CGF_EN
+    .org 0x10
+    .word(_RF_CERTIFICATION_CFG_ADDR_OFFSET)
+#endif
+
 	.org 0x14
 	.word(0x01000000+__LOAD_DUT<<16)
 	.org 0x20
@@ -74,10 +89,10 @@ _RAM_START:
     .option pop
 
 #if DP_THROUGH_SWIRE_DIS
-	lui		t0, 0x80100
-	addi	t0 , t0 , 0x700
-	li		t1, 0x40
-	sb		t1, 0x501(t0)  //0x80100c01 -> 0x40  <7>: 0 swire_usb_dis <6>:read-only bit
+    lui     t0, 0x80100
+    addi    t0 , t0 , 0x700
+    li      t1, 0x00
+    sb      t1, 0x501(t0)  //0x80100c01 -> 0x00  <7>: 0 swire_usb_dis 
 #endif
 	/* Initialize stack pointer */
     la     t0, _STACK_TOP

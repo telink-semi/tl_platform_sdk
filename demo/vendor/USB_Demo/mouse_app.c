@@ -39,7 +39,7 @@ void user_init(void)
     usbhw_set_eps_en(BIT(USB_EDP_MOUSE));
 
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 
     //initiate LED for indication
     gpio_function_en(LED1);

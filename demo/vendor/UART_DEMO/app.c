@@ -57,6 +57,10 @@
 #define UART3_MODULE   3 //UART3
 #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
 #define UART2_MODULE   2 //UART2
+#elif defined(MCU_CORE_TL322X)
+#define UART2_MODULE   2 //UART2
+#define UART3_MODULE   3 //UART3
+#define UART4_MODULE   4 //UART4
 #endif
 
 #define UART_MODULE_SEL   UART0_MODULE
@@ -123,15 +127,17 @@ void user_init(void)
     uart_set_rtx_pin(UART1_RTX_PIN);
 #endif
 
-#elif defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
 #if(UART_MODULE_SEL == UART0_MODULE)
     uart_set_rtx_pin(UART_MODULE_SEL,UART0_RTX_PIN);
 #elif(UART_MODULE_SEL==UART1_MODULE)
     uart_set_rtx_pin(UART_MODULE_SEL,UART1_RTX_PIN);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART2_MODULE))
     uart_set_rtx_pin(UART_MODULE_SEL,UART2_RTX_PIN);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART3_MODULE))
     uart_set_rtx_pin(UART_MODULE_SEL,UART3_RTX_PIN);
+#elif defined(MCU_CORE_TL322X)  && (UART_MODULE_SEL == UART4_MODULE))
+    uart_set_rtx_pin(UART_MODULE_SEL, UART4_RTX_PIN);
 #endif
 
 #elif(MCU_CORE_TL721X || MCU_CORE_TL321X)
@@ -153,15 +159,17 @@ void user_init(void)
     uart_set_pin(UART1_TX_PIN,UART1_RX_PIN);
 #endif
 
-#elif defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
 #if(UART_MODULE_SEL == UART0_MODULE)
     uart_set_pin(UART_MODULE_SEL,UART0_TX_PIN,UART0_RX_PIN);
 #elif(UART_MODULE_SEL==UART1_MODULE)
     uart_set_pin(UART_MODULE_SEL,UART1_TX_PIN,UART1_RX_PIN);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif ((defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)) && (UART_MODULE_SEL == UART2_MODULE))
     uart_set_pin(UART_MODULE_SEL,UART2_TX_PIN,UART2_RX_PIN);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART3_MODULE))
     uart_set_pin(UART_MODULE_SEL,UART3_TX_PIN,UART3_RX_PIN);
+#elif defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART4_MODULE)
+    uart_set_pin(UART_MODULE_SEL, UART4_TX_PIN, UART4_RX_PIN);
 #endif
 
 #elif defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X)
@@ -172,7 +180,6 @@ void user_init(void)
 #elif(UART_MODULE_SEL == UART2_MODULE)
     uart_set_pin(UART_MODULE_SEL, UART2_TX_PIN, UART2_RX_PIN);
 #endif
-
 #endif
 #endif
     uart_cal_div_and_bwpc(115200, sys_clk.pclk*1000*1000, &div, &bwpc);
@@ -183,22 +190,22 @@ void user_init(void)
     uart_set_irq_mask(UART_MODULE_SEL, UART_RX_IRQ_MASK|UART_ERR_IRQ_MASK);
 #if defined(MCU_CORE_B92)||defined(MCU_CORE_B91)
     uart_set_rx_timeout(UART_MODULE_SEL, bwpc, 12, UART_BW_MUL2);
-#elif defined(MCU_CORE_TL751X) ||defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X)
+#elif defined(MCU_CORE_TL751X) ||defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
     uart_set_rx_timeout(UART_MODULE_SEL, bwpc, 12, UART_BW_MUL2,0);
 #endif
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X) ||defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
     uart_set_irq_mask(UART_MODULE_SEL, UART_RXDONE_MASK);
 #endif
 #if(UART_MODULE_SEL == UART0_MODULE)
     plic_interrupt_enable(IRQ_UART0);
 #elif(UART_MODULE_SEL==UART1_MODULE)
     plic_interrupt_enable(IRQ_UART1);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART2_MODULE))
     plic_interrupt_enable(IRQ_UART2);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART3_MODULE))
     plic_interrupt_enable(IRQ_UART3);
-#elif(defined(MCU_CORE_TL721X) || MCU_CORE_TL321X&&(UART_MODULE_SEL == UART2_MODULE))
-    plic_interrupt_enable(IRQ_UART2);
+#elif (defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART4_MODULE))
+    plic_interrupt_enable(IRQ_UART4);
 #endif
     core_interrupt_enable();
 #elif( FLOW_CTR == USE_CTS)
@@ -206,12 +213,12 @@ void user_init(void)
     uart_cts_config(UART_MODULE_SEL,UART0_CTS_PIN,STOP_VOLT);
 #elif(UART_MODULE_SEL==UART1_MODULE)
     uart_cts_config(UART_MODULE_SEL,UART1_CTS_PIN,STOP_VOLT);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART2_MODULE))
     uart_cts_config(UART_MODULE_SEL,UART2_CTS_PIN,STOP_VOLT);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART3_MODULE))
     uart_cts_config(UART_MODULE_SEL,UART3_CTS_PIN,STOP_VOLT);
-#elif(defined(MCU_CORE_TL721X) || MCU_CORE_TL321X&&(UART_MODULE_SEL == UART2_MODULE))
-    uart_cts_config(UART_MODULE_SEL,UART2_CTS_PIN,STOP_VOLT);
+#elif defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART4_MODULE))
+    uart_cts_config(UART_MODULE_SEL,UART4_CTS_PIN,STOP_VOLT);
 #endif
     uart_clr_irq_mask(UART_MODULE_SEL, UART_RX_IRQ_MASK | UART_TX_IRQ_MASK);
     uart_set_cts_en(UART_MODULE_SEL);
@@ -222,15 +229,17 @@ void user_init(void)
     uart_rts_config(UART_MODULE_SEL,UART0_RTS_PIN,RTS_INVERT,RTS_MODE);
 #elif(UART_MODULE_SEL==UART1_MODULE)
     uart_rts_config(UART_MODULE_SEL,UART1_RTS_PIN,RTS_INVERT,RTS_MODE);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif (defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART2_MODULE))
     uart_rts_config(UART_MODULE_SEL,UART2_RTS_PIN,RTS_INVERT,RTS_MODE);
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART3_MODULE))
     uart_rts_config(UART_MODULE_SEL,UART3_RTS_PIN,RTS_INVERT,RTS_MODE);
-#elif(defined(MCU_CORE_TL721X) || MCU_CORE_TL321X&&(UART_MODULE_SEL == UART2_MODULE))
+#elif(defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) ||  defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART2_MODULE))
     uart_rts_config(UART_MODULE_SEL,UART2_RTS_PIN,RTS_INVERT,RTS_MODE);
+#elif defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART4_MODULE))
+    uart_rts_config(UART_MODULE_SEL,UART4_RTS_PIN,RTS_INVERT,RTS_MODE);
 #endif
     uart_clr_irq_mask(UART_MODULE_SEL, UART_RX_IRQ_MASK | UART_TX_IRQ_MASK);
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X)
     uart_clr_irq_mask(UART_MODULE_SEL, UART_RXDONE_MASK);
 #endif
     uart_rts_trig_level_auto_mode(UART_MODULE_SEL, RTS_THRESH);
@@ -283,7 +292,7 @@ void main_loop (void)
 #elif( FLOW_CTR == NORMAL)
 #if defined(MCU_CORE_B91)
     if(uart_rx_flag>0)
-#elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
    if(uart_rx_done_flag>0)
 #endif
     {
@@ -328,12 +337,14 @@ void main_loop (void)
 _attribute_ram_code_sec_ void uart0_irq_handler(void)
 #elif(UART_MODULE_SEL==UART1_MODULE)
 _attribute_ram_code_sec_ void uart1_irq_handler(void)
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART2_MODULE))
 _attribute_ram_code_sec_ void uart2_irq_handler(void)
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART3_MODULE))
 _attribute_ram_code_sec_ void uart3_irq_handler(void)
-#elif(defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X) &&(UART_MODULE_SEL == UART2_MODULE))
+#elif(defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X) ||  defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART2_MODULE))
 _attribute_ram_code_sec_ void uart2_irq_handler(void)
+#elif defined(MCU_CORE_TL322X) && (UART_MODULE_SEL == UART4_MODULE)
+_attribute_ram_code_sec_ void uart4_irq_handler(void)
 #endif
 {
 #if( FLOW_CTR == NORMAL)
@@ -343,7 +354,7 @@ _attribute_ram_code_sec_ void uart2_irq_handler(void)
         uart_clr_irq_status(UART_MODULE_SEL,UART_CLR_RX);// it will clear rx_fifo and rx_err_irq ,rx_buff_irq,so it won't enter rx_buff_irq interrupt.
         uart_hw_fsm_reset(UART_MODULE_SEL); //clear hardware pointer
         uart_clr_rx_index(UART_MODULE_SEL); //clear software pointer
-#elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) ||  defined(MCU_CORE_TL322X)
         uart_clr_irq_status(UART_MODULE_SEL,UART_RXBUF_IRQ_STATUS);// it will clear rx_fifo,clear hardware pointer and rx_err_irq ,rx_buff_irq,so it won't enter rx_buff_irq interrupt.
 #endif
         uart_irq_cnt=0;
@@ -382,7 +393,7 @@ _attribute_ram_code_sec_ void uart2_irq_handler(void)
         }
 
     }
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
     if(uart_get_irq_status(UART_MODULE_SEL, UART_RXDONE_IRQ_STATUS)){
         gpio_set_high_level(LED4);
         unsigned char uart_fifo_cnt = uart_get_rxfifo_num(UART_MODULE_SEL);
@@ -414,12 +425,14 @@ _attribute_ram_code_sec_ void uart2_irq_handler(void)
     PLIC_ISR_REGISTER(uart0_irq_handler, IRQ_UART0)
 #elif(UART_MODULE_SEL==UART1_MODULE)
     PLIC_ISR_REGISTER(uart1_irq_handler, IRQ_UART1)
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART2_MODULE))
     PLIC_ISR_REGISTER(uart2_irq_handler, IRQ_UART2)
-#elif (defined(MCU_CORE_TL751X)&&(UART_MODULE_SEL == UART3_MODULE))
+#elif (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART3_MODULE))
     PLIC_ISR_REGISTER(uart3_irq_handler, IRQ_UART3)
-#elif( defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X)&&(UART_MODULE_SEL == UART2_MODULE))
+#elif( defined(MCU_CORE_TL721X) ||  defined(MCU_CORE_TL321X)  ||  defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART2_MODULE))
     PLIC_ISR_REGISTER(uart2_irq_handler, IRQ_UART2)
+#elif defined(MCU_CORE_TL322X) &&(UART_MODULE_SEL == UART4_MODULE)
+    PLIC_ISR_REGISTER(uart4_irq_handler, IRQ_UART4)
 #endif
 
 #endif

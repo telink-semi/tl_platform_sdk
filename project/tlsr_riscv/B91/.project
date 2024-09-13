@@ -145,6 +145,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PWM_DEMO</locationURI>
 		</link>
 		<link>
+			<name>vendor/RF_Certification</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_Certification</locationURI>
+		</link>
+		<link>
 			<name>vendor/RF_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_DEMO</locationURI>

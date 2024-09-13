@@ -134,6 +134,8 @@ extern "C" {
 #define DEEP_RET256K_32K_RC_WAKEUP      71
 #endif
 
+#define PM_SET_DVDD1_DVDD2_MODE         72
+
 #define PM_MODE                         DEEP_PAD_WAKEUP
 
 

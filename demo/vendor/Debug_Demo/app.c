@@ -37,14 +37,20 @@ void user_init(void)
     gpio_output_en(LED4);
     gpio_input_dis(LED4);
 #if(DEBUG_BUS==USB_PRINT_DEBUG_ENABLE)
+    /*                                 Note
+     * TL751X, TL721X, TL321X don't support hardware enumeration into print device.
+     * See the print demo in the USB_Demo for a software enumeration instead of a hardware enumeration.
+     */
+#if !defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL721X) && !defined(MCU_CORE_TL321X)
 #if !defined(MCU_CORE_B91) && !defined(MCU_CORE_B92)
     usbhw_init();
 #endif
     usbhw_set_printer_threshold(1);
     usbhw_set_ep8_fifo_mode();
-    usb_set_pin_en();
+    usb_set_pin(1);
     delay_ms(1000);
     printf("\n Driver version: %2x \n Copyright (c) %d Telink semiconductor (%s) Ltd, Co \n",0xa001,2019,"shanghai");
+#endif
 #elif(DEBUG_BUS==UART_PRINT_DEBUG_ENABLE)
     printf("  \n");                             // caution: The first byte will be error
     printf("\n Driver version: %2x \n",0xa001);

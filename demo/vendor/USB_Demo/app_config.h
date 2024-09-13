@@ -53,6 +53,8 @@ extern "C" {
 #if defined(MCU_CORE_B91)
 #define  USB_MASS_STORAGE   7
 #endif
+#define  USB_PRINT          8 /* TL751X, TL721X, TL321X don't support hardware enumeration into print device.
+                                 Please use software enumeration instead of hardware enumeration. */
 
 #define  USB_DEMO_TYPE      USB_MOUSE
 
@@ -69,6 +71,8 @@ extern "C" {
 #elif (USB_DEMO_TYPE == USB_MIC_SPEAKER)
     #define USB_MIC_ENABLE          1
     #define USB_SPEAKER_ENABLE      1
+#elif (USB_DEMO_TYPE == USB_PRINT)
+    #define USB_PRINTER_ENABLE      1
 #endif
 #if defined(MCU_CORE_B91)
 #if ((USB_DEMO_TYPE == USB_MASS_STORAGE))

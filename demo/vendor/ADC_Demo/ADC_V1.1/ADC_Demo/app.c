@@ -26,42 +26,58 @@
 adc_gpio_cfg_t adc_gpio_cfg_m =
 {
         .v_ref = ADC_VREF_1P2V,
+#if defined(MCU_CORE_TL721X)
         .pre_scale = ADC_PRESCALE_1F8,
+#elif defined(MCU_CORE_TL321X)
+        .pre_scale = ADC_PRESCALE_1F4,
+#endif
         .sample_freq = ADC_SAMPLE_FREQ_96K,
         .pin = GPIO_M_CHN_SAMPLE_PIN,
 };
 adc_gpio_cfg_t adc_gpio_cfg_l =
 {
         .v_ref = ADC_VREF_1P2V,
+#if defined(MCU_CORE_TL721X)
         .pre_scale = ADC_PRESCALE_1F8,
+#elif defined(MCU_CORE_TL321X)
+        .pre_scale = ADC_PRESCALE_1F4,
+#endif
         .sample_freq = ADC_SAMPLE_FREQ_96K,
         .pin = GPIO_L_CHN_SAMPLE_PIN,
 };
 adc_gpio_cfg_t adc_gpio_cfg_r =
 {
         .v_ref = ADC_VREF_1P2V,
+#if defined(MCU_CORE_TL721X)
         .pre_scale = ADC_PRESCALE_1F8,
+#elif defined(MCU_CORE_TL321X)
+        .pre_scale = ADC_PRESCALE_1F4,
+#endif
         .sample_freq = ADC_SAMPLE_FREQ_96K,
         .pin = GPIO_R_CHN_SAMPLE_PIN,
 };
 
 typedef enum{
     ADC_VOLTAGE,
+#if INTERNAL_TEST_FUNC_EN
     TEMP_VALUE,
+#endif
 }adc_result_type_e;
 
 volatile unsigned short adc_m_chn_val;
 volatile unsigned short adc_l_chn_val;
 volatile unsigned short adc_r_chn_val;
 volatile unsigned short adc_temp_val;
+volatile unsigned int  adc_irq_cnt=0;
 
 unsigned short adc_sample_buffer[ADC_SAMPLE_GROUP_CNT*ADC_SAMPLE_CHN_CNT] __attribute__((aligned(4))) = {0};
 unsigned short channel_buffers[3][ADC_SAMPLE_GROUP_CNT] __attribute__((aligned(4))) = {0};
 
 unsigned short adc_sort_and_get_average_code(unsigned short *channel_sample_buffer);
-void adc_code_split_dma(unsigned short *sample_buffer, unsigned int sample_num,unsigned char chn_cnt,unsigned short buffers[chn_cnt][sample_num]);
 unsigned short adc_get_result(adc_transfer_mode_e transfer_mode,adc_sample_chn_e chn,adc_result_type_e result_type);
-void adc_start_dma(void);
+#if (ADC_MODE == ADC_DMA_MODE)
+void adc_code_split_dma(unsigned short *sample_buffer, unsigned int sample_num,unsigned char chn_cnt,unsigned short buffers[chn_cnt][sample_num]);
+#endif
 
 void user_init(void)
 {
@@ -70,6 +86,9 @@ void user_init(void)
 
 #if (ADC_MODE == ADC_DMA_MODE)
     adc_set_dma_config(ADC_DMA_CHN);
+    dma_set_irq_mask(ADC_DMA_CHN, TC_MASK);
+    plic_interrupt_enable(IRQ_DMA);
+    core_interrupt_enable();
 
 #if(ADC_SAMPLE_CHN_CNT == DMA_M_1_CHN_EN)
     adc_init(DMA_M_CHN);
@@ -85,8 +104,6 @@ void user_init(void)
     adc_gpio_sample_init(ADC_M_CHANNEL,adc_gpio_cfg_m);
 #elif(ADC_M_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_M_CHANNEL);
-#elif(ADC_M_CHN_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
-    adc_temp_init(ADC_M_CHANNEL);
 #endif
 
 #endif
@@ -97,8 +114,6 @@ void user_init(void)
     adc_gpio_sample_init(ADC_L_CHANNEL,adc_gpio_cfg_l);
 #elif(ADC_L_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_L_CHANNEL);
-#elif(ADC_L_CHN_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
-    adc_temp_init(ADC_L_CHANNEL);
 #endif
 
 #endif
@@ -109,8 +124,6 @@ void user_init(void)
     adc_gpio_sample_init(ADC_R_CHANNEL,adc_gpio_cfg_r);
 #elif(ADC_R_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_R_CHANNEL);
-#elif(ADC_R_CHN_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
-    adc_temp_init(ADC_R_CHANNEL);
 #endif
 
 #endif
@@ -118,68 +131,79 @@ void user_init(void)
 
 #elif (ADC_MODE == ADC_NDMA_MODE)
 
-     adc_init(NDMA_M_CHN);
+    adc_init(NDMA_M_CHN);
 
 #if (ADC_SAMPLE_MODE == ADC_GPIO_SAMPLE)
     adc_gpio_sample_init(ADC_M_CHANNEL,adc_gpio_cfg_m);
 #elif(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_M_CHANNEL);
-#elif(ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
+#elif( INTERNAL_TEST_FUNC_EN && (ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE))
     adc_temp_init(ADC_M_CHANNEL);
 #endif
 
 #endif
     adc_power_on();
+    delay_us(30);//Wait >30us after adc_power_on() for ADC to be stable.
+
 }
 
 void main_loop (void)
 {
 
 #if(ADC_MODE == ADC_DMA_MODE)
-    adc_start_dma();
 
-#if((ADC_SAMPLE_CHN_CNT == DMA_M_1_CHN_EN) || (ADC_SAMPLE_CHN_CNT == DMA_M_L_2_CHN_EN) || (ADC_SAMPLE_CHN_CNT == DMA_M_L_R_3_CHN_EN))
-
-#if ((ADC_M_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE) || (ADC_M_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE))
-    adc_m_chn_val = adc_get_result(DMA,ADC_M_CHANNEL,ADC_VOLTAGE);
-#elif(ADC_M_CHN_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
-    adc_temp_val = adc_get_result(DMA,ADC_M_CHANNEL,TEMP_VALUE);
-#endif
-
-#endif
-
-#if((ADC_SAMPLE_CHN_CNT == DMA_M_L_2_CHN_EN) || (ADC_SAMPLE_CHN_CNT == DMA_M_L_R_3_CHN_EN))
-#if ((ADC_L_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE) || (ADC_L_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE))
-    adc_l_chn_val = adc_get_result(DMA,ADC_L_CHANNEL, ADC_VOLTAGE);
-#elif(ADC_L_CHN_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
-    adc_temp_val = adc_get_result(DMA,ADC_L_CHANNEL,TEMP_VALUE);
-#endif
-
-#endif
-
-#if(ADC_SAMPLE_CHN_CNT == DMA_M_L_R_3_CHN_EN)
-
-#if ((ADC_R_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE) || (ADC_R_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE))
-    adc_r_chn_val = adc_get_result(DMA,ADC_R_CHANNEL, ADC_VOLTAGE);
-#elif(ADC_R_CHN_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
-    adc_temp_val = adc_get_result(DMA,ADC_R_CHANNEL,TEMP_VALUE);
-#endif
-
-#endif
-
+    adc_start_sample_dma((unsigned short *)adc_sample_buffer, (ADC_SAMPLE_GROUP_CNT*ADC_SAMPLE_CHN_CNT)<<1);
 #elif(ADC_MODE == ADC_NDMA_MODE)
 
-#if(ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE)
+#if( INTERNAL_TEST_FUNC_EN && (ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE))
+
     adc_temp_val = adc_get_result(NDMA,ADC_M_CHANNEL,TEMP_VALUE);
 #else
     adc_m_chn_val = adc_get_result(NDMA,ADC_M_CHANNEL,ADC_VOLTAGE);
 #endif
 
 #endif
-
     delay_ms(500);
     gpio_toggle(LED1);
+
 }
+
+#if(ADC_MODE == ADC_DMA_MODE)
+_attribute_ram_code_sec_ void dma_irq_handler(void)
+{
+    if(dma_get_tc_irq_status(BIT(ADC_DMA_CHN)))
+    {
+        adc_irq_cnt++;
+        /******clear adc sample finished status********/
+        adc_clr_irq_status_dma();
+        /******get adc sample data and sort these data ********/
+        for(int i=0;i<(ADC_SAMPLE_GROUP_CNT*ADC_SAMPLE_CHN_CNT);i++)
+        {
+            if(adc_sample_buffer[i] & BIT(11))
+            {  //12 bit resolution, BIT(11) is sign bit, 1 means negative voltage in differential_mode
+                adc_sample_buffer[i] = 0;
+            }
+            else
+            {
+                adc_sample_buffer[i] = (adc_sample_buffer[i] & 0x7ff);  //BIT(10..0) is valid adc code
+            }
+        }
+
+        adc_code_split_dma((unsigned short *)adc_sample_buffer , ADC_SAMPLE_GROUP_CNT,ADC_SAMPLE_CHN_CNT ,channel_buffers);
+
+#if((ADC_SAMPLE_CHN_CNT == DMA_M_1_CHN_EN) || (ADC_SAMPLE_CHN_CNT == DMA_M_L_2_CHN_EN) || (ADC_SAMPLE_CHN_CNT == DMA_M_L_R_3_CHN_EN))
+        adc_m_chn_val = adc_get_result(DMA,ADC_M_CHANNEL,ADC_VOLTAGE);
+#endif
+#if((ADC_SAMPLE_CHN_CNT == DMA_M_L_2_CHN_EN) || (ADC_SAMPLE_CHN_CNT == DMA_M_L_R_3_CHN_EN))
+        adc_l_chn_val = adc_get_result(DMA,ADC_L_CHANNEL, ADC_VOLTAGE);
+#endif
+#if(ADC_SAMPLE_CHN_CNT == DMA_M_L_R_3_CHN_EN)
+        adc_r_chn_val = adc_get_result(DMA,ADC_R_CHANNEL, ADC_VOLTAGE);
+#endif
+    }
+}
+PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
+#endif
 
 /**
  * @brief This function serves to sort adc sample code and get average value.
@@ -214,7 +238,59 @@ unsigned short adc_sort_and_get_average_code(unsigned short *channel_sample_buff
         }
         return adc_code_average;
 }
+/**
+ * @brief      This function serves to convert to voltage value and temperature value.
+ * @param[in]  transfer_mode -enum variable of adc code transfer mode.
+ * @param[in]  chn - enum variable of ADC sample channel.
+ * @param[in]  result_type - enum variable of result value
+ * @return     adc_result   - adc voltage value or temperature value.
+ */
+unsigned short adc_get_result(adc_transfer_mode_e transfer_mode,adc_sample_chn_e chn,adc_result_type_e result_type)
+{
+    unsigned short code_average;
+    unsigned short adc_result;
+    unsigned int cnt = 0;
 
+    if(transfer_mode==NDMA)
+    {
+        adc_start_sample_nodma();
+
+        while (cnt < ADC_SAMPLE_GROUP_CNT)
+        {
+            int sample_cnt = adc_get_rxfifo_cnt();
+            if (sample_cnt > 0)
+            {
+                channel_buffers[chn][cnt]= adc_get_code();
+                if(channel_buffers[chn][cnt] & BIT(11)){ //12 bit resolution, BIT(11) is sign bit, 1 means negative voltage in differential_mode
+                    channel_buffers[chn][cnt]=0;
+                }
+                else{
+                channel_buffers[chn][cnt] &= 0x7FF;  //BIT(10..0) is valid adc code
+                }
+                cnt++;
+            }
+        }
+    }
+
+    code_average = adc_sort_and_get_average_code(channel_buffers[chn]);
+
+    if(result_type == ADC_VOLTAGE)
+    {
+        return adc_result = adc_calculate_voltage(chn, code_average);
+    }
+#if INTERNAL_TEST_FUNC_EN
+    else if((result_type == TEMP_VALUE))
+    {
+        return adc_result = adc_calculate_temperature(code_average);
+    }
+#endif
+    else
+    {
+        return 0;
+    }
+}
+
+#if (ADC_MODE == ADC_DMA_MODE)
 /**
  * @brief       This function serves to split the data from all channels in the sample buffer into different channels.
  * @param[in]   sample_buffer - This parameter is the first address of the received data buffer, which must be 4 bytes aligned, otherwise the program will enter an exception.
@@ -233,53 +309,4 @@ void adc_code_split_dma(unsigned short *sample_buffer, unsigned int sample_num,u
         }
     }
 }
-/**
- * @brief      This function is used to start the dma to get the adc sample code into adc_sample_buffer and split it into different channels of data.
- * @return     none.
- * @attention  When using multi-channel sampling in DMA mode, you need to make sure that the dma handling data process is not interrupted, otherwise it will result in the sampling data of the multi-channels being misordered when you come back;
- *             if there is a possibility of interruption in the process of data handling by the dma, you have to reconfigure and initialize the ADC and the DMA after coming back in order to continue to work normally.
- */
-void adc_start_dma(void)
-{
-    adc_get_code_dma((unsigned short *)adc_sample_buffer, (ADC_SAMPLE_GROUP_CNT*ADC_SAMPLE_CHN_CNT));
-    adc_code_split_dma((unsigned short *)adc_sample_buffer, ADC_SAMPLE_GROUP_CNT,ADC_SAMPLE_CHN_CNT ,channel_buffers);
-}
-/**
- * @brief      This function serves to convert to voltage value and temperature value.
- * @param[in]  transfer_mode -enum variable of adc code transfer mode.
- * @param[in]  chn - enum variable of ADC sample channel.
- * @param[in]  result_type - enum variable of result value
- * @return     adc_result   - adc voltage value or temperature value.
- */
-unsigned short adc_get_result(adc_transfer_mode_e transfer_mode,adc_sample_chn_e chn,adc_result_type_e result_type)
-{
-    unsigned short code_average;
-    unsigned short adc_result;
-
-    if(transfer_mode==NDMA)
-    {
-        for (int i = 0; i < ADC_SAMPLE_GROUP_CNT; i++)
-        {
-            channel_buffers[chn][i]= adc_get_code();
-            if(channel_buffers[chn][i] & BIT(11)){ //12 bit resolution, BIT(11) is sign bit, 1 means negative voltage in differential_mode
-                channel_buffers[chn][i]=0;
-            }
-            else{
-                channel_buffers[chn][i] &= 0x7FF;  //BIT(10..0) is valid adc code
-            }
-        }
-    }
-
-    code_average = adc_sort_and_get_average_code(channel_buffers[chn]);
-
-    if(result_type == ADC_VOLTAGE)
-    {
-        return adc_result = adc_calculate_voltage(chn, code_average);
-    }else if((result_type == TEMP_VALUE))
-    {
-        return adc_result = adc_calculate_temperature(code_average);
-    }else
-    {
-        return 0;
-    }
-}
+#endif

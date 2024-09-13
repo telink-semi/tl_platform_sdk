@@ -1,3 +1,280 @@
+## V3.2.0
+
+### Version
+
+* SDK version: tl_platform_sdk V3.2.0
+* Chip version
+  * TLSR921x/TLSR951x(B91) (A0/A1/A2), TLSR922x/TLSR952x(B92) (A3/A4), TL721X (A1), TL321X (A1)
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+* Toolchain version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
+
+### Note
+* (B92/TL721x/TL321x) Update toolchains from V5.3.0 to V5.3.x(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
+* (B91/B92/TL721X/TL321X) Add usb_set_pin() interface, in USB application can choose to enable or disable dp_through_swire function, for compatibility usb_set_pin_en() is defined as usb_set_pin(1) and comments were added to cstartup.S.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1249)
+
+### BREAKING CHANGES
+
+* **sys**
+  * (TL321X)Add power_mode parameter into sys_init(A0 version only support LDO, A1 version support both LDO and DCDC_LDO) and update sys_init to adapt the chip A1 version.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1218)
+  * (TL721x/TL321x)In the new version, after calling sys_init(), if you want to get the value of g_pm_status_info.mcu_status or call pm_get_reboot_event() to get related information, you won't be able to. The application layer needs to call pm_update_status_info() to obtain it. The new usage method is as follows:After calling sys_init(), call pm_update_status_info(), and you can get the value of g_pm_status_info.mcu_status and call pm_get_sw_reboot_event to check the reason for the software reboot.Additionally, the reboot classifications have been changed as follows:1.Two new statuses have been added to g_pm_status_info.mcu_status: MCU_HW_REBOOT_TIMER_WATCHDOG and MCU_HW_REBOOT_32K_WATCHDOG.2.The meaning of MCU_STATUS_REBOOT_BACK has changed. Previously, it included both software reboots and watchdog reboots. In the new version, MCU_STATUS_REBOOT_BACK only represents software reboots. If you want to know the specific reason for a software reboot, you can call pm_get_sw_reboot_event to check. The functions pm_get_reboot_event() and pm_get_deep_retention_flag() have been removed.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+  * (TL721x/TL321x)Previously, the reasons for software reboots could coexist in multiple situations. To save register bits for future expansion, the new version only saves the reason for the most recent software reboot. Therefore, if you want to save all software reboot reasons, the upper application needs to save them after each initialization to prevent losing the history of reboot reasons.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+  * (TL721x/TL321x)Function name changes:sys_set_power_mode -> pm_set_power_mode, sys_set_vbat_type -> pm_set_vbat_type.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **dma**
+  * (B92/TL321x/TL721x) Change the interface for setting the interrupt mode of linked list DMA from dma_set_llp_int_mode to dma_set_llp_irq_mode, and unify the enumeration type of the interrupt mode to dma_llp_irq_mode_e.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1229)
+* **audio**
+  * (B92) Change audio_set_i2s_align_en,audio_set_i2s_align_dis interface name to audio_i2s_align_en,audio_i2s_align_dis.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144).
+* **emi**
+  * (B91/B92/TL721X/TL321X)Modify the emi. c rf_comtinue_made_run interface to add configurable packet data types and adjust the correspondence between command values and data types from (0: pbrs9 1: 0xf0 2:0x55) to (0: pbrs9 1: 0x0f 2:0x55 3: 0xaa 4:0xf0 5:0x00 6:0xff)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+  * (B91/B92/TL721X/TL321X)Renaming the original supported mode of the rf_mode parameter of the functions rf_emi_tx_continue_update_data rf_emi_rx_setup rf_emi_tx_burst_loop and rf_emi_tx_burst_setup RF_MODE_BLE_2M to RF_MODE_BLE_2M_NO_PN (the new name is closer to its mode)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **adc**
+  * (TL721x/TL321x)ADC DMA mode is optimized from round-robin mode to DMA interrupt mode to read data, which improves the efficiency of code running, and at the same time rename adc_get_sample_status_dma()/adc_clr_sample_status_dma()/adc_set_dma_trig_num() to adc_get_irq_status_dma()/adc_clr _irq_status_dma()/adc_set_rx_fifo_trig_cnt(), deleted adc_get_code_dma().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+
+### Features
+
+* **flash**
+  * (TL321x)add new flash P25Q40SU/P25Q16SU.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1171)
+* **Secure_Boot_Demo**
+  * (TL721x/TL321x) Add Secure_Boot_Demo, compile the demo to generate runtime descriptors, etc. bin.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1184)
+* **Toolchain**
+  * (B91/B92/TL321x/TL721x):In order to support open source toolchains compilation (if using an open source toolchain, this macro 'STD_GCC' needs to be opened, and currently support Zephyr toolchain compilation), the following modifications are made:
+    1. Use assembler language to implement interfaces for reading and writing CSR registers, without using the functions in nds_intrinsic.h (which is a header file in the Andes toolchain);
+    2. Add a new file core_reg.h and copy CSR registers from nds_intrinsic.h to core_reg.h.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1181)
+* **Trap**
+  * (B91/B92/TL321x/TL721x)Add new interfaces plic_irqs_preprocess_for_wfi() and plic_irqs_postprocess_for_wfi() to configure the interrupts related to entering and exiting WFI mode, respectively, and provide sample code(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1186).
+* **efuse**
+  * (B92):Added efuse_get_chip_status interface to read the status of JTAG, SWS, and boot mode.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1223)
+  * (TL321x) Added efuse_get_chip_id interface.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1075)
+* **IR_LEARN_Demo**
+  * (TL721x/TL321x) Add IR_LEARN_Demo and driver files.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1214).
+* **audio**
+  * (TL721x) Adding audio related drivers and demos.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144)。
+* **USB Demo**
+  * (B91/B92/TL321x/TL721x) added print demo into USB_Demo.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1230)
+* **link**
+  * (TL721x/TL321x)Add flash code segment for link and _attribute_flash_code_sec_noinline_ into compiler.h.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1243)
+  * (B91/B92/TL721X/TL321X)Added the rf_certification_cfg data segment for rf certification related configuration.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
+* **common**
+  * (B91/B92/TL721x/TL321X):To prevent power leakage, add gpio_shutdown(GPIO_ALL) to platform_init() to configure all GPIOs (except SWS and MSPI) to a high resistance state.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)
+* **Jtag**
+  * (B92/TL321x/TL721x): Add jtag configuration interface jtag_sdp_set_pin(), two-wire and four-wire enable interfaces jtag_set_pin_en() and sdp_set_pin_en().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)
+* **emi**
+  * (B91/B92/TL721X/TL321X)Added rf_phy_test_prbs15() interface for generating prbs15 type data(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **calibration**
+  * (TL721X/TL321X)Added calibration_func(),user_calib_freq_offset() calibration interface.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **rf**
+  * (B91/B92/TL721X/TL321X)Add rf_set_power_level_singletone interface, remove rf_set_power_level_index_singletone interface from emi.c(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **S**
+  * (B91/B92/TL721X/TL321X)Added the starting address 0x10 related to RF_Certification configuration and defined the starting address of _RF_CCERTIFICATION_CFG_LMA_START(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
+* **adc**
+  * (TL721x/TL321x):add adc_start_sample_nodma() , adc_stop_sample_nodma(), adc_get_irq_status(), adc_clr_irq_status() and adc_set_scan_chn_dis().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+
+### Bug Fixes
+
+* **flash**
+  * (TL721x)Fix flash default protected area(Changed from unprotected to protect half of the flash area).(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1188)
+* **rf**
+  * (TL321x)Fix rf_power_level_index_e enumeration value error problem.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1194)
+  * (TL721x/TL321x)Due to the removal of reg_bb_dma_rx_rptr, the interface rf_get_rx_packet_addr in rf_common.c has been updated to replace reg_bb_dma_rx_rptr with reg_rf_dma_rx_rptr.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1207)
+  * (TL721x/TL321x)Fixed the issue of inaccurate RSSI values obtained by RF.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1261)
+* **pm**
+  * (B91/B92/TL721x/TL321x)Fixed an issue where calling function pm_set_vbat_type or sys_init to modify parameter vbat_v failed. (This is only a problem when changing VBAT_MAX_VALUE_LESS_THAN_3V6 to VBAT_MAX_VALUE_GREATER_THAN_3V6)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **dma** 
+  * (TL721x/TL321x)Due to invalid or duplicate definitions, the following interfaces have been deleted: In dma_reg.h: reg_dma_rx_wptr, reg_dma_tx_wptr, reg_dma_rx_rptr, reg_dma_tx_rptr. In rf_reg.h: reg_bb_dma_rx_wptr, reg_bb_dma_tx_wptr, reg_bb_dma_rx_rptr, reg_bb_dma_tx_rptr. Users should now use the following register definitions: reg_rf_dma_rx_wptr, reg_rf_dma_rx_rptr, reg_rf_dma_tx_rptr, reg_rf_dma_tx_wptr. (http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1207)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1235)
+* **spi**
+  * (B92/TL721x/TL321x) Change the type of word_len in the spi_write/spi_read interface from unsigned char to unsigned int.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144).
+* **gpio**
+  * (TL721x/TL321X)Fix the problem of not setting gpio to low level in gpio_init(), preventing that gpio cannot be initialized to low level after calling gpio_init().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)  
+ * **gpio**
+  * (B91)Fix the problem of no initialization PF group (MSPI) in gpio_init() to prevent the MSPI port from not being initialized after calling gpio_init().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)  
+* **Jtag**
+  * (B91): The jtag two-wire and four-wire enable interfaces jtag_set_pin_en() and sdp_set_pin_en() add analog pull-ups and drop-downs to prevent the jtag hardware from being abnormal when not connected.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)
+* **usb**
+  * (TL321X)Fix the problem of setting usbhw_enable_hw_feature() would clear other features exceptionally.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1249)
+* **adc**
+  * (TL721x/TL321x):adc_get_code() is changed from reading analog registers to reading adc rx fifo to prevent repeated fetching of the same code in multiple consecutive calls to adc_get_code().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+* **adc**
+  * (TL721x/TL321x): Modify the sample cycle configuration for each sampling frequency, and delay 30us after adc_power_on() to wait for adc to stabilize, fix the problem of the first code exception after adc_power_on().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+* **flash**
+  * (B91/B92/TL721X/TL321X):Add macro in platform_init() not to add protection to the flash of the chip running ram bin to prevent the chip with no flash on board from getting stuck.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1255)
+* **uart**
+  * (TL721X/TL321X):Fixed dma uart rx data loss issue by changing the length parameter passed to uart_receive_dma to the maximum value that can be received.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1257)
+
+### Refactoring
+
+* **trap**
+  * (B91/B92/TL721X/TL321X) Define the trap_entry function as a weak function so that applications can reimplement it.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1212).
+* **ADC**
+  * (B91/B92/TL721X/TL321X)The ADC temperature detection function is an internal test function, not opened to the public, and the function is disabled by default.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1227)
+* **pm**
+  * (TL721x/TL321x)Encapsulated clock.c, stimer.c, mspi.c, and core.c into library files.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+  * (TL721X)Modify the PM-related interfaces to use the O2 optimization option.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1238)
+* **usb**
+  * (TL721x/TL321x)Remove unused header file (wchar.h) from usbhw.c. (http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1237)
+* **calibration**
+  * (B91/B92)Add a range limit of frequency_offset_value to the user_calib_freq_offset interface(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **rf**
+  * (TL721x/TL321x)the function rf_clr_dig_logic_state and rf_reset_register_value have been updated with the _attribute_ram_code_sec_noinline_ attribute. The function rf_dma_reset has been updated to static _always_inline.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1251)
+
+### Performance Improvements
+
+* **clock**
+  * (TL721x/TL321x)To save power, the 24M RC and PLL are turned off separately when not in use.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **S**
+  * (TL721x/TL321x)To save power, the GPIO input functionality is turned off during initialization.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **rf**
+  * (TL721x)Add configuration related to optimising TX power consumption inside rf_mode_init().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1234)
+  * (TL321x):Optimise power consumption in tx vant mode, increase vant maximum output power, 
+  and update the rf_power_level_list table with the latest driver configuration.
+  (http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1234)
+  * (TL321x): optimise RX sensitivity performance, add rf_rx_performance_mode interface and rf_rx_performance_e to select RX sensitivity configurations, default configuration is RF_RX_LOW_POWER; select RF_RX_HIGH_PERFORMANCE to increase the performance by 1dbm, but it will increase the RX power consumption.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1234,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1265)
+  * (TL721x/TL321x)Improve BLE500K and BLE125K per floor performance.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1232)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1260)
+
+### 版本
+
+* SDK版本: tl_platform_sdk V3.2.0
+* 芯片版本
+  * TLSR921x/TLSR951x(B91) (A0/A1/A2), TLSR922x/TLSR952x(B92) (A3/A4), TL721X (A1), TL321X (A1)
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
+
+### Note
+* (B92/TL721x/TL321x)编译工具链从V5.3.0升级为V5.3.x。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
+* (B91/B92/TL721X/TL321X) 新增usb_set_pin()接口，在USB应用中可以选择使能或不使能dp_through_swire功能，为了兼容性usb_set_pin_en()定义为 usb_set_pin(1)，并在cstartup.S 添加相应注释。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1249)
+
+### BREAKING CHANGES 
+
+* **sys**
+  * (TL321X)sys_init新增power_mode参数（A0只支持LDO模式，A1支持LDO和DCDC_LDO）同时更新sys_init内容以适配A1芯片。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1218)
+  * (TL721x/TL321x)新的版本调用sys_init()之后，如果想要获取g_pm_status_info.mcu_status的值，或者调用pm_get_reboot_event（）获取相关信息，获取不到了。需要应用层自己调用pm_update_status_info()获取。新的使用方法如下：调用sys_init()后再调用pm_update_status_info()，即可获得g_pm_status_info.mcu_status的值并且可以调用pm_get_sw_reboot_event查看软件重启原因。同时，之前的reboot分类也做了如下变更：1.g_pm_status_info.mcu_status新增两个状态：MCU_HW_REBOOT_TIMER_WATCHDOG 、MCU_HW_REBOOT_32K_WATCHDOG2.MCU_STATUS_REBOOT_BACK的含义和以前不一样了，以前是包含软件重启和watchdog重启。现在的版本MCU_STATUS_REBOOT_BACK仅仅代表软件重启，如果想要知道软件重启的具体原因，可以调用pm_get_sw_reboot_event进行查看。删除了pm_get_reboot_event()/pm_get_deep_retention_flag()函数。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+  * (TL721x/TL321x)之前的软件reboot原因，可以多种情况共存，为了节省寄存器bit以便将来扩展使用，现在的版本只会保存最新一次软件reboot的原因。所以如果想要保存所有软件reboot的原因的话，上层应用需要每次初始化后自行保存，以防看不到历史的reboot原因。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+  * (TL721x/TL321x)函数名字变更：sys_set_power_mode->pm_set_power_mode，sys_set_vbat_type->pm_set_vbat_type。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **dma**
+  * (B92/TL321x/TL721x)设置链表DMA的中断模式的接口由dma_set_llp_int_mode改成dma_set_llp_irq_mode, 将中断模式的枚举类型统一为dma_llp_irq_mode_e。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1229)
+* **dma**
+  * (B92/TL721x/TL321x) 将dma_set_spi_burst_size接口名称修改为dma_set_burst_size。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144).
+* **audio**
+  * (B92) 将audio_set_i2s_align_en,audio_set_i2s_align_dis接口名称修改为audio_i2s_align_en,audio_i2s_align_dis。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144).
+* **emi**
+  * (B91/B92/TL721X/TL321X)修改emi.c rf_continue_mode_run 接口，增加了可配置发包数据类型，调整命令值与数据类型的对应关系，由（0:pbrs9 1:0xf0 2:0x55）调整为（0:pbrs9 1:0x0f 2:0x55 3:0xaa 4:0xf0 5:0x00 6:0xff）(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+  * (B91/B92/TL721X/TL321X)将 rf_emi_tx_continue_update_data,rf_emi_rx_setup,rf_emi_tx_burst_loop,rf_emi_tx_burst_setup函数的rf_mode参数的原支持模式RF_MODE_BLE_2M更名为RF_MODE_BLE_2M_NO_PN（新名字更贴近其模式）(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **adc**
+  * (TL721x/TL321x)ADC DMA模式从轮巡方式优化成DMA中断方式读取数据，提高代码运行效率，同时将adc_get_sample_status_dma()/adc_clr_sample_status_dma()/adc_set_dma_trig_num()改名为adc_get_irq_status_dma()/adc_clr_irq_status_dma()/adc_set_rx_fifo_trig_cnt(),删除了adc_get_code_dma()。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+
+### Features
+
+* **flash**
+  * (TL321x)添加新增flash P25Q40SU/P25Q16SU.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1171)
+* **Secure_Boot_Demo**
+  * (TL721x/TL321x) 添加Secure_Boot_Demo, 编译demo生成运行描述符等bin.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1184)
+* **Toolchain**
+  * (B91/B92/TL321x/TL721x):为了支持开源工具链编译(若使用开源工具链，需要打开这个宏'STD_GCC'，目前支持Zephyr工具链编译)，做如下修改：
+    1. 使用汇编语言实现CSR寄存器的读写等接口，不使用nds_intrinsic.h内的函数(这是一个在Andes工具链里的头文件)；
+    2. 添加一个新文件core_reg.h, 将nds_intrinsic.h里面CSR寄存器拷贝到core_reg.h。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1181)
+* **Trap**
+  * (B91/B92/TL321x/TL721x)新增接口 plic_irqs_preprocess_for_wfi() 和 plic_irqs_postprocess_for_wfi() ，分别用于配置进入和退出 WFI 模式的相关中断并提供示例代码(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1186)。
+* **efuse**
+  * (B92):增加efuse_get_chip_status接口，用于读取JTAG、SWS 和启动模式的状态。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1223)
+  * (TL321x) 增加efuse_get_chip_id接口。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1075)
+* **IR_LEARN_Demo**
+  * (TL721x/TL321x) 新增IR_LEARN_Demo和driver files.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1214)。
+* **audio**
+  * (TL721x) 添加audio相关驱动和demo.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144)。
+* **USB Demo**
+  * (B91/B92/TL321x/TL721x)在USB_Demo中添加print demo。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1230)
+* **link**
+  * (TL721X/TL321X)link文件中新增flash_code段,complier.h中新增_attribute_flash_code_sec_noinline_(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1243)
+  * (B91/B92/TL721X/TL321X)添加rf_certification_cfg段，用于rf certification的相关配置(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
+* **common**
+  * (B91/B92/TL721x/TL321X)为防止漏电，在platform_init()中添加gpio_shutdown(GPIO_ALL)将所有gpio（除SWS和MSPI外）配置为高阻态。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)
+* **Jtag**
+  * (B92/TL321x/TL721x)添加jtag配置接口jtag_sdp_set_pin()，两线和四线使能接口jtag_set_pin_en()和sdp_set_pin_en()。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)
+* **emi**
+  * (B91/B92/TL721X/TL321X)新增rf_phy_test_prbs15()接口用于生成prbs15类型数据(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **calibration**
+  * (TL721X/TL321X)新增calibration_func(),user_calib_freq_offset()校准接口(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **rf**
+   * (B91/B92/TL721X/TL321X)新增rf_set_power_level_singletone接口，删除emi.c 中的rf_set_power_level_index_singletone接口(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **S**
+  * (B91/B92/TL721X/TL321X)添加RF_Certification配置相关的起始地址 0x10 并定义 RF_Certification 配置的起始地址 _RF_CERTIFICATION_CFG_ADDR_OFFSET(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
+* **adc**
+  * (TL721x/TL321x):添加adc_start_sample_nodma(), adc_stop_sample_nodma(), adc_get_irq_status(),adc_clr_irq_status()和adc_set_scan_chn_dis().(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)  
+### Bug Fixes
+
+* **flash**
+  * (TL721x)修复flash默认保护区域（从无保护改为保护flash的一半区域）。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1188)
+* **rf**
+  * (TL321x)修复 rf_power_level_index_e 枚举值错误问题。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1194)
+  * (TL721x/TL321x)由于删除了 reg_bb_dma_rx_rptr，在 rf_common.c 中，接口 rf_get_rx_packet_addr 中的 reg_bb_dma_rx_rptr 已替换为 reg_rf_dma_rx_rptr。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1207)
+  * (TL721x/TL321x)修复了RF获取RSSI值不准的问题(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1261)
+* **pm**
+  * (B91/B92/TL721x/TL321x)解决了调用函数pm_set_vbat_type或者sys_init修改参数vbat_v不成功的问题。（仅仅当将VBAT_MAX_VALUE_LESS_THAN_3V6修改为VBAT_MAX_VALUE_GREATER_THAN_3V6会有问题）(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **dma** 
+  * (TL721x/TL321x)由于定义无效或重复，删除了以下寄存器定义：dma_reg.h中reg_dma_rx_wptr、reg_dma_tx_wptr、reg_dma_rx_rptr、reg_dma_tx_rptr；rf_reg.h中reg_bb_dma_rx_wptr、reg_bb_dma_tx_wptr、reg_bb_dma_rx_rptr、reg_bb_dma_tx_rptr;用户请使用如下寄存器定义：reg_rf_dma_rx_wptr、reg_rf_dma_rx_rptr、reg_rf_dma_tx_rptr、reg_rf_dma_tx_wptr。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1207)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1235)
+* **spi**
+  * (B92/TL721x/TL321x) 将spi_write/spi_read接口中的word_len类型从unsigned char修改为unsigned int。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1144).
+* **gpio**
+  * (TL721x/TL321X)修复gpio_init()中无法设置gpio为低电平的问题，防止调用gpio_init()后不能将gpio初始化为低电平。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)  
+ * **gpio**
+  * (B91)修复gpio_init()中无法初始化PF组(MSPI)的问题，防止调用gpio_init()后不能初始化MSPI口。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)  
+* **Jtag**
+  * (B91)jtag两线和四线使能接口jtag_set_pin_en()和sdp_set_pin_en()添加模拟上下拉，防止jtag硬件在未连接时出现异常。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1226)  
+* **usb**
+  * (TL321X)修复了设置usbhw_enable_hw_feature()时会将其他feature异常清除的问题.(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1249)
+* **adc**
+  * (TL721x/TL321x): adc_get_code()由读模拟寄存器方式改为读adc rx fifo方式，防止连续多次调用adc_get_code()时重复取的是同一个code。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+* **adc**
+  * (TL721x/TL321x):修改各个采样频率的sample cycle配置，且在adc_power_on()后delay 30us 等待adc稳定，修复adc_power_on()后第一个code异常的问题。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1246)
+* **flash**
+  * (B91/B92/TL721X/TL321X):在platform_init()中添加宏不对跑ram bin的芯片的flash加保护，防止无搭载flash的芯片卡死。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1255)
+* **uart**
+  * (TL721X/TL321X):修复了dma uart rx数据丢失问题,将传递给uart_receive_dma的长度参数修改为可以接收到的最大值。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1257)
+
+### Refactoring
+
+* **trap**
+  * (B91/B92/TL721X/TL321X) 将 trap_entry 函数定义为弱函数，以便应用程序重新可以实现该函数。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1212).
+* **ADC**
+  * (B91/B92/TL721X/TL321X)ADC温度检测功能属于内部测试功能，不对外开放，默认禁用该功能。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1227)
+* **pm**
+  * (TL721x/TL321x)clock.c stimer.c mspi.c core.c 封装成库文件。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+  * (TL721X)修改PM相关的接口都使用O2优化选项。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1238)
+* **usb**
+  * (TL721x/TL321x)删除 usbhw.c 中未使用的头文件 wchar.h。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1237)
+* **calibration**
+  *  (B91/B92)给user_calib_freq_offset接口添加frequency_offset_value范围限制(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1247)
+* **rf**
+  * (TL721x/TL321x)函数rf_clr_dig_logic_state、rf_reset_register_value类型修改为_attribute_ram_code_sec_noinline_；函数rf_dma_reset类型修改为static _always_inline。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1251)
+
+### Performance Improvements
+
+* **clock**
+  * (TL721x/TL321x)为了节省功耗，在不使用24M RC和PLL的时候，分别关闭24M RC/PLL。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **S**
+  * (TL721x/TL321x)为了节省功耗，初始化时关掉gpio输入功能。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1195,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213)
+* **rf**
+  * (TL721x)rf_mode_init()内部添加优化TX功耗的相关配置，并根据最新的驱动配置更新rf_power_Level_list表。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1234)
+  * (TL321x)优化 tx vant 模式下的功耗，提高 vant 最大输出功率，并根据最新的驱动配置更新rf_power_Level_list表(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1234)
+  * (TL321x)优化RX sensitivity 性能，添加rf_rx_performance_mode接口及rf_rx_performance_e选择RX灵敏度配置，默认配置为RF_RX_LOW_POWER；选择RF_RX_HIGH_PERFORMANCE性能会提升1dbm,但会增加RX功耗(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1213,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1234,http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1265)
+  * (TL721x/TL321x)提升 BLE500K 和 BLE125K per floor 性能。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1232)(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1260)
+  
+---
+
 ## V3.1.0
 
 ### Version

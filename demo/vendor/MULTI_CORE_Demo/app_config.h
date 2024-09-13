@@ -29,11 +29,13 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
-#define ENABLE_DSP              1
+#if !defined(MCU_CORE_TL322X)
+#define ENABLE_DSP              0
+#endif
 #define ENABLE_N22              1
 
-#define TEST_MAILBOX            1
-#define TEST_STALL              1
+#define TEST_MAILBOX            0
+#define TEST_STALL              0
 
 
 /* Disable C linkage for C++ Compilers: */

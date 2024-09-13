@@ -22,6 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
+
 #if(DEMO_MODE == TEST_MODE)
 
 #define MANUAL_TEST_MODE        1 // For internal testing, users need not care
@@ -30,7 +31,7 @@
 
 #if(GPIO_TEST_MODE == AUTO_TEST_MODE)
 
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
 volatile unsigned int gpio_irq_cnt=0,gpio_irq_risc0_cnt=0,gpio_irq_risc1_cnt=0,gpio_irq0_cnt=0, gpio_irq1_cnt=0, gpio_irq2_cnt=0, gpio_irq3_cnt=0, gpio_irq4_cnt=0, gpio_irq5_cnt=0, gpio_irq6_cnt=0, gpio_irq7_cnt=0;
 
 void gpio_input_test(void);
@@ -76,7 +77,7 @@ struct PC_CMD_FUNC{
     unsigned short cmd_name;
     void (*func)(void);
 };
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
 struct PC_CMD_FUNC pc_cmd_func[] = {
     {DUTCMD_GPIO_INPUT, gpio_input_test},
     {DUTCMD_GPIO_OUTPUT_LOW, gpio_output_low_test},
@@ -130,7 +131,7 @@ struct PC_CMD_FUNC pc_cmd_func[] = {
     volatile unsigned int gpio_src_irq6_cnt=0;
     volatile unsigned int gpio_src_irq7_cnt=0;
 #endif
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
 volatile unsigned int gpio_src_irq0_cnt=0;
 volatile unsigned int gpio_src_irq1_cnt=0;
 volatile unsigned int gpio_src_irq2_cnt=0;
@@ -319,7 +320,7 @@ void gpio_output_high_test(void)
     send_data[2] = 2;
     result_buff_write(send_data,send_data[2]);
 }
-#if defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
 #else
 void gpio_digital_pull_up_test(void)
 {
@@ -395,7 +396,7 @@ void gpio_analog_pull_down_100K_test(void)
     send_data[2] = 2;
     result_buff_write(send_data,send_data[2]);
 }
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
 void gpio_irq0_test(void)
 {
     autotest_package_t_ptr para = (autotest_package_t_ptr)para_buff;
@@ -786,7 +787,7 @@ void gpio_irq_risc1_test(void)
     gpio_irq_risc1_cnt = 0;
 }
 #endif
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
 void gpio_irq_report_test(void)
 {
     unsigned char send_data[14];

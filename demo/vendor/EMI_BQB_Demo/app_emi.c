@@ -167,14 +167,13 @@ test_list_t  ate_list[] = {
 void rf_emi_tx_current_test(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
 {
     (void)(rf_mode);
-    extern void rf_set_power_level_index_singletone (rf_power_level_e level);
     extern unsigned char g_single_tong_freqoffset;
     rf_mode_init();
     rf_power_level_e  power = rf_power_Level_list[pwr];
     g_single_tong_freqoffset = 1;
     rf_set_chn(rf_chn);
     g_single_tong_freqoffset = 0;
-    rf_set_power_level_index_singletone(power);
+    rf_set_power_level_singletone(power);
     rf_set_txmode();
     gpio_shutdown(GPIO_ALL);
     rf_current_test_cfg();
@@ -284,7 +283,7 @@ void emicarrieronly(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
     unsigned int t0 = reg_system_tick,chnidx = 1;
 #endif
     rf_power_level_e  power = rf_power_Level_list[pwr];
-    g_hop = read_sram8(CD_MODE_HOPPING_CHN);
+    g_hop = (read_sram8(CD_MODE_HOPPING_CHN)&BIT(0));
     rf_emi_tx_single_tone(power,rf_chn);
     while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
             && ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
@@ -329,7 +328,7 @@ void emi_con_prbs9(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
     pa_operation(PA_SETTING_STATE_TX);
     unsigned int t0 = reg_system_tick,chnidx = 1;
     rf_power_level_e power = rf_power_Level_list[pwr];
-    g_hop = read_sram8(CD_MODE_HOPPING_CHN);
+    g_hop = (read_sram8(CD_MODE_HOPPING_CHN)&BIT(0));
     rf_emi_tx_continue_update_data(rf_mode,power,rf_chn,0);
     while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
             && ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
@@ -592,7 +591,7 @@ void emi_con_tx55(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
     pa_operation(PA_SETTING_STATE_TX);
     unsigned int t0 = reg_system_tick,chnidx = 1;
     rf_power_level_e power = rf_power_Level_list[pwr];
-    g_hop = read_sram8(CD_MODE_HOPPING_CHN);
+    g_hop = (read_sram8(CD_MODE_HOPPING_CHN)&BIT(0));
     rf_emi_tx_continue_update_data(rf_mode,power,rf_chn,2);
     while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
             && ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
@@ -632,7 +631,7 @@ void emi_con_tx0f(rf_mode_e rf_mode,unsigned char pwr,signed char rf_chn)
     pa_operation(PA_SETTING_STATE_TX);
     unsigned int t0 = reg_system_tick,chnidx = 1;
     rf_power_level_e power = rf_power_Level_list[pwr];
-    g_hop = read_sram8(CD_MODE_HOPPING_CHN);
+    g_hop = (read_sram8(CD_MODE_HOPPING_CHN)&BIT(0));
     rf_emi_tx_continue_update_data(rf_mode,power,rf_chn,1);
     while( ((read_sram8(RUN_STATUE_ADDR)) == g_run ) &&  ((read_sram8(TEST_COMMAND_ADDR)) == g_cmd_now )\
             && ((read_sram8(POWER_ADDR)) == g_power_level ) &&  ((read_sram8(CHANNEL_ADDR)) == g_chn )\
@@ -678,7 +677,7 @@ void emi_serviceloop(void)
            g_mode = read_sram8(RF_MODE_ADDR);
            g_cmd_now = read_sram8(TEST_COMMAND_ADDR);  // get the command!
            g_tx_cnt = (read_sram8(TX_PACKET_MODE_ADDR)&0x7f);
-           g_hop = read_sram8(CD_MODE_HOPPING_CHN);
+           g_hop = (read_sram8(CD_MODE_HOPPING_CHN)&BIT(0));
 #if defined(MCU_CORE_B92)
            g_pkt_tone = (read_sram8(TX_PACKET_MODE_ADDR)&BIT(7));
 #endif
@@ -691,7 +690,7 @@ void emi_serviceloop(void)
                     switch(g_mode)
                     {
                       case ble2m:
-                          ate_list[i].func(RF_MODE_BLE_2M,g_power_level,g_chn);
+                          ate_list[i].func(RF_MODE_BLE_2M_NO_PN,g_power_level,g_chn);
                           break;
 
                       case ble1m:
@@ -756,13 +755,13 @@ void user_init(void)
     pa_setting_init(g_emi_setting.pa_setting_pos, g_emi_setting.general_setting.pa_bypass_en);
     if(g_emi_setting.general_setting.swire_through_usb_en)
     {
-        usb_set_pin_en();
+        usb_set_pin(1);
         gpio_set_up_down_res(GPIO_DM, GPIO_PIN_PULLUP_10K);
     }
 #else
 
 #if SWIRE_THROUGH_USB_EN
-    usb_set_pin_en();
+    usb_set_pin(1);
     gpio_set_up_down_res(GPIO_DM, GPIO_PIN_PULLUP_10K);
 #endif
 
