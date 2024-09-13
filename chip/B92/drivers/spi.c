@@ -659,7 +659,7 @@ drv_api_status_e spi_master_send_cmd(spi_sel_e spi_sel, unsigned char cmd)
  */
 drv_api_status_e spi_write(spi_sel_e spi_sel, unsigned char *data, unsigned int len)
 {
-	unsigned char word_len = len >> 2;
+	unsigned int word_len = len >> 2;
 	unsigned char single_len = len & 3;
 	//When the remaining size in tx_fifo is not less than 4 bytes, the MCU moves the data according to the word length.
 	for (unsigned int i = 0; i < word_len; i++)
@@ -696,7 +696,7 @@ drv_api_status_e spi_write(spi_sel_e spi_sel, unsigned char *data, unsigned int 
  */
 drv_api_status_e spi_read(spi_sel_e spi_sel, unsigned char *data, unsigned int len)
 {
-	unsigned char word_len = len >> 2;
+	unsigned int word_len = len >> 2;
 	unsigned char single_len = len & 3;
 	//When the data size in rx_fifo is not less than 4 bytes, the MCU moves the data according to the word length
 	for (unsigned int i = 0; i < word_len; i++)

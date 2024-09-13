@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
 
 #define DSP_FW_DOWNLOAD_FLASH_ADDR      0x20040000
 
@@ -52,10 +52,19 @@ volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
 #define N22_BOOTLOADER_MODE             N22_BOOTLOADER_BY_MCU
 
 #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA)
+#if !defined(MCU_CORE_TL322X)
 #define N22_IRAM_STARTUP_ADDR           0x50068000/* Note:  If modified, please make sure this value is within the IRAM address range of N22.
                                                             The corresponding link file need to modify in the same time. */
 #define N22_DRAM_ADDR                   0x50080000/* Note:  If modified, please make sure this value is within the DRAM address range of N22.
+                                                           The corresponding link file need to modify in the same time. */
+#else
+#define N22_IRAM_STARTUP_ADDR           0xd0000000/* Note:  If modified, please make sure this value is within the IRAM address range of N22.
                                                             The corresponding link file need to modify in the same time. */
+#define N22_DRAM_ADDR                   0xd0080000/* Note:  If modified, please make sure this value is within the DRAM address range of N22.
+                                                           The corresponding link file need to modify in the same time. */
+
+#endif
+
 #endif
 
 #define N22_FW_DOWNLOAD_FLASH_ADDR      0x20080000/* Note:  If modified, please make sure this value is within the address range of Flash. 
@@ -98,7 +107,7 @@ void user_init(void)
     gpio_function_en(LED4);
     gpio_output_en(LED4);
 
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
     sys_dsp_init();
     sys_set_dsp_startup_addr(DSP_FW_DOWNLOAD_FLASH_ADDR);
     sys_dsp_start();
@@ -106,7 +115,9 @@ void user_init(void)
 
 #if (ENABLE_N22)
 #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA)
+#if !defined(MCU_CORE_TL322X)
     sys_n22_init();
+#endif
     sys_set_n22_startup_addr(N22_IRAM_STARTUP_ADDR);
 
     n22_ilm_bin_size = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR  + 0x08);
@@ -128,7 +139,9 @@ void user_init(void)
 
     sys_n22_start();
 #elif (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_MCU)
+#if !defined(MCU_CORE_TL322X)
     sys_n22_init();
+#endif
     sys_set_n22_startup_addr(N22_FW_DOWNLOAD_FLASH_ADDR);
     sys_n22_start();
 #endif
@@ -137,7 +150,7 @@ void user_init(void)
 
 #if (TEST_MAILBOX)
 
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
     mailbox_set_irq_mask(FLD_MAILBOX_DSP_TO_D25F_IRQ);
     plic_interrupt_enable(IRQ_MAILBOX_DSP_TO_D25);
     core_interrupt_enable();
@@ -165,7 +178,7 @@ void main_loop(void)
 
     delay_ms(1000);
 
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
     val_d25f_to_dsp_word[0] = 0x01234567;
     mailbox_d25f_set_dsp_msg(val_d25f_to_dsp_word);
     while(mailbox_dsp_to_d25_irq_flag == 0)
@@ -187,7 +200,7 @@ void main_loop(void)
 
     delay_ms(1000);
 
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
     val_d25f_to_dsp_word[0] = 0x11111111;
     mailbox_d25f_set_dsp_msg(val_d25f_to_dsp_word);
 #endif
@@ -198,7 +211,7 @@ void main_loop(void)
 #endif
 
 #else
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
     if(mailbox_dsp_to_d25_irq_flag == 1)
     {
         mailbox_dsp_to_d25_irq_flag = 0;
@@ -232,7 +245,7 @@ void main_loop(void)
 }
 
 #if (TEST_MAILBOX)
-#if (ENABLE_DSP)
+#if !defined(MCU_CORE_TL322X)&& (ENABLE_DSP)
 _attribute_ram_code_sec_noinline_ void mailbox_dsp_to_d25_irq_handler(void)
 {
     if (mailbox_get_irq_status() & FLD_MAILBOX_DSP_TO_D25F_IRQ)

@@ -1299,7 +1299,7 @@ void audio_i2s_output_init(audio_i2s_input_output_t* audio_i2s_output)
  * @brief This function serves to enable the i2s align function.
  * @return    none
  */
-void  audio_set_i2s_align_en(void)
+void  audio_i2s_align_en(void)
 {
 	/*for sync mode, select iis0 for the sync clock source*/
 	reg_align_ctrl |=FLD_I2S_ALIGN_EN|FLD_I2S_CLK_SEL|FLD_I2S_ALIGN_CTRL;
@@ -1309,7 +1309,7 @@ void  audio_set_i2s_align_en(void)
  * @brief This function serves to disable the i2s align function.
  * @return    none
  */
-void  audio_set_i2s_align_dis(void)
+void  audio_i2s_align_dis(void)
 {
 	reg_align_ctrl &= ~FLD_I2S_CLK_SEL;
 	reg_usb_audio_ctrl |=FLD_I2S_ALIGN_MASK;

@@ -182,7 +182,7 @@ void user_init(void)
     //enable global interrupt
     core_interrupt_enable();
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 
     /*1  "AUDIO_ADC_16K_DAC_48K" - mic sampling=16K,spk sampling=48K;"AUDIO_16K"-mic sampling=16K,spk sampling=16K,should match the setting  in usb_default.h
      *2  mic and spk  channel count should be the same (1 or 2 ) in usb_default.h
@@ -242,7 +242,7 @@ void user_init(void)
     usbhw_set_eps_en(BIT(USB_EDP6_OUT) | BIT(USB_EDP7_IN));
 
     //enable USB DP pull up 1.5k
-    usb_set_pin_en();
+    usb_set_pin(1);
 
     audio_codec_init();
 
@@ -385,7 +385,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 static unsigned int t1 = 0;
@@ -433,7 +433,7 @@ void user_init(void)
 #endif
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 static unsigned int t1 = 0;
@@ -482,7 +482,7 @@ void user_init(void)
 #endif
 
     /* enable USB DP pull up 1.5k */
-    usb_set_pin_en();
+    usb_set_pin(1);
 }
 
 static unsigned int t1 = 0;

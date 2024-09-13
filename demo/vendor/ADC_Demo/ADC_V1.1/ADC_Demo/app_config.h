@@ -32,13 +32,15 @@ extern "C" {
 /**********************************************************************************************************************
  *                                         Users do not need to modify                                                *
  *********************************************************************************************************************/
+
 #define ADC_DMA_MODE            1
 #define ADC_NDMA_MODE           2
 
 #define ADC_GPIO_SAMPLE         1
 #define ADC_VBAT_SAMPLE         2
+#if INTERNAL_TEST_FUNC_EN
 #define ADC_TEMP_SENSOR_SAMPLE  3
-
+#endif
 //In NDMA mode, only M channel can be used.
 #define NDMA_M_1_CHN_EN     1
 //Multiple channels can be used in DMA mode.
@@ -50,7 +52,7 @@ extern "C" {
  *                                         Users can modify macros                                                    *
  *********************************************************************************************************************/
 /**
- *@attention  ADC_SAMPLE_GROUP_CNT must be multiple of 8.
+ *@attention  -# In NDMA/DMA mode, ADC_SAMPLE_GROUP_CNT must be multiple of 8.
  */
 #define  ADC_SAMPLE_GROUP_CNT       8  //Number of adc sample codes per channel.
 
@@ -61,7 +63,7 @@ extern "C" {
 #define  ADC_SAMPLE_CHN_CNT         DMA_M_1_CHN_EN //Number of channels enabled
 #define  ADC_M_CHN_SAMPLE_MODE      ADC_GPIO_SAMPLE
 #define  ADC_L_CHN_SAMPLE_MODE      ADC_VBAT_SAMPLE
-#define  ADC_R_CHN_SAMPLE_MODE      ADC_TEMP_SENSOR_SAMPLE
+#define  ADC_R_CHN_SAMPLE_MODE      ADC_GPIO_SAMPLE
 #else
 #define  ADC_SAMPLE_CHN_CNT         NDMA_M_1_CHN_EN
 #define  ADC_SAMPLE_MODE            ADC_GPIO_SAMPLE

@@ -44,7 +44,7 @@ extern "C" {
 #define GPIO_SEL_IRQ_SRC        5
 #endif
 #define GPIO_MODE               GPIO_IRQ
-#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
 //GPIO_MODE can be configured as GPIO_IRQ0~7, 8 interrupts can be used at the same time.
 #define GPIO_IRQ_NUM0               6
 #define GPIO_IRQ_NUM1               7

@@ -35,7 +35,7 @@
 #if defined(MCU_CORE_B91)
 #define BQB_TX_POWER        RF_POWER_P6p98dBm
 #elif defined(MCU_CORE_TL321X)
-#define BQB_TX_POWER        RF_POWER_P7p11dBm
+#define BQB_TX_POWER        RF_POWER_P7p19dBm
 #else
 #define BQB_TX_POWER        RF_POWER_P7p00dBm
 #endif

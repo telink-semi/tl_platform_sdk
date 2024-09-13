@@ -31,11 +31,11 @@ extern "C" {
 #include "common.h"
 
 
-#define MAILBOX_N22_D25F        1
+#define MAILBOX_N22_D25F        0
 #define MAILBOX_N22_DSP         0
 
-#define TEST_MAILBOX            1
-#define TEST_STALL              1
+#define TEST_MAILBOX            0
+#define TEST_STALL              0
 
 
 

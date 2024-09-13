@@ -47,6 +47,17 @@ void user_init(void)
 {
     delay_ms(2000);
 
+
+#if((PM_MODE == PM_SET_DVDD1_DVDD2_MODE)&&defined(MCU_CORE_TL751X))
+    unsigned char return_flag=0;
+   //Upward Voltage
+    return_flag= pm_set_dvdd(DVDD1_DVDD2_VOL_0P9_CONFG,DMA8,D25F,1000);
+    CCLK_192M_HCLK_192M_PCLK_48M_MSPI_48M;
+   //Downward Voltage
+    CCLK_96M_HCLK_96M_PCLK_24M_MSPI_48M;
+    return_flag= pm_set_dvdd(DVDD1_DVDD2_VOL_0P8_CONFG,DMA8,D25F,1000);
+    (void)return_flag;
+#endif
 #if CURRENT_TEST
     gpio_shutdown(GPIO_ALL);
 
@@ -295,7 +306,7 @@ void user_init(void)
     pm_sleep_wakeup(DEEPSLEEP_MODE_RET_SRAM_LOW96K, PM_WAKEUP_COMPARATOR, PM_TICK_STIMER, 0);
 
 #elif(defined(MCU_CORE_B91)||defined(MCU_CORE_B92))&&(PM_MODE == SUSPEND_CORE_USB_WAKEUP)
-    usb_set_pin_en();
+    usb_set_pin(1);
     reg_wakeup_en |= 0x01;
     gpio_set_up_down_res(GPIO_PA5, GPIO_PIN_PULLDOWN_100K);
     gpio_set_up_down_res(GPIO_PA6, GPIO_PIN_PULLUP_10K);

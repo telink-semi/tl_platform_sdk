@@ -49,8 +49,9 @@ extern "C" {
     *   B92 supports Vbat channel battery voltage sample, and the range is 1.9~4.3V
 **/
 #define ADC_VBAT_SAMPLE         2   //Vbat channel Battery Voltage with low accuracy.
+#if INTERNAL_TEST_FUNC_EN
 #define ADC_TEMP_SENSOR_SAMPLE  3   //Temp test
-
+#endif
 #define ADC_SAMPLE_MODE             ADC_GPIO_SAMPLE
 
 #if defined(MCU_CORE_B91)

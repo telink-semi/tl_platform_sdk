@@ -26,20 +26,29 @@
 /**
    # If add flash type, need pay attention to the read uid command and the bit number of status register.
 
-    +--------------+------------+---------+----------+---------+---------------------------------+------------------------+
-    | Package Type | Flash Type | uid CMD |   MID    | Company |         tRES1                   |   Sector Erase Time    |
-    |              |            |         |          |         | (<25us, otherwise see note (1)) |         (MAX)          |
-    +--------------+------------+---------+----------+---------+---------------------------------+------------------------+
-    |   Internal   | P25Q80SU   |   0x4b  | 0x146085 |  PUYA   |           8us                   |         16ms           |
-    +--------------+------------+---------+----------+---------+---------------------------------+------------------------+
+    +--------------+------------+---------+----------+---------+---------------------------------+--------------------------------------+
+    | Package Type | Flash Type | uid CMD |   MID    | Company |         tRES1                   |            Sector Erase Time         |
+    |              |            |         |          |         | (<25us, otherwise see note (1)) |                  (MAX)               |
+    +--------------+------------+---------+----------+---------+---------------------------------+--------------------------------------+
+    |   Internal   | P25Q80SU   |   0x4b  | 0x146085 |  PUYA   |           8us                   |                   30ms               |
+    |              | P25Q40SU   |   0x4b  | 0x136085 |  PUYA   |           8us                   |                   30ms               |
+    |              | P25Q16SU   |   0x4b  | 0x156085 |  PUYA   |           8us                   |                   30ms               |
+    |              | P25Q32SU   |   0x4b  | 0x166085 |  PUYA   |           8us                   |                   30ms               |
+    +--------------+------------+---------+----------+---------+---------------------------------+--------------------------------------+
 
     Note:
     1 If tRES1 > 25us, update the delay of EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM in the S file.
       If tRES1 > 150us, this flash model cannot be used, because the chip hardware boot program only waits for 150us.
  **/
 const flash_hal_handler_t flash_list[] = {
+    //512K
+    {0x136085,flash_get_lock_block_mid136085, flash_unlock_mid136085, flash_lock_mid136085,FLASH_LOCK_LOW_256K_MID136085,flash_write_status_mid136085,FLASH_WRITE_STATUS_QE_MID136085,FLASH_QE_ENABLE_MID136085,FLASH_QE_DISABLE_MID136085},
     //1M
     {0x146085,flash_get_lock_block_mid146085, flash_unlock_mid146085, flash_lock_mid146085,FLASH_LOCK_LOW_512K_MID146085,flash_write_status_mid146085,FLASH_WRITE_STATUS_QE_MID146085,FLASH_QE_ENABLE_MID146085,FLASH_QE_DISABLE_MID146085},
+    //2M
+    {0x156085,flash_get_lock_block_mid156085, flash_unlock_mid156085, flash_lock_mid156085,FLASH_LOCK_LOW_1M_MID156085,flash_write_status_mid156085,FLASH_WRITE_STATUS_QE_MID156085,FLASH_QE_ENABLE_MID156085,FLASH_QE_DISABLE_MID156085},
+    //4M
+    {0x166085,flash_get_lock_block_mid166085, flash_unlock_mid166085, flash_lock_mid166085,FLASH_LOCK_LOW_2M_MID166085,flash_write_status_mid166085,FLASH_WRITE_STATUS_QE_MID166085,FLASH_QE_ENABLE_MID166085,FLASH_QE_DISABLE_MID166085},
 };
 const unsigned int FLASH_CNT = sizeof(flash_list)/sizeof(flash_hal_handler_t);
 

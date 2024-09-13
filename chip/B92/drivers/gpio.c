@@ -181,12 +181,10 @@ void gpio_set_input(gpio_pin_e pin, unsigned char value)
 
 /**
  * @brief      This function servers to set the specified GPIO as high resistor.
- * @param[in]  pin  - select the specified GPIO, GPIOG group is not included in GPIO_ALL
+ *             To prevent power leakage, you need to call gpio_shutdown(GPIO_ALL) (set all gpio to high resistance, except SWS and MSPI.)
+ *             as front as possible in the program, and then initialize the corresponding GPIO according to the actual using situation.
+ * @param[in]  pin  - select the specified GPIO.
  * @return     none.
- * @note       -# gpio_shutdown(GPIO_ALL) is a debugging method only and is not recommended for use in applications.
- *             -# gpio_shutdown(GPIO_ALL) set all GPIOs to high impedance except SWS and MSPI.
- *             -# If you want to use JTAG/USB in active state, or wake up the MCU with a specific pin,
- *                you can enable the corresponding pin after calling gpio_shutdown(GPIO_ALL).
  */
 void gpio_shutdown(gpio_pin_e pin)
 {
@@ -195,68 +193,49 @@ void gpio_shutdown(gpio_pin_e pin)
 	switch(group)
 	{
 		case GPIO_GROUPA:
-			reg_gpio_pa_out &= (~bit);
-			reg_gpio_pa_oen |= bit;//disable output
-			reg_gpio_pa_gpio |= bit;
 			reg_gpio_pa_ie &= (~bit);//disable input
+			reg_gpio_pa_oen |= bit;//disable output
+			reg_gpio_pa_gpio |= bit;//enable GPIO function
 			break;
 		case GPIO_GROUPB:
-			reg_gpio_pb_out &= (~bit);
+			reg_gpio_pb_ie &= (~bit);
 			reg_gpio_pb_oen |= bit;
 			reg_gpio_pb_gpio |= bit;
-			reg_gpio_pb_ie &= (~bit);
 			break;
 		case GPIO_GROUPC:
-			reg_gpio_pc_out &= (~bit);
+			analog_write_reg8(areg_gpio_pc_ie, analog_read_reg8(areg_gpio_pc_ie) & (~bit));
 			reg_gpio_pc_oen |= bit;
 			reg_gpio_pc_gpio |= bit;
-			analog_write_reg8(areg_gpio_pc_ie, analog_read_reg8(areg_gpio_pc_ie) & (~bit));
 			break;
 		case GPIO_GROUPD:
-			reg_gpio_pd_out &= (~bit);
+			analog_write_reg8(areg_gpio_pd_ie, analog_read_reg8(areg_gpio_pd_ie) & (~bit));
 			reg_gpio_pd_oen |= bit;
 			reg_gpio_pd_gpio |= bit;
-			analog_write_reg8(areg_gpio_pd_ie, analog_read_reg8(areg_gpio_pd_ie) & (~bit));
 			break;
-
 		case GPIO_GROUPE:
-			reg_gpio_pe_out &= (~bit);
+			reg_gpio_pe_ie &= (~bit);
 			reg_gpio_pe_oen |= bit;
 			reg_gpio_pe_gpio |= bit;
-			reg_gpio_pe_ie &= (~bit);
 			break;
-
 		case GPIO_GROUPF:
-			reg_gpio_pf_out &= (~bit);
+			reg_gpio_pf_ie &= (~bit);
 			reg_gpio_pf_oen |= bit;
 			reg_gpio_pf_gpio |= bit;
-			reg_gpio_pf_ie &= (~bit);
 			break;
-
 		case GPIO_GROUPG:
-			reg_gpio_pg_out &= (~bit);
+			reg_gpio_pg_ie &= (~bit);
 			reg_gpio_pg_oen |= bit;
 			reg_gpio_pg_gpio |= bit;
-			reg_gpio_pg_ie &= (~bit);
 			break;
-
 		case GPIO_ALL:
 		{
-			//as gpio
-			reg_gpio_pa_gpio = 0x7f;
-			reg_gpio_pb_gpio = 0xff;
-			reg_gpio_pc_gpio = 0xff;
-			reg_gpio_pd_gpio = 0xff;
-			reg_gpio_pe_gpio = 0xff;
-			reg_gpio_pf_gpio = 0xff;
-
-			//set low level
-			reg_gpio_pa_out = 0x00;
-			reg_gpio_pb_out = 0x00;
-			reg_gpio_pc_out = 0x00;
-			reg_gpio_pd_out = 0x00;
-			reg_gpio_pe_out = 0x00;
-			reg_gpio_pf_out = 0x00;
+			//disable input
+			reg_gpio_pa_ie = 0x80;//except SWS
+			reg_gpio_pb_ie = 0x00;
+			analog_write_reg8(areg_gpio_pc_ie, 0);
+			analog_write_reg8(areg_gpio_pd_ie, 0);
+			reg_gpio_pe_ie = 0x00;
+			reg_gpio_pf_ie = 0x00;
 
 			//output disable
 			reg_gpio_pa_oen = 0xff;
@@ -266,13 +245,13 @@ void gpio_shutdown(gpio_pin_e pin)
 			reg_gpio_pe_oen = 0xff;
 			reg_gpio_pf_oen = 0xff;
 
-			//disable input
-			reg_gpio_pa_ie = 0x80;					//SWS
-			reg_gpio_pb_ie = 0x00;
-			analog_write_reg8(areg_gpio_pc_ie, 0);
-			analog_write_reg8(areg_gpio_pd_ie, 0);
-			reg_gpio_pe_ie = 0x00;
-			reg_gpio_pf_ie = 0x00;
+			//as gpio
+			reg_gpio_pa_gpio = 0x7f;//except SWS
+			reg_gpio_pb_gpio = 0xff;
+			reg_gpio_pc_gpio = 0xff;
+			reg_gpio_pd_gpio = 0xff;
+			reg_gpio_pe_gpio = 0xff;
+			reg_gpio_pf_gpio = 0xff;
 		}
 	}
 }
@@ -546,9 +525,12 @@ void jtag_sdp_set_pin(gpio_pin_e pin)
 void jtag_set_pin_en(void)
 {
 	jtag_sdp_set_pin(GPIO_PC4);//TDI
+	gpio_set_up_down_res(GPIO_PC4,GPIO_PIN_PULLDOWN_100K);
     jtag_sdp_set_pin(GPIO_PC5);//TDO
     jtag_sdp_set_pin(GPIO_PC6);//TMS
+	gpio_set_up_down_res(GPIO_PC6,GPIO_PIN_PULLUP_10K);
     jtag_sdp_set_pin(GPIO_PC7);//TCK
+	gpio_set_up_down_res(GPIO_PC7,GPIO_PIN_PULLUP_10K);
 }
 
 /**
@@ -561,7 +543,9 @@ void jtag_set_pin_en(void)
 void sdp_set_pin_en(void)
 {
     jtag_sdp_set_pin(GPIO_PC6);//TMS
+    gpio_set_up_down_res(GPIO_PC6,GPIO_PIN_PULLUP_10K);
     jtag_sdp_set_pin(GPIO_PC7);//TCK
+    gpio_set_up_down_res(GPIO_PC7,GPIO_PIN_PULLUP_10K);
 }
 
 /**********************************************************************************************************************

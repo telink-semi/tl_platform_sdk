@@ -179,7 +179,7 @@ void user_init(void)
         audio_power_on();
         /***align mode initialization***/
         //step(1)
-        audio_set_i2s_align_en();
+        audio_i2s_align_en();
         audio_set_i2s_align_data_width(I2S_ALIGN_BIT_16_DATA);
         //step(2)
         audio_i2c_init_wm(GPIO_FC_PC5,GPIO_FC_PB2,(unsigned char)(sys_clk.pclk*1000*1000/(4*200000)));//set i2c frequency 200K

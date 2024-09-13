@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#include "nds_intrinsic.h"
+
 #if !defined(MCU_CORE_TL321X) || (DEMO_MODE == MANUAL_TEST_MODE)
 
 void user_init(void)

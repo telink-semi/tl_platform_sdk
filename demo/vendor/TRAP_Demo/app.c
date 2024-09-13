@@ -39,7 +39,9 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 #elif defined(MCU_CORE_TL721X)
 #define RF_POWER            RF_POWER_P7p00dBm
 #elif defined(MCU_CORE_TL321X)
-#define RF_POWER            RF_POWER_P10p73dBm
+#define RF_POWER            RF_POWER_P10p78dBm
+#elif defined(MCU_CORE_TL322X)
+#define RF_POWER            RF_POWER_P8p51dBm
 #elif defined(MCU_CORE_B931)
 #define RF_POWER            RF_POWER_P8p05dBm
 #endif
@@ -93,7 +95,7 @@ void user_init(void)
 
       /******** stimer init********/
     plic_interrupt_enable(IRQ_SYSTIMER);
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); //1ms
 #else
     stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); //1ms
@@ -111,7 +113,7 @@ void user_init(void)
 
     timer_start(TIMER0);
 
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_D25F);      //irq enable
 #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK);       //irq enable
@@ -131,14 +133,14 @@ void main_loop(void)
 
 _attribute_ram_code_sec_  void stimer_irq_handler(void)
 {
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     if(stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
 #else
     if(stimer_get_irq_status(FLD_SYSTEM_IRQ))
 #endif
     {
         gpio_set_high_level(LED2);
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F);  //clr irq
         stimer_set_irq_capture_d25f(stimer_get_tick() + 16*1000);
 #else
@@ -349,9 +351,11 @@ void main_loop(void)
  *  - When the core is awoken by the taken interrupt and global interrupts enable, it will resume and start to execute from the corresponding interrupt service routine.
  *  - When the core is awoken by the pending interrupt and global interrupts disable, it will resume and start to execute from the instruction after the WFI instruction.
  */
-# define WFI_MODE_GLOBAL_INTR_EN    0
-# define WFI_MODE_GLOBAL_INTR_DIS   1
-# define WFI_AWOKEN_MODE   WFI_MODE_GLOBAL_INTR_EN
+#define WFI_MODE_GLOBAL_INTR_EN_TIMER_AND_STIMER_WAKEUP  0 /* global interrupt enable, stimer and timer wakeup. */
+#define WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP 1 /* global interrupt disable, stimer and timer wakeup. */
+#define WFI_MODE_INTR_EN_ONLY_STIMER_WAKEUP              2 /* global interrupt enable, only stimer wakeup. */
+#define WFI_MODE_INTR_DIS_ONLY_STIMER_WAKEUP             3 /* global interrupt disable, only stimer wakeup. */
+#define WFI_AWOKEN_MODE                                  WFI_MODE_INTR_DIS_ONLY_STIMER_WAKEUP
 volatile unsigned int current_pc=0;
 
 void user_init(void)
@@ -371,7 +375,7 @@ void user_init(void)
      */
     core_mie_enable(FLD_MIE_MEIE);
     core_mie_disable(FLD_MIE_MSIE |FLD_MIE_MTIE);
-#if (WFI_AWOKEN_MODE== WFI_MODE_GLOBAL_INTR_DIS)
+#if ((WFI_AWOKEN_MODE== WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP) || (WFI_AWOKEN_MODE== WFI_MODE_INTR_DIS_ONLY_STIMER_WAKEUP))
     /* disable global interrupt. */
     core_interrupt_disable();
 #else
@@ -380,16 +384,19 @@ void user_init(void)
 #endif
 
     /* init stimer */
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_D25F);
 #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+    stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK);       //irq enable
 #else
+    stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
     stimer_set_irq_mask(FLD_SYSTEM_IRQ);        //irq enable
 #endif
      plic_interrupt_enable(IRQ_SYSTIMER);
 
+#if ((WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_EN_TIMER_AND_STIMER_WAKEUP) || (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP))
     /* init timer0 */
     timer_set_init_tick(TIMER0, 0);
     timer_set_cap_tick(TIMER0, 1500 * sys_clk.pclk * 1000);
@@ -399,12 +406,13 @@ void user_init(void)
 #endif
     timer_start(TIMER0);
     plic_interrupt_enable(IRQ_TIMER0);
+#endif
 
     current_pc = core_get_current_pc(); /* only for watch current_pc */
     printf("\r\n before enter WFI the current_pc=0x%4x\r\n", current_pc);
 }
 
-#if (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_EN)
+#if (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_EN_TIMER_AND_STIMER_WAKEUP)
 _attribute_ram_code_sec_ void timer0_irq_handler(void)
 {
     /* resume and start to execute from the corresponding interrupt service routine.*/
@@ -427,7 +435,9 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
 #endif
 }
 PLIC_ISR_REGISTER(timer0_irq_handler, IRQ_TIMER0)
+#endif
 
+#if ((WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_EN_TIMER_AND_STIMER_WAKEUP) || (WFI_AWOKEN_MODE == WFI_MODE_INTR_EN_ONLY_STIMER_WAKEUP))
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
     /* resume and start to execute from the corresponding interrupt service routine.*/
@@ -435,7 +445,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     printf("\r\ncurrent_pc=0x%4x\r\n", current_pc);
     printf("\r\nleave wfi mode from stimer interrupt service routine \r\n");
 
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
     {
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
@@ -452,11 +462,11 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
 #endif
 }
 PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
-#endif /* end of WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_EN */
+#endif
 
 void main_loop(void)
 {
-#if (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS)
+#if (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP)
     /**
      * Before entering wfi mode, clear all current requests from the PLIC.
      */
@@ -466,11 +476,39 @@ void main_loop(void)
         printf("clear plic request failed !!!\r\n");
         return;
     }
-#endif /* end of WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS */
+#endif /* end of WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP */
+
+#if (WFI_AWOKEN_MODE == WFI_MODE_INTR_EN_ONLY_STIMER_WAKEUP)
+    plic_irqs_preprocess_for_wfi(0, FLD_MIE_MEIE);
+    plic_interrupt_enable(IRQ_SYSTIMER);
+#endif
+
+#if (WFI_AWOKEN_MODE == WFI_MODE_INTR_DIS_ONLY_STIMER_WAKEUP)
+    plic_irqs_preprocess_for_wfi(1, FLD_MIE_MEIE);
+    plic_interrupt_enable(IRQ_SYSTIMER);
+#endif
 
     core_entry_wfi_mode(); /* WFI instruction enables the processor to enter the wait-for-interrupt (WFI) mode */
 
-#if (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS)
+#if (WFI_AWOKEN_MODE == WFI_MODE_INTR_EN_ONLY_STIMER_WAKEUP)
+    plic_irqs_postprocess_for_wfi(); // restore interrupts.
+#endif
+
+#if (WFI_AWOKEN_MODE == WFI_MODE_INTR_DIS_ONLY_STIMER_WAKEUP)
+    if (stimer_get_irq_status(FLD_SYSTEM_IRQ))
+    {
+        stimer_clr_irq_status(FLD_SYSTEM_IRQ); /* clr irq */
+        stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
+        gpio_toggle(LED2);
+    }
+    plic_irqs_postprocess_for_wfi(); // restore interrupts.
+    /* resume and start to execute from the instruction after the WFI instruction. */
+    current_pc = core_get_current_pc(); /* only for watch current_pc */
+    printf("\r\ncurrent_pc=0x%4x\r\n", current_pc);
+    printf("\r\n leave wfi mode from after the WFI instruction\r\n");
+#endif
+
+#if (WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP)
     /**
      * Since global interrupts are disabled, make sure that all interrupts are claimed and completed after exiting from WFI mode, \n
      * otherwise the interrupt flag will remain set((When global interrupt enable, hardware handles the claim, complete is handled in the plic_isr function)).
@@ -480,7 +518,7 @@ void main_loop(void)
     switch (cur_claim)
     {
     case IRQ_SYSTIMER:
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
         if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
         {
             stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
@@ -522,7 +560,7 @@ void main_loop(void)
              * Re-set the stimer capture so that stimer interrupts come sooner. \n
              * The purpose of this is to allow the stimer and timer0 to wake up the WFI alternately, in practice it is not necessary to set the capture value alternately.
              */
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
             stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S - SYSTEM_TIMER_TICK_1MS * 100);
 #else
             stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S - SYSTEM_TIMER_TICK_1MS * 100);
@@ -539,7 +577,7 @@ void main_loop(void)
     current_pc = core_get_current_pc(); /* only for watch current_pc */
     printf("\r\ncurrent_pc=0x%4x\r\n", current_pc);
     printf("\r\n leave wfi mode from after the WFI instruction\r\n");
-#endif /* end of WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS */
+#endif /* end of WFI_AWOKEN_MODE == WFI_MODE_GLOBAL_INTR_DIS_TIMER_AND_STIMER_WAKEUP */
 
     gpio_toggle(LED1);
 }
@@ -667,7 +705,7 @@ void user_init(void)
 
     /* 6: stimer init */
     plic_interrupt_enable(IRQ_SYSTIMER);
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); /* 1ms */
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_D25F);                          /* irq enable */
 #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
@@ -704,14 +742,14 @@ _attribute_ram_code_sec_ void mswi_irq_handler(void)
 
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
 #else
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ))
 #endif
     {
         gpio_set_high_level(LED4);
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL322X)
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
         stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS);
 #else

@@ -500,11 +500,10 @@ void bqb_serviceloop (void)
                 if((uPrivateStatus.tStatus.test_flag==1) && (uPrivateStatus.tStatus.test_mode==PRIVATE_TX_CARRIER_MODE))
                 {
                     extern unsigned char  g_single_tong_freqoffset;
-                    extern void rf_set_power_level_index_singletone (rf_power_level_e level);
                     g_single_tong_freqoffset = 1;
                     rf_set_zigbee_250K_mode();
                     rf_set_ble_chn(freq);
-                    rf_set_power_level_index_singletone(rf_power_Level_list[uPrivateStatus.tStatus.parameter]);
+                    rf_set_power_level_singletone(rf_power_Level_list[uPrivateStatus.tStatus.parameter]);
                     rf_set_txmode();
                     g_single_tong_freqoffset = 0;
                 }
@@ -651,11 +650,11 @@ void bqb_serviceloop (void)
  */
 void  bqbtest_init()
 {
-    t0 = rf_stimer_get_tick();
-    rf_phy_test_prbs9 (bqbtest_pkt + 6, 37);
-    reg_rf_ll_ctrl_1 &= ~FLD_RF_RX_FIRST_TIMEOUT_EN;//disable first timeout
+    t0 = stimer_get_tick();
     rf_mode_init();
     rf_set_ble_1M_NO_PN_mode();
+    rf_phy_test_prbs9 (bqbtest_pkt + 6, 37);
+    reg_rf_ll_ctrl_1 &= ~FLD_RF_RX_FIRST_TIMEOUT_EN;//disable first timeout
 #if(RF_FAST_SETTLE)
 #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
 

@@ -63,7 +63,7 @@ void user_init(void)
 
             plic_interrupt_enable(IRQ_USB_ENDPOINT);
             core_interrupt_enable();
-            usb_set_pin_en();
+            usb_set_pin(1);
 
 
 }

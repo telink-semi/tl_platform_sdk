@@ -88,7 +88,7 @@ __attribute__((weak)) void except_handler(void)
  * @return      none
  */
 _attribute_ram_code_sec_noinline_ void trap_entry(void) __attribute__((interrupt("machine"), aligned(4)));
-void trap_entry(void)
+__attribute__((weak)) void trap_entry(void)
 {
     long mcause = read_csr(NDS_MCAUSE);
     long mepc = 0;

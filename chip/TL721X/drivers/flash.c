@@ -25,10 +25,10 @@
 #include "lib/include/flash_base.h"
 #include "flash.h"
 
-#include "mspi.h"
+#include "lib/include/mspi.h"
 #include "timer.h"
-#include "core.h"
-#include "stimer.h"
+#include "lib/include/core.h"
+#include "lib/include/stimer.h"
 #include "types.h"
 
 _attribute_data_retention_sec_ flash_handler_t flash_read_page = flash_dread;

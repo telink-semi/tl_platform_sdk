@@ -93,7 +93,7 @@ void user_init(void)
 #if (!defined(MCU_CORE_TL751X)) && (STIMER_MODE == STIMER_IRQ)
     stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
 
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK);   //irq enable
 #else
     stimer_set_irq_mask(FLD_SYSTEM_IRQ);
@@ -196,7 +196,7 @@ void user_init(void)
      * Configure interrupt first, then configure DMA, otherwise DMA cannot enter interrupt.
      */
     dma_set_irq_mask(CAPT_DMA_CHN, TC_MASK);
-    dma_set_llp_int_mode(CAPT_DMA_CHN, DMA_INTERRUPT_MODE);
+    dma_set_llp_irq_mode(CAPT_DMA_CHN, DMA_INTERRUPT_MODE);
     plic_interrupt_enable(IRQ_DMA);
     core_interrupt_enable();
     stimer_set_input_capt_dma_chain_llp(CAPT_DMA_CHN, stimer_capt_dma0_buff, CAPT_DMA_CNT*4, &stimer_dma_chain_cfg[0]);
