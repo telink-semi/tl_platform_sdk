@@ -11,10 +11,10 @@
   * TL721X: C1T315A20
   * TL321X: C1T335A20
 * Toolchain version
-  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
-  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
-  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
-  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
+  - TLSR921x/TLSR951x(B91): TL32 ELF MCULIB V5F GCC7.4  (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
+  - TLSR922x/TLSR952x(B92): TL32 ELF MCULIB V5F GCC12.2 (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
+  - TL721x: TL32 ELF MCULIB V5F GCC12.2 (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
+  - TL321x: TL32 ELF MCULIB V5 GCC12.2 (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
 
 ### Note
 * (B92/TL721x/TL321x) Update toolchains from V5.3.0 to V5.3.x(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
@@ -148,10 +148,10 @@
   * TL721X: C1T315A20
   * TL321X: C1T335A20
 * 工具链版本
-  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
-  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
-  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
-  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
+  - TLSR921x/TLSR951x(B91): TL32 ELF MCULIB V5F GCC7.4  (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
+  - TLSR922x/TLSR952x(B92): TL32 ELF MCULIB V5F GCC12.2 (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
+  - TL721x: TL32 ELF MCULIB V5F GCC12.2 (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
+  - TL321x: TL32 ELF MCULIB V5 GCC12.2 (IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/wiki/IDE-and-Tools/Telink_IoT_Studio/))
 
 ### Note
 * (B92/TL721x/TL321x)编译工具链从V5.3.0升级为V5.3.x。(http://192.168.48.36/src/driver/tl_platform_src/merge_requests/1175)
