@@ -56,7 +56,7 @@
   * (TL721x)SKE_Demo is changed to v1.1.9.(merge_requests/@1364)
 * **rf**
   * (B91/B92/TL7518)Added "rf_set_tx_wait_time" and "rf_set_rx_wait_time" interfaces to configure tx wait time and rx wait time.(merge_requests/@1403)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Adapted the fast settle mode switching feature, added the following interfaces: rf_tx_fast_settle_get_cal_val, rf_tx_fast_settle_set_cal_val, rf_rx_fast_settle_get_cal_val, and rf_rx_fast_settle_set_cal_val. Removed the global variable g_fast_settle_cal_val and introduced the global pointer variable g_fast_settle_cal_val_ptr.(merge_requests/1416)(merge_requests/@1432)(merge_requests/1439)
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Adapted the fast settle mode switching feature, added the following interfaces: rf_tx_fast_settle_get_cal_val, rf_tx_fast_settle_set_cal_val, rf_rx_fast_settle_get_cal_val, and rf_rx_fast_settle_set_cal_val. Removed the global variable g_fast_settle_cal_val and introduced the global pointer variable g_fast_settle_cal_val_ptr.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
   * (TL321X) Enable software dcoc and add rf_set_rx_dcoc_cali_by_sw interfaces for customers to control the software dcoc on/off.(192.168.48.36/src/driver/tl_platform_src/merge_requests/@1435)
   * (TL721X/TL321X) Add interfaces "rf_dma_chn_en" and "rf_dma_chn_dis"(merge_requests/@1483)
 * **pke**
@@ -184,7 +184,7 @@
   * (TL721x)将SKE_Demo更新到v1.1.9.(merge_requests/@1364)
 * **rf**
   * (B91/B92/TL7518)增加了"rf_set_tx_wait_time" 和"rf_set_rx_wait_time"接口配置tx wait时间和rx wait时间(merge_requests/@1403)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)适配fast settle模式切换功能，新增接口rf_tx_fast_settle_get_cal_val、rf_tx_fast_settle_set_cal_val、rf_rx_fast_settle_get_cal_val、rf_rx_fast_settle_set_cal_val；删除全局变量g_fast_settle_cal_val，新增全局指针变量g_fast_settle_cal_val_ptr。(merge_requests/1416)(merge_requests/1432)(merge_requests/@1439)
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)适配fast settle模式切换功能，新增接口rf_tx_fast_settle_get_cal_val、rf_tx_fast_settle_set_cal_val、rf_rx_fast_settle_get_cal_val、rf_rx_fast_settle_set_cal_val；删除全局变量g_fast_settle_cal_val，新增全局指针变量g_fast_settle_cal_val_ptr。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
   * (TL321X)使能软件dcoc并添加rf_set_rx_dcoc_cali_by_sw接口供客户控制软件dcoc开关。(merge_requests/@1435)
   * (TL721X/TL321X)增加了"rf_dma_chn_en" 和 "rf_dma_chn_dis"接口(merge_requests/@1483)
 * **pke**
