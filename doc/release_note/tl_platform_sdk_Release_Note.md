@@ -3,17 +3,22 @@
 ### Version
 
 * SDK version: tl_platform_sdk V3.3.0
-* This version of the SDK supports TLSR921x/TLSR951x(A0/A1/A2),TLSR922x/TLSR952x(A3/A4),TL721X(A2),TL321X(A0) chips.
+* This version of the SDK supports TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL721X(A2),TL321X(A0) chips.
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
 * Toolchain version
-  - TLSR921x/TLSR951x: gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
-  - TLSR922x/TLSR952x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
   - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
   - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
 
 ### Bug Fixes
 
 * **aes**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)Solved the problem that the aes modified the e0 address pointer, causing the BT communication to be abnormal.(merge_requests/@1273)
+  * (B91/B92)Solved the problem that the aes modified the e0 address pointer, causing the BT communication to be abnormal.(merge_requests/@1273)
 * **pm**
   * (TL721X)Solves an issue where users cannot sleep and wake up normally when all interrupt priorities such as PM are initialized to 0 during initialization.(merge_requests/@1332)
   * (TL321x)Solved the issue of possible SRAM loss when entering suspend sleep after deep retention sleep. (merge_requests/@1480)
@@ -22,14 +27,14 @@
 * **ske** 
   * (TL321X/TL721x)Addressed the issue where the software did not check the busy signal bit before writing to the SKE register, leading to data errors caused by repeated software triggering of calculations before the SKE computation was complete.（merge_requests/@1331, merge_requests/@1340）
 * **audio**
-  * (TLSR921x/TLSR951x)Fixed the problem that i2s pin input function could not be used because gpio_shutdown(GPIO_ALL) was called during initialization.(merge_requests/@1351)
+  * (B91)Fixed the problem that i2s pin input function could not be used because gpio_shutdown(GPIO_ALL) was called during initialization.(merge_requests/@1351)
   * (TL721x/TL321x)Fix BUFFER_TO_LINEOUT demo waveform distortion issue.(merge_requests/@1472)
 * **rf**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)Fixed an issue where incorrect configuration during the enable and disable of fast settle caused the settle process to deviate from the expected behavior, potentially leading to a degradation in RF performance.(merge_requests/@1354)
+  * (B91/B92)Fixed an issue where incorrect configuration during the enable and disable of fast settle caused the settle process to deviate from the expected behavior, potentially leading to a degradation in RF performance.(merge_requests/@1354)
 * **adc**
   * (TL721x)1.A2 test PB0 PD1 PD2 three pins capture voltage performance slightly worse than other pins, so remove. 2.Test found that enabling dwa affects adc performance so don't use this feature. 3.pre_scale = 1/4 Fixed on A2, already open.(merge_requests/@1428,merge_requests/@1445)
 * **clock**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)Fixed PLL crash caused by failure to vibrate. If the PLL starts abnormally, restart it. Use PM_ANA_REG_POWER_ON_CLR_BUF0[bit3-6] to check whether the reset caused by abnormal PLL starts occurs. Use drv_get_error_code to query the exception source. Note that the exception source is lost after each reset. You need to read and save the error source at the application layer in advance.(merge_requests/@1268)(merge_requests/@1438)
+  * (B91/B92)Fixed PLL crash caused by failure to vibrate. If the PLL starts abnormally, restart it. Use PM_ANA_REG_POWER_ON_CLR_BUF0[bit3-6] to check whether the reset caused by abnormal PLL starts occurs. Use drv_get_error_code to query the exception source. Note that the exception source is lost after each reset. You need to read and save the error source at the application layer in advance.(merge_requests/@1268)(merge_requests/@1438)
 * **sys** 
   * (tl721x)The problem is solved because the efuse load is not completed, which leads to the instability of ram limit and the error of program handling.(merge_requests/@1454)
 * **spi**
@@ -43,7 +48,7 @@
   * (TL721x)Add ed25519 algorithm driver and demo.(merge_requests/@1289)
 * **audio**
   * (TL721x)Add TL721x audio dmic to i2s case.(merge_requests/@1345)
-  * (TLSR921x/TLSR951x)Added audio i2sin to i2sout case.(merge_requests/@1351)
+  * (B91)Added audio i2sin to i2sout case.(merge_requests/@1351)
   * (TL721x)Add audio_reset_audio_clk interface to change codec clk.(merge_requests/@1418)
   * (TL321x) Add audio driver and demo.(merge_requests/@1367)
   * (TL721x/TL321x) Add spi_txdma_req_after_cmd_en,spi_txdma_req_after_cmd_dis interface.(merge_requests/@1472)。
@@ -56,8 +61,8 @@
   * (TL721x)SKE_Demo is changed to v1.1.9.(merge_requests/@1364)
 * **rf**
   * (B91/B92/TL7518)Added "rf_set_tx_wait_time" and "rf_set_rx_wait_time" interfaces to configure tx wait time and rx wait time.(merge_requests/@1403)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Adapted the fast settle mode switching feature, added the following interfaces: rf_tx_fast_settle_get_cal_val, rf_tx_fast_settle_set_cal_val, rf_rx_fast_settle_get_cal_val, and rf_rx_fast_settle_set_cal_val. Removed the global variable g_fast_settle_cal_val and introduced the global pointer variable g_fast_settle_cal_val_ptr.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
-  * (TL321X) Enable software dcoc and add rf_set_rx_dcoc_cali_by_sw interfaces for customers to control the software dcoc on/off.(192.168.48.36/src/driver/tl_platform_src/merge_requests/@1435)
+  * (B91/B92/TL721x/TL321x) Adapted the fast settle mode switching feature, added the following interfaces: rf_tx_fast_settle_get_cal_val, rf_tx_fast_settle_set_cal_val, rf_rx_fast_settle_get_cal_val, and rf_rx_fast_settle_set_cal_val. Removed the global variable g_fast_settle_cal_val and introduced the global pointer variable g_fast_settle_cal_val_ptr.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (TL321X) Enable software dcoc and add rf_set_rx_dcoc_cali_by_sw interfaces for customers to control the software dcoc on/off.(merge_requests/@1435)
   * (TL721X/TL321X) Add interfaces "rf_dma_chn_en" and "rf_dma_chn_dis"(merge_requests/@1483)
 * **pke**
   * (TL721x)Add x25519 algorithm driver and demo.(merge_requests/@1421)
@@ -70,26 +75,26 @@
 * **otp**
   * (TL721x)Add the interface otp_get_ieee_addr().(merge_requests/@1440)
 * **DUT_Demo** 
-  * (TLSR922x/TLSR952x)Add DUT_Demo and users can develop fixture test programs according to their own needs.(merge_requests/@1384)
+  * (B92)Add DUT_Demo and users can develop fixture test programs according to their own needs.(merge_requests/@1384)
 * **EMI_BQB_DEMO**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Adapted the fast settle mode switching feature.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x) Adapted the fast settle mode switching feature.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
 * **RF_DEMO**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Adapted the fast settle mode switching feature.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x) Adapted the fast settle mode switching feature.(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
 
 ### Refactoring
 
 * **usb**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X)Add enum type-casting to GPIO pin in usb_set_pin() to prevent compilation errors.(merge_requests/@1321)
-  * (TLSR921x/TLSR951x) tinyusb port file add parameter checking.(merge_requests/@1472)
+  * (B91/B92/TL721X/TL321X)Add enum type-casting to GPIO pin in usb_set_pin() to prevent compilation errors.(merge_requests/@1321)
+  * (B91) tinyusb port file add parameter checking.(merge_requests/@1472)
 * **uart**
-  * (TLSR922x/TLSR952x)uart_get_dma_rev_data_len: Optimize the interface logic to return the dma-configured receive length when the transmit length is greater than the receive length. (merge_requests/@1338)
+  * (B92)uart_get_dma_rev_data_len: Optimize the interface logic to return the dma-configured receive length when the transmit length is greater than the receive length. (merge_requests/@1338)
 * **adc**
-  * (TL721X/TL321X)Revert adc_input_pin_e to adc_input_pin_def_e for compatibility with TLSR922x/TLSR952x.(merge_requests/@1339)
+  * (TL721X/TL321X)Revert adc_input_pin_e to adc_input_pin_def_e for compatibility with B92.(merge_requests/@1339)
 * **plic** 
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)Remove the clock_32k_init and calibration interfaces from the mtime_clk_init interface and put them in the demo to be called as needed.（merge_requests/@1394）
+  * (B91/B92/TL721x/TL321x)Remove the clock_32k_init and calibration interfaces from the mtime_clk_init interface and put them in the demo to be called as needed.（merge_requests/@1394）
 * **rf**
   * (TL721X/TL321X)Optimized the interfaces of "rf_set_tx_wait_time" and "rf_set_rx_wait_time" and updated relevant comments.(merge_requests/@1403)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Adapted the fast settle mode switching feature and updated the following interfaces: rf_set_chn, rf_rx_fast_settle_update_cal_val, rf_tx_fast_settle_update_cal_val and rf_set_rccal_cal_val(Excluding TLSR921x/TLSR951x/TLSR922x/TLSR952x).(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x) Adapted the fast settle mode switching feature and updated the following interfaces: rf_set_chn, rf_rx_fast_settle_update_cal_val, rf_tx_fast_settle_update_cal_val and rf_set_rccal_cal_val(Excluding B91/B92).(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
 * **audio**
   * (TL721x)Adjust the audio sample rate arrays and enum, remove 8.02k sample rate.(merge_requests/@1415)
   * (TL721X)Modify reg_fifo_th_irq register bit comments.(merge_requests/@1401)
@@ -99,9 +104,9 @@
 * **pke**  
   * (TL321X)Remove duplicate declarations, delete the pke_utility.h file.(merge_requests/@1444)
 * **lib**
-  * (TLSR922x/TLSR952x)The file analog.c and the interface sys_set_dcdc_1pP4_ldo_2p0() are encapsulated into library files.(merge_requests/@1195,merge_requests/@1268)
+  * (B92)The file analog.c and the interface sys_set_dcdc_1pP4_ldo_2p0() are encapsulated into library files.(merge_requests/@1195,merge_requests/@1268)
 * **gpio**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)add comments: Do not recommended that two or more GPIOs be set to the same interrupt source, as the interrupt is uncertain if triggered at the same time.(merge_requests/@1470)
+  * (B91/B92/TL721x/TL321x)add comments: Do not recommended that two or more GPIOs be set to the same interrupt source, as the interrupt is uncertain if triggered at the same time.(merge_requests/@1470)
 
 ### BREAKING CHANGES 
 
@@ -109,7 +114,7 @@
   * (TL721x/TL321x)uart_set_rx_timeout: For compatibility, change it to uart_set_rx_timeout_with_exp.(merge_requests/@1338)
 * **audio**
   * (TL721X)Adjusted the parameter's position of audio_rx_dma_chain_init and audio_tx_dma_chain_init to make their function prototypes consistent with other chips.(merge_requests/@1342)
-  * (TLSR921x/TLSR951x)Fixed i2s pin definition in audio_i2s_set_pin interface. Swapped adc_dat and dac_dat, adc_lr and dac_lr.(merge_requests/@1351)
+  * (B91)Fixed i2s pin definition in audio_i2s_set_pin interface. Swapped adc_dat and dac_dat, adc_lr and dac_lr.(merge_requests/@1351)
   * (TL721X)Change the name of the audio_i2s_set_mclk interface to audio_set_codec_clk_as_mclk, and the name of the audio_aclk_debug_set_mclk interface to audio_set_debug_clk_as_mclk, and add the following function to gpio_func_e function in gpio_func_e.(merge_requests/@1401)
 * **spi**  
   * (TL321x)gspi_cs_pin_en: Interface formal parameter type changed from gpio_pin_e to gpio_func_pin_e.(merge_requests/@1320)
@@ -131,17 +136,22 @@
 ### 版本
 
 * SDK版本: tl_platform_sdk V3.3.0
-* 此版本SDK支持 TLSR921x/TLSR951x(A0/A1/A2),TLSR922x/TLSR952x(A3/A4),TL721X(A2),TL321X(A0) 芯片。
+* 此版本SDK支持 TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL721X(A2),TL321X(A0) 芯片。
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
 * 工具链版本
-  - TLSR921x/TLSR951x: gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
-  - TLSR922x/TLSR952x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
   - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
   - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
 
 ### Bug Fixes
 
 * **aes** 
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)解决了因为aes修改了e0的地址指针，导致BT通信异常的问题。(merge_requests/@1273)
+  * (B91/B92)解决了因为aes修改了e0的地址指针，导致BT通信异常的问题。(merge_requests/@1273)
 * **pm** 
   * (TL721X)解决了当用户在初始化中，把PM等所有中断优先级初始化成0时，不能正常睡眠唤醒的问题。(merge_requests/@1332)
   * (TL321x)解决了deep retention模式唤醒后再进入suspend模式可能造成的RAM未完全保持问题。 (merge_requests/@1480)
@@ -150,14 +160,14 @@
 * **ske** 
   * (TL321X/TL721x)解决了ske在写寄存器之前没有查看busy信号位，导致的ske计算还未完成时软件重复触发计算从而数据出错的问题。（merge_requests/@1331, merge_requests/@1340）
 * **audio**
-  * (TLSR921x/TLSR951x)修复了初始化调用gpio_shutdown(GPIO_ALL)后，i2s pin输入功能无法使用问题。(merge_requests/@1351)
+  * (B91)修复了初始化调用gpio_shutdown(GPIO_ALL)后，i2s pin输入功能无法使用问题。(merge_requests/@1351)
   * (TL721x/TL321x)修复 BUFFER_TO_LINEOUT demo 波形失真的问题。(merge_requests/@1472)
 * **rf**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)修复了由于fast settle使能和退出时的错误配置，导致settle过程与预期不符，从而可能引发RF性能下降的问题。(merge_requests/@1354)
+  * (B91/B92)修复了由于fast settle使能和退出时的错误配置，导致settle过程与预期不符，从而可能引发RF性能下降的问题。(merge_requests/@1354)
 * **adc**
   * (TL721x)1.A2测试PB0 PD1 PD2三引脚采集电压性能略差于其他引脚，因此删除。2.测试发现使能dwa影响adc性能，所以不使用此特性。3.pre_scale = 1/4 在A2 上修复，已开放。(merge_requests/@1428,merge_requests/@1445)
 * **clock** 
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)解决PLL起振失败导致死机的问题。 PLL起振异常则重启，占用PM_ANA_REG_POWER_ON_CLR_BUF0[bit3-6]查询是否发生过PLL起振异常等导致的复位。通过接口drv_get_error_code查询异常来源，注意异常来源每次复位后会丢失，需要应用层提前读取保存。(merge_requests/@1268)(merge_requests/@1438)
+  * (B91/B92)解决PLL起振失败导致死机的问题。 PLL起振异常则重启，占用PM_ANA_REG_POWER_ON_CLR_BUF0[bit3-6]查询是否发生过PLL起振异常等导致的复位。通过接口drv_get_error_code查询异常来源，注意异常来源每次复位后会丢失，需要应用层提前读取保存。(merge_requests/@1268)(merge_requests/@1438)
 * **sys** 
   * (tl721x)解决了因为efuse load未完成，导致ram限制不稳定，程序搬运出错，导致的死机隐患。(merge_requests/@1454)
 * **spi**
@@ -171,7 +181,7 @@
   * (TL721x)添加ed25519算法驱动和demo。(merge_requests/@1289)
 * **audio**
   * (TL721x)增加了TL721x audio dmic in i2s out的case。(merge_requests/@1345)
-  * (TLSR921x/TLSR951x)新增了audio i2sin to i2sout的用例。(merge_requests/@1351)
+  * (B91)新增了audio i2sin to i2sout的用例。(merge_requests/@1351)
   * (TL721x)增加了audio_reset_audio_clk接口，用于改变codec的时钟。(merge_requests/@1418)
   * (TL321x) 添加audio相关驱动和demo.(merge_requests/@1367)。
   * (TL721x/TL321x) 添加spi_txdma_req_after_cmd_en,spi_txdma_req_after_cmd_dis接口。(merge_requests/@1472)。
@@ -184,7 +194,7 @@
   * (TL721x)将SKE_Demo更新到v1.1.9.(merge_requests/@1364)
 * **rf**
   * (B91/B92/TL7518)增加了"rf_set_tx_wait_time" 和"rf_set_rx_wait_time"接口配置tx wait时间和rx wait时间(merge_requests/@1403)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)适配fast settle模式切换功能，新增接口rf_tx_fast_settle_get_cal_val、rf_tx_fast_settle_set_cal_val、rf_rx_fast_settle_get_cal_val、rf_rx_fast_settle_set_cal_val；删除全局变量g_fast_settle_cal_val，新增全局指针变量g_fast_settle_cal_val_ptr。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x)适配fast settle模式切换功能，新增接口rf_tx_fast_settle_get_cal_val、rf_tx_fast_settle_set_cal_val、rf_rx_fast_settle_get_cal_val、rf_rx_fast_settle_set_cal_val；删除全局变量g_fast_settle_cal_val，新增全局指针变量g_fast_settle_cal_val_ptr。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
   * (TL321X)使能软件dcoc并添加rf_set_rx_dcoc_cali_by_sw接口供客户控制软件dcoc开关。(merge_requests/@1435)
   * (TL721X/TL321X)增加了"rf_dma_chn_en" 和 "rf_dma_chn_dis"接口(merge_requests/@1483)
 * **pke**
@@ -198,26 +208,26 @@
 * **otp**
   * (TL721x)添加接口otp_get_ieee_addr()。(merge_requests/@1440)
 * **DUT_Demo** 
-  * (TLSR922x/TLSR952x)新增DUT_Demo并且用户可根据自身需要开发夹具测试程序。(merge_requests/@1384) 
+  * (B92)新增DUT_Demo并且用户可根据自身需要开发夹具测试程序。(merge_requests/@1384) 
 * **EMI_BQB_DEMO**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)fast settle 适配模式切换功能。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x)fast settle 适配模式切换功能。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
 * **RF_DEMO**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)fast settle 适配模式切换功能。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x)fast settle 适配模式切换功能。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
 
 ### Refactoring
 
 * **usb**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721X/TL321X)在usb_set_pin()中增加GPIO pin的枚举类型转换防止编译报错。(merge_requests/@1321)
-  * (TLSR921x/TLSR951x) tinyusb 移植文件添加参数检查。(merge_requests/@1472)
+  * (B91/B92/TL721X/TL321X)在usb_set_pin()中增加GPIO pin的枚举类型转换防止编译报错。(merge_requests/@1321)
+  * (B91) tinyusb 移植文件添加参数检查。(merge_requests/@1472)
 * **uart**
-  * (TLSR922x/TLSR952x)uart_get_dma_rev_data_len: 优化接口逻辑，当发送长度大于接收长度时，则返回dma配置的接受长度。(merge_requests/@1338)
+  * (B92)uart_get_dma_rev_data_len: 优化接口逻辑，当发送长度大于接收长度时，则返回dma配置的接受长度。(merge_requests/@1338)
 * **adc**
-  * (TL721X/TL321X)将 adc_input_pin_e 恢复为 adc_input_pin_def_e，以便与 TLSR922x/TLSR952x 兼容。(merge_requests/@1339)
+  * (TL721X/TL321X)将 adc_input_pin_e 恢复为 adc_input_pin_def_e，以便与 B92 兼容。(merge_requests/@1339)
 * **plic** 
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)将mtime_clk_init接口中的clock_32k_init和clock_cal接口移除，放到demo按需要调用。（merge_requests/@1394）
+  * (B91/B92/TL721x/TL321x)将mtime_clk_init接口中的clock_32k_init和clock_cal接口移除，放到demo按需要调用。（merge_requests/@1394）
 * **rf**
   * (TL721X/TL321X)优化了"rf_set_tx_wait_time"和"rf_set_rx_wait_time"接口并更新了相关注释(merge_requests/@1403)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)适配fast settle模式切换功能，更新接口rf_set_chn、rf_rx_fast_settle_update_cal_val、rf_tx_fast_settle_update_cal_val、rf_set_rccal_cal_val(TLSR921x/TLSR951x/TLSR922x/TLSR952x除外)。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
+  * (B91/B92/TL721x/TL321x)适配fast settle模式切换功能，更新接口rf_set_chn、rf_rx_fast_settle_update_cal_val、rf_tx_fast_settle_update_cal_val、rf_set_rccal_cal_val(B91/TLSR922x/TLSR952x除外)。(merge_requests/@1416)(merge_requests/@1432)(merge_requests/@1439)
 * **audio**
   * (TL721x)调整audio采样率数组和枚举，删除了8.02k采样率。(merge_requests/@1415)
   * (TL721X)修改reg_fifo_th_irq寄存器bit位注释。(merge_requests/@1401)
@@ -227,9 +237,9 @@
 * **pke**  
   * (TL321X)去掉重复的声明，删掉pke_utility.h文件。(merge_requests/@1444)
 * **lib**
-  * (TLSR922x/TLSR952x)文件analog.c和接口sys_set_dcdc_1pP4_ldo_2p0()封装成库文件。(merge_requests/@1195,merge_requests/@1268)
+  * (B92)文件analog.c和接口sys_set_dcdc_1pP4_ldo_2p0()封装成库文件。(merge_requests/@1195,merge_requests/@1268)
 * **gpio**
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x)添加注释: 不推荐两个或多个GPIO设置成同一种中断源，如果同时触发了中断，中断的情况是不确定的。(merge_requests/@1470)
+  * (B91/B92/TL721x/TL321x)添加注释: 不推荐两个或多个GPIO设置成同一种中断源，如果同时触发了中断，中断的情况是不确定的。(merge_requests/@1470)
 
 ### BREAKING CHANGES 
 
@@ -237,7 +247,7 @@
   * (TL721x/TL321x)uart_set_rx_timeout: 为了兼容,将其改为uart_set_rx_timeout_with_exp。(merge_requests/@1338)
 * **audio**
   * (TL721X)调整了audio_rx_dma_chain_init和audio_tx_dma_chain_init的参数位置，使其函数原型与其他芯片一致。(merge_requests/@1342)
-  * (TLSR921x/TLSR951x)在audio_i2s_set_pin接口中，修正了i2s pin定义，互换了adc_dat和dac_dat，adc_lr和dac_lr。（merge_requests/@1351）
+  * (B91)在audio_i2s_set_pin接口中，修正了i2s pin定义，互换了adc_dat和dac_dat，adc_lr和dac_lr。（merge_requests/@1351）
   * (TL721X)将audio_i2s_set_mclk接口名称修改为audio_set_codec_clk_as_mclk，将audio_aclk_debug_set_mclk接口名称修改为audio_set_debug_clk_as_mclk， 并在gpio_func_e添加相应的function 。(merge_requests/@1401)
 * **spi**  
   * (TL321x)gspi_cs_pin_en: 接口形参类型修改，从gpio_pin_e类型修改为gpio_func_pin_e类型 。(merge_requests/@1320)
