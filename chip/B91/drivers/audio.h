@@ -39,12 +39,23 @@
 #include "pwm.h"
 #include "compiler.h"
 
+/**
+ *  @brief  Define fifo type
+ */
+typedef enum
+{
+    FIFO0 = 0,
+    FIFO1,
+} audio_fifo_chn_e;
+
 typedef enum{
 	I2S_BCK_PC3      = GPIO_PC3,
-	I2S_ADC_LR_PC4   = GPIO_PC4,
-	I2S_ADC_DAT_PC5  = GPIO_PC5,
-	I2S_DAC_LR_PC6   = GPIO_PC6,
-	I2S_DAC_DAT_PC7  = GPIO_PC7,
+	/* The adc_lr/adc_data and dac_lr/dac_data pins were previously reversed,
+	and now correctly named. */
+	I2S_ADC_LR_PC6   = GPIO_PC6, /* GPIO_PC4 before */
+	I2S_ADC_DAT_PC7  = GPIO_PC7, /* GPIO_PC5 before */
+	I2S_DAC_LR_PC4   = GPIO_PC4, /* GPIO_PC6 before */
+	I2S_DAC_DAT_PC5  = GPIO_PC5, /* GPIO_PC7 before */
 }i2s_pin_e;
 
 
@@ -202,8 +213,6 @@ typedef struct {
 	unsigned char  i2s_lr_clk_invert_select;
 	unsigned char  i2s_data_invert_select;
 }audio_i2s_invert_config_t;
-
-
 
 typedef enum{
 	I2S_DATA_IN_FIFO ,
@@ -431,6 +440,32 @@ typedef struct {
 	unsigned char    i2s_clk_mode;
 	unsigned char 	 i2s_bclk_div;
 }audio_i2s_clk_config_t;
+
+/**
+ *  @brief  Define audio i2s general configuration struct
+ */
+typedef struct
+{
+    audio_sample_rate_e sample_rate;
+    i2s_data_select_e data_width;
+    i2s_mode_select_e i2s_mode;
+    i2s_codec_m_s_mode_e master_slave_mode;
+    audio_flow_e audio_io_mode;
+} audio_i2s_config_t;
+
+/**
+ *  @brief  Define audio i2s input output struct
+ */
+typedef struct
+{
+    void *data_buf;
+    unsigned int data_buf_size;
+    i2s_data_select_e data_width;
+    audio_fifo_chn_e fifo_chn;
+    audio_channel_select_e audio_ch_sel;
+    dma_chn_e dma_num;
+} audio_i2s_input_output_t;
+
 /**
  * 	@brief      This function serves to set the clock of i2s
  * 	@param[in]  step - the dividing factor of step.
@@ -843,6 +878,15 @@ void audio_set_dmic_pin(dmic_pin_group_e pin_gp);
  */
 void audio_mux_config(audio_flow_e audio_flow, audio_in_mode_e ain0_mode , audio_in_mode_e ain1_mode,audio_out_mode_e i2s_aout_mode);
 
+/**
+ * @brief     This function serves to set audio i2s cmode.
+ * @param[in] audio_flow_e    - audio flow select
+ * @return    none
+ */
+static inline void audio_set_i2s_cmode(audio_flow_e audio_flow)
+{
+	reg_audio_ctrl = (reg_audio_ctrl & (~FLD_AUDIO_I2S_CMODE)) | MASK_VAL(FLD_AUDIO_I2S_CMODE, audio_flow);
+}
 
 /**
  * @brief     This function serves to config codec for dac.
@@ -1003,6 +1047,27 @@ void audio_init_i2c(audio_flow_mode_e flow_mode,audio_sample_rate_e rate,audio_c
  * @return    none
  */
 void audio_i2s_init(pwm_pin_e pwm0_pin, i2c_sda_pin_e sda_pin,i2c_scl_pin_e scl_pin);
+
+/**
+ * @brief This function serves to initialize configuration i2s.
+ * @param[in]  i2s_config - the relevant configuration struct pointer
+ * @return    none
+ */
+void audio_i2s_config_init(audio_i2s_config_t *i2s_config);
+
+/**
+ * @brief This function serves to initialize input i2s.
+ * @param[in] audio_i2s_input - the relevant input struct pointer
+ * @return    none
+ */
+void audio_i2s_input_init(audio_i2s_input_output_t *audio_i2s_input);
+
+/**
+ * @brief  This function serves to initialize output i2s.
+ * @param[in] audio_i2s_output - audio_i2s_input_output_t pointer.
+ * @return    none.
+ */
+void audio_i2s_output_init(audio_i2s_input_output_t *audio_i2s_output);
 
 /**
  * @brief     This function serves to set audio rx dma chain transfer.

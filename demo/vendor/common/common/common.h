@@ -70,16 +70,15 @@
 #define KEY2                    GPIO_PD7
 #define KEY3                    GPIO_PD6
 #define KEY4                    GPIO_PF6
-#elif defined(MCU_CORE_B931)
-#define LED1                    GPIO_PD1
-#define LED2                    GPIO_PD3
-#define LED3                    GPIO_PD4
-#define LED4                    GPIO_PD5
-#define LED5                    GPIO_PD0
-#define LED6                    GPIO_PD2
-#define KEY1                    GPIO_PA1
-#define KEY2                    GPIO_PA2
-#define KEY3                    GPIO_PA3
+#elif defined(MCU_CORE_TL751X)
+#define LED1                    GPIO_PA2
+#define LED2                    GPIO_PA1
+#define LED3                    GPIO_PA0
+#define LED4                    GPIO_PA4
+#define KEY1                    GPIO_PB0
+#define KEY2                    GPIO_PD2
+#define KEY3                    GPIO_PD3
+#define KEY4                    GPIO_PD4
 #elif defined(MCU_CORE_TL721X)
 #define LED1                    GPIO_PC3
 #define LED2                    GPIO_PC2
@@ -91,9 +90,9 @@
 #define KEY4                    GPIO_PD7
 #elif defined(MCU_CORE_TL321X)
 #define LED1                    GPIO_PD0
-#define LED2                    GPIO_PD1
-#define LED3                    GPIO_PD2
-#define LED4                    GPIO_PD3
+#define LED2                    GPIO_PB0
+#define LED3                    GPIO_PB1
+#define LED4                    GPIO_PB2
 #define KEY1                    GPIO_PD4
 #define KEY2                    GPIO_PD5
 #define KEY3                    GPIO_PD6
@@ -148,7 +147,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e g
 #ifndef CLOCK_INIT
 #define CLOCK_INIT      CCLK_24M_HCLK_24M_PCLK_24M
 #endif
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en);
 #ifndef PLATFORM_INIT
 #define PLATFORM_INIT   platform_init(VBAT_MAX_VALUE_GREATER_THAN_3V6,1)
@@ -156,10 +155,18 @@ void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en);
 #ifndef CLOCK_INIT
 #define CLOCK_INIT      CCLK_96M_HCLK_96M_PCLK_24M_MSPI_48M
 #endif
+#elif defined(MCU_CORE_TL751X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en);
+#ifndef PLATFORM_INIT
+#define PLATFORM_INIT   platform_init(LDO_AVDD_LDO_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6, 1)
+#endif
+#ifndef CLOCK_INIT
+#define CLOCK_INIT       PLL_264M_D25F_132M_DSP_132M_N22_48M_HCLK_66M_PCLK_66M_MSPI_44M_WT_11M
+#endif
 #elif defined(MCU_CORE_TL721X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en);
 #ifndef PLATFORM_INIT
-#define PLATFORM_INIT   platform_init(LDO_0P94_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
+#define PLATFORM_INIT   platform_init(LDO_0P94_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 1)
 #endif
 #ifndef CLOCK_INIT
 #define CLOCK_INIT      PLL_240M_CCLK_120M_HCLK_60M_PCLK_60M_MSPI_48M

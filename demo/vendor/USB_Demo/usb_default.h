@@ -71,7 +71,7 @@
 
 #endif
 
-#define USB_ENUM_IN_INTERRUPT   0 /* 1: usb enumeration in interrupt, 0: usb enumeration in main_loop. */
+#define USB_ENUM_IN_INTERRUPT       0 /* 1: usb enumeration in interrupt, 0: usb enumeration in main_loop. */
 
 #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
 #define USB_PHYSICAL_EDP_CDC_IN     USB_EDP4_IN  /* physical in endpoint */

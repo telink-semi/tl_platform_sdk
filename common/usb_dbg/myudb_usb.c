@@ -26,6 +26,8 @@
 #include "myudb.h"
 #include "string.h"
 #include "myudb_usbdesc.h"
+#include "myudb.h"
+#include "debug_vcd.h"
 
 #if (USB_CNT == 0)
 #include "reg_include/usb_reg.h"
@@ -572,9 +574,9 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd (unsigned char *p, int nbyte
             else
             {
 //              flash_erase_chip ();
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
                 unsigned int flash_mid = flash_read_mid();
-#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92)
+#elif defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
                 unsigned int flash_mid = flash_read_mid_with_device_num(0);
 #endif
                 flash_mid >>= 16;
@@ -721,6 +723,9 @@ void myudb_usb_init(unsigned short id, void *p)
     //reg_usb_mask = BIT(7);            //audio in interrupt enable
     //reg_irq_mask |= FLD_IRQ_IRQ4_EN;
 #if (USB_CNT == 0)
+#if !defined(MCU_CORE_B91) && !defined(MCU_CORE_B92)
+    usbhw_init();
+#endif
     reg_usb_ep_max_size = (128 >> 2);
     reg_usb_ep8_send_thres = 0x40;
     reg_usb_ep_buf_addr (MYUDB_EDP_IN_HCI) = 128;
@@ -728,11 +733,9 @@ void myudb_usb_init(unsigned short id, void *p)
     reg_usb_ep_buf_addr (MYUDB_EDP_IN_VCD) = 0;
     reg_usb_ep8_fifo_mode = 1;
     reg_usb_mdev &= ~BIT(3);            //vendor command: bRequest[7] = 0
-
     usbhw_enable_manual_interrupt(FLD_CTRL_EP_AUTO_STD | FLD_CTRL_EP_AUTO_DESC);
 #elif (USB_CNT == 1)
     usb1hw_init();
-
     reg_usb1_ep_max_size = (128 >> 2);
     reg_usb1_ep8_send_thres = 0x40;
     usb1hw_set_ep_addr(MYUDB_EDP_IN_HCI, 128);
@@ -740,7 +743,6 @@ void myudb_usb_init(unsigned short id, void *p)
     usb1hw_set_ep_addr(MYUDB_EDP_IN_VCD, 0);
     reg_usb1_ep8_fifo_mode = 1;
     reg_usb1_mdev &= ~BIT(3); /* vendor command: bRequest[7] = 0. */
-
     usb1hw_enable_manual_interrupt(FLD_USB1_CTRL_EP_AUTO_STD | FLD_USB1_CTRL_EP_AUTO_DESC);
 #endif
 

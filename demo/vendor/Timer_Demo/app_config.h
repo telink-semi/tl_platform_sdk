@@ -29,8 +29,29 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
-#define TIMER_GPIO_1            GPIO_PA0
-#define TIMER_GPIO_2            GPIO_PA1
+#if defined(MCU_CORE_TL751X)
+#define TIMER0_GPIO            GPIO_PD0
+#define TIMER1_GPIO            GPIO_PD1
+#else
+#define TIMER0_GPIO            GPIO_PA0
+#define TIMER1_GPIO            GPIO_PA1
+#endif
+
+#if defined(MCU_CORE_TL751X)
+#define TIMER0_TRIG_PIN        GPIO_PD2
+#define TIMER1_TRIG_PIN        GPIO_PD3
+#else
+#define TIMER0_TRIG_PIN        GPIO_PA2
+#define TIMER1_TRIG_PIN        GPIO_PA3
+#endif
+
+
+#define    TIMER0_CAPT_PIN         GPIO_PA1
+#define    TIMER1_CAPT_PIN         GPIO_PA3
+#define    TIMER0_COMP_PIN         GPIO_FC_PC0
+#define    TIMER1_COMP_PIN         GPIO_FC_PC1
+
+
 
 #define TIMER_SYS_CLOCK_MODE    1
 #define TIMER_GPIO_TRIGGER_MODE 2
@@ -40,11 +61,16 @@ extern "C" {
 #if !defined(MCU_CORE_B91)
 #define TIMER_32K_WATCHDOG_MODE 6
 #endif
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+#define TIMER_INPUT_CAPTURE_MODE                    7 //TIMER_INPUT_CAPTURE_MODE can be used with TIMER_SYS_CLOCK_MODE and TIMER_TICK_MODE.
+#define TIMER_INPUT_CAPTURE_MODE_WITH_DMA         8
+#define TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP     9
+#endif
 
 #define TIMER_MODE              TIMER_SYS_CLOCK_MODE
 
 
-#define WATCHDOG_32K_XTAL_MODE  1 //The TL751X A0 version not support 32k xtal.
+#define WATCHDOG_32K_XTAL_MODE  1 //The TL7518 A0 version not support 32k xtal.
 #define WATCHDOG_32K_RC_MODE    2
 
 #define WATCHDOG_MODE           WATCHDOG_32K_RC_MODE

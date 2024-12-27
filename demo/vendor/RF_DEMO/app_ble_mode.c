@@ -33,7 +33,7 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 
 #define TX                  1
 #define RX                  2
-#define RF_TRX_MODE         RX
+#define RF_TRX_MODE         TX
 
 #define AUTO                1
 #define MANUAL              2
@@ -49,7 +49,6 @@ unsigned char  ble_tx_packet[48] __attribute__ ((aligned (4))) ={3,0,0,0,0,10,0x
 
 #define RF_FREQ             17
 #define ACCESS_CODE        0x29417671//0xd6be898e// 0x898e898e//
-
 
 volatile unsigned int rx_cnt=0;
 volatile unsigned int tx_cnt=0;
@@ -87,7 +86,11 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
 
 
 }
+#if defined(MCU_CORE_TL751X_N22)
+CLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
+#else
 PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
+#endif
 #endif
 
 #if(RF_AUTO_MODE == AUTO)
@@ -108,7 +111,12 @@ void user_init(void)
     rf_set_rx_dma(rx_packet,RX_FIFO_NUM-1,RX_FIFO_DEP);
 #if(RF_RX_IRQ_EN)
     core_interrupt_enable();
+#if defined(MCU_CORE_TL751X_N22)
+    clic_init();
+    clic_interrupt_enable(IRQ_ZB_RT);
+#else
     plic_interrupt_enable(IRQ_ZB_RT);
+#endif
     rf_set_irq_mask(FLD_RF_IRQ_RX);
     rf_start_srx(rf_stimer_get_tick());
 
@@ -144,19 +152,27 @@ void main_loop(void)
     ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
     ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
     ble_tx_packet[0] = rf_tx_dma_len&0xff;
+    rf_set_vant1p05_power_trim_vol_up();
     rf_start_stx(ble_tx_packet,rf_stimer_get_tick());
 
     while(1)
     {
         delay_ms(1);
-#if(!defined(MCU_CORE_TL751X))
-        while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
-        rf_clr_irq_status(FLD_RF_IRQ_TX);
-#else
+#if(defined(MCU_CORE_TL7518))
         while(!(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END)));
         rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
-        delay_us(5);//Currently, the TL751X chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+        delay_us(5);//Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+#elif(defined(MCU_CORE_TL751X))
+        while(!(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE)));
+        rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+        delay_us(11);//Currently, the TL751x chip also requires a seq delay of at least 20us after the end of the TX and RX EN states.
+#else
+        while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
+        rf_clr_irq_status(FLD_RF_IRQ_TX);
 #endif
+        rf_set_vant1p05_power_trim_vol_down();
+        delay_us(20);
+        rf_set_vant1p05_power_trim_vol_up();
         rf_start_stx(ble_tx_packet,rf_stimer_get_tick());
         gpio_toggle(LED1);
         //delay_ms(100);
@@ -181,8 +197,10 @@ void main_loop(void)
 
             }
                 rf_clr_irq_status(FLD_RF_IRQ_RX);
-#if defined(MCU_CORE_TL751X)
-                delay_us(5);//Currently, the TL751X chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+#if defined(MCU_CORE_TL7518)
+                delay_us(5);//Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+#elif defined(MCU_CORE_TL751X)
+                delay_us(11);//Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
 #endif
                 rf_start_srx(rf_stimer_get_tick());
 
@@ -218,13 +236,20 @@ void user_init(void)
 
 #if(RF_RX_IRQ_EN)
     core_interrupt_enable();
+#if defined(MCU_CORE_TL751X_N22)
+    clic_init();
+    clic_interrupt_enable(IRQ_ZB_RT);
+#else
     plic_interrupt_enable(IRQ_ZB_RT);
+#endif
     rf_set_irq_mask(FLD_RF_IRQ_RX);
     rf_set_rxmode();
-#if(!defined(MCU_CORE_TL751X))
-    delay_us(85);  //Wait for calibration to stabilize
-#else
+#if(defined(MCU_CORE_TL7518))
     delay_us(43); //Wait for calibration to stabilize
+#elif(defined(MCU_CORE_TL751X))
+    delay_us(54); //Wait for calibration to stabilize
+#else
+    delay_us(85);  //Wait for calibration to stabilize
 #endif
 #endif
 #endif
@@ -256,43 +281,54 @@ void main_loop(void)
     ble_tx_packet[2] = (rf_tx_dma_len >> 16)&0xff;
     ble_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
     ble_tx_packet[0] = rf_tx_dma_len&0xff;
-#if(!defined(MCU_CORE_TL751X))
+#if(defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X))
+    //TODO:TL7518 manual tx temporarily not available
+    while(1)
+    {
+        delay_ms(1);
+        rf_set_txmode();
+#if defined(MCU_CORE_TL7518)
+        delay_us(46);//Wait for calibration to stabilize
+        rf_tx_pkt(ble_tx_packet);
+        while(!(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END)));
+        rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
+#elif defined(MCU_CORE_TL751X)
+        delay_us(49);//Wait for calibration to stabilize
+        rf_tx_pkt(ble_tx_packet);
+        while(!(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE)));
+        rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+#endif
+        gpio_toggle(LED1);
+        rf_set_tx_rx_off();
+        tx_cnt++;
+    }
+#else
     rf_set_txmode();
     delay_us(113);//Wait for calibration to stabilize
 
     while(1)
     {
         delay_ms(1);
+        rf_set_vant1p05_power_trim_vol_up();
         rf_tx_pkt(ble_tx_packet);
         while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
         rf_clr_irq_status(FLD_RF_IRQ_TX);
+        rf_set_vant1p05_power_trim_vol_down();
         gpio_toggle(LED1);
         tx_cnt++;
     }
-#else
-//TODO:TL751X manual tx temporarily not available
-    while(1)
-    {
-        delay_ms(1);
-        rf_set_txmode();//
-        delay_us(46);//Wait for calibration to stabilize
-        rf_tx_pkt(ble_tx_packet);
-        while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
-        rf_clr_irq_status(FLD_RF_IRQ_TX);
-        gpio_toggle(LED1);
-        rf_set_tx_rx_off();
-        tx_cnt++;
-    }
-
 #endif
 
 #elif(RF_TRX_MODE==RX)
 #if(!RF_RX_IRQ_EN)
     rf_set_rxmode();
-#if(!defined(MCU_CORE_TL751X))
-    delay_us(85);  //Wait for calibration to stabilize
-#else
+
+#if(defined(MCU_CORE_TL7518))
     delay_us(43);  //Wait for calibration to stabilize
+#elif(defined(MCU_CORE_TL7518))
+    delay_us(54);  //Wait for calibration to stabilize
+#else
+    delay_us(85);  //Wait for calibration to stabilize
 #endif
     while(1)
     {

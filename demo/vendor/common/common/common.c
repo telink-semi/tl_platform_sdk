@@ -48,18 +48,21 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x1660c8, FLASH_LOCK_LOW_2M_MID1660C8},
     //16M
     {0x186085, FLASH_LOCK_LOW_8M_MID186085},
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
-#elif defined(MCU_CORE_B931)
+#elif defined(MCU_CORE_TL751X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
 #elif defined(MCU_CORE_TL721X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    {0x1460c8, FLASH_LOCK_LOW_512K_MID1460C8},
     //2M
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
-
+    {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
 #elif defined(MCU_CORE_TL321X)
     //512K
     {0x136085, FLASH_LOCK_LOW_256K_MID136085},
@@ -69,6 +72,11 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+#elif defined(MCU_CORE_TL322X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
 #elif defined(MCU_CORE_W92)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
@@ -84,13 +92,13 @@ flash_user_defined_list_t flash_init_list[] = {
 #endif
 
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
 
 flash_hal_user_handler_t flash_handler = {
         .list= list_fp,
         .flash_cnt = (sizeof(flash_init_list)/sizeof(flash_user_defined_list_t)),
 };
-#elif  defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
+#elif  defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_W92)
 flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
         {
              .list= list_fp,
@@ -120,8 +128,10 @@ flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
 #elif  defined(MCU_CORE_B92)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e gpio_v, cap_typedef_e cap,unsigned char flash_protect_en)
-#elif  defined(MCU_CORE_TL751X)
+#elif  defined(MCU_CORE_TL7518)
 void platform_init(vbat_type_e vbat_v,unsigned char flash_protect_en)
+#elif  defined(MCU_CORE_TL751X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL721X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap,unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL321X)
@@ -141,8 +151,10 @@ void platform_init(unsigned char flash_protect_en)
     sys_init(power_mode, vbat_v, cap);
 #elif  defined(MCU_CORE_B92)
     sys_init(power_mode, vbat_v, gpio_v, cap);
-#elif  defined(MCU_CORE_TL751X)
+#elif  defined(MCU_CORE_TL7518)
     sys_init(vbat_v);
+#elif  defined(MCU_CORE_TL751X)
+    sys_init(power_mode, vbat_v);
 #elif defined(MCU_CORE_TL721X)
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_TL321X)
@@ -160,7 +172,9 @@ void platform_init(unsigned char flash_protect_en)
     To prevent leakage, all GPIOs are set to high resistance except the MSPI pins and SWS.
     ===============================================================================
 */
+#if(!defined(DUT_TEST))
     gpio_shutdown(GPIO_ALL);
+#endif
     
 /**
     ===============================================================================
@@ -170,7 +184,7 @@ void platform_init(unsigned char flash_protect_en)
     Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
     ===============================================================================
 */
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)
     pm_update_status_info(1);
 #endif
 
@@ -226,12 +240,16 @@ void platform_init(unsigned char flash_protect_en)
     user_read_flash_value_calib();
 #elif defined(MCU_CORE_B92)
     calibration_func(gpio_v);
+#elif defined(MCU_CORE_TL721X)
+    calibration_func();
+#elif defined(MCU_CORE_TL321X)
+    calibration_func();
 #endif
 
     //The A0 chip's AVDD1/AVDD2/DVDD1/DVDD2 voltages will be on the high side and need to be set to the correct gear according to the following requirements:
     //1.DVDD2>DVDD1>0.8V
     //2.Plus or minus 10% of the design value is safe.
-//#if defined(MCU_CORE_TL751X)
+//#if defined(MCU_CORE_TL7518)
 //  pm_set_avdd1(PM_AVDD1_VOLTAGE_1V050);//AVDD1 voltage select(LDO) 000:1.050V,design value:1.15V
 //  pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V750);//DVDD2 voltage select(LDO) 000:0.750V,design value:0.8V
 //  pm_set_avdd2(PM_AVDD2_VOLTAGE_2V346);//AVDD2 voltage select(LDO) 000:2.346V,design value:1.8V
@@ -247,6 +265,20 @@ void platform_init(unsigned char flash_protect_en)
     // pm_set_dig_ldo_voltage(DIG_LDO_TRIM_0P850V);
 #endif
 
+#if (defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL751X_N22))
+    if(pm_get_dcdc_power() != 0x00)
+    {
+        lpc_set_input_chn(LPC_INPUT_PF6);
+        lpc_set_input_ref(LPC_NORMAL,LPC_REF_820MV);
+        lpc_set_scaling_coeff(LPC_SCALING_PER100);
+        lpc_power_on();
+        pm_set_wakeup_src(PM_WAKEUP_COMPARATOR);
+        pm_clr_irq_status(FLD_WAKEUP_STATUS_ALL);
+        plic_interrupt_enable(IRQ_PM_LVL);
+        core_interrupt_enable();
+    }
+#endif
+
 /**
     ===============================================================================
                         ##### driver sdk firmware protection #####
@@ -260,25 +292,27 @@ void platform_init(unsigned char flash_protect_en)
     @note if flash protection fails, LED1 lights up long, and keeps while.
     ===============================================================================
 */
+#if !defined(INTERNAL_SIMULATION_DEBUG)
 #if (!defined(DUT_TEST) && defined(MCU_STARTUP_FLASH))
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
-    unsigned char flash_init_flag = hal_flash_init(&flash_handler);
-#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
-    unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t*)flash_handler);
-#else
-    unsigned char flash_init_flag =0;
-#endif
-   if(flash_init_flag!=0){
-       gpio_set_high_level(LED1);
-       while(1);
-   }
     if(flash_protect_en)
     {
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+        unsigned char flash_init_flag = hal_flash_init(&flash_handler);
+#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)//||defined(MCU_CORE_B931)
+        unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t*)flash_handler);
+#else
+        unsigned char flash_init_flag =0;
+#endif
+        if(flash_init_flag!=0){
+            gpio_set_high_level(LED1);
+            while(1);
+        }
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
-     unsigned char lock_flag = hal_flash_lock();
-#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
-    unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
+
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+        unsigned char lock_flag = hal_flash_lock();
+#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_W92)
+        unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
 #endif
         if(!(lock_flag==1)){
             gpio_set_high_level(LED1);
@@ -288,5 +322,40 @@ void platform_init(unsigned char flash_protect_en)
 #else
     (void)flash_protect_en;
 #endif
+#else
+    (void)flash_protect_en;
+#endif //#if defined(INTERNAL_SIMULATION_DEBUG)
 }
+
+#if (defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL751X_N22))
+_attribute_ram_code_sec_noinline_ void pm_irq_handler(void)
+{
+    if(pm_get_wakeup_src()&(WAKEUP_STATUS_COMPARATOR))
+    {
+        pm_powerdown_dcdc();
+        pm_poweron_dcdc();
+//        gpio_function_en(LED2);
+//        gpio_output_en(LED2);
+//        gpio_input_dis(LED2);
+//        gpio_set_high_level(LED2);
+    }
+    pm_clr_irq_status(FLD_WAKEUP_STATUS_ALL);
+}
+PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_IRQ)
+
+_attribute_ram_code_sec_ void pm_level_irq_handler(void)
+{
+    if(pm_get_wakeup_src()&(WAKEUP_STATUS_COMPARATOR))
+    {
+        pm_powerdown_dcdc();
+        pm_poweron_dcdc();
+//        gpio_function_en(LED2);
+//        gpio_output_en(LED2);
+//        gpio_input_dis(LED2);
+//        gpio_set_high_level(LED2);
+    }
+    pm_clr_irq_status(FLD_WAKEUP_STATUS_ALL);
+}
+PLIC_ISR_REGISTER(pm_level_irq_handler, IRQ_PM_LVL)
+#endif
 

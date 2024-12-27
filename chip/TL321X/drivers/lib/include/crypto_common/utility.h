@@ -147,7 +147,7 @@ void uint32_copy_8_words(unsigned int *dst, const unsigned int *src);
 /**
  * @brief       clear uint32 buffer
  * @param[in]   a             - input&output, word buffer a.
- * @param[in]   aWordLen      - input, word length of buffer a.
+ * @param[in]   wordLen      - input, word length of buffer a.
  * @return      none
  * @note
    @verbatim

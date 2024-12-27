@@ -27,7 +27,7 @@
 #include "application/usb_app/usbmouse.h"
 
 char  mouse[4];
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
 #endif
@@ -88,7 +88,7 @@ void main_loop (void)
  * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
  *              otherwise the MCU will be reset after 8s.
 */
-#if( (defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_B931))&& (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+#if( (defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X))&& (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
     /**
      *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
      */

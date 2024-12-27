@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for TL751X/TL721X/TL321X
+ * @brief   This is the source file for TL7518/TL721X/TL321X
  *
  * @author  Driver Group
  * @date    2024

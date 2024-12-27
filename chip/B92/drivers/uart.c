@@ -678,25 +678,32 @@ void uart_receive_dma(uart_num_e uart_num, unsigned char * addr,unsigned int rev
  * @param[in] chn      - DMA channel.
  * @return    data length.
  */
-unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num,dma_chn_e chn)
+unsigned int uart_get_dma_rev_data_len(uart_num_e uart_num, dma_chn_e chn)
 {
- /*
-  * the real dma received length is coming from the following:
-  * 1.uart_dma_rev_size[uart_num] - dma_remaining_word*4;
-  * 2.due to dma only move 4 bytes from fifo,so check the uart receive cnt to see how many valid data in fifo,
-  *   then minus the last word(4bytes) + the valid remaining bytes.
-  */
+    /*
+     * the real dma received length is coming from the following:
+     * 1.uart_dma_rev_size[uart_num] - dma_remaining_word*4;
+     * 2.due to dma only move 4 bytes from fifo,so check the uart receive cnt to see how many valid data in fifo,
+     *   then minus the last word(4bytes) + the valid remaining bytes.
+     */
 
-	unsigned int data_len=0;
-	unsigned int buff_data_len = (reg_uart_status(uart_num)&FLD_UART_RBCNT)%4;
+    unsigned int data_len = 0;
+    unsigned int buff_data_len = (reg_uart_status(uart_num) & FLD_UART_RBCNT) % 4;
 
-	data_len = uart_dma_rev_size[uart_num] - reg_dma_size(chn)*4;
-	if(buff_data_len){
-		data_len =data_len - 4 + buff_data_len;
-	}
-	return data_len;
+    if ((reg_dma_size(chn) == 0) && (buff_data_len != 0))
+    {
+        return uart_dma_rev_size[uart_num];
+    }
+    else
+    {
+        data_len = uart_dma_rev_size[uart_num] - reg_dma_size(chn) * 4;
+        if (buff_data_len)
+        {
+            data_len = data_len - 4 + buff_data_len;
+        }
+        return data_len;
+    }
 }
-
 
 /**
   * @brief     Configures the UART tx_dma channel control register.

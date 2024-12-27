@@ -156,12 +156,12 @@ unsigned int sm2_getkey(unsigned char priKey[32], unsigned char pubKey[65]);
 
 /**
  * @brief       Generate SM2 Signature
- * @param[in]   E[32]          - input, E value, 32 bytes, big-endian
- * @param[in]   rand_k[32]     - input, random big integer k in signing, 32 bytes, big-endian,
+ * @param[in]   E          - input, E value, 32 bytes, big-endian
+ * @param[in]   rand_k     - input, random big integer k in signing, 32 bytes, big-endian,
  *                               if you do not have this integer, please set this parameter to be NULL,
  *                               it will be generated inside.
- * @param[in]   priKey[32]     - private key, 32 bytes, big-endian
- * @param[out]  signature[64]  - Signature r and s, 64 bytes, big-endian
+ * @param[in]   priKey     - private key, 32 bytes, big-endian
+ * @param[out]  signature  - Signature r and s, 64 bytes, big-endian
  * @return      SM2_SUCCESS(success)     other:error
  * @note
   @verbatim
@@ -172,9 +172,9 @@ unsigned int sm2_sign(unsigned char E[32], unsigned char rand_k[32], unsigned ch
 
 /**
  * @brief       Verify SM2 Signature
- * @param[in]   E[32]          - E value, 32 bytes, big-endian
- * @param[in]   pubKey[65]     - public key(0x04 + x + y), 65 bytes, big-endian
- * @param[in]   signature[64]  - Signature r and s, 64 bytes, big-endian
+ * @param[in]   E          - E value, 32 bytes, big-endian
+ * @param[in]   pubKey     - public key(0x04 + x + y), 65 bytes, big-endian
+ * @param[in]   signature  - Signature r and s, 64 bytes, big-endian
  * @return      SM2_SUCCESS(success)     other:error
  */
 unsigned int sm2_verify(unsigned char E[32], unsigned char pubKey[65], unsigned char signature[64]);
@@ -183,10 +183,10 @@ unsigned int sm2_verify(unsigned char E[32], unsigned char pubKey[65], unsigned 
  * @brief       SM2 Encryption
  * @param[in]   M              - plaintext, MByteLen bytes, big-endian
  * @param[in]   MByteLen       - byte length of M
- * @param[in]   rand_k[32]     - input, random big integer k in encrypting, 32 bytes, big-endian,
+ * @param[in]   rand_k     - input, random big integer k in encrypting, 32 bytes, big-endian,
  *                               if you do not have this integer, please set this parameter to be NULL,
  *                               it will be generated inside.
- * @param[in]   pubKey[65]     - public key, 65 bytes, big-endian
+ * @param[in]   pubKey     - public key, 65 bytes, big-endian
  * @param[in]   order          - either SM2_C1C3C2 or SM2_C1C2C3
  * @param[out]   C              - ciphertext, CByteLen bytes, big-endian
  * @param[out]  CByteLen       - byte length of C, should be MByteLen+97 if success
@@ -205,7 +205,8 @@ unsigned int sm2_encrypt(unsigned char *M, unsigned int MByteLen, unsigned char 
  * @brief       SM2 Decryption
  * @param[in]   C             - ciphertext, CByteLen bytes, big-endian
  * @param[in]   CByteLen      - byte length of C, make sure MByteLen>97
- * @param[in]   priKey[32]    - private key, 32 bytes, big-endian
+ * @param[in]   priKey        - private key, 32 bytes, big-endian
+ * @param[in]   order          - either SM2_C1C3C2 or SM2_C1C2C3
  * @param[out]  M             - plaintext, MByteLen bytes, big-endian
  * @param[out]  MByteLen      - byte length of M, should be CByteLen-97 if success
  * @return      SM2_SUCCESS(success)     other:error
@@ -220,17 +221,17 @@ unsigned int sm2_decrypt(unsigned char *C, unsigned int CByteLen, unsigned char 
 /**
  * @brief       SM2 Key Exchange
  * @param[in]   role              - SM2_Role_Sponsor - sponsor, SM2_Role_Responsor - responsor
- * @param[in]   dA[32]            - local's permanent private key7
- * @param[in]   PB[65]            - peer's permanent public key
- * @param[in]   rA[32]            - local's temporary private key
- * @param[in]   RA[65]            - local's temporary public key
- * @param[in]   RB[65]            - peer's temporary public key
- * @param[in]   ZA[32]            - local's Z value
- * @param[in]   ZB[32]            - peer's Z value
- * @param[in]   kByteLen          - byte length of output key, should be less than (2^32 - 1)bit
- * @param[out]  KA[kByteLen]      - output key
- * @param[out]  S1[32]            - sponsor's S1, or responsor's S2, this is optional
- * @param[out]  SA[32]            - sponsor's SA, or responsor's SB, this is optional
+ * @param[in]   dA            - local's permanent private key7
+ * @param[in]   PB            - peer's permanent public key
+ * @param[in]   rA            - local's temporary private key
+ * @param[in]   RA            - local's temporary public key
+ * @param[in]   RB            - peer's temporary public key
+ * @param[in]   ZA            - local's Z value
+ * @param[in]   ZB            - peer's Z value
+ * @param[in]   kByteLen      - byte length of output key, should be less than (2^32 - 1)bit
+ * @param[out]  KA            - output key
+ * @param[out]  S1            - sponsor's S1, or responsor's S2, this is optional
+ * @param[out]  SA            - sponsor's SA, or responsor's SB, this is optional
  * @return      SM2_SUCCESS(success)     other:error
  * @note
   @verbatim

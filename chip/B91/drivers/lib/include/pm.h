@@ -70,6 +70,17 @@
  * [Bit3~7]: These bits are used by the driver and cannot be used by the customer.
  */
 #define PM_ANA_REG_POWER_ON_CLR_BUF0 	0x39 // initial value 0x00
+typedef enum{
+    REBOOT_FLAG                   = BIT(0),
+    DEEP_AFTER_REBOOT             = BIT(1),
+    XTAL_UNSTABLE                 = BIT(2),
+    SW_REBOOT_REASON              = BIT_RNG(3,7),
+}pm_poweron_clr_buf0_e;
+//Since there are only 5 bits, this enumeration ranges from 0 to 31.
+typedef enum{
+    WAIT_TIMEOUT                  = 0x00,
+}pm_sw_reboot_reason_e;
+
 #define PM_ANA_REG_POWER_ON_CLR_BUF1 	0x3a // initial value 0x00
 #define PM_ANA_REG_POWER_ON_CLR_BUF2 	0x3b // initial value 0x00
 #define PM_ANA_REG_POWER_ON_CLR_BUF3 	0x3c // initial value 0x00
@@ -274,6 +285,15 @@ static inline void pm_set_wakeup_src(pm_sleep_wakeup_src_e wakeup_src)
 }
 
 /**
+ * @brief       This function is used to set reboot reason.
+ * @return      none.
+ */
+static _always_inline void pm_set_reboot_reason(pm_sw_reboot_reason_e reboot_reason)
+{
+    analog_write_reg8(PM_ANA_REG_POWER_ON_CLR_BUF0, REBOOT_FLAG | (reboot_reason<<3));
+}
+
+/**
  * @brief		This function configures a GPIO pin as the wakeup pin.
  * @param[in]	pin	- the pin needs to be configured as wakeup pin.
  * @param[in]	pol - the wakeup polarity of the pad pin(0: low-level wakeup, 1: high-level wakeup).
@@ -384,3 +404,18 @@ _always_inline void sys_reset_all(void)
 {
 	reg_pwdn_en = 0x20;
 }
+
+/********************************************************************************************************
+ *                                          internal
+ *******************************************************************************************************/
+/********************************************************************************************************
+ *              This is just for internal debug purpose, users are prohibited from calling.
+ *******************************************************************************************************/
+/**
+ * @brief       When an error occurs, such as the crystal does not vibrate properly, the corresponding recording and reset operations are performed.
+ * @param[in]   reboot_reason  - The bit to be configured in the power on buffer.
+ * @param[in]   all_ramcode_en  - Whether all processing in this function is required to be ram code.
+ * @return      none.
+ */
+_attribute_ram_code_sec_noinline_ void pm_sys_reboot_with_reason(pm_sw_reboot_reason_e reboot_reason, unsigned char all_ramcode_en);
+

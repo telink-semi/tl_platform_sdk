@@ -600,7 +600,7 @@ const USB_Descriptor_Configuration_t
                     1 // TotalDiscreteSampleRates
                 },
                 // mic_sample_rate
-                {(MIC_SAMPLE_RATE & 0xff), (MIC_SAMPLE_RATE >> 8), 0x00},
+                {(MIC_SAMPLE_RATE & 0xff), (MIC_SAMPLE_RATE >> 8) & 0xff, (MIC_SAMPLE_RATE >> 16) & 0xff},
                 // mic_stream_endpoint
                 {   {
                         {   sizeof(USB_Audio_Descriptor_StreamEndpoint_Std_t), DTYPE_Endpoint}

@@ -25,7 +25,7 @@
 #include "app_config.h"
 
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)
 #if (PKE_TEST_MODE == PKE_RSA)
 
 #if 1
@@ -130,7 +130,7 @@ unsigned int rsa_modexp_1024_test(void)
 
     return 0;
 }
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)
 unsigned int rsa_modexp_2048_test()
 {
     //n is 0xA7C5D82068EC9949...3958A753BB5248B9
@@ -462,7 +462,7 @@ unsigned int rsa_test(void)
 #if 1
     //RSA NON-CRT
     eBitLen=17;
-    nBitLen=1024;//only TL751X supports 2048 and 4096
+    nBitLen=1024;//only TL7518 supports 2048 and 4096
 //  eWordLen=(eBitLen+0x1F)>>5;
     nWordLen=(nBitLen+0x1F)>>5;
 //  pWordLen=(nBitLen/2+0x1F)>>5;
@@ -527,7 +527,7 @@ unsigned int rsa_test(void)
 #if 1
     //RSA CRT
     eBitLen=17;
-    nBitLen=1024;//only TL751X supports 2048 and 4096
+    nBitLen=1024;//only TL7518 supports 2048 and 4096
 //  eWordLen=(eBitLen+0x1F)>>5;
     nWordLen=(nBitLen+0x1F)>>5;
 //  pWordLen=(nBitLen/2+0x1F)>>5;
@@ -648,7 +648,7 @@ unsigned char RSA_all_test(void)
 
     if(rsa_modexp_1024_test())
         return 1;
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)
     if(rsa_modexp_2048_test())
         return 1;
 

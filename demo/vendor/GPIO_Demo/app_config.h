@@ -36,18 +36,24 @@ extern "C" {
 #if(DEMO_MODE == NORMAL_MODE)
 #define IRQ_PIN                 KEY1
 #define GPIO_HIGH_RESISTOR      1
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 #define GPIO_IRQ                2
 #define GPIO_IRQ_RISC0          3
 #define GPIO_IRQ_RISC1          4
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 #define GPIO_SEL_IRQ_SRC        5
 #endif
+/**
+ * Do not recommended that two or more GPIOs be set to the same interrupt source, as the interrupt is uncertain if triggered at the same time.
+ */
 #define GPIO_MODE               GPIO_IRQ
-#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
+#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
 //GPIO_MODE can be configured as GPIO_IRQ0~7, 8 interrupts can be used at the same time.
 #define GPIO_IRQ_NUM0               6
 #define GPIO_IRQ_NUM1               7
+/**
+ * Do not recommended that two or more GPIOs be set to the same interrupt source, as the interrupt is uncertain if triggered at the same time.
+ */
 #define GPIO_MODE               GPIO_IRQ_NUM1
 #endif
 

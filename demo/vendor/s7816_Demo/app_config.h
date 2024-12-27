@@ -76,7 +76,7 @@ extern "C" {
 #define S7816_VCC_PIN    GPIO_PB4
 #define S7816_RST_PIN    GPIO_PB1
 #define S7816_CLK_PIN    GPIO_FC_PA0
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 #define S7816_TRX_PIN    GPIO_FC_PB3
 #define S7816_VCC_PIN    GPIO_PB4
 #define S7816_RST_PIN    GPIO_PB1

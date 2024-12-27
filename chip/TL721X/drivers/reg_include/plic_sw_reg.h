@@ -25,20 +25,4 @@
 #define __PLIC_SW_REG_H_
 #include "soc.h"
 
-/*******************************     plic_sw registers:     ******************************/
-#define reg_irq_sw_pending              (*(volatile unsigned long *)(0xc6401000))
-enum
-{
-    FLD_PLIC_SW_SRC                     = BIT(1),
-};
-
-#define reg_irq_sw_src                  (*(volatile unsigned long *)(0xc6402000))
-
-#define reg_irq_sw_done                 (*(volatile unsigned long *)(0xc6600004))
-enum
-{
-    FLD_PLIC_SW_ID                      = BIT(0),
-};
-
-
-#endif /* end of __PLIC_SW_REG_H_ */
+/***

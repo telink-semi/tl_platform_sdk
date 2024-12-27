@@ -587,8 +587,8 @@ void usb_handle_in_class_endp_req(void) {
         switch(property){
         case AUDIO_REQ_GetCurrent:
             usbhw_write_ctrl_ep_data(MIC_SAMPLE_RATE & 0xff);
-            usbhw_write_ctrl_ep_data(MIC_SAMPLE_RATE >> 8);
-            usbhw_write_ctrl_ep_data(MIC_SAMPLE_RATE >> 16);
+            usbhw_write_ctrl_ep_data((MIC_SAMPLE_RATE >> 8) & 0xff);
+            usbhw_write_ctrl_ep_data((MIC_SAMPLE_RATE >> 16) & 0xff);
             break;
         default:
             break;
@@ -951,7 +951,7 @@ void usb_init(void)
     /* set control endpoint size */
     usbhw_set_ctrl_ep_size(USB_CTR_SIZE);
 #endif
-#if (defined(MCU_CORE_TL321X) || defined(MCU_CORE_B931))
+#if (defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X))
     usbhw_enable_hw_feature(FLD_USB_AUTO_HALT_CLR | FLD_USB_AUTO_HALT_STALL);
 #endif
     usbhw_enable_manual_interrupt(FLD_CTRL_EP_AUTO_STD | FLD_CTRL_EP_AUTO_DESC | FLD_CTRL_EP_AUTO_CFG);
@@ -995,7 +995,7 @@ void usb_cdc_irq_data_process(void)
 
 #if( !defined(MCU_CORE_B91)&& !defined(MCU_CORE_B92) )
 
-#if !defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL7518)
 static volatile int set_intf_cnt = 0;
 static volatile int set_addr_cnt = 0;
 /**
@@ -1040,7 +1040,7 @@ _attribute_ram_code_sec_ void usb_250us_or_sof_irq_handler(void)
         sof_cnt++;
         usbhw_clr_irq_status(USB_IRQ_SOF_STATUS);
         sof_frame[sof_cnt & 3] = (reg_usb_sof_frame1 << 8) | reg_usb_sof_frame0;
-#if !defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL7518)
         sys_tick[sof_cnt & 3] = usbhw_get_timer_stamp();
 #endif
     }

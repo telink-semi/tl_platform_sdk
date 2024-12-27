@@ -35,7 +35,7 @@
 
 #include "lib/include/emi.h"
 #include "audio.h"
-#include "analog.h"
+#include "lib/include/analog.h"
 #include "dma.h"
 #include "gpio.h"
 #include "i2c.h"

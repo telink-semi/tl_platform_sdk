@@ -84,7 +84,7 @@ void aes_set_key_data(unsigned char *key, unsigned char* data)
 		aes_data_buff[i] = temp;
 	}
 
-	reg_aes_ptr = (unsigned int)aes_data_buff - embase_offset;  //the aes data ptr is base on embase address.
+	reg_aes_ptr = (reg_aes_ptr&0xffff0000)|((unsigned int)(aes_data_buff - embase_offset)&0xffff);  //the aes data ptr is base on embase address.
 }
 
 /**

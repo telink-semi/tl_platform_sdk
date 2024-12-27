@@ -42,7 +42,7 @@
 
 #endif
 
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)
 #define SRAM_BASE_ADDR 0x00020000
 #elif defined(MCU_CORE_TL721X)
 #define SRAM_BASE_ADDR 0x00040000

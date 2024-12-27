@@ -35,7 +35,8 @@ unsigned char ECCp_get_key_all_test(void);
 unsigned char ECDH_all_test(void);
 unsigned char ECDSA_all_test(void);
 unsigned char RSA_all_test(void);
-
+unsigned int Ed25519_all_test(void);
+unsigned int X25519_all_test(void);
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

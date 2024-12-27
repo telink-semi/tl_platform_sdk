@@ -152,6 +152,12 @@ extern unsigned int g_chip_version;
 _attribute_text_sec_ void sys_reboot(void);
 
 /**
+ * @brief      This function reboot mcu.
+ * @return     none
+ */
+_attribute_ram_code_sec_noinline_ void sys_reboot_ram(void);
+
+/**
  * @brief   	This function serves to initialize system.
  * @param[in]	power_mode	- power mode(LDO/DCDC/LDO_DCDC)
  * @param[in]	vbat_v		- This parameter is used to determine whether the VBAT voltage can be greater than 3.6V.
@@ -193,15 +199,6 @@ unsigned char efuse_calib_adc_vref(gpio_voltage_e gpio_type);
  * @note	  This function can only used when cclk is 24M RC cause the function execution process will power down the 24M crystal.
  */
 _attribute_ram_code_sec_optimize_o2_ void crystal_manual_settle(void);
-
-/**
- * @brief	This function servers to set dcdc 1.4V ldo 2.0V.
- * @return	none.
- * @note	The A3 chip has an issue (A4 does not have): If there is a 1.4V dcdc inductor component on the hardware board and a 1.8V GPIO is used, 
- * 			it is necessary to set 1P4V to DCDC mode as soon as possible after the chip is powered on. 
- * 			Otherwise, there is a voltage pulse on vdd1v2 and vddo3, and this interface is used to solve this problem.	
- */
-void sys_set_dcdc_1pP4_ldo_2p0(void);
 
 /**
 * @brief      This function servers to get chip id from EFUSE.

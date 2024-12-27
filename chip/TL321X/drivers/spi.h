@@ -155,7 +155,7 @@ typedef enum{
  *  @brief  Define SPI module.
  */
 typedef enum{
-    GSPI_MODULE = 0 ,/* Note:  Currently spi has only one gspi module.
+    GSPI_MODULE = 1 ,/* Note:  Currently spi has only one gspi module.
                                The spi_sel_e parameter is retained for compatibility
                                with other spi sdk's that have two ways of spi*/
 }spi_sel_e;
@@ -418,7 +418,7 @@ typedef struct {
     volatile spi_api_error_timeout_code_e g_spi_error_timeout_code;//record spi error timeout code(lspi/gspi), can obtain the value through the spi_get_error_timeout_code() interface;
 }spi_timeout_error_t;
 
-extern spi_timeout_error_t g_spi_timeout_error[1];
+extern spi_timeout_error_t g_spi_timeout_error;
 
 #define SPI_WAIT(condition,spi_sel,g_spi_error_timeout_us,spi_timeout_handler,spi_api_error_code)                               wait_condition_fails_or_timeout_with_param(condition,(unsigned int)spi_sel,g_spi_error_timeout_us,spi_timeout_handler,(unsigned int)spi_api_error_code)
 
@@ -483,7 +483,7 @@ static inline void spi_hw_fsm_reset(spi_sel_e spi_sel)
     (void)spi_sel;/* Note:The TL321X only supports GSPI, and the spi_sel parameter is retained for compatibility with different chip interfaces.*/
     reg_rst1 &= (~FLD_RST1_GSPI);
     reg_rst1 |= FLD_RST1_GSPI;
-    g_spi_timeout_error[GSPI_MODULE].g_spi_error_timeout_code = SPI_API_ERROR_TIMEOUT_NONE;
+    g_spi_timeout_error.g_spi_error_timeout_code = SPI_API_ERROR_TIMEOUT_NONE;
 }
 
 /**
@@ -898,6 +898,26 @@ static inline void spi_xip_stop(spi_sel_e spi_sel)
 }
 
 /**
+ * @brief   This function servers to enable txdma request after cmd.
+ * @param[in]   spi_sel     - the spi module.
+ * @return  none.
+ */
+static inline void spi_txdma_req_after_cmd_en(spi_sel_e spi_sel)
+{
+    BM_SET(reg_spi_ctrl4(spi_sel), FLD_TXDMA_REQ_AF_CMD);
+}
+
+/**
+ * @brief   This function servers to disable txdma request after cmd.
+ * @param[in]   spi_sel     - the spi module.
+ * @return  none.
+ */
+static inline void spi_txdma_req_after_cmd_dis(spi_sel_e spi_sel)
+{
+    BM_CLR(reg_spi_ctrl4(spi_sel), FLD_TXDMA_REQ_AF_CMD);
+}
+
+/**
  * @brief       This function servers to set xip timeout cnt,when two data frame intervals exceed hclk_period*timeout_cnt,csn will set high level.
  * @param[in]   spi_sel     - the spi module.
  * @param[in]   cnt         - xip timeout cnt.
@@ -1043,7 +1063,6 @@ __attribute__((weak)) void gspi_timeout_handler(unsigned int spi_error_timeout_c
 
 /**
   * @brief     This function serves to set the spi timeout(us).
-  * @param[in] spi_sel   - the spi module.
   * @param[in] timeout_us - the timeout(us).
   * @return    none.
   * @note      The default timeout (g_spi_error_timeout_us) is the larger value.If the timeout exceeds the feed dog time and triggers a watchdog restart,
@@ -1058,14 +1077,13 @@ __attribute__((weak)) void gspi_timeout_handler(unsigned int spi_error_timeout_c
   *            when timeout exits, solution:
   *            reset SPI(as master or slave) module,corresponding api:spi_hw_fsm_reset;
   */
- void spi_set_error_timeout(spi_sel_e spi_sel,unsigned int timeout_us);
+ void spi_set_error_timeout(unsigned int timeout_us);
 
  /**
     * @brief     This function serves to return the spi api error timeout code.
-    * @param[in] spi_sel   - the spi module.
     * @return    none.
     */
-   spi_api_error_timeout_code_e spi_get_error_timeout_code(spi_sel_e spi_sel);
+   spi_api_error_timeout_code_e spi_get_error_timeout_code(void);
 
 /**
  * @brief      This function selects  pin  for gspi master or slave mode.
@@ -1080,14 +1098,14 @@ void gspi_set_pin_mux(gpio_func_pin_e pin,gpio_func_e function);
  * @param[in]   pin - the csn pin.
  * @return      none.
  */
-void gspi_cs_pin_en(gpio_pin_e pin);
+void gspi_cs_pin_en(gpio_func_pin_e pin);
 
 /**
  * @brief       This function disable gspi csn pin.
  * @param[in]   pin - the csn pin.
  * @return      none.
  */
-void gspi_cs_pin_dis(gpio_pin_e pin);
+void gspi_cs_pin_dis(gpio_func_pin_e pin);
 
 /**
  * @brief       This function change gspi csn pin.
@@ -1095,7 +1113,7 @@ void gspi_cs_pin_dis(gpio_pin_e pin);
  * @param[in]   next_csn_pin - the next csn pin.
  * @return      none.
  */
-void gspi_change_csn_pin(gpio_pin_e current_csn_pin,gpio_pin_e next_csn_pin);
+void gspi_change_csn_pin(gpio_func_pin_e current_csn_pin,gpio_func_pin_e next_csn_pin);
 
 /**
  * @brief       This function servers to set gspi pin.

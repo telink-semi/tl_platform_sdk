@@ -189,6 +189,9 @@ typedef struct
     rf_ldo_trim_t   ldo_trim;
     rf_dcoc_cal_t   dcoc_cal;
     rf_rccal_cal_t  rccal_cal;
+    unsigned char   tx_fcal[8];
+    unsigned char   rx_fcal[8];
+    unsigned char   fcal[8];
 }rf_fast_settle_t;
 
 
@@ -827,6 +830,20 @@ static inline unsigned char rf_get_rx_wptr(void)
 void rf_rx_performance_mode(rf_rx_performance_e rx_performance);
 
 /**
+ * @brief        This function is used to set whether or not to use the rx DCOC software calibration in rf_mode_init();
+ * @param[in]    en:This value is used to set whether or not rx DCOC software calibration is performed.
+ *                -#1:enable the DCOC software calibration;
+ *                -#0:disable the DCOC software calibration;
+ * @return        none.
+ * @note        Attention:
+ *                 1.Driver default enable to solve the problem of poor receiver sensitivity performance of some chips with large DC offset
+ *                 2.The following conditions should be noted when using this function:
+ *                   If you use the RX function, it must be enabled, otherwise it will result in a decrease in RX sensitivity.
+ *                   If you only use tx and not rx, and want to save code execution time for rf_mode_init(), you can disable it
+ */
+void rf_set_rx_dcoc_cali_by_sw(unsigned char en);
+
+/**
  * @brief      This function serves to initiate information of RF.
  * @return     none.
  */
@@ -1130,29 +1147,33 @@ void rf_get_rccal_cal_val(rf_rccal_cal_t *rccal_cal);
 void rf_set_rccal_cal_val(rf_rccal_cal_t rccal_cal);
 
 /**
- * @brief      This function serves to set RF tx settle time.
- * @param[in]  tx_wait_us  tx settle time,the unit is us.The max value of this param is 0xfff; The default settling time value is 150us.
- *             The typical value is 113us (tx_settle time should not be less than this value).
+ * @brief      This function serves to set the tx wait time during the rx2tx process
+ * @param[in]  tx_wait_us  tx wait time,the unit is us.The max value of this param is 0xfff; The default wait time value is 10us.
  * @return     none.
- * @note       Attention:It is not necessary to call this function to adjust the settling time in the normal sending state.
+ * @note       Attention:It is not necessary to call this function to adjust the wait time in the rx2tx process.
  */
 static inline void rf_set_tx_wait_time(unsigned short tx_wait_us )
 {
-    tx_wait_us &= 0x0fff;
-    write_reg16(0x17020e, (read_reg16(0x17020e)& 0xf000) |(tx_wait_us - 1));
+    if(tx_wait_us>0x0fff)
+    {
+        tx_wait_us = 0x0fff;
+    }
+    reg_rf_ll_txwait = (reg_rf_ll_txwait & 0xf000)|(tx_wait_us-1);
 }
 
 /**
- * @brief      This function serves to set RF tx settle time and rx settle time.
- * @param[in]  rx_stl_us  rx settle time,the unit is us.The max value of this param is 0xfff;The default settling time value is 150us.
- *             The typical value is 85us (rx_settle time should not be less than this value).
+ * @brief      This function serves to set the rx wait time during the tx2rx process
+ * @param[in]  rx_wait_us  rx wait time,the unit is us.The max value of this param is 0xfff; The default wait time value is 10us.
  * @return     none.
- * @note       Attention:It is not necessary to call this function to adjust the settling time in the normal packet receiving state.
+ * @note       Attention:It is not necessary to call this function to adjust the wait time in the tx2rx process.
  */
 static inline void rf_set_rx_wait_time( unsigned short rx_wait_us )
 {
-    rx_wait_us &= 0x0fff;
-     write_reg16(0x170206, (read_reg16(0x170206)& 0xf000) |(rx_wait_us - 1));
+    if(rx_wait_us>0x0fff)
+    {
+        rx_wait_us = 0x0fff;
+    }
+    reg_rf_ll_rxwait = (reg_rf_ll_rxwait & 0xf000)|(rx_wait_us-1);
 }
 
 /**
@@ -1204,5 +1225,45 @@ void rf_rx_fast_settle_update_cal_val(rf_rx_fast_settle_time_e rx_settle_time,un
  * @return         none.
  */
 void rf_set_power_level_singletone(rf_power_level_e level);
+
+/**
+ *  @brief      This function is used to get the tx fast_settle calibration value.
+ *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_15US and TX_SETTLE_TIME_51US, other parameters are invalid.
+ *                              (When tx_settle_us is 15us or 51us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *  @return     none
+*/
+void rf_tx_fast_settle_get_cal_val(rf_tx_fast_settle_time_e tx_settle_time,unsigned char chn, rf_fast_settle_t* fs_cv);
+
+/**
+ *  @brief      This function is used to set the tx fast_settle calibration value.
+ *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_15US and TX_SETTLE_TIME_51US, other parameters are invalid.
+ *                              (When tx_settle_us is 15us or 51us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *  @return     none
+*/
+void rf_tx_fast_settle_set_cal_val(rf_tx_fast_settle_time_e tx_settle_time,unsigned char chn,rf_fast_settle_t* fs_cv);
+
+/**
+ *  @brief      This function is used to get the rx fast_settle calibration value.
+ *  @param[in]  rx_settle_us    After adjusting the timing sequence, the time required for rx to settle.
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to RX_SETTLE_TIME_15US, other parameters are invalid.
+ *                              (When rx_settle_us is 15us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *  @return     none
+*/
+void rf_rx_fast_settle_get_cal_val(rf_rx_fast_settle_time_e rx_settle_time,unsigned char chn, rf_fast_settle_t* fs_cv);
+
+/**
+ *  @brief      This function is used to set the rx fast_settle calibration value.
+ *  @param[in]  rx_settle_us    After adjusting the timing sequence, the time required for rx to settle.
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to RX_SETTLE_TIME_15US, other parameters are invalid.
+ *                              (When rx_settle_us is 15us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *  @return     none
+*/
+void rf_rx_fast_settle_set_cal_val(rf_rx_fast_settle_time_e rx_settle_time,unsigned char chn,rf_fast_settle_t* fs_cv);
 
 #endif

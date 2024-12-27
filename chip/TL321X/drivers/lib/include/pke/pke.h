@@ -46,7 +46,9 @@ extern eccp_curve_t sm9_curve[1];
 extern edward_curve_t ed25519[1];
 #endif
 
-
+#ifdef SUPPORT_C25519
+extern mont_curve_t c25519[1];
+#endif
 /***************** PKE register *******************/
 #define rPKE_CTRL           (*((volatile unsigned int *)(PKE_BASE_ADDR)))
 #define rPKE_CFG            (*((volatile unsigned int *)(PKE_BASE_ADDR+0x04U)))
@@ -141,8 +143,14 @@ extern edward_curve_t ed25519[1];
 
 
 
-
-
+/**
+ * @brief       Ed25519 decode point
+ * @param[in]   in_y              - encoded Ed25519 point
+ * @param[in]   out_x            - x coordinate of input point
+ * @param[in]   out_y             - y coordinate of input point
+ * @return      PKE_SUCCESS(success)     other:error
+ */
+unsigned int ed25519_decode_point(unsigned char in_y[32], unsigned char out_x[32], unsigned char out_y[32]);
 //APIs
 
 /**
@@ -210,7 +218,6 @@ unsigned int pke_get_operand_bytes(void);
 
 /**
  * @brief       get exe config
- * @param[in]   cfg      - specific config value.
  * @return      current exe config value.
  */
 unsigned int pke_get_exe_cfg(void);
@@ -325,7 +332,7 @@ unsigned int pke_mul_internal( unsigned int *a,  unsigned int *b, unsigned int *
  * @param[in]   a              - integer a.
  * @param[in]   b              - integer b.
  * @param[out]  out            - out = a*b.
- * @param[in]   wordLen        - word length of a, b, out.
+ * @param[in]   ab_wordLen        - word length of a, b, out.
  * @return      0:success     other:error
  * @note
   @verbatim
@@ -342,7 +349,7 @@ unsigned int pke_mul( unsigned int *a,  unsigned int *b, unsigned int *out, unsi
  * @param[in]   modulus              - modulus.
  * @param[in]   bitLen               - bit length of modulus, must be multiple of 32
  * @param[out]  H                    - R^2 mod modulus.
- * @param[out]  n1                   - modulus ^(-1) mod 2^w, here w is 32 actually.
+ * @param[out]  n0                   - modulus ^(-1) mod 2^w, here w is 32 actually.
  * @return      PKE_SUCCESS(success)     other:error
  * @note
   @verbatim
@@ -360,7 +367,7 @@ unsigned int pke_pre_calc_mont_without_mgmr_microcode( unsigned int *modulus, un
  * @param[in]   modulus              - modulus.
  * @param[in]   bitLen               - bit length of modulus
  * @param[out]  H                    - R^2 mod modulus.
- * @param[out]  n1                   - modulus ^(-1) mod 2^w, here w is 32 actually.
+ * @param[out]  n0                   - modulus ^(-1) mod 2^w, here w is 32 actually.
  * @return      PKE_SUCCESS(success)     other:error
  * @note
   @verbatim
@@ -406,6 +413,7 @@ unsigned int pke_pre_calc_mont_for_modexp( unsigned int *modulus, unsigned int b
  * @param[in]   modulus              - modulus.
  * @param[out]  modulus_h            - R^2 mod modulus
  * @param[out]  modulus_n0           - modulus ^(-1) mod 2^w, here w is 32 actually
+ * @param[in]   bitLen               - bit length of modulus
  * @return      PKE_SUCCESS(success)     other:error
  * @note
   @verbatim
@@ -429,10 +437,8 @@ unsigned int pke_load_modulus_and_pre_monts( unsigned int *modulus,  unsigned in
    @endverbatim
  */
 unsigned int pke_set_modulus_and_pre_monts( unsigned int *modulus,  unsigned int *modulus_h,  unsigned int *modulus_n0, unsigned int bitLen);
-
 /**
  * @brief       set modulus and pre-calculated mont parameters H(R^2 mod modulus) and n0'(- modulus ^(-1) mod 2^w) for hardware operation.
- * @param[in]   modulus        - modulus.
  * @param[in]   a              - integer a.
  * @param[in]   b              - integer b.
  * @param[out]  out            - out = a*b mod modulus.
@@ -530,7 +536,7 @@ unsigned int pke_modexp_U8( unsigned char *modulus,  unsigned char *exponent,  u
  * @param[in]   aWordLen    - word length of integer.
  * @param[in]   b           - integer b, modulus.
  * @param[in]   b_h         - out = base^(exponent) mod modulus.
- * @param[in]   b_n1        - modulus ^(-1) mod 2^w, here w is 32 actually.
+ * @param[in]   b_n0        - modulus ^(-1) mod 2^w, here w is 32 actually.
  * @param[in]   bWordLen    - word length of integer b and b_h.
  * @param[out]  c           - c = a mod b.
  * @return      0:success     other:error

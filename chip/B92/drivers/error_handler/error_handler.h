@@ -59,6 +59,7 @@ typedef enum {
 	DRV_API_ERROR_TIMEOUT_MSPI_WAIT			= 0x03,
 	DRV_API_ERROR_TIMEOUT_ANALOG_WAIT		= 0x04,
 	DRV_API_ERROR_TIMEOUT_ANA_TX_BUFCNT		= 0x05,
+	DRV_API_ERROR_TIMEOUT_PLL_DONE          = 0x06,
 } drv_api_error_code_e;
 
 /**********************************************************************************************************************
@@ -82,7 +83,7 @@ drv_api_error_code_e drv_get_error_code(void);
  * @return    none.
  * @note      This function can be rewritten according to the application scenario.
  */
-__attribute__((weak)) void drv_timeout_handler(unsigned int error_code);
+__attribute__((weak)) _attribute_ram_code_sec_noinline_ void drv_timeout_handler(unsigned int error_code);
 
 /**
  * @brief     This function serves to set the error timeout(us).

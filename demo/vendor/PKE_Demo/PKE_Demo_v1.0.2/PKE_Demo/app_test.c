@@ -1,4 +1,4 @@
-/********************************************************************************************************
+                                                                                                                                                                                                                        /********************************************************************************************************
  * @file    app_test.c
  *
  * @brief   This is the source file for Telink RISC-V MCU
@@ -25,9 +25,22 @@
 
 unsigned int pke_app_test(void)
 {
-#if defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
+#if defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_W92)
     pke_dig_en();
 #endif
+#if 1
+    hash_dig_en();
+    trng_dig_en();
+    if(Ed25519_all_test())
+        return 1;
+#endif
+
+#if 1
+    trng_dig_en();
+    if(X25519_all_test())
+        return 1;
+#endif
+
 #if 1
     if(ECCp_get_key_all_test())
         return 1;
@@ -51,6 +64,7 @@ unsigned int pke_app_test(void)
     if(RSA_all_test())
         return 1;
 #endif
+    printf("pke all test success\r\n");
     return 0;
 }
 

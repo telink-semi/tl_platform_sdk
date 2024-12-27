@@ -23,7 +23,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if((AUDIO_MODE <= I2S_ALIGN)&&(AUDIO_MODE > DMA_IRQ_TEST))
+#if((AUDIO_MODE >= I2S_TO_EXT_CODEC_WM)&&(AUDIO_MODE <DMIC_INPUT_TO_BUF_TO_I2S))
 #include "audio_common.h"
 #include "ext_codec_wm/ext_codec_wm.h"
 
@@ -383,13 +383,13 @@ void user_init(void)
     audio_i2s_input_init(&audio_i2s_input);
     /**** i2s output init ****/
     audio_i2s_output_init(&audio_i2s_output);
-    /**** setting the clock of i2s1 as the current i2s clock****/
-    audio_i2s_set_mclk(GPIO_FC_PC4);//only set i2s as master mclk=24*/2=12M
+    /**** setting the codec clock of audio as the current mclk clock****/
+    audio_set_codec_clk_as_mclk(GPIO_FC_PC6);//only set i2s as master mclk=24*/2=12M
     /**** configuring external codec-related registers via i2c***/
     audio_i2c_init_wm(GPIO_FC_PF7,GPIO_FC_PF6,(unsigned char)(sys_clk.pclk*1000*1000/(4*100000)));//set i2c frequency 100K
     /**** tx rx dma init ****/
-    audio_rx_dma_chain_init(audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size,audio_i2s_input.fifo_chn);
-    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size,audio_i2s_output.fifo_chn);
+    audio_rx_dma_chain_init(audio_i2s_input.fifo_chn, audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size);
+    audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
     audio_rx_dma_en(audio_i2s_input.dma_num);
     audio_tx_dma_en(audio_i2s_output.dma_num);
@@ -457,8 +457,8 @@ void user_init(void)
     /**** enable the left and right channels to be configured with one fifo channel each ****/
     audio_i2s_2fifo_en(audio_i2s_config.i2s_select);
     /**** tx dma init ****/
-    audio_tx_dma_chain_init(audio_i2s_output0.dma_num,(unsigned short *)audio_i2s_output0.data_buf,audio_i2s_output0.data_buf_size,audio_i2s_output0.fifo_chn);
-    audio_tx_dma_chain_init(audio_i2s_output1.dma_num,(unsigned short *)audio_i2s_output1.data_buf,audio_i2s_output1.data_buf_size,audio_i2s_output1.fifo_chn);
+    audio_tx_dma_chain_init(audio_i2s_output0.fifo_chn, audio_i2s_output0.dma_num,(unsigned short *)audio_i2s_output0.data_buf,audio_i2s_output0.data_buf_size);
+    audio_tx_dma_chain_init(audio_i2s_output1.fifo_chn, audio_i2s_output1.dma_num,(unsigned short *)audio_i2s_output1.data_buf,audio_i2s_output1.data_buf_size);
     /**** i2s starts run ****/
     audio_tx_dma_en(audio_i2s_output0.dma_num);
     audio_tx_dma_en(audio_i2s_output1.dma_num);
@@ -543,8 +543,8 @@ void user_init(void)
     /**** i2s tdm mode output init ****/
     audio_i2s2_tdm_output_init(&audio_i2s2_tdm_output);
     /**** rx tx dma init ****/
-    audio_rx_dma_chain_init(audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size,audio_i2s_input.fifo_chn);
-    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size,audio_i2s_output.fifo_chn);
+    audio_rx_dma_chain_init(audio_i2s_input.fifo_chn, audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size);
+    audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
     audio_rx_dma_en(audio_i2s_input.dma_num);
     audio_tx_dma_en(audio_i2s_output.dma_num);
@@ -588,7 +588,7 @@ void user_init(void)
     /**** set rx dma channel burst size ****/
     audio_set_dma_rx_burst(audio_i2s_input.fifo_chn,audio_i2s_input.dma_num,DMA_BURST_2_WORD);
     /**** rx dma init ****/
-    audio_rx_dma_chain_init(audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size,audio_i2s_input.fifo_chn);
+    audio_rx_dma_chain_init(audio_i2s_input.fifo_chn,audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size);
     /**** i2s starts run ****/
     audio_rx_dma_en(audio_i2s_input.dma_num);
     audio_i2s_clk_en(audio_i2s_config.i2s_select);
@@ -632,7 +632,7 @@ void user_init(void)
     /**** set tx dma channel burst size ****/
     audio_set_dma_tx_burst(audio_i2s_output.fifo_chn,audio_i2s_output.dma_num,DMA_BURST_2_WORD);
     /**** tx dma init ****/
-    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size,audio_i2s_output.fifo_chn);
+    audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
     audio_tx_dma_en(audio_i2s_output.dma_num);
     audio_i2s_clk_en(audio_i2s_config.i2s_select);
@@ -688,8 +688,8 @@ void user_init(void)
     /**** enable threshold trigger***/
     audio_i2s_schedule_en(audio_i2s_config.i2s_select);
     /**** rx tx dma init ****/
-    audio_rx_dma_chain_init(audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size,audio_i2s_input.fifo_chn);
-    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size,audio_i2s_output.fifo_chn);
+    audio_rx_dma_chain_init(audio_i2s_input.fifo_chn, audio_i2s_input.dma_num,(unsigned short *)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size);
+    audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
     audio_rx_dma_en(audio_i2s_input.dma_num);
     audio_tx_dma_en(audio_i2s_output.dma_num);
@@ -745,7 +745,7 @@ void user_init(void)
     audio_set_ascl_gain(ASCL2,ASCL_OUT_D_GAIN_0_DB);
     audio_ascl_set_conversion_sample_rate(ASCL2,AUDIO_ASCL_48K,AUDIO_ASCL_96K,AUDIO_STEREO);
     /**** tx dma init ****/
-    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size,audio_i2s_output.fifo_chn);
+    audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num,(unsigned short *)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
     audio_tx_dma_en(audio_i2s_output.dma_num);
     audio_i2s_clk_en(audio_i2s_config.i2s_select);
@@ -813,8 +813,8 @@ void user_init(void)
     /**** enable tx fifo interrupt for i2s ****/
     audio_txfifo_irq_en(audio_i2s_output.fifo_chn);
     /**** rx tx dma init ****/
-    audio_rx_dma_chain_init(audio_i2s_input.dma_num,(unsigned short *)AUDIO_BUFF,audio_i2s_input.data_buf_size,audio_i2s_input.fifo_chn);
-    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short *)AUDIO_BUFF,audio_i2s_output.data_buf_size,audio_i2s_output.fifo_chn);
+    audio_rx_dma_chain_init(audio_i2s_input.fifo_chn, audio_i2s_input.dma_num,(unsigned short *)AUDIO_BUFF,audio_i2s_input.data_buf_size);
+    audio_tx_dma_chain_init(audio_i2s_output.fifo_chn,audio_i2s_output.dma_num,(unsigned short *)AUDIO_BUFF,audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
     audio_rx_dma_en(audio_i2s_input.dma_num);
     audio_tx_dma_en(audio_i2s_output.dma_num);
@@ -960,8 +960,8 @@ void user_init(void)
     /**** i2s fifo set input path ****/
     audio_data_fifo_input_path_sel(RX_FIFO_NUM,I2S_ALIGN_INPUT_PATH);
     /**** rx tx dma init ****/
-    audio_rx_dma_chain_init(RX_DMA_CHN,(unsigned short *)AUDIO_BUFF,AUDIO_BUFF_SIZE,RX_FIFO_NUM);
-    audio_tx_dma_chain_init(TX_DMA_CHN,(unsigned short *)AUDIO_BUFF,AUDIO_BUFF_SIZE,TX_FIFO_NUM);
+    audio_rx_dma_chain_init(RX_FIFO_NUM, RX_DMA_CHN,(unsigned short *)AUDIO_BUFF,AUDIO_BUFF_SIZE);
+    audio_tx_dma_chain_init(TX_FIFO_NUM, TX_DMA_CHN,(unsigned short *)AUDIO_BUFF,AUDIO_BUFF_SIZE);
     /**** i2s starts run ****/
     audio_rx_dma_en(RX_DMA_CHN);
     audio_tx_dma_en(TX_DMA_CHN);

@@ -44,9 +44,6 @@ extern "C" {
 #define SUPPORT_SKE_AES_128
 #define SUPPORT_SKE_AES_192
 #define SUPPORT_SKE_AES_256
-#if defined(MCU_CORE_TL721X)
-#define SUPPORT_SKE_SM4
-#endif
 //#define SUPPORT_SKE_IRQ
 
 #define SUPPORT_SKE_MODE_ECB
@@ -249,6 +246,7 @@ typedef enum{
 typedef struct{
     unsigned char block_bytes;
     unsigned char block_words;
+    unsigned short sp_key_idx;
 } SKE_CTX;
 
 

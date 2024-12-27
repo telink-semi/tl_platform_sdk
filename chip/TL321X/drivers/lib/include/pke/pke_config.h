@@ -78,18 +78,18 @@ extern "C" {
  *caution:
  */
 #define SUPPORT_RSA
-//#define SUPPORT_DH
+#define SUPPORT_DH
 #define SUPPORT_ECDH
 #define SUPPORT_ECDSA
-//#define SUPPORT_ECIES
-//#define SUPPORT_SM2
-//#define SUPPORT_SM9
-//#define SUPPORT_C25519
+#define SUPPORT_ECIES
+//#define SUPPORT_SM2//hardware not support
+//#define SUPPORT_SM9//hardware not support
+#define SUPPORT_C25519
 
 
 #ifdef SUPPORT_RSA
 //#define SUPPORT_RSAES_OAEP
-//#define SUPPORT_RSASSA_PSS
+//#define SUPPORT_RSASSA_PSS //hardware not support
 #endif
 
 

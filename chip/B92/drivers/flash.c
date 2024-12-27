@@ -534,7 +534,7 @@ _attribute_text_sec_ unsigned int flash_read_mid(void)
 _attribute_text_sec_ void flash_read_uid(unsigned char idcmd,unsigned char *buf)
 {
 	DISABLE_BTB;
-	if(idcmd==((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH>>16)&0xff))
+	if(idcmd==((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH>>24)&0xff))
 	{
 		flash_mspi_read_ram(FLASH_READ_UID_CMD_GD_PUYA_ZB_TH ,0, buf,16);
 	}

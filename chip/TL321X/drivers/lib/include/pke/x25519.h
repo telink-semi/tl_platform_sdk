@@ -33,7 +33,7 @@ extern "C" {
 
 
 
-extern mont_curve_t c25519[1];
+//extern mont_curve_t c25519[1];
 
 
 

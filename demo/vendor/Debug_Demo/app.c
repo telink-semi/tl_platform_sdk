@@ -38,10 +38,10 @@ void user_init(void)
     gpio_input_dis(LED4);
 #if(DEBUG_BUS==USB_PRINT_DEBUG_ENABLE)
     /*                                 Note
-     * TL751X, TL721X, TL321X don't support hardware enumeration into print device.
+     * TL7518, TL721X, TL321X don't support hardware enumeration into print device.
      * See the print demo in the USB_Demo for a software enumeration instead of a hardware enumeration.
      */
-#if !defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL721X) && !defined(MCU_CORE_TL321X)
+#if !defined(MCU_CORE_TL7518) && !defined(MCU_CORE_TL721X) && !defined(MCU_CORE_TL321X)
 #if !defined(MCU_CORE_B91) && !defined(MCU_CORE_B92)
     usbhw_init();
 #endif
@@ -71,7 +71,7 @@ void main_loop (void)
     gpio_toggle(LED2);
     gpio_toggle(LED3);
     gpio_toggle(LED4);
-    delay_ms(50);
+    delay_ms(500);
 }
 
 

@@ -154,7 +154,7 @@ uart_timeout_error_t g_uart_timeout_error[3]={
         .g_uart_error_timeout_code      = UART_API_ERROR_TIMEOUT_NONE,
     }
 };
-
+static unsigned char g_uart_auto_clr_rx_fifo_ptr_en =1;
 /**********************************************************************************************************************
  *                                          local function prototype                                                  *
  *********************************************************************************************************************/
@@ -349,7 +349,7 @@ void uart_cal_div_and_bwpc(unsigned int baudrate, unsigned int pclk, unsigned sh
  * @param[in]  rxtimeout_exp   - the power exponent of mul.
  * @return     none
  */
-void uart_set_rx_timeout(uart_num_e uart_num, unsigned char bwpc, unsigned char bit_cnt, uart_timeout_mul_e mul, unsigned char rxtimeout_exp)
+void uart_set_rx_timeout_with_exp(uart_num_e uart_num, unsigned char bwpc, unsigned char bit_cnt, uart_timeout_mul_e mul, unsigned char rxtimeout_exp)
 {
     reg_uart_rx_timeout0(uart_num) = (bwpc + 1) * bit_cnt; // one byte includes 12 bits at most
     reg_uart_rx_timeout1(uart_num) = (((reg_uart_rx_timeout1(uart_num)) & (~FLD_UART_TIMEOUT_MUL)) | mul);
@@ -742,7 +742,7 @@ void uart_receive_dma(uart_num_e uart_num, unsigned char *addr, unsigned int rev
     uart_dma_rev_size[uart_num] = rev_size;
     // uart_receive_dma interface dma must be invoked,nodma does not call,so put the uart_rxdone_sel interface in this interface.
     uart_rxdone_sel(UART0, UART_DMA_MODE);
-    uart_auto_clr_rx_fifo_ptr(uart_num, 1);
+    uart_auto_clr_rx_fifo_ptr(uart_num, g_uart_auto_clr_rx_fifo_ptr_en);
     dma_set_address(uart_dma_rx_chn[uart_num], uart_base_addr(uart_num), (unsigned int)(addr));
     dma_set_size(uart_dma_rx_chn[uart_num], rev_size, DMA_WORD_WIDTH);
     dma_chn_en(uart_dma_rx_chn[uart_num]);

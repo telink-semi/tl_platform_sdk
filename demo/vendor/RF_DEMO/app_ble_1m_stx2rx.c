@@ -64,24 +64,31 @@ volatile unsigned int timeout_cnt=0;
 volatile unsigned int tx_state=0;
 volatile unsigned int rx_state=0;
 volatile unsigned int timeout_state=0;
-
-
 _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 {
-#if(!defined(MCU_CORE_TL751X))
-    if(rf_get_irq_status(FLD_RF_IRQ_TX))
-        {
-            tx_state = 1;
-            gpio_toggle(LED1);
-            rf_clr_irq_status(FLD_RF_IRQ_TX);
-        }
-#else
+#if defined(MCU_CORE_TL7518)
     if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
         {
             tx_state = 1;
             gpio_toggle(LED1);
             rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
-            delay_us(5);//Currently, the TL751X chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+            delay_us(5);//Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+        }
+#elif defined(MCU_CORE_TL751X)
+    if(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE))
+        {
+            tx_state = 1;
+            gpio_toggle(LED1);
+            rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+            delay_us(11);//Currently, the TL751x chip also requires a seq delay of at least 11us after the end of the TX and RX EN states.
+        }
+#else
+    if(rf_get_irq_status(FLD_RF_IRQ_TX))
+        {
+            rf_set_vant1p05_power_trim_vol_down();
+            tx_state = 1;
+            gpio_toggle(LED1);
+            rf_clr_irq_status(FLD_RF_IRQ_TX);
         }
 #endif
     if(rf_get_irq_status(FLD_RF_IRQ_RX))
@@ -89,9 +96,12 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
             rx_state = 1;
             gpio_toggle(LED2);
             rf_clr_irq_status(FLD_RF_IRQ_RX);
-#if defined(MCU_CORE_TL751X)
-            delay_us(5);//Currently, the TL751X chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+#if defined(MCU_CORE_TL7518)
+            delay_us(5);//Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+#elif defined(MCU_CORE_TL751X)
+            delay_us(11);//Currently, the TL751x chip also requires a seq delay of at least 11us after the end of the TX and RX EN states.
 #endif
+            rf_set_vant1p05_power_trim_vol_up();
         }
 
     if(rf_get_irq_status(FLD_RF_IRQ_RX_TIMEOUT))
@@ -109,8 +119,11 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
 
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
 }
-PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
-
+#if defined(MCU_CORE_TL751X_N22)
+CLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
+#else
+PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT);
+#endif
 
 void user_init(void)
 {
@@ -148,20 +161,41 @@ void user_init(void)
 #endif
 #if(RF_STRX_MODE==TX_FIRST)
     core_interrupt_enable();
-    plic_interrupt_enable(IRQ_ZB_RT);
-#if(!defined(MCU_CORE_TL751X))
-    rf_set_irq_mask(FLD_RF_IRQ_TX|FLD_RF_IRQ_RX|FLD_RF_IRQ_RX_TIMEOUT);
+#if defined(MCU_CORE_TL751X_N22)
+    clic_init();
+    clic_interrupt_enable(IRQ_ZB_RT);
 #else
+    plic_interrupt_enable(IRQ_ZB_RT);
+#endif
+
+#if(defined(MCU_CORE_TL7518))
     rf_set_irq_mask(FLD_RF_IRQ_MDM_TX_END|FLD_RF_IRQ_RX|FLD_RF_IRQ_RX_TIMEOUT);
+#elif(defined(MCU_CORE_TL751X))
+    rf_set_irq_mask(FLD_RF_IRQ_TX_EN_DONE|FLD_RF_IRQ_RX|FLD_RF_IRQ_RX_TIMEOUT);
+    /*
+    * This configuration is used for tl751x.
+    * After the current version of tx en ends, an additional 11us seq is required.
+    * Subsequent versions will continue to compress this time.
+    */
+    rf_set_rx_wait_time(11);
+#else
+    rf_set_irq_mask(FLD_RF_IRQ_TX|FLD_RF_IRQ_RX|FLD_RF_IRQ_RX_TIMEOUT);
 #endif
 
 #elif(RF_STRX_MODE==RX_FIRST)
     core_interrupt_enable();
-    plic_interrupt_enable(IRQ_ZB_RT);
-#if(!defined(MCU_CORE_TL751X))
-    rf_set_irq_mask(FLD_RF_IRQ_TX|FLD_RF_IRQ_RX|FLD_RF_IRQ_FIRST_TIMEOUT);
+#if defined(MCU_CORE_TL751X_N22)
+    clic_init();
+    clic_interrupt_enable(IRQ_ZB_RT);
 #else
+    plic_interrupt_enable(IRQ_ZB_RT);
+#endif
+#if(defined(MCU_CORE_TL7518))
     rf_set_irq_mask(FLD_RF_IRQ_MDM_TX_END|FLD_RF_IRQ_RX|FLD_RF_IRQ_FIRST_TIMEOUT);
+#elif(defined(MCU_CORE_TL751X))
+    rf_set_irq_mask(FLD_RF_IRQ_TX_EN_DONE|FLD_RF_IRQ_RX|FLD_RF_IRQ_FIRST_TIMEOUT);
+#else
+    rf_set_irq_mask(FLD_RF_IRQ_TX|FLD_RF_IRQ_RX|FLD_RF_IRQ_FIRST_TIMEOUT);
 #endif
 #endif
 
@@ -183,6 +217,7 @@ void main_loop (void)
         rx_state=0;
         timeout_state=0;
         delay_ms(100);
+        rf_set_vant1p05_power_trim_vol_up();
         rf_start_stx2rx (ble_tx_packet, rf_stimer_get_tick()+16*RF_SYSTEM_TIMER_TICK_1US);
         while(1)
         {

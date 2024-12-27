@@ -54,15 +54,50 @@
 #define FLASH_CAP_VALUE_ADDR_16M            0xffe000
 #endif
 
+/********************IEEE ADDRESS IN FLASH***********************/
+#ifndef FLASH_IEEE_ADDR_LOCATION_64K
+#define FLASH_IEEE_ADDR_LOCATION_64K        0xf000
+#endif
+
+#ifndef FLASH_IEEE_ADDR_LOCATION_128K
+#define FLASH_IEEE_ADDR_LOCATION_128K       0x1f000
+#endif
+
+#ifndef FLASH_IEEE_ADDR_LOCATION_512K
+#define FLASH_IEEE_ADDR_LOCATION_512K       0x7f000
+#endif
+
+#ifndef FLASH_IEEE_ADDR_LOCATION_1M
+#define FLASH_IEEE_ADDR_LOCATION_1M         0xff000
+#endif
+
+#ifndef FLASH_IEEE_ADDR_LOCATION_2M
+#define FLASH_IEEE_ADDR_LOCATION_2M         0x1ff000
+#endif
+
+#ifndef FLASH_IEEE_ADDR_LOCATION_4M
+#define FLASH_IEEE_ADDR_LOCATION_4M         0x3ff000
+#endif
+
+#ifndef FLASH_IEEE_ADDR_LOCATION_16M
+#define FLASH_IEEE_ADDR_LOCATION_16M        0xfff000
+#endif
+
+typedef enum {
+    IEEE_ADDR_NOT_EXIST,
+    IEEE_ADDR_FROM_FLASH,
+    IEEE_ADDR_FROM_OTP,
+}ieee_addr_source_e;
+
+
 /**
  * @brief       This function is used to calibrate the user's parameters.
- *              This function is to read the calibration value stored in efuse and flash ,
+ *              This function is to read the calibration value stored in efuse and flash,
  *              and use the calibration value to configure the chip to improve chip performance.
  *              (reduce adc measurement error, reduce frequency offset, etc.)
- * @param[in]   device_num  - the number of slave device.
  * @return      none.
  */
-void calibration_func(mspi_slave_device_num_e device_num);
+void calibration_func(void);
 
 /**
  * @brief      This function serves to update rf frequency offset.
@@ -71,4 +106,11 @@ void calibration_func(mspi_slave_device_num_e device_num);
  */
 unsigned char user_calib_freq_offset( unsigned int addr);
 
+/**
+ * @brief      This function serves to read IEEE address from FLASH or OTP.
+ * @param[in]  addr - the IEEE address of flash.
+ * @param[out] buf  - Pointer to IEEE address buffer
+ * @return     ieee_addr_source_e
+ */
+ieee_addr_source_e user_get_ieee_addr(unsigned int addr,unsigned char *mac_addr_buf);
 #endif /* VENDOR_COMMON_CALIBRATION_H_ */

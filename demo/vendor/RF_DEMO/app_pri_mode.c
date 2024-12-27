@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if (( !defined(MCU_CORE_TL751X)&&(RF_MODE==RF_PRIVATE_500K || RF_MODE==RF_PRIVATE_250K))||RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M  )
+#if (( !defined(MCU_CORE_TL7518)&&(RF_MODE==RF_PRIVATE_500K || RF_MODE==RF_PRIVATE_250K))||RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M  )
 
 
 unsigned char  rx_packet[128*4]  __attribute__ ((aligned (4)));
@@ -170,7 +170,7 @@ void main_loop(void)
     Private_SB_tx_packet[1] = (rf_tx_dma_len >> 8)&0xff;
     Private_SB_tx_packet[0] = rf_tx_dma_len&0xff;
 #endif
-
+    rf_set_vant1p05_power_trim_vol_up();
 #if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
     rf_start_stx(Private_TPLL_tx_packet, rf_stimer_get_tick());
 #elif(PRI_MODE== SB_MODE)
@@ -182,6 +182,9 @@ void main_loop(void)
         delay_ms(1);
         while(!(rf_get_irq_status(FLD_RF_IRQ_TX )));
         rf_clr_irq_status(FLD_RF_IRQ_TX );
+        rf_set_vant1p05_power_trim_vol_down();
+        delay_us(20);
+        rf_set_vant1p05_power_trim_vol_up();
 #if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
         rf_start_stx(Private_TPLL_tx_packet, rf_stimer_get_tick());
 #elif(PRI_MODE== SB_MODE)
@@ -298,6 +301,7 @@ void main_loop(void)
     while(1)
     {
         delay_ms(1);
+        rf_set_vant1p05_power_trim_vol_up();
 #if(PRI_MODE==TPLL_MODE&&(RF_MODE == RF_PRIVATE_1M || RF_MODE==RF_PRIVATE_2M))
         rf_tx_pkt(Private_TPLL_tx_packet);
 #elif(PRI_MODE== SB_MODE)
@@ -305,6 +309,7 @@ void main_loop(void)
 #endif
         while(!(rf_get_irq_status(FLD_RF_IRQ_TX )));
         rf_clr_irq_status(FLD_RF_IRQ_TX );
+        rf_set_vant1p05_power_trim_vol_down();
         gpio_toggle(LED4);
         //delay_ms(100);
         tx_cnt++;

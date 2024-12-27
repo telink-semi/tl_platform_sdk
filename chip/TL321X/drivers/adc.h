@@ -34,6 +34,7 @@
 #pragma once
 
 #include "dma.h"
+#include "audio.h"
 #include "compiler.h"
 #include "gpio.h"
 #include "reg_include/register.h"
@@ -104,7 +105,7 @@ typedef enum{
     ADC_GPIO_PB7 = GPIO_PB7 | (0x8<<12),
     ADC_GPIO_PD0 = GPIO_PD0 | (0x9<<12),
     ADC_GPIO_PD1 = GPIO_PD1 | (0xa<<12),
-}adc_input_pin_e;
+}adc_input_pin_def_e;
 
 typedef enum{
     ADC_GPIO_MODE,
@@ -194,7 +195,7 @@ typedef enum{
     ADC_PRESCALE_1   = 0x00,
 //  ADC_PRESCALE_1F2 = 0x01,//Only for internal testing
     ADC_PRESCALE_1F4 = 0x02,
-//    ADC_PRESCALE_1F8 = 0x03,//Only for internal testing
+//  ADC_PRESCALE_1F8 = 0x03,//Only for internal testing
 }adc_pre_scale_e;
 
 typedef struct{
@@ -210,7 +211,7 @@ typedef struct{
     adc_ref_vol_e v_ref;
     adc_pre_scale_e pre_scale;
     adc_sample_freq_e sample_freq;
-    adc_input_pin_e pin;
+    adc_input_pin_def_e pin;
 }adc_gpio_cfg_t;
 
 typedef enum{
@@ -247,13 +248,15 @@ static inline void adc_set_diff_input(adc_sample_chn_e chn,adc_input_pch_e p_ain
     analog_write_reg8(areg_adc_res_m, analog_read_reg8(areg_adc_res_m) | FLD_ADC_EN_DIFF_CHN_M);
     reg_adc_r_mux(chn) = (p_ain | (n_ain<<4)) ;
 }
+
+
 /**
  * @brief This function is used to set IO port for ADC supply or ADC IO port voltage sampling.
  * @param[in]  mode - ADC gpio pin sample mode
- * @param[in]  pin - adc_input_pin_e ADC input gpio pin
+ * @param[in]  pin - adc_input_pin_def_e ADC input gpio pin
  * @return none
  */
-void adc_pin_config(adc_input_pin_mode_e mode ,adc_input_pin_e pin);
+void adc_pin_config(adc_input_pin_mode_e mode ,adc_input_pin_def_e pin);
 /**
  * @brief This function is used to set two IO port configuration and set it as input channel of ADC difference IO port voltage sampling.
  * @param[in]  chn - enum variable of ADC sample channel.
@@ -261,7 +264,7 @@ void adc_pin_config(adc_input_pin_mode_e mode ,adc_input_pin_e pin);
  * @param[in]  n_pin - enum variable of ADC analog negative input IO.
  * @return none
  */
-void adc_set_diff_pin(adc_sample_chn_e chn,adc_input_pin_e p_pin, adc_input_pin_e n_pin);
+void adc_set_diff_pin(adc_sample_chn_e chn,adc_input_pin_def_e p_pin, adc_input_pin_def_e n_pin);
 
 /**
  * @brief      This function serves to select Vbat voltage division factor.
@@ -293,6 +296,15 @@ void adc_gpio_sample_init(adc_sample_chn_e chn , adc_gpio_cfg_t cfg);
  * @return none
  */
 void adc_vbat_sample_init(adc_sample_chn_e chn);
+
+/**
+ * @brief  This function is used to initialize the ADC for gpio sampling to indirectly sample the vbat voltage.
+ * @param[in]  chn -the channel to be configured.
+ * @param[in]  cfg -structure for configuring ADC channel.
+ * @return none
+ * @attention Only for 1.9V ~ 3.6V vbat power supply, if the vbat power supply > 3.6V, ADC_VBAT_SAMPLE must be selected.
+ */
+void adc_gpio_sample_vbat_init(adc_sample_chn_e chn , adc_gpio_cfg_t cfg);
 #if INTERNAL_TEST_FUNC_EN
 /**
  * @brief This function is used to initialize the ADC for Temperature Sensor sampling.
@@ -333,6 +345,23 @@ static inline void adc_set_rx_fifo_trig_cnt(unsigned char trig_num)
 {
     reg_adc_rxfifo_trig_num = ((reg_adc_rxfifo_trig_num & (~FLD_RXFIFO_TRIG_NUM)) | trig_num);
 }
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref for GPIO.
+ * @param[in] vref - GPIO sampling calibration value.
+ * @param[in] offset - GPIO sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_gpio_calib_vref(unsigned short vref,signed char offset);
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref for Vbat.
+ * @param[in] vref - Vbat channel sampling calibration value.
+ * @param[in] offset - Vbat channel sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_vbat_calib_vref(unsigned short vref,signed char offset);
+
 /**********************************************************************************************************************
  *                                                DMA only interface                                                  *
  **********************************************************************************************************************/

@@ -36,7 +36,7 @@
 #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
 #define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
 #define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 8000) ?  AUDIO_8K :((SPEAKER_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (SPEAKER_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (SPEAKER_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
-#elif  defined(MCU_CORE_TL751X)
+#elif  defined(MCU_CORE_TL7518)
 #define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 16000) ? AUDIO_16K :((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
 #define SPK_SAMPLING_RATE   (SPEAKER_SAMPLE_RATE== 16000) ? AUDIO_16K :((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
 #else
@@ -46,7 +46,7 @@
 
 short iso_in_buff[MIC_BUFFER_SIZE];
 short iso_out_buff[SPK_BUFFER_SIZE];
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
 #endif
@@ -355,7 +355,7 @@ else
 
     usb_handle_irq();
 }
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 
 void user_init(void)
 {
@@ -448,6 +448,55 @@ void main_loop(void)
 }
 
 #elif (defined(MCU_CORE_TL321X))
+void user_init(void)
+{
+    gpio_function_en(LED1);
+    gpio_output_en(LED1);
+    gpio_function_en(LED2);
+    gpio_output_en(LED2);
+    gpio_function_en(LED3);
+    gpio_output_en(LED3);
+
+    /* enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device) */
+    usb_init();
+    /* enable endpoint USB_EDP_SPEAKER and USB_EDP_MIC. */
+    usbhw_set_eps_en(BIT(USB_EDP_SPEAKER) | BIT(USB_EDP_MIC));
+
+    /* enable global interrupt */
+    core_interrupt_enable();
+
+    /* set data endpoint buffer size and addr */
+    usbhw_set_ep_addr(USB_EDP_MIC, 0x00);
+    usbhw_set_ep_addr(USB_EDP_SPEAKER, USB_MIC_CHANNELS_LEN);
+    usbhw_set_eps_max_size(192); /* max 192 */
+
+    /* enable usb data endpoint interrupt */
+    usbhw_set_eps_irq_mask(BIT(USB_EDP_MIC));
+    usbhw_set_eps_irq_mask(BIT(USB_EDP_SPEAKER));
+    plic_interrupt_enable(IRQ_USB_ENDPOINT);
+
+#if (USB_ENUM_IN_INTERRUPT == 1)
+    /* enable set intf irq */
+    usbhw_set_irq_mask(USB_IRQ_SETINF_MASK);
+    plic_interrupt_enable(IRQ_USB_CTRL_EP_SETINF);
+#endif
+
+    /* enable USB DP pull up 1.5k */
+    usb_set_pin(1);
+}
+
+static unsigned int t1 = 0;
+void main_loop(void)
+{
+    usb_handle_irq();
+    if (clock_time_exceed(t1, 500000))
+    {
+        t1 = stimer_get_tick() | 1;
+        gpio_toggle(LED1);
+    }
+}
+
+#elif (defined(MCU_CORE_TL751X))
 void user_init(void)
 {
     gpio_function_en(LED1);

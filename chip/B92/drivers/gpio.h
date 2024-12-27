@@ -41,7 +41,7 @@
 
 #include <stdbool.h>
 #include "lib/include/plic.h"
-#include "analog.h"
+#include "lib/include/analog.h"
 #include "reg_include/gpio_reg.h"
 /**********************************************************************************************************************
  *                                         global constants                                                           *
@@ -357,7 +357,7 @@ typedef enum {
 	GPIO_PIN_UP_DOWN_FLOAT      = 0,
 	GPIO_PIN_PULLUP_1M        	= 1,
 	GPIO_PIN_PULLDOWN_100K  	= 2,
-	GPIO_PIN_PULLUP_10K 		= 3,
+	GPIO_PIN_PULLUP_10K 		= 3,//PULLUP_10K cannot be used as a wake-up function, otherwise it may fail to wake up.
 }gpio_pull_type_e;
 
 typedef enum{

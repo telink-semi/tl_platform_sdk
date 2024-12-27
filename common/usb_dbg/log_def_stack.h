@@ -23,7 +23,6 @@
  *******************************************************************************************************/
 #ifndef _LOG_DEF_STACK_H_
 #define _LOG_DEF_STACK_H_
-
 //  event: 0 for time stamp; 1 reserved; eid2 - eid31
 #define         SLEV_timestamp              0
 #define         SLEV_reserved               1
@@ -93,4 +92,8 @@
 #define         SL16_sniff_slot             9
 #define         SL16_sniff_win              10
 #define         SL16_sub_instant            11
+
+// 24-bit data: sid0 - sid63
+#define         SL24_FCNT                   1
+
 #endif

@@ -40,16 +40,16 @@ static volatile unsigned long mtime_clock_source = 32000;
  */
 void mtime_clk_init(clk_32k_type_e src)
 {
-    clock_32k_init(src);
+   
     if (src == CLK_32K_RC)
     {
         mtime_clock_source = 32000;
-        clock_cal_32k_rc();
+        
     }
     else
     {
         mtime_clock_source = 32768;
-        clock_kick_32k_xtal(10);
+
     }
 }
 

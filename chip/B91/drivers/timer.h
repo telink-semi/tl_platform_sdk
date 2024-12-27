@@ -195,7 +195,7 @@ static inline void timer_set_cap_tick(timer_type_e type, unsigned int cap_tick)
 void timer_start(timer_type_e type);
 
 /**
- * @brief     set mode, initial tick and capture of timer.
+ * @brief     set mode of timer.
  * @param[in] type - select the timer to start.
  * @param[in] mode - select mode for timer.
  * @return    none

@@ -145,7 +145,7 @@ bool dcd_edpt_open(unsigned char rhport, tusb_desc_endpoint_t const *desc_edpt)
   unsigned char const epnum = tu_edpt_number(desc_edpt->bEndpointAddress);
   unsigned char const dir = tu_edpt_dir(desc_edpt->bEndpointAddress);
 
-  xfer_ctl_t *xfer = XFER_CTL_BASE(epnum, dir);
+  xfer_ctl_t *xfer = XFER_CTL_BASE(epnum & 0x07, dir);
   xfer->max_size = desc_edpt->wMaxPacketSize.size;
 
   usbhw_set_ep_en(epnum & 0x07, 1);
@@ -211,7 +211,7 @@ bool dcd_edpt_xfer(unsigned char rhport, unsigned char ep_addr, unsigned char *b
   volatile unsigned char const epnum = tu_edpt_number(ep_addr);
   unsigned char const dir = tu_edpt_dir(ep_addr);
 
-  xfer_ctl_t *xfer = XFER_CTL_BASE(epnum, dir);
+  xfer_ctl_t *xfer = XFER_CTL_BASE(epnum & 0x07, dir);
   xfer->buffer = buffer;
   xfer->total_len = total_bytes;
   xfer->queued_len = 0;
@@ -251,7 +251,7 @@ void dcd_edpt_clear_stall(unsigned char rhport, unsigned char ep_addr)
 
 static void receive_packet(unsigned char ep_num)
 {
-  xfer_ctl_t *xfer = XFER_CTL_BASE(ep_num, TUSB_DIR_OUT);
+  xfer_ctl_t *xfer = XFER_CTL_BASE(ep_num & 0x07, TUSB_DIR_OUT);
   unsigned char xfer_size;
 
   /* get receive data length */
@@ -296,7 +296,7 @@ static void receive_packet(unsigned char ep_num)
 static void transmit_packet(unsigned char ep_num)
 {
   if(ep_num >= EP_MAX)  return;
-  xfer_ctl_t *xfer = XFER_CTL_BASE(ep_num, TUSB_DIR_IN);
+  xfer_ctl_t *xfer = XFER_CTL_BASE(ep_num & 0x07, TUSB_DIR_IN);
 
   // First, determine whether we should even send a packet or finish
   // up the xfer.

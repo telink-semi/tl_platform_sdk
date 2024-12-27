@@ -28,14 +28,14 @@
                         ##### how to test demo #####
    ===============================================================================
    master and slave end hardware connection:scl <-> scl,sda <-> sda,gnd <-> gnd,during the test, power on the slave and then the master.
-   (+) I2C_DEVICE == I2C_MASTER_DEVICE(B91/B92/TL751X/TL721X)
+   (+) I2C_DEVICE == I2C_MASTER_DEVICE(B91/B92/TL7518/TL721X)
        the bin is burned into the master, and the data flow situation:
        the master writes the data to the slave end, and then reads back to determine whether the written data is consistent with the read data;
-   (+) I2C_DEVICE == I2C_SLAVE_DEVICE(B91/B92/TL751X/TL721X)
-      (+) I2C_STRETCH_MODE == I2C_STRETCH_DIS(B91/B92/TL751X/TL721X)
+   (+) I2C_DEVICE == I2C_SLAVE_DEVICE(B91/B92/TL7518/TL721X)
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_DIS(B91/B92/TL7518/TL721X)
            the bin is burned into the slave. data flow condition:
            the slave receives data from the master and then writes the received data back to the master.
-      (+) I2C_STRETCH_MODE == I2C_STRETCH_EN(B92/TL751X/TL721X)
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_EN(B92/TL7518/TL721X)
           (+)Another mechanism for communicating with the master,the bin is burned into the slave. data flow condition:
              the slave receives data from the master and then writes the received data back to the master.
    @endverbatim
@@ -54,7 +54,7 @@
 #if(I2C_DEVICE == I2C_MASTER_DEVICE)
 #define  I2C_CLK_SPEED              200000 //i2c clock 200K.
 /*In B91 and B92, the length of data received by the slave should not exceed the buffer size to avoid potential overflow risks.
- *In TL751X and TL721X, the received data length will not result in a buffer address overflow. Refer to the detailed interface: i2c_slave_set_rx_dma().*/
+ *In TL7518 and TL721X, the received data length will not result in a buffer address overflow. Refer to the detailed interface: i2c_slave_set_rx_dma().*/
 #define  BUFF_DATA_LEN_DMA          32
 #if !defined(MCU_CORE_B91)
 volatile unsigned char i2c_master_read_nack_cnt=0;
@@ -84,7 +84,7 @@ unsigned char i2c_rx_buff[BUFF_DATA_LEN_DMA+4] __attribute__((aligned(4)));
 #endif
 /* B91 DMA_REV_LEN configuration is consistent with the transmission length.
  * In B92, when DMA length is configured to the maximum, DMA has function write_num.
- * In TL751X and TL721X, the DMA write_num function is unrelated to DMA_REV_LEN, but it needs to be aligned with 4.*/
+ * In TL7518 and TL721X, the DMA write_num function is unrelated to DMA_REV_LEN, but it needs to be aligned with 4.*/
 #if defined(MCU_CORE_B91)
 #define  DMA_REV_LEN                BUFF_DATA_LEN_DMA
 #elif defined(MCU_CORE_B92)
@@ -146,7 +146,7 @@ void user_init(void)
  *      2.If the receiving length information of DMA is set to less than max value:0xfffffc byte, even if write_num is turned on,
  *         the length of data received by DMA will not be written to the first four bytes of addr;
  *      in b92 demo,it choose that the receiving length of DMA be set to the maximum value of the scenario.
- * TL751X and TL721X:
+ * TL7518 and TL721X:
  *      1.The receiving length of DMA can be any length aligned with 4 bytes.
  *      2.If write_num is turned on, the length of the data received by DMA will be written into the first four bytes of addr.
  */
@@ -239,7 +239,7 @@ void i2c_irq_handler(void)
         reg_i2c_sct1 = (FLD_I2C_LS_STOP);
         while(i2c_master_busy());//wait for the STOP signal to finish sending.
         dma_chn_dis(I2C_TX_DMA_CHN);
-        /* In B92, TL751X, and TL721X, when sending data in the master, whether in the ID stage or data stage, if NACK signal is received,
+        /* In B92, TL7518, and TL721X, when sending data in the master, whether in the ID stage or data stage, if NACK signal is received,
          * the processing in the interrupt is disable TX_DMA, clear FIFO, stop the transmission of data, record the number of exceptions,
          * after interrupt, and process the following operations.*/
         if(I2C_MASTER_WRITE == i2c_get_master_wr_status())

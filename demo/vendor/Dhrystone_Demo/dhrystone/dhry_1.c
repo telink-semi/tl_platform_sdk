@@ -123,9 +123,15 @@ _attribute_ram_code_ void dhry_main (void)
   REG   int             Run_Index;
   REG   int             Number_Of_Runs;
   /* Initializations */
-#if defined(MCU_CORE_TL751X)
-#if !defined(MCU_CORE_TL751X_N22)
+#if defined(MCU_CORE_TL7518)
+#if !defined(MCU_CORE_TL7518_N22)
     cpu_mhz = sys_clk.cclk_hclk;
+#else
+    cpu_mhz = sys_clk.n22_clk;
+#endif
+#elif defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL751X_N22)
+    cpu_mhz = sys_clk.cclk;
 #else
     cpu_mhz = sys_clk.n22_clk;
 #endif

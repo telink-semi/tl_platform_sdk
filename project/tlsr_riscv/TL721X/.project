@@ -75,14 +75,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/AUDIO_Demo/AUDIO_V1.3/AUDIO_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/Auto_Test_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Auto_Test_Demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/CHACHA20_POLY1305_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/CHACHA20_POLY1305_Demo/CHACHA20_POLY1305_Demo_v1.0.2/CHACHA20_POLY1305_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/Coremark_demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Coremark_demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/Debug_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Debug_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/Dhrystone_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Dhrystone_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/EMI_BQB_Demo</name>
@@ -113,6 +128,11 @@
 			<name>vendor/IR_LEARN_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/IR_LEARN_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/LPC_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/LPC_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/PKE_Demo</name>
@@ -147,7 +167,7 @@
 		<link>
 			<name>vendor/SKE_Demo</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/SKE_Demo/SKE_Demo_v1.0.2/SKE_Demo</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/SKE_Demo/SKE_Demo_v1.1.9/SKE_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/SPI_Demo</name>

@@ -61,7 +61,7 @@ void user_init(void)
     while(1);  //This mode is used for currents testing
 #else
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 #if (GPIO_MODE == GPIO_IRQ )
      /****GPIO_IRQ POL_FALLING   Press SW2 to connect IRQ_PIN and KEY3 to trigger an interrupt. **/
     //if disable gpio interrupt,choose disable gpio mask , use interface gpio_clr_irq_mask instead of gpio_irq_dis,if use gpio_irq_dis,may generate a false interrupt.
@@ -86,7 +86,7 @@ void user_init(void)
     gpio_set_gpio2risc1_irq(IRQ_PIN,INTR_FALLING_EDGE); //When SW2 is pressed, the falling edge triggers the interrupt.
     plic_interrupt_enable(IRQ_GPIO2RISC1);
 
-#elif((GPIO_MODE == GPIO_SEL_IRQ_SRC)&&(defined(MCU_CORE_B92)||defined( MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)))
+#elif((GPIO_MODE == GPIO_SEL_IRQ_SRC)&&(defined(MCU_CORE_B92)||defined( MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)))
     /*Note : the use method of 8 new GPIO irq source :
      * First ,you can choose a gpio group,like gpio GPIO_GROUP_A,8 GPIO in all.
      * Second,the 8 gpio you choose corresponding to the 8 gpio irq source respectively.for example,irq source0-GPIO_PA0,irq source1-GPIO-PA1......
@@ -99,7 +99,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GPIO_SRC0 + BIT_LOW_BIT(IRQ_PIN&0x00ff));
 #endif
 
-#elif  defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#elif  defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)
 
     gpio_set_up_down_res(IRQ_PIN,GPIO_PIN_PULLDOWN_100K);
 
@@ -141,7 +141,7 @@ void main_loop (void)
  * @param[in]   none
  * @return      none
  */
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 
 volatile unsigned int gpio_irq_cnt=0,gpio_irq_risc0_cnt=0,gpio_irq_risc1_cnt=0;
 
@@ -174,7 +174,7 @@ PLIC_ISR_REGISTER(gpio_risc1_irq_handler, IRQ_GPIO2RISC1)
 #endif
 #endif
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 volatile unsigned int gpio_src_irq0_cnt=0;
 volatile unsigned int gpio_src_irq1_cnt=0;
 volatile unsigned int gpio_src_irq2_cnt=0;
@@ -250,7 +250,7 @@ PLIC_ISR_REGISTER(gpio_src7_irq_handler, IRQ_GPIO_SRC7)
 #endif
 #endif
 
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)
 volatile unsigned int gpio_irq0_cnt=0;
 volatile unsigned int gpio_irq7_cnt=0;
 #if (GPIO_MODE == GPIO_IRQ_NUM0)

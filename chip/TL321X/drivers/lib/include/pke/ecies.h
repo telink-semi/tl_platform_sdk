@@ -180,7 +180,7 @@ typedef struct
 /**
  * @brief       HMAC MAC CTX init.
  * @param[in]   mac_ctx          - ctx to be initialized
- * @param[in]   key_buffer       - hmac key buffer, to store hmac key
+ * @param[in]   key              - hmac key buffer, to store hmac key
  * @param[in]   key_bytes        - hmac key byte length
  * @param[out]  appendix         - appendix followed by cipher
  * @param[in]   appendix_bytes   - byte length of appendix
@@ -262,7 +262,7 @@ void ecies_ansi_x963_ctx_init(ECIES_STD *ctx, ECIES_ENC_MAC_KEY_ORDER enc_mac_ke
                                         if you do not have this, please set this parameter to be NULL,
                                         it will be generated inside.
  * @param[in]   receiver_pub_key      - reveiver's public key, big-endian.
- * @param[in]   conversion_form       - curve point representation.
+ * @param[in]   point_form            - curve point representation.
  * @param[in]   kdf_hash_alg          - specific hash algorithm for KDF.
  * @param[in]   mac_hash_alg          - specific hash algorithm for MAC.
  * @param[in]   mac_k_bytes           - key length of the MAC.
@@ -289,7 +289,7 @@ unsigned int ansi_x963_2001_ecies_encrypt( eccp_curve_t *curve,  unsigned char *
  * @brief       Elliptic Curve Integrated Encryption Scheme (ECIES) Decrypt ANSI-X963-2001
  * @param[in]   curve                 - ecc curve struct pointer, please make sure it is valid
  * @param[in]   cipher                - original message, plaintext.
- * @param[in]   cipher_len            - byte length of msg.
+ * @param[in]   cipher_bytes          - byte length of msg.
  * @param[in]   receiver_pri_key      - optional, shared information, for KDF.
  * @param[in]   shared_info1          - byte length of shared_info1.
  * @param[in]   shared_info1_bytes    - optional, shared information, for MAC.

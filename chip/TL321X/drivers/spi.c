@@ -30,11 +30,10 @@ static unsigned char s_gspi_slave_rx_dma_chn;
 dma_chain_config_t g_spi_rx_dma_list_cfg;
 dma_chain_config_t g_spi_tx_dma_list_cfg;
 
-spi_timeout_error_t g_spi_timeout_error[1]={
-    {   .g_spi_error_timeout_us         = 0xffffffff,
+spi_timeout_error_t g_spi_timeout_error ={
+        .g_spi_error_timeout_us         = 0xffffffff,
         .spi_timeout_handler            = gspi_timeout_handler,
         .g_spi_error_timeout_code       = SPI_API_ERROR_TIMEOUT_NONE,
-    }
 };
 dma_config_t gspi_tx_dma_config = {
     .dst_req_sel    = DMA_REQ_GSPI_TX,//tx req.
@@ -90,12 +89,11 @@ dma_config_t gspi_slave_rx_dma_config = {
  */
 __attribute__((weak)) void gspi_timeout_handler(unsigned int spi_error_timeout_code)
  {
-    g_spi_timeout_error[GSPI_MODULE].g_spi_error_timeout_code = spi_error_timeout_code;
+    g_spi_timeout_error.g_spi_error_timeout_code = spi_error_timeout_code;
  }
 
 /**
   * @brief     This function serves to set the spi timeout(us).
-  * @param[in] spi_sel   - the spi module.
   * @param[in] timeout_us - the timeout(us).
   * @return    none.
   * @note      The default timeout (g_spi_error_timeout_us) is the larger value.If the timeout exceeds the feed dog time and triggers a watchdog restart,
@@ -110,19 +108,18 @@ __attribute__((weak)) void gspi_timeout_handler(unsigned int spi_error_timeout_c
   *            when timeout exits, solution:
   *            reset SPI(as master or slave) module,corresponding api:spi_hw_fsm_reset;
   */
- void spi_set_error_timeout(spi_sel_e spi_sel,unsigned int timeout_us)
+ void spi_set_error_timeout(unsigned int timeout_us)
  {
-    g_spi_timeout_error[spi_sel].g_spi_error_timeout_us = timeout_us;
+    g_spi_timeout_error.g_spi_error_timeout_us = timeout_us;
  }
 
  /**
    * @brief     This function serves to return the spi api error timeout code.
-   * @param[in] spi_sel   - the spi module.
    * @return    none.
    */
-  spi_api_error_timeout_code_e spi_get_error_timeout_code(spi_sel_e spi_sel)
+  spi_api_error_timeout_code_e spi_get_error_timeout_code(void)
    {
-     return g_spi_timeout_error[spi_sel].g_spi_error_timeout_code;
+     return g_spi_timeout_error.g_spi_error_timeout_code;
    }
 
 
@@ -204,7 +201,7 @@ void gspi_set_pin_mux(gpio_func_pin_e pin,gpio_func_e function)
  * @param[in]   pin - the csn pin.
  * @return      none.
  */
-void gspi_cs_pin_en(gpio_pin_e pin)
+void gspi_cs_pin_en(gpio_func_pin_e pin)
 {
     gspi_set_pin_mux((gpio_func_pin_e)pin,GSPI_CN0_IO);
 }
@@ -214,12 +211,12 @@ void gspi_cs_pin_en(gpio_pin_e pin)
  * @param[in]   pin - the csn pin.
  * @return      none.
  */
-void gspi_cs_pin_dis(gpio_pin_e pin)
+void gspi_cs_pin_dis(gpio_func_pin_e pin)
 {
-    gpio_output_en(pin);
-    gpio_input_dis(pin);
-    gpio_set_high_level(pin);
-    gpio_function_en(pin);//gpio_function_en must be set at the end
+    gpio_output_en((gpio_pin_e)pin);
+    gpio_input_dis((gpio_pin_e)pin);
+    gpio_set_high_level((gpio_pin_e)pin);
+    gpio_function_en((gpio_pin_e)pin);//gpio_function_en must be set at the end
 }
 
 /**
@@ -228,7 +225,7 @@ void gspi_cs_pin_dis(gpio_pin_e pin)
  * @param[in]   next_csn_pin - the next csn pin.
  * @return      none.
  */
-void gspi_change_csn_pin(gpio_pin_e current_csn_pin,gpio_pin_e next_csn_pin)
+void gspi_change_csn_pin(gpio_func_pin_e current_csn_pin,gpio_func_pin_e next_csn_pin)
 {
     gspi_cs_pin_dis(current_csn_pin);
     gspi_cs_pin_en(next_csn_pin);
@@ -527,7 +524,7 @@ drv_api_status_e spi_master_send_cmd(spi_sel_e spi_sel, unsigned char cmd)
     spi_tx_fifo_clr(spi_sel);
     spi_set_transmode(spi_sel,SPI_MODE_NONE_DATA);//nodata.
     spi_set_cmd(spi_sel,cmd);
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
        return DRV_API_TIMEOUT;
     }
      return DRV_API_SUCCESS;
@@ -553,7 +550,7 @@ drv_api_status_e spi_write(spi_sel_e spi_sel, unsigned char *data, unsigned int 
     //The tx _fifo depth of the gspi is 8 bytes. When the remaining size in the tx_fifo is not less than 4 bytes, the MCU will move the data according to the word length.
     for (unsigned int i = 0; i < word_len; i++)
     {
-        if(SPI_WAIT(spi_txfifo_num_is_word,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_NUM_WORD)){
+        if(SPI_WAIT(spi_txfifo_num_is_word,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_NUM_WORD)){
             return DRV_API_TIMEOUT;
         }
         reg_spi_wr_rd_data_word(spi_sel) = ((unsigned int *)data)[i];
@@ -561,7 +558,7 @@ drv_api_status_e spi_write(spi_sel_e spi_sel, unsigned char *data, unsigned int 
     //When the remaining size in tx_fifo is less than 4 bytes, the MCU moves the data according to the word length.
     for (unsigned int i = 0; i < single_len; i++)
     {
-        if(SPI_WAIT(spi_txfifo_is_full,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_FULL)){
+        if(SPI_WAIT(spi_txfifo_is_full,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_FULL)){
             return DRV_API_TIMEOUT;
         }
         reg_spi_wr_rd_data(spi_sel,i % 4) = data[(word_len*4) + i];
@@ -588,7 +585,7 @@ drv_api_status_e spi_read(spi_sel_e spi_sel, unsigned char *data, unsigned int l
     //When the data size in rx_fifo is not less than 4 bytes, the MCU moves the data according to the word length.
     for (unsigned int i = 0; i < word_len; i++)
     {
-        if(SPI_WAIT(spi_rxfifo_num_is_word,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_RXFIFO_NUM_WORD)){
+        if(SPI_WAIT(spi_rxfifo_num_is_word,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_RXFIFO_NUM_WORD)){
             return DRV_API_TIMEOUT;
         }
         ((unsigned int *)data)[i] = reg_spi_wr_rd_data_word(spi_sel) ;
@@ -596,7 +593,7 @@ drv_api_status_e spi_read(spi_sel_e spi_sel, unsigned char *data, unsigned int l
     //When the data size in rx_fifo is less than 4 bytes, the MCU moves the data according to the word length.
     for (unsigned char i = 0; i < single_len; i++)
     {
-         if(SPI_WAIT(spi_rxfifo_is_empty,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_RXFIFO_EMPTY)){
+         if(SPI_WAIT(spi_rxfifo_is_empty,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_RXFIFO_EMPTY)){
             return DRV_API_TIMEOUT;
          }
         data[(word_len*4) + i] = reg_spi_wr_rd_data((spi_sel), i % 4);
@@ -620,7 +617,7 @@ drv_api_status_e spi_master_write(spi_sel_e spi_sel, unsigned char *data, unsign
     spi_set_transmode(spi_sel,SPI_MODE_WRITE_ONLY);
     spi_set_cmd(spi_sel,0x00);//when  cmd  disable that  will not sent cmd,just trigger spi send.
     spi_write(spi_sel,(unsigned char *)data, len);
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -650,7 +647,7 @@ drv_api_status_e spi_master_write_read(spi_sel_e spi_sel, unsigned char *wr_data
     spi_set_cmd(spi_sel,0x00);//when  cmd  disable that  will not sent cmd,just trigger spi send.
     spi_write(spi_sel,(unsigned char *)wr_data, wr_len);
     spi_read(spi_sel, (unsigned char *)rd_data, rd_len);
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -684,7 +681,7 @@ drv_api_status_e spi_master_write_plus(spi_sel_e spi_sel, unsigned char cmd, uns
     if(data_len != 0){
         spi_write(spi_sel, (unsigned char *)data, data_len);
     }
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -711,13 +708,13 @@ drv_api_status_e spi_master_write_repeat(spi_sel_e spi_sel, unsigned char *data,
     {
         for (j = 0; j < len; j++,k++)
         {
-            if(SPI_WAIT(spi_txfifo_is_full,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_FULL)){
+            if(SPI_WAIT(spi_txfifo_is_full,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_FULL)){
                 return DRV_API_TIMEOUT;
             }
             reg_spi_wr_rd_data(spi_sel, k % 4) = data[j];
         }
     }
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -750,13 +747,13 @@ drv_api_status_e spi_master_write_repeat_plus(spi_sel_e spi_sel, unsigned char c
     {
         for (j = 0; j < data_len; j++,k++)
         {
-             if(SPI_WAIT(spi_txfifo_is_full,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_FULL)){
+             if(SPI_WAIT(spi_txfifo_is_full,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_TXFIFO_FULL)){
                 return DRV_API_TIMEOUT;
              }
             reg_spi_wr_rd_data(spi_sel, k % 4) = data[j];
         }
     }
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -782,7 +779,7 @@ drv_api_status_e spi_master_read_plus(spi_sel_e spi_sel, unsigned char cmd, unsi
     spi_rx_cnt(spi_sel, data_len);
     spi_set_cmd(spi_sel,cmd);
     spi_read(spi_sel, (unsigned char *)data, data_len);
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -813,7 +810,7 @@ drv_api_status_e spi_master_write_read_plus(spi_sel_e spi_sel, unsigned char cmd
     spi_set_cmd(spi_sel,cmd);
     spi_write(spi_sel, (unsigned char *)addrs, addr_len);
     spi_read(spi_sel, (unsigned char *)data, data_len);
-    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error[spi_sel].g_spi_error_timeout_us,g_spi_timeout_error[spi_sel].spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
+    if(SPI_WAIT(spi_is_busy,spi_sel,g_spi_timeout_error.g_spi_error_timeout_us,g_spi_timeout_error.spi_timeout_handler,SPI_API_ERROR_TIMEOUT_BUS_BUSY)){
         return DRV_API_TIMEOUT;
     }
     return DRV_API_SUCCESS;
@@ -1051,11 +1048,12 @@ void spi_master_write_read_full_duplex(spi_sel_e spi_sel,unsigned char *write_da
     spi_tx_dma_dis(spi_sel);
     spi_rx_dma_dis(spi_sel);
     spi_set_transmode(spi_sel, SPI_MODE_WRITE_AND_READ);
-    spi_set_cmd(spi_sel, 0);
     spi_tx_fifo_clr(spi_sel);
     spi_rx_fifo_clr(spi_sel);
     spi_tx_cnt(spi_sel, len);
     spi_rx_cnt(spi_sel, len);
+    spi_set_cmd(spi_sel, 0x00);//when  cmd  disable that  will not sent cmd,just trigger spi send .
+
 
     for(unsigned int i = 0; i<len; i = i +chunk_size){
         if(chunk_size > (len - i)){

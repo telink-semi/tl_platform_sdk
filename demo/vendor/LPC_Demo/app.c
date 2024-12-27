@@ -29,7 +29,11 @@ void user_init(void)
     gpio_output_en(LED1);
     gpio_input_dis(LED1);
 
+#if defined(MCU_CORE_TL751X)
+    lpc_set_input_chn(LPC_INPUT_PG1);
+#else
     lpc_set_input_chn(LPC_INPUT_PB1);
+#endif
     //When the chip works in low power mode, the reference voltage can only be provided by UVLO or from PB0 and PB3.
     lpc_set_input_ref(LPC_NORMAL,LPC_REF_872MV);
     lpc_set_scaling_coeff(LPC_SCALING_PER50);

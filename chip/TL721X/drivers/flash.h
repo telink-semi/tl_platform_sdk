@@ -136,7 +136,10 @@ typedef enum {
  * @brief     flash mid definition
  */
 typedef enum{
+    MID146085   =   0x146085,//P25Q80SU
     MID156085   =   0x156085,//P25Q16SU
+    MID1460C8   =   0x1460c8,//GD25LE80E
+    MID1560C8   =   0x1560c8,//GD25LE16E
 }flash_mid_e;
 
 

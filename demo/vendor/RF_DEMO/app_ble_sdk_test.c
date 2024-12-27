@@ -36,7 +36,7 @@
 #define TX_INTERVAL_US          (TX_INTERVAL_TICK/SYSTEM_TIMER_TICK_1US)
 
 
-#define TEST_MODE_MANUAL_TX     1  //TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+#define TEST_MODE_MANUAL_TX     1  //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define TEST_MODE_STX           2
 #define TEST_MODE_BTX_TX        3  //test TX only, do not care RX of BTX
 #define TEST_MODE_BTX           4
@@ -257,18 +257,25 @@ void ble_stx_test(void)
         rf_start_stx ((void *)&debug_pkt_adv, rf_stimer_get_tick() + 100);
 
         delay_us(2000);  //2mS is enough for packet sending
-#if(!defined(MCU_CORE_TL751X))
-        if(rf_get_irq_status(FLD_RF_IRQ_TX))
-        {
-            rf_clr_irq_status(FLD_RF_IRQ_TX);
-            gpio_toggle(LED4);
-            DBG_CHN0_TOGGLE;
-        }
-#else
+#if(defined(MCU_CORE_TL7518))
         if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
         {
             rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
             gpio_toggle(LED1);
+            DBG_CHN0_TOGGLE;
+        }
+#elif defined(MCU_CORE_TL751X)
+        if(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE))
+        {
+            rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+            gpio_toggle(LED1);
+            DBG_CHN0_TOGGLE;
+        }
+#else
+        if(rf_get_irq_status(FLD_RF_IRQ_TX))
+        {
+            rf_clr_irq_status(FLD_RF_IRQ_TX);
+            gpio_toggle(LED4);
             DBG_CHN0_TOGGLE;
         }
 #endif
@@ -289,10 +296,12 @@ void ble_manual_tx_test(void)
     rf_set_tx_dma(2,128);
 
     rf_set_txmode();
-#if(!defined(MCU_CORE_TL751X))
-    delay_us(113);
-#else
+#if(defined(MCU_CORE_TL7518))
     delay_us(43);
+#elif(defined(MCU_CORE_TL751X))
+    delay_us(49);
+#else
+    delay_us(113);
 #endif
     reg_rf_irq_status = 0xffff;
 
@@ -310,10 +319,20 @@ void ble_manual_tx_test(void)
 
         delay_us(2000);  //2mS is enough for packet sending
 
-#if(!defined(MCU_CORE_TL751X))
-        if(rf_get_irq_status(FLD_RF_IRQ_TX))
+#if(defined(MCU_CORE_TL7518))
+        if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
         {
-            rf_clr_irq_status(FLD_RF_IRQ_TX);
+            rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
+            delay_us(20);
+            tx_cnt++;
+            gpio_toggle(LED4);
+            DBG_CHN0_TOGGLE;
+        }
+#elif defined(MCU_CORE_TL751X)
+        if(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE))
+        {
+            rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+            delay_us(20);
             tx_cnt++;
             gpio_toggle(LED4);
             DBG_CHN0_TOGGLE;
@@ -322,7 +341,6 @@ void ble_manual_tx_test(void)
         if(rf_get_irq_status(FLD_RF_IRQ_TX))
         {
             rf_clr_irq_status(FLD_RF_IRQ_TX);
-            delay_us(20);
             tx_cnt++;
             gpio_toggle(LED4);
             DBG_CHN0_TOGGLE;
@@ -351,7 +369,14 @@ void ble_btx_tx_test(void)
 
         rf_set_tx_rx_off_auto_mode();
         rf_set_ble_chn (TEST_CHN);  //2402
-
+#if(defined(MCU_CORE_TL751X))
+    /*
+    * This configuration is used for tl751x.
+    * After the current version of tx en ends, an additional 11us seq is required.
+    * Subsequent versions will continue to compress this time.
+    */
+        rf_set_rx_wait_time(11);
+#endif
         debug_pkt_adv.data[0] ++;
 
 
@@ -360,19 +385,28 @@ void ble_btx_tx_test(void)
         delay_us(2000);  //2mS is enough for packet sending
 
         rf_set_tx_rx_off_auto_mode();
-#if(!defined(MCU_CORE_TL751X))
-        if(rf_get_irq_status(FLD_RF_IRQ_TX))
+#if(defined(MCU_CORE_TL7518))
+        if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
         {
-            rf_clr_irq_status(FLD_RF_IRQ_TX);
+            rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
+            tx_cnt++;
+            gpio_toggle(LED1);
+            gpio_toggle(LED2);
+            DBG_CHN0_TOGGLE;
+        }
+#elif defined(MCU_CORE_TL751X)
+        if(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE))
+        {
+            rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
             tx_cnt++;
             gpio_toggle(LED1);
             gpio_toggle(LED2);
             DBG_CHN0_TOGGLE;
         }
 #else
-        if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
+        if(rf_get_irq_status(FLD_RF_IRQ_TX))
         {
-            rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
+            rf_clr_irq_status(FLD_RF_IRQ_TX);
             tx_cnt++;
             gpio_toggle(LED1);
             gpio_toggle(LED2);
@@ -473,21 +507,31 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
      }
 
     bltParam_conn_rx_num ++;
-#if(!defined(MCU_CORE_TL751X))
+#if(defined(MCU_CORE_TL7518))
+    if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
+    {
+         rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
+         delay_us(5);//Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+    }
+#elif(defined(MCU_CORE_TL751X))
+    if(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE))
+    {
+         rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+         delay_us(11);//Currently, the TL751X chip also requires a seq delay of at least 11us after the end of the TX and RX EN states.
+    }
+#else
     if(rf_get_irq_status(FLD_RF_IRQ_TX))
     {
          rf_clr_irq_status(FLD_RF_IRQ_TX);
     }
-#else
-    if(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END))
-    {
-         rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
-         delay_us(5);//Currently, the TL751X chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
-    }
 #endif
 
 }
-PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
+#if defined(MCU_CORE_TL751X_N22)
+CLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
+#else
+PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT);
+#endif
 
 
 
@@ -509,13 +553,20 @@ _attribute_ram_code_sec_noinline_ void ble_manual_rx_test(void)
     rf_clr_irq_status(FLD_RF_IRQ_RX);
 
     rf_set_rxmode ();
-#if(!defined(MCU_CORE_TL751X))
-    delay_us(85);
-#else
+#if(defined(MCU_CORE_TL7518))
     delay_us(43);
+#elif(defined(MCU_CORE_TL751X))
+    delay_us(54);
+#else
+    delay_us(85);
 #endif
     core_interrupt_enable();
+#if defined(MCU_CORE_TL751X_N22)
+    clic_init();
+    clic_interrupt_enable(IRQ_ZB_RT);
+#else
     plic_interrupt_enable(IRQ_ZB_RT);
+#endif
     rf_set_irq_mask(FLD_RF_IRQ_RX);
 
     while(1)
@@ -537,16 +588,24 @@ void ble_brx_rx_test(void)
     rf_set_power_level (RF_POWER);
     rf_set_ble_crc_adv ();
     rf_access_code_comm(BLE_ACCESS_CODE);
-#if(!defined(MCU_CORE_TL751X))
-    rf_clr_irq_status(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
-    rf_set_irq_mask(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
-#else
+#if(defined(MCU_CORE_TL7518))
     rf_clr_irq_status(FLD_RF_IRQ_RX | FLD_RF_IRQ_MDM_TX_END);
     rf_set_irq_mask(FLD_RF_IRQ_RX | FLD_RF_IRQ_MDM_TX_END);
+#elif(defined(MCU_CORE_TL751X))
+    rf_clr_irq_status(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX_EN_DONE);
+    rf_set_irq_mask(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX_EN_DONE);
+#else
+    rf_clr_irq_status(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
+    rf_set_irq_mask(FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
 #endif
     brx_mode_flag = 0;
-    plic_interrupt_enable(IRQ_ZB_RT);
     core_interrupt_enable();
+#if defined(MCU_CORE_TL751X_N22)
+    clic_init();
+    clic_interrupt_enable(IRQ_ZB_RT);
+#else
+    plic_interrupt_enable(IRQ_ZB_RT);
+#endif
 
 //enter manual RX first, get peer TX device timeStamp
     rf_set_ble_chn(TEST_CHN);
@@ -587,10 +646,12 @@ void ble_brx_rx_test(void)
         core_interrupt_disable();
         rf_set_tx_rx_off_auto_mode();
         delay_us(100);
-#if(!defined(MCU_CORE_TL751X))
-        rf_clr_irq_status( FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
-#else
+#if(defined(MCU_CORE_TL7518))
         rf_clr_irq_status( FLD_RF_IRQ_RX | FLD_RF_IRQ_MDM_TX_END);
+#elif(defined(MCU_CORE_TL751X))
+        rf_clr_irq_status( FLD_RF_IRQ_RX | FLD_RF_IRQ_TX_EN_DONE);
+#else
+        rf_clr_irq_status( FLD_RF_IRQ_RX | FLD_RF_IRQ_TX);
 #endif
         core_interrupt_enable();
 

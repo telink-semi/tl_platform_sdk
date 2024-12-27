@@ -34,7 +34,7 @@ extern "C" {
 #define  PKE_ECDH           1
 #define  PKE_ECDSA          2
 #define  PKE_X25519         3
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)
 #define  PKE_RSA            4
 #endif
 

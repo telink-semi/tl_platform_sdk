@@ -351,9 +351,12 @@ enum{
 };
 
 /**
- * BIT[0] i2s0_2fifo_mode enable.
- * BIT[1] i2s1_2fifo_mode enable.
- * BIT[2] i2s2_2fifo_mode enable.
+ * BIT[0] rxfifo0_th_irq.
+ * BIT[1] rxfifo1_th_irq.
+ * BIT[2] rxfifo2_th_irq.
+ * BIT[3] txfifo0_th_irq.
+ * BIT[4] txfifo1_th_irq.
+ * BIT[5] txfifo2_th_irq.
  */
 #define reg_fifo_th_irq                    REG_ADDR8(AUDIO_DFIFO_REG_BASE+0x69)
 enum{

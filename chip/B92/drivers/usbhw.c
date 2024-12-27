@@ -110,7 +110,7 @@ void usb_set_pin(bool dp_through_swire)
     gpio_function_dis(GPIO_PA5);
     reg_gpio_func_mux(GPIO_PA6) = reg_gpio_func_mux(GPIO_PA6) & (~BIT_RNG(0, 5));
     gpio_function_dis(GPIO_PA6);
-    gpio_input_en(GPIO_PA5 | GPIO_PA6); // DP/DM must set input enable
+    gpio_input_en((gpio_pin_e)(GPIO_PA5 | GPIO_PA6)); // DP/DM must set input enable
     usb_dp_pullup_en(1);
     /*                                      Note
      * If you want to enable the dp_through_swire function, there are the following considerations:

@@ -32,17 +32,17 @@
 signed short AUDIO_BUFF[AUDIO_BUFF_SIZE >> 1] __attribute__((aligned(4)));
 #if defined(MCU_CORE_TL721X)
 sdm_pin_config_t sdm_pin_config = {
-    .sdm0_p_pin = GPIO_FC_PF0,
-    .sdm0_n_pin = GPIO_FC_PF1,
-    .sdm1_p_pin = GPIO_FC_PC4,
-    .sdm1_n_pin = GPIO_FC_PC5,
+    .sdm0_p_pin = GPIO_FC_PA0,//Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
+    .sdm0_n_pin = GPIO_FC_PA1,
+    .sdm1_p_pin = GPIO_FC_PF4,
+    .sdm1_n_pin = GPIO_FC_PF5,
 };
 #elif defined(MCU_CORE_TL321X)
 sdm_pin_config_t sdm_pin_config = {
-    .sdm0_p_pin = GPIO_FC_PE0,
-    .sdm0_n_pin = GPIO_FC_PE1,
-    .sdm1_p_pin = GPIO_FC_PC4,
-    .sdm1_n_pin = GPIO_FC_PC5,
+    .sdm0_p_pin = GPIO_FC_PD5,
+    .sdm0_n_pin = GPIO_FC_PE2,
+    .sdm1_p_pin = GPIO_FC_PE3,
+    .sdm1_n_pin = GPIO_FC_PA0,//Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
 };
 #endif
 
@@ -56,37 +56,36 @@ sdm_pin_config_t sdm_pin_config = {
 #define TX_DMA_CHN DMA1
 
 #if (AUDIO_MODE == LINE_INPUT_TO_BUF_TO_LINEOUT)
-#define INPUT_SRC LINE_STREAM0_NONO_L
+#define INPUT_SRC LINE_STREAM0_MONO_L
 #define OUTPUT_SRC SDM_MONO
 
 #elif ((AUDIO_MODE == AMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMA_IRQ_TEST))
-#define INPUT_SRC AMIC_STREAM0_NONO_L
+#define INPUT_SRC AMIC_STREAM0_MONO_L
 #define OUTPUT_SRC SDM_MONO
 
 #elif (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT)
-#define INPUT_SRC DMIC_STREAM0_MONO_L
+#define INPUT_SRC DMIC_STREAM0_STEREO
 #define OUTPUT_SRC SDM_STEREO
 #endif
 
 audio_codec_stream0_input_t audio_codec_stream0_input =
-    {
-        .input_src = INPUT_SRC,
-        .sample_rate = SAMPLE_RATE,
-        .data_width = DATA_WIDTH,
-        .fifo_chn = RX_FIFO_NUM,
-        .dma_num = RX_DMA_CHN,
-        .data_buf = AUDIO_BUFF,
-        .data_buf_size = sizeof(AUDIO_BUFF),
+{
+    .input_src = INPUT_SRC,
+    .sample_rate = SAMPLE_RATE,
+    .data_width = DATA_WIDTH,
+    .fifo_chn = RX_FIFO_NUM,
+    .dma_num = RX_DMA_CHN,
+    .data_buf = AUDIO_BUFF,
+    .data_buf_size = sizeof(AUDIO_BUFF),
 };
 audio_codec_output_t audio_stream_output =
-    {
-        .output_src = OUTPUT_SRC,
-        .sample_rate = SAMPLE_RATE,
-        .data_width = DATA_WIDTH,
-        .dma_num = TX_DMA_CHN,
-        .data_buf = AUDIO_BUFF,
-        .data_buf_size = sizeof(AUDIO_BUFF),
-
+{
+    .output_src = OUTPUT_SRC,
+    .sample_rate = SAMPLE_RATE,
+    .data_width = DATA_WIDTH,
+    .dma_num = TX_DMA_CHN,
+    .data_buf = AUDIO_BUFF,
+    .data_buf_size = sizeof(AUDIO_BUFF),
 };
 #elif (AUDIO_MODE == BUFFER_TO_LINEOUT)
 #define SAMPLE_RATE AUDIO_16K
@@ -111,14 +110,6 @@ void user_init(void)
     gpio_function_en(LED1);
     gpio_output_en(LED1);
     gpio_input_dis(LED1);
-
-    gpio_function_en(LED2);
-    gpio_output_en(LED2);
-    gpio_input_dis(LED2);
-
-    gpio_function_en(LED3);
-    gpio_output_en(LED3);
-    gpio_input_dis(LED3);
 
     audio_init();
 #if ((AUDIO_MODE == LINE_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == AMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMA_IRQ_TEST))
@@ -149,11 +140,12 @@ void user_init(void)
     /****stream0 line in/amic/dmic init****/
     audio_codec_stream0_input_init(&audio_codec_stream0_input);
     /****line output init****/
-    audio_set_sdm_pin(&sdm_pin_config);
+
     audio_codec_stream_output_init(&audio_stream_output);
+
     /****rx tx dma init****/
-    audio_rx_dma_chain_init(audio_codec_stream0_input.dma_num, (unsigned short *)audio_codec_stream0_input.data_buf, audio_codec_stream0_input.data_buf_size, audio_codec_stream0_input.fifo_chn);
-    audio_tx_dma_chain_init(audio_stream_output.dma_num, (unsigned short *)audio_stream_output.data_buf, audio_stream_output.data_buf_size, TX_FIFO_NUM);
+    audio_rx_dma_chain_init(audio_codec_stream0_input.fifo_chn, audio_codec_stream0_input.dma_num, (unsigned short *)audio_codec_stream0_input.data_buf, audio_codec_stream0_input.data_buf_size);
+    audio_tx_dma_chain_init(TX_FIFO_NUM, audio_stream_output.dma_num, (unsigned short *)audio_stream_output.data_buf, audio_stream_output.data_buf_size);
     /****audio starts run****/
 #if (AUDIO_CLR_CODEC_POP==1)
     audio_mic_mute_en(); /* Step1 - mute audio*/
@@ -184,15 +176,15 @@ void user_init(void)
     /* 0ms ~ 5ms : fade-in process */
     audio_linear_fade_in_config(AUDIO_MONO,  audio_codec_stream0_input.data_width,audio_codec_stream0_input.sample_rate,(char *)audio_codec_stream0_input.data_buf, 0, 5);
 #endif
-
+    audio_set_sdm_pin(&sdm_pin_config);
     audio_codec_stream_output_en(audio_stream_output.dma_num);
+
 #elif (AUDIO_MODE == BUFFER_TO_LINEOUT)
     /****line output init****/
     audio_set_sdm_pin(&sdm_pin_config);
     audio_codec_stream_output_init(&audio_stream_output);
-    audio_set_ascl_gain(ASCL0, ASCL_OUT_D_GAIN_6_DB);
     /****tx dma init****/
-    audio_tx_dma_chain_init(audio_stream_output.dma_num, (unsigned short *)audio_stream_output.data_buf, audio_stream_output.data_buf_size, TX_FIFO_NUM);
+    audio_tx_dma_chain_init(TX_FIFO_NUM, audio_stream_output.dma_num, (unsigned short *)audio_stream_output.data_buf, audio_stream_output.data_buf_size);
     /****audio starts run****/
     audio_codec_stream_output_en(audio_stream_output.dma_num);
 #endif
@@ -229,6 +221,33 @@ void main_loop(void)
 {
     gpio_toggle(LED1);
     delay_ms(200);
+#if defined(AUDIO_CODEC_POWER_TEST)
+    delay_ms(500);
+    {/* audio off */
+        audio_stream0_fade_dig_gain(CODEC_IN_D_GAIN_m48_DB);
+        audio_unset_sdm_pin(&sdm_pin_config);
+        audio_codec_stream_output_dis(audio_stream_output.dma_num);
+        audio_codec_stream0_input_dis(audio_codec_stream0_input.dma_num);
+#if (AUDIO_MODE == AMIC_INPUT_TO_BUF_TO_LINEOUT)
+        audio_codec_adc_power_down();
+#endif
+        audio_power_down();
+    }
+    delay_ms(500);
+    {/* audio on and reinit */
+        audio_init();
+        /****stream0 line in/amic/dmic init****/
+        audio_codec_stream0_input_init(&audio_codec_stream0_input);
+        /****line output init****/
+        audio_codec_stream_output_init(&audio_stream_output);
+        audio_mic_mute_en(); /* Step1 - mute audio*/
+        audio_codec_stream0_input_en(audio_codec_stream0_input.dma_num); /* Step2 - enable audio codec */
+        audio_codec_clr_input_pop(20); /* Step3 - Clear codec input pop and dis mute audio */
+        audio_codec_input_path_en(audio_codec_stream0_input.fifo_chn); /* Step4 - enable codec input path, codec data come in */
+        audio_set_sdm_pin(&sdm_pin_config);
+        audio_codec_stream_output_en(audio_stream_output.dma_num);
+    }
+#endif
 }
 
 #endif

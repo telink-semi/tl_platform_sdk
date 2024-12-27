@@ -31,13 +31,13 @@
 
 #if(GPIO_TEST_MODE == AUTO_TEST_MODE)
 
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
 volatile unsigned int gpio_irq_cnt=0,gpio_irq_risc0_cnt=0,gpio_irq_risc1_cnt=0,gpio_irq0_cnt=0, gpio_irq1_cnt=0, gpio_irq2_cnt=0, gpio_irq3_cnt=0, gpio_irq4_cnt=0, gpio_irq5_cnt=0, gpio_irq6_cnt=0, gpio_irq7_cnt=0;
 
 void gpio_input_test(void);
 void gpio_output_low_test(void);
 void gpio_output_high_test(void);
-#if defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X)
 void gpio_digital_pull_up_test(void);
 void gpio_digital_pull_down_test(void);
 #endif
@@ -67,7 +67,7 @@ void gpio_irq_test(void);
 void gpio_irq_risc0_test(void);
 void gpio_irq_risc1_test(void);
 void gpio_irq_report_test(void);
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 void gpio_irq_sel_test(void);
 void gpio_irq_sel_report_test(void);
 #endif
@@ -77,12 +77,12 @@ struct PC_CMD_FUNC{
     unsigned short cmd_name;
     void (*func)(void);
 };
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
 struct PC_CMD_FUNC pc_cmd_func[] = {
     {DUTCMD_GPIO_INPUT, gpio_input_test},
     {DUTCMD_GPIO_OUTPUT_LOW, gpio_output_low_test},
     {DUTCMD_GPIO_OUTPUT_HIGH, gpio_output_high_test},
-#if defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X)
     {DUTCMD_GPIO_DIGITAL_PULL_UP, gpio_digital_pull_up_test},
     {DUTCMD_GPIO_DIGITAL_PULL_DOWN, gpio_digital_pull_down_test},
 #endif
@@ -115,13 +115,13 @@ struct PC_CMD_FUNC pc_cmd_func[] = {
     {DUTCMD_GPIO_IRQ_RISC1, gpio_irq_risc1_test},
     {DUTCMD_GPIO_IRQ_REPORT, gpio_irq_report_test},
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
     {DUTCMD_GPIO_IRQ_SEL, gpio_irq_sel_test},
     {DUTCMD_GPIO_IRQ_SEL_REPORT, gpio_irq_sel_report_test},
 #endif
 };
 #endif
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
     volatile unsigned int gpio_src_irq0_cnt=0;
     volatile unsigned int gpio_src_irq1_cnt=0;
     volatile unsigned int gpio_src_irq2_cnt=0;
@@ -131,7 +131,7 @@ struct PC_CMD_FUNC pc_cmd_func[] = {
     volatile unsigned int gpio_src_irq6_cnt=0;
     volatile unsigned int gpio_src_irq7_cnt=0;
 #endif
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
 volatile unsigned int gpio_src_irq0_cnt=0;
 volatile unsigned int gpio_src_irq1_cnt=0;
 volatile unsigned int gpio_src_irq2_cnt=0;
@@ -216,7 +216,7 @@ _attribute_ram_code_sec_noinline_ void gpio_risc1_irq_handler(void)
 }
 PLIC_ISR_REGISTER(gpio_risc1_irq_handler, IRQ_GPIO2RISC1)
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 _attribute_ram_code_sec_noinline_ void gpio_src0_irq_handler(void)
 {
     gpio_src_irq0_cnt++;
@@ -339,7 +339,7 @@ void gpio_digital_pull_up_test(void)
     result_buff_write(send_data,send_data[2]);
 }
 #endif
-#if defined(MCU_CORE_B931)
+#if defined(MCU_CORE_TL751X)
 void gpio_digital_pull_down_test(void)
 {
     autotest_package_t_ptr para = (autotest_package_t_ptr)para_buff;
@@ -396,7 +396,7 @@ void gpio_analog_pull_down_100K_test(void)
     send_data[2] = 2;
     result_buff_write(send_data,send_data[2]);
 }
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
 void gpio_irq0_test(void)
 {
     autotest_package_t_ptr para = (autotest_package_t_ptr)para_buff;
@@ -787,7 +787,7 @@ void gpio_irq_risc1_test(void)
     gpio_irq_risc1_cnt = 0;
 }
 #endif
-#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_B931)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
 void gpio_irq_report_test(void)
 {
     unsigned char send_data[14];
@@ -822,7 +822,7 @@ void gpio_irq_report_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 void gpio_irq_sel_test(void)
 {
     autotest_package_t_ptr para = (autotest_package_t_ptr)para_buff;
@@ -925,12 +925,12 @@ void main_loop(void)
  */
 #elif(GPIO_TEST_MODE == MANUAL_TEST_MODE)
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 volatile unsigned int gpio_irq_cnt = 0;
 volatile unsigned int gpio_irq_risc0_cnt = 0;
 volatile unsigned int gpio_irq_risc1_cnt = 0;
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 volatile unsigned int gpio_src_irq0_cnt = 0;
 volatile unsigned int gpio_src_irq1_cnt = 0;
 volatile unsigned int gpio_src_irq2_cnt = 0;
@@ -963,7 +963,7 @@ gpio_pin_e GPIO_PIN[] = {
 #endif
 };
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 #define GPIO_SRC                0
 gpio_pin_e GPIO_SRC_PIN[] = {
 #if(GPIO_SRC == 0 || GPIO_SRC == 0xff)
@@ -1014,7 +1014,7 @@ typedef enum{
     test_item_analog_drop_down_100k,
     test_item_analog_pull_up_10k,
     test_item_analog_pull_up_1M,
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
     test_item_digital_pull_up,
 
     test_item_irq_rising_edge,
@@ -1033,7 +1033,7 @@ typedef enum{
 
 const test_item_e g_test_item_e = test_item_analog_pull_up_1M;
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 _attribute_ram_code_sec_noinline_ void gpio_irq_handler(void)
 {
     gpio_toggle(g_led_irq);
@@ -1058,7 +1058,7 @@ _attribute_ram_code_sec_noinline_ void gpio_risc1_irq_handler(void)
 }
 PLIC_ISR_REGISTER(gpio_risc1_irq_handler, IRQ27_GPIO2RISC1)
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
 _attribute_ram_code_sec_noinline_ void gpio_src0_irq_handler(void)
 {
     gpio_src_irq0_cnt++;
@@ -1200,7 +1200,7 @@ void user_init(void)
                 gpio_set_up_down_res(GPIO_PIN[i], GPIO_PIN_PULLUP_1M);
              }
         break;
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
         case test_item_digital_pull_up:
              for(unsigned char i = 0; i < sizeof(GPIO_PIN)/sizeof(GPIO_PIN[0]); i++){
                 gpio_function_en(GPIO_PIN[i]);
@@ -1338,7 +1338,7 @@ void user_init(void)
                  }
                 gpio_set_irq_mask(GPIO_IRQ_MASK_GPIO2RISC1);
         break;
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL721X)
         case test_item_sel_irq_src_rising_edge:
              gpio_function_en(g_led_irq);
              gpio_output_en(g_led_irq);

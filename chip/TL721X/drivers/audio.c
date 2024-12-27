@@ -30,7 +30,6 @@
 
 static unsigned char audio_codec_rate[AUDIO_RATE_SIZE + 0x03] = {
     0x06, /*8k*/              // 12Mhz/1500=8K
-    0x17, /*8.0214k*/         // 12Mhz/1496=8.0214K
     0x19, /*11.0259k*/        // 12Mhz/1088=11.0259K
     0x08, /*12k*/             // 12Mhz/1000=12K
     0x0a, /*16k*/             // 12Mhz/750=16K
@@ -45,7 +44,6 @@ static unsigned char audio_codec_rate[AUDIO_RATE_SIZE + 0x03] = {
 
 static unsigned int audio_stream_output_stereo_step[AUDIO_RATE_SIZE] = {
     0x00831001, /*8k*/
-    0x00837001, /*8.0214k*/
     0x00b4a001, /*11.0259k*/
     0x00c4a001, /*12k*/
     0x01062001, /*16k*/
@@ -58,7 +56,6 @@ static unsigned int audio_stream_output_stereo_step[AUDIO_RATE_SIZE] = {
 
 static unsigned int audio_stream_output_mono_step[AUDIO_RATE_SIZE] = {
     0x01062001, /*8k*/
-    0x0106e001, /*8.0214k*/
     0x01694001, /*11.0259k*/
     0x01894001, /*12k*/
     0x020c5001, /*16k*/
@@ -71,7 +68,6 @@ static unsigned int audio_stream_output_mono_step[AUDIO_RATE_SIZE] = {
 
 unsigned int audio_sample_rate_value[AUDIO_ASCL_RATE_SIZE] = {
     8000,   /*8k*/
-    8021,   /*8.0214k*/
     11025,  /*11.0259k*/
     12000,  /*12k*/
     16000,  /*16k*/
@@ -270,6 +266,33 @@ void audio_set_sdm_pin(sdm_pin_config_t *config)
 }
 
 /**
+ * @brief     This function configures sdm pin.
+ * @param[in] config -sdm config pin struct.
+ * @return    none.
+ */
+void audio_unset_sdm_pin(sdm_pin_config_t *config)
+{
+    if (config->sdm0_p_pin != GPIO_NONE_PIN)
+    {
+        gpio_function_en((gpio_pin_e)config->sdm0_p_pin);
+    }
+
+    if (config->sdm0_n_pin != GPIO_NONE_PIN)
+    {
+        gpio_function_en((gpio_pin_e)config->sdm0_n_pin);
+    }
+
+    if (config->sdm1_p_pin != GPIO_NONE_PIN)
+    {
+        gpio_function_en((gpio_pin_e)config->sdm1_p_pin);
+    }
+
+    if (config->sdm1_n_pin != GPIO_NONE_PIN)
+    {
+        gpio_function_en((gpio_pin_e)config->sdm1_n_pin);
+    }
+}
+/**
  * @brief     This function configures i2s pin.
  * @param[in] i2s_select       - channel select
  * @param[in] config           - i2s config pin struct.
@@ -391,7 +414,7 @@ void audio_rx_dma_add_list_element(dma_chain_config_t *config_addr, dma_chain_co
  * @param[in] rx_fifo_chn - rx fifo select.
  * @return    none.
  */
-void audio_rx_dma_chain_init(dma_chn_e chn, unsigned short *in_buff, unsigned int buff_size, audio_fifo_chn_e rx_fifo_chn)
+void audio_rx_dma_chain_init(audio_fifo_chn_e rx_fifo_chn, dma_chn_e chn, unsigned short *in_buff, unsigned int buff_size)
 {
     audio_rx_fifo_chn = rx_fifo_chn;
     audio_rx_dma_config(chn, (unsigned short *)in_buff, buff_size, &g_audio_rx_dma_list_cfg[rx_fifo_chn]);
@@ -441,7 +464,7 @@ void audio_tx_dma_add_list_element(dma_chain_config_t *config_addr, dma_chain_co
  * @param[in] tx_fifo_chn - tx fifo select.
  * @return    none.
  */
-void audio_tx_dma_chain_init(dma_chn_e chn, unsigned short *out_buff, unsigned int buff_size, audio_fifo_chn_e tx_fifo_chn)
+void audio_tx_dma_chain_init(audio_fifo_chn_e tx_fifo_chn, dma_chn_e chn, unsigned short *out_buff, unsigned int buff_size)
 {
     audio_tx_fifo_chn = tx_fifo_chn;
     audio_tx_dma_config(chn, (unsigned short *)out_buff, buff_size, &g_audio_tx_dma_list_cfg[tx_fifo_chn]);
@@ -530,6 +553,34 @@ void audio_codec_init(void)
 }
 
 /**
+ * @brief     This function serves to reinit audio codec clock.
+ * @param[in]  div_numerator   - the dividing factor of div_numerator (15bits valid).
+ * @param[in]  div_denominator - the dividing factor of div_denominator(16bits valid).
+ * @param[in]  clk_usb_mode - CLK_USB_MODE_OFF 128 downsampling; CLK_USB_MODE_ON 125 downsampling.
+ * @param[in]  rate - audio sample rate.
+ * @return    none
+ * @note      Just for test, should be called after audio_codec_stream0_input_init
+ *            CLK_USB_MODE_OFF: codec input sample rate using 128 downsampling (higher THD+N Ratio)
+ *            CLK_USB_MODE_ON:  codec input sample rate using 125 downsampling
+ *            Therefore, changing this configuration requires a simultaneous modification of the codec's clock
+ *            in order to get the corresponding sample rate.
+ *            Need to be placed after audio_codec_stream0_input_init.
+ */
+void audio_reset_audio_clk(unsigned short div_numerator, unsigned short div_denominator, codec_clk_usb_mode_e clk_usb_mode, audio_sample_rate_e rate)
+{
+    if (clk_usb_mode == CLK_USB_MODE_OFF)
+    {
+         reg_codec_clkcfg &= ~FLD_CLK_USB;
+    }
+    else
+    {
+        reg_codec_clkcfg |= FLD_CLK_USB;
+    }
+    audio_set_audio_clk(div_numerator, div_denominator); // audio clk=240M*(div_numerator/div_denominator)
+    reg_codec_clkcfg = (reg_codec_clkcfg & (~FLD_CLK_SR)) | (audio_codec_rate[rate] << 0x01);
+}
+
+/**
  * @brief     This function serves to set codec_adc clock.
  * @return    none.
  */
@@ -569,15 +620,31 @@ void audio_codec_set_adc_vmid(power_switch_e en)
 {
     if (en)
     {
-        /***enable vmid voltage***/
-        analog_write_reg8(areg_0x8f, (analog_read_reg8(areg_0x8f) & (~FLD_AUDIO_VMID_EN)));
+        if(g_chip_version == CHIP_VERSION_A1)
+        {
+            /***enable vmid voltage***/
+            analog_write_reg8(areg_0x8f, (analog_read_reg8(areg_0x8f) & (~FLD_AUDIO_VMID_PD)));
+        }
+        else
+        {
+            /***enable vmid voltage***/
+            analog_write_reg8(areg_0x8f, (analog_read_reg8(areg_0x8f) | FLD_AUDIO_VMID_PD));
+        }
         /***keep 0.9v vmid***/
         analog_write_reg8(areg_0x8e, (analog_read_reg8(areg_0x8e) | FLD_AUDIO_PD_ENABLE_0R6));
     }
     else
     {
-        /***disable vmid voltage***/
-        analog_write_reg8(areg_0x8f, (analog_read_reg8(areg_0x8f) | FLD_AUDIO_VMID_EN));
+        if(g_chip_version == CHIP_VERSION_A1)
+        {
+            /***disable vmid voltage***/
+            analog_write_reg8(areg_0x8f, (analog_read_reg8(areg_0x8f) | FLD_AUDIO_VMID_PD));
+        }
+        else
+        {
+            /***disable vmid voltage***/
+            analog_write_reg8(areg_0x8f, (analog_read_reg8(areg_0x8f) & (~FLD_AUDIO_VMID_PD)));
+        }
     }
 }
 
@@ -613,17 +680,14 @@ void audio_set_codec_stream0_sample_rate(codec_stream0_input_src_e source, audio
     if (source & BIT(3))
     {
         /* When the sampling rate is greater than or equal to 32K there is a data channel reversal problem,
-        * so reg_codec_cfg bit[5] need to be configured to adjust the direction,
-        * when sampling rate is less than 32K there is no reversal problem, so clear the bit.
+        * so reg_codec_cfg bit[5] need to be configured to adjust the direction.
+        * Moreover, this bit is also recommended to be configured for scenarios with less than 32k sampling rate,
+        * and in this case, the direction will not be flipped.
         */
+        reg_codec_cfg |= FLD_R_NEG;
         if (rate >= AUDIO_32K)
         {
             rate += 3;
-            reg_codec_cfg |= FLD_R_NEG;
-        }
-        else
-        {
-            reg_codec_cfg &= ~FLD_R_NEG;
         }
     }
     reg_codec_clkcfg = (reg_codec_clkcfg & (~FLD_CLK_SR)) | (audio_codec_rate[rate] << 0x01);
@@ -1001,19 +1065,21 @@ void audio_set_ascl_format(audio_ascl_select_e ascl_select, ascl_mode_select_e a
 }
 
 /**
- * @brief     This function configures i2s mclk pin for extern codec,mclk=240M*(div_numerator/div_denominator):240M*(1/20)=12M.
- * @param[in] mclk_pin -mclk output pin.
+ * @brief     This function configures the internal codec clk to the external codec mclk via the debug pin,mclk=240M*(div_numerator/div_denominator):240M*(1/20)=12M.
+ * @param[in] mclk_pin -mclk output pin.(only set PC6).
  * @return    none.
  * @attention If need to use internal codec at the same time, mclk must be set to 12M.
  */
-void audio_i2s_set_mclk(gpio_func_pin_e mclk_pin)
+void audio_set_codec_clk_as_mclk(gpio_func_pin_e mclk_pin)
 {
     reg_codec_clkcfg = (reg_codec_clkcfg & (~FLD_CLK_DIV2)) | MASK_VAL(FLD_CLK_DIV2, 1, FLD_CLK_EN, 1);
-    gpio_set_probe_clk_function(mclk_pin, PROBE_CODEC_MCLK);
+    audio_set_debug_clk_as_mclk(CODEC_CLK_DBG);
+    gpio_set_mux_function(mclk_pin, DBG_AUDIO_DAC);
+    gpio_function_dis((gpio_pin_e)mclk_pin);
 }
 
 /**
- * @brief     This function configures i2s mclk pin for extern iis clk,mclk=240M*(div_numerator/div_denominator):240M*(1/20)=12M.
+ * @brief     This function configures i2s clk pin for extern codec clk,mclk=240M*(div_numerator/div_denominator):240M*(1/20)=12M.
  * @param[in] i2s_select i2s channel.
  * @param[in] mclk_pin -mclk output pin.
  * @param[in] div_numerator   - the dividing factor of div_numerator (15bits valid).
@@ -1035,11 +1101,11 @@ void audio_set_i2s_clk_as_mclk(audio_i2s_select_e i2s_select, gpio_func_pin_e mc
 }
 
 /**
- * @brief     This function configures debug clk as iis mclk,mclk=240M*(div_numerator/div_denominator):240M*(1/20)=12M.
+ * @brief     This function configures audio module debug clk as codec mclk
  * @param[in] clk debug clk.
  * @return    none.
  */
-void audio_aclk_debug_set_mclk(aclk_dbg_e clk)
+void audio_set_debug_clk_as_mclk(audio_clk_dbg_e clk)
 {
     BM_SET(reg_aclk_dbg, clk);
 }

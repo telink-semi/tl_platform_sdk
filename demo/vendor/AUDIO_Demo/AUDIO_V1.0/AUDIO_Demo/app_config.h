@@ -42,6 +42,7 @@ extern "C" {
 #define BUFFER_TO_LINEOUT               4
 #define EXT_CODEC_LINEIN_LINEOUT        5
 #define FLASH_TO_LINEOUT                6
+#define I2SIN_TO_I2SOUT                 7
 
 
 #define AUDIO_MODE     DMIC_TO_LINEOUT

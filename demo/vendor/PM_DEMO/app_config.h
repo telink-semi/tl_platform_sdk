@@ -40,6 +40,22 @@ extern "C" {
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M
 #endif
 
+#define CORE_SINGLE             1
+#define CORE_MULTI              2
+#if defined(MCU_CORE_TL751X)
+#define CORE_MODE               CORE_MULTI
+#else
+#define CORE_MODE               CORE_SINGLE
+#endif
+
+#define N22_TEST                        0
+#define DSP_TEST                        0
+#define DSP_FW_DOWNLOAD_FLASH_ADDR      0x20040000
+#define N22_FW_DOWNLOAD_FLASH_ADDR      0x20080000
+
+#if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL7518)
+#define PM_SET_DVDD_MODE                01
+#endif
 
 /**
  * @note To enter sleep using COMPARATOR Wake mode, the voltage difference between the input level and the configured wake level
@@ -51,9 +67,9 @@ extern "C" {
 //[eagle]The A0 version of the suspend execution process is abnormal and the program restarts.
 #define SUSPEND_PAD_WAKEUP              10
 #define SUSPEND_32K_RC_WAKEUP           11
+#define SUSPEND_COMPARATOR_WAKEUP       13
 #if (defined(MCU_CORE_B91)||defined(MCU_CORE_B92))
 #define SUSPEND_32K_XTAL_WAKEUP         12
-#define SUSPEND_COMPARATOR_WAKEUP       13
 #define SUSPEND_CORE_USB_WAKEUP         14
 #endif
 #if defined(MCU_CORE_B91)
@@ -68,9 +84,9 @@ extern "C" {
 /* DEEP SLEEP MODE */
 #define DEEP_PAD_WAKEUP                 20
 #define DEEP_32K_RC_WAKEUP              21
+#define DEEP_COMPARATOR_WAKEUP          23
 #if (defined(MCU_CORE_B91)||defined(MCU_CORE_B92))
 #define DEEP_32K_XTAL_WAKEUP            22
-#define DEEP_COMPARATOR_WAKEUP          23
 #endif
 #if defined(MCU_CORE_B91)
 #define DEEP_MDEC_WAKEUP                24
@@ -84,9 +100,9 @@ extern "C" {
 #if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)|| defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)
 #define DEEP_RET32K_PAD_WAKEUP          30
 #define DEEP_RET32K_32K_RC_WAKEUP       31
+#define DEEP_RET32K_COMPARATOR_WAKEUP   33
 #if (defined(MCU_CORE_B91)||defined(MCU_CORE_B92))
 #define DEEP_RET32K_32K_XTAL_WAKEUP     32
-#define DEEP_RET32K_COMPARATOR_WAKEUP   33
 #endif
 #if defined(MCU_CORE_B91)
 #define DEEP_RET32K_MDEC_WAKEUP         34
@@ -100,9 +116,9 @@ extern "C" {
 #if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)|| defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)
 #define DEEP_RET64K_PAD_WAKEUP          40
 #define DEEP_RET64K_32K_RC_WAKEUP       41
+#define DEEP_RET64K_COMPARATOR_WAKEUP   43
 #if (defined(MCU_CORE_B91)||defined(MCU_CORE_B92))
 #define DEEP_RET64K_32K_XTAL_WAKEUP     42
-#define DEEP_RET64K_COMPARATOR_WAKEUP   43
 #endif
 #if defined(MCU_CORE_B91)
 #define DEEP_RET64K_MDEC_WAKEUP         44
@@ -116,25 +132,30 @@ extern "C" {
 #if defined(MCU_CORE_B92)|| defined(MCU_CORE_TL321X)
 #define DEEP_RET96K_PAD_WAKEUP          50
 #define DEEP_RET96K_32K_RC_WAKEUP       51
+#define DEEP_RET96K_COMPARATOR_WAKEUP   53
 #if defined(MCU_CORE_B92)
 #define DEEP_RET96K_32K_XTAL_WAKEUP     52
-#define DEEP_RET96K_COMPARATOR_WAKEUP   53
 // CTB mode : For internal testing only, this function is not available externally
 #define DEEP_RET96K_CTB_WAKEUP          54
 #endif
 #endif
 
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL751X)
 #define DEEP_RET128K_PAD_WAKEUP         60
 #define DEEP_RET128K_32K_RC_WAKEUP      61
+#define DEEP_RET128K_COMPARATOR_WAKEUP  62
 #endif
 
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL751X)
 #define DEEP_RET256K_PAD_WAKEUP         70
 #define DEEP_RET256K_32K_RC_WAKEUP      71
+#define DEEP_RET256K_COMPARATOR_WAKEUP  72
 #endif
 
-#define PM_SET_DVDD1_DVDD2_MODE         72
+#if defined(MCU_CORE_TL751X)
+#define DEEP_RET384K_PAD_WAKEUP         80
+#define DEEP_RET384K_32K_RC_WAKEUP      81
+#endif
 
 #define PM_MODE                         DEEP_PAD_WAKEUP
 

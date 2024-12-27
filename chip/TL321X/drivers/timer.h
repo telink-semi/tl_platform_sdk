@@ -202,7 +202,7 @@ static inline void timer_clr_irq_mask(timer_irq_e mask)
 void timer_start(timer_type_e type);
 
 /**
- * @brief     set mode, initial tick and capture of timer.
+ * @brief     set mode of timer.
  * @param[in] type - select the timer to start.
  * @param[in] mode - select mode for timer.
  * @return    none

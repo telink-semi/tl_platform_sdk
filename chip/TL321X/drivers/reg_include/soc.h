@@ -75,23 +75,24 @@ enum
     FLD_GSPI_DIV_IN_SEL                 = BIT_RNG(8, 9),//0:rc24m;   1:xtl24m;  2:pll;
 };
 
-#define reg_i2s0_step                   REG_ADDR16(SC_BASE_ADDR + 0x06)
-enum
-{
-    FLD_I2S0_STEP                       = BIT_RNG(0, 14),
-    FLD_I2S0_EN                         = BIT(15),
+#define reg_sdm_step                   REG_ADDR16(SC_BASE_ADDR+0x06)
+enum{
+    FLD_SDM_STEP                =   BIT_RNG(0,14),
+    FLD_SDM_CLK_EN_0            =   BIT(15),
 };
 
-#define reg_i2s2_step                   REG_ADDR16(SC_BASE_ADDR + 0x08)
-enum
-{
-    FLD_I2S2_STEP                       = BIT_RNG(0, 14),
-    FLD_I2S2_EN                         = BIT(15),
+#define reg_i2s_step                    REG_ADDR16(SC_BASE_ADDR+0x08)
+enum{
+    FLD_I2S_STEP                =   BIT_RNG(0,14),
+    FLD_I2S_CLK_EN_0            =   BIT(15),
 };
 
-#define reg_i2s2_mod                    REG_ADDR16(SC_BASE_ADDR + 0x0a)
-#define reg_i2s0_mod                    REG_ADDR16(SC_BASE_ADDR + 0x2a)
 
+
+#define reg_sdm_mod                    REG_ADDR16(SC_BASE_ADDR+0x2a)
+
+
+#define reg_i2s_mod                     REG_ADDR16(SC_BASE_ADDR+0x0a)
 #define reg_cache_init                  REG_ADDR8(SC_BASE_ADDR + 0x10)
 enum
 {

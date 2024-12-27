@@ -828,6 +828,36 @@ static inline void rf_set_rx_settle_time( unsigned short rx_stl_us )
 }
 
 /**
+ * @brief      This function serves to set the tx wait time during the rx2tx process
+ * @param[in]  tx_wait_us  tx wait time,the unit is us.The max value of this param is 0xfff; The default wait time value is 10us.
+ * @return     none.
+ * @note       Attention:It is not necessary to call this function to adjust the wait time in the rx2tx process.
+ */
+static inline void rf_set_tx_wait_time(unsigned short tx_wait_us )
+{
+    if(tx_wait_us>0x0fff)
+    {
+        tx_wait_us = 0x0fff;
+    }
+    reg_rf_ll_txwait = (reg_rf_ll_txwait & 0xf000)|(tx_wait_us-1);
+}
+
+/**
+ * @brief      This function serves to set the rx wait time during the tx2rx process
+ * @param[in]  rx_wait_us  rx wait time,the unit is us.The max value of this param is 0xfff; The default wait time value is 10us.
+ * @return     none.
+ * @note       Attention:It is not necessary to call this function to adjust the wait time in the tx2rx process.
+ */
+static inline void rf_set_rx_wait_time( unsigned short rx_wait_us )
+{
+    if(rx_wait_us>0x0fff)
+    {
+        rx_wait_us = 0x0fff;
+    }
+    reg_rf_ll_rxwait = (reg_rf_ll_rxwait & 0xf000)|(rx_wait_us-1);
+}
+
+/**
  * @brief	This function serve to get ptx wptr.
  * @param[in]	pipe_id	-	The number of tx fifo.0<= pipe_id <=5.
  * @return		The write pointer of the tx.
@@ -1541,6 +1571,30 @@ void rf_set_power_off_singletone(void);
 void rf_tx_fast_settle_update_cal_val(rf_tx_fast_settle_time_e tx_settle_time,unsigned char chn);
 
 /**
+ *  @brief		This function is used to get the tx fast_settle calibration value.
+ *	@param[in]	tx_settle_us  	After adjusting the timing sequence, the time required for tx to settle.
+ *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Only applicable to TX_SETTLE_TIME_50US, other parameters are invalid.
+ *								(When tx_settle_us is 50us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *	@return	 	none
+ *  @note       TX_SETTLE_TIME_50US  - disable tx_ldo_trim function and tx_hpmc,reduce 58us of tx settle time.After frequency hopping, a normal calibration must be done.
+ *	            TX_SETTLE_TIME_104US - disable tx_ldo_trim function,reduce 4.5us of tx settle time. Do a normal calibration at the beginning.
+*/
+void rf_tx_fast_settle_get_cal_val(rf_tx_fast_settle_time_e tx_settle_time,unsigned char chn, rf_fast_settle_t* fs_cv);
+
+/**
+ *  @brief		This function is used to set the tx fast_settle calibration value.
+ *	@param[in]	tx_settle_us  	After adjusting the timing sequence, the time required for tx to settle.
+ *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Only applicable to TX_SETTLE_TIME_50US, other parameters are invalid.
+ *								(When tx_settle_us is 50us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *	@return	 	none
+ *  @note       TX_SETTLE_TIME_50US  - disable tx_ldo_trim function and tx_hpmc,reduce 58us of tx settle time.After frequency hopping, a normal calibration must be done.
+ *	            TX_SETTLE_TIME_104US - disable tx_ldo_trim function,reduce 4.5us of tx settle time. Do a normal calibration at the beginning.
+*/
+void rf_tx_fast_settle_set_cal_val(rf_tx_fast_settle_time_e tx_settle_time,unsigned char chn,rf_fast_settle_t* fs_cv);
+
+/**
  *  @brief		This function is used to set the rx fast_settle calibration value.
  *	@param[in]	rx_settle_us  	After adjusting the timing sequence, the time required for rx to settle.
  *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80.
@@ -1548,6 +1602,30 @@ void rf_tx_fast_settle_update_cal_val(rf_tx_fast_settle_time_e tx_settle_time,un
  *	@return	 	none
 */
 void rf_rx_fast_settle_update_cal_val(rf_rx_fast_settle_time_e rx_settle_time,unsigned char chn);
+
+/**
+ *  @brief		This function is used to get the rx fast_settle calibration value.
+ *	@param[in]	rx_settle_us  	After adjusting the timing sequence, the time required for rx to settle.
+ *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80.
+								Reserved for future functionality. Currently, this parameter has no effect.
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *	@return	 	none
+ *	@note		RX_SETTLE_TIME_45US - disable rx_ldo_trim and rx_dcoc calibration,reduce 44.5us of rx settle time.Receive for a period of time and then do a normal calibration.
+ *				RX_SETTLE_TIME_80US - disable rx_ldo_trim calibration,reduce 4.5us of rx settle time. Do a normal calibration at the beginning.
+*/
+void rf_rx_fast_settle_get_cal_val(rf_rx_fast_settle_time_e rx_settle_time,unsigned char chn, rf_fast_settle_t* fs_cv);
+
+/**
+ *  @brief		This function is used to set the rx fast_settle calibration value.
+ *	@param[in]	rx_settle_us  	After adjusting the timing sequence, the time required for rx to settle.
+ *	@param[in]	chn             Calibrates the frequency (2400 + chn). Range: 0 to 80.
+								Reserved for future functionality. Currently, this parameter has no effect.
+ *  @param[in]  fs_cv           Fast settle calibration value address pointer.
+ *	@return	 	none
+ *	@note		RX_SETTLE_TIME_45US - disable rx_ldo_trim and rx_dcoc calibration,reduce 44.5us of rx settle time.Receive for a period of time and then do a normal calibration.
+ *				RX_SETTLE_TIME_80US - disable rx_ldo_trim calibration,reduce 4.5us of rx settle time. Do a normal calibration at the beginning.
+*/
+void rf_rx_fast_settle_set_cal_val(rf_rx_fast_settle_time_e rx_settle_time,unsigned char chn, rf_fast_settle_t* fs_cv);
 
 /****************************************************************************************************************************************
  *                                         RF User-defined package related functions                                  					*

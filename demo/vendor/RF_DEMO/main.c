@@ -33,8 +33,20 @@ extern void main_loop (void);
  */
 int main(void)
 {
+
+#if(defined(MCU_CORE_TL751X_N22))||(defined(MCU_CORE_TL322X_N22))
+    rf_n22_dig_init();
+    rf_clr_irq_mask(FLD_RF_IRQ_ALL);
+#else
     PLATFORM_INIT;
     CLOCK_INIT;
+#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X))
+
+    sys_n22_init(0x20080000);
+    rf_n22_dig_init();
+    rf_clr_irq_mask(FLD_RF_IRQ_ALL);
+#endif
+#endif
     rf_mode_init();
 #if(RF_MODE==RF_BLE_1M)//1
     rf_set_ble_1M_mode();
@@ -48,11 +60,11 @@ int main(void)
     rf_set_ble_500K_mode();
 #elif(RF_MODE==RF_LR_S8_125K)//6
     rf_set_ble_125K_mode();
-#elif(RF_MODE==RF_ZIGBEE_250K)//TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+#elif(RF_MODE==RF_ZIGBEE_250K)//TODO:TL7518 and tl751x are temporarily unavailable, available versions will be updated in the future
     rf_set_zigbee_250K_mode();
-#elif(RF_MODE==RF_PRIVATE_1M)//TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+#elif(RF_MODE==RF_PRIVATE_1M)//TODO:TL7518 and tl751x are temporarily unavailable, available versions will be updated in the future
      rf_set_pri_1M_mode();
-#elif(RF_MODE==RF_PRIVATE_2M)//TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+#elif(RF_MODE==RF_PRIVATE_2M)//TODO:TL7518 and tl751x are temporarily unavailable, available versions will be updated in the future
     rf_set_pri_2M_mode();
 #elif(RF_MODE==RF_BLE_STX2RX)
     rf_set_ble_1M_mode();
@@ -60,7 +72,7 @@ int main(void)
     rf_set_ble_1M_mode();
 #endif
 
-#if !defined(MCU_CORE_TL751X)
+#if ((!defined(MCU_CORE_TL7518))||(!defined(MCU_CORE_TL751X)))
 #if(RF_MODE==RF_PRIVATE_250K)
     rf_set_pri_250K_mode();
 #elif(RF_MODE==RF_PRIVATE_500K)
@@ -88,7 +100,7 @@ int main(void)
 #endif
 #endif
 
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
  //TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
 #if(RF_MODE==RF_PRI_GENERIC_1M)
     rf_set_pri_generic_1M_mode();

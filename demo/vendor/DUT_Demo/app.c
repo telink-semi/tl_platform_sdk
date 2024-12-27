@@ -49,7 +49,7 @@ struct DUT_CMD_FUNC {
    script instruction: dutcmd(cmd,para0,para1,time_out)
    An example of firmware encryption test is as follows.The meaning of the test script is to write the encrypted data to the flash 0 address.
    fast_load(DUT_Demo.bin,1,24)
-   dutcmd(0x68,0,0,1024)##test_name:FWEncrypt
+   fw_encrypt(0x0,5)##test_name:FWEncrypt
    Note:
    Users can get para0 and para1 by "g_test_cmd_ptr->param[0]" and "g_test_cmd_ptr->param[1]" int the program.
    If the test item fails,  the program returns "TL_TEST_RESP_ERR".

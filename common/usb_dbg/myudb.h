@@ -31,9 +31,9 @@
  * @brief 0: USB0, 1:USB1.
  * 
  * @note
- *        - This version only TL751X support USB1.
+ *        - This version only TL7518 support USB1.
  */
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)
 #define USB_CNT  1
 #else
 #define USB_CNT  0
@@ -71,43 +71,5 @@ void    myudb_set_txfifo (void *p);
 
 #define         my_irq_disable()        unsigned int rie = core_interrupt_disable ()
 #define         my_irq_restore()        core_restore_interrupt(rie)
-#define         LOG_EVENT_TIMESTAMP     0
-#define         LOG_DATA_B1_0           0
-#define         LOG_DATA_B1_1           1
-
-//#define           get_systemtick()        (stimer_get_tick()*3/2)
-#define         get_systemtick()        stimer_get_tick()
-
-//#define           log_uart(d)             uart_send_byte_dma(0,d)
-#if (USB_CNT == 0)
-#define         log_uart(d)             reg_usb_ep8_dat=d
-#elif (USB_CNT == 1)
-#define         log_uart(d)             reg_usb1_ep8_dat=d
-#endif
-
-#define         DEBUG_PORT              GPIO_PB2
-#define         log_ref_gpio_h()        gpio_set_high_level(DEBUG_PORT)
-#define         log_ref_gpio_l()        gpio_set_low_level(DEBUG_PORT)
-
-
-#define log_hw_ref()    {my_irq_disable();log_ref_gpio_h();log_uart(0x20);int t=get_systemtick();log_uart(t);log_uart(t>>8);log_uart(t>>16);log_ref_gpio_l();my_irq_restore();}
-
-// 4-byte sync word: 00 00 00 00
-#define log_sync(en)    if(en) {my_irq_disable();log_uart(0);log_uart(0);log_uart(0);log_uart(0);my_irq_restore();}
-//4-byte (001_id-5bits) id0: timestamp align with hardware gpio output; id1-31: user define
-#define log_tick(en,id) if(en) {my_irq_disable();log_uart(0x20|(id&31));int t=get_systemtick();log_uart(t);log_uart(t>>8);log_uart(t>>16);my_irq_restore();}
-
-//1-byte (000_id-5bits)
-#define log_event(en,id) if(en) {my_irq_disable();log_uart(0x00|(id&31));my_irq_restore();}
-
-//1-byte (01x_id-5bits) 1-bit data: id0 & id1 reserved for hardware
-#define log_task(en,id,b)   if(en) {my_irq_disable();log_uart(((b)?0x60:0x40)|(id&31));int t=get_systemtick();log_uart(t);log_uart(t>>8);log_uart(t>>16);my_irq_restore();}
-
-//2-byte (10-id-6bits) 8-bit data
-#define log_b8(en,id,d) if(en) {my_irq_disable();log_uart(0x80|(id&63));log_uart(d);my_irq_restore();}
-
-//3-byte (11-id-6bits) 16-bit data
-#define log_b16(en,id,d) if(en) {my_irq_disable();log_uart(0xc0|(id&63));log_uart(d);log_uart((d)>>8);my_irq_restore();}
-
 
 #endif

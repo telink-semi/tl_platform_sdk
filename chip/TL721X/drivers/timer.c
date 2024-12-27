@@ -112,7 +112,7 @@ void timer_stop(timer_type_e type)
 
 
 /**
- * @brief     set mode, initial tick and capture of timer.
+ * @brief     set mode of timer.
  * @param[in] type - select the timer to start.
  * @param[in] mode - select mode for timer.
  * @return    none

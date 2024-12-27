@@ -29,7 +29,7 @@ extern "C" {
 #include "driver.h"
 #include "common.h"
 
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 /**
  * @brief   The POWER_SUPPLY_MODE defaults to VBUS_POWER_SUPPLY.
  */
@@ -46,14 +46,14 @@ extern "C" {
 
 #define  USB_MOUSE          1
 #define  USB_KEYBOARD       2
-#define  USB_MICROPHONE     3 /* TL751X this version is not support microphone data->SRAM, it will be added later. */
-#define  USB_SPEAKER        4 /* TL751X this version is not support SRAM data->speaker, it will be added later. */
+#define  USB_MICROPHONE     3 /* TL7518 this version is not support microphone data->SRAM, it will be added later. */
+#define  USB_SPEAKER        4 /* TL7518 this version is not support SRAM data->speaker, it will be added later. */
 #define  USB_CDC            5
-#define  USB_MIC_SPEAKER    6 /* TL751X this version is not support microphone data->SRAM and SRAM data->speaker, it will be added later. */
+#define  USB_MIC_SPEAKER    6 /* TL7518 this version is not support microphone data->SRAM and SRAM data->speaker, it will be added later. */
 #if defined(MCU_CORE_B91)
 #define  USB_MASS_STORAGE   7
 #endif
-#define  USB_PRINT          8 /* TL751X, TL721X, TL321X don't support hardware enumeration into print device.
+#define  USB_PRINT          8 /* TL7518, TL721X, TL321X don't support hardware enumeration into print device.
                                  Please use software enumeration instead of hardware enumeration. */
 
 #define  USB_DEMO_TYPE      USB_MOUSE

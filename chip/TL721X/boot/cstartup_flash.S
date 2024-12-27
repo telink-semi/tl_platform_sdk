@@ -52,6 +52,7 @@
 //When adding flash later, if tRES1 is greater than 25us, this waiting time needs to be updated. (flash tRES1, which can be viewed in the comments of the variable flash_support_mid.)
 //(add by weihua.zhang 20230811)
 #define EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM        320 //25us
+#define FLASH_LOOP_NUM_TEST                         0
 
 //The default driver configuration is 128K to ensure that the default driver configuration can work properly on all models.
 //In actual use, please configure the sram size according to your own model, otherwise the efficiency will be affected.
@@ -320,6 +321,7 @@ _IRESET_ENTRY:
     j       _ISTART
 
     .org 0x22
+
 _ISTART:
 #if 0
     // add debug, PB4 output 1
@@ -328,7 +330,7 @@ _ISTART:
     li      t1, 0xef
     li      t2, 0x10
     sb      t1, 0x482(t0)       //0x80140c12  PB oen     =  0xef
-    sb      t2, 0x48c(t0)       //0x80140c1c  PB output  =  0x10
+    sb      t2, 0x48c(t0)       //0x80140c1c  PB set     =  0x10
 #endif
 
     /* timer rst enable. */
@@ -444,13 +446,44 @@ _MSPI_WAIT_2:
     li      t1, 0x0a
     sb      t1, 0x78c(t0)       //xip_enable        :0xA3FFFF1c = 0x0a
 
+#if FLASH_LOOP_NUM_TEST
+    // add debug, PB4 output 1
+    lui     t0, 0x80140
+    addi    t0, t0, 0x790
+    li      t1, 0xef
+    li      t2, 0x10
+    sb      t1, 0x482(t0)       //0x80140c12  PB oen     =  0xef
+    sb      t2, 0x48c(t0)       //0x80140c1c  PB set     =  0x10
+#endif
+
     /*flash wakeup need delay about 20us */
-    /*efuse load need delay about 0us */
+    /*efuse load need delay about 44us */
     li      t0, 0
     li      t1, EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM
 _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH:
     addi    t0, t0, 1
     bgeu    t1, t0, _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH
+
+    lui     t0, 0x80140
+    lb      t2, 0x307(t0)      //0x80140307[bit0]:OTP_STATUS-busy
+    andi    t2, t2, 0x01
+    li      t1, 0x00
+    beq     t1, t2, _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH_END
+
+    li      t0, 0
+    li      t1, EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM
+_WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH_2:
+    addi    t0, t0, 1
+    bgeu    t1, t0, _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH_2
+_WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH_END:
+
+#if FLASH_LOOP_NUM_TEST
+    // add debug, PB4 output 0
+    lui     t0, 0x80140
+    addi    t0, t0, 0x790
+    li      t2, 0x10
+    sb      t2, 0x48d(t0)       //0x80140c1d  PB clear   =  0x10
+#endif
 
 _MULTI_ADDRESS_BEGIN:
     lui     t0, 0xA3FFF

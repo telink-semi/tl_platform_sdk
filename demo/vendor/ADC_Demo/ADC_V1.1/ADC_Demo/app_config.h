@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app_config.h
  *
- * @brief   This is the header file for TL751X/TL721X/TL321X
+ * @brief   This is the header file for TL7518/TL721X/TL321X
  *
  * @author  Driver Group
  * @date    2024
@@ -38,15 +38,21 @@ extern "C" {
 
 #define ADC_GPIO_SAMPLE         1
 #define ADC_VBAT_SAMPLE         2
+#define ADC_GPIO_SAMPLE_VBAT    3
 #if INTERNAL_TEST_FUNC_EN
-#define ADC_TEMP_SENSOR_SAMPLE  3
+#define ADC_TEMP_SENSOR_SAMPLE  4
 #endif
 //In NDMA mode, only M channel can be used.
 #define NDMA_M_1_CHN_EN     1
 //Multiple channels can be used in DMA mode.
 #define DMA_M_1_CHN_EN      1//When using one channels in DMA mode, only M channel can be selected.
-#define DMA_M_L_2_CHN_EN    2//When using two channels in DMA mode, only M and L channels can be selected.
-#define DMA_M_L_R_3_CHN_EN  3
+/*
+ * Due to issues with adc multichannel sampling on TL721X A2, it is not available to the public.
+ * A2 chip has the problem of interference due to multi-channel.
+ * In DMA mode, only m-channel can be used.(add by bolong.zhang,confirmed haitao 20241219)
+ */
+#define DMA_M_L_2_CHN_EN    2//When using two channels in DMA mode, only M and L channels can be selected.//tl721X A2 not available.
+#define DMA_M_L_R_3_CHN_EN  3//tl721X A2 not available.
 
 /**********************************************************************************************************************
  *                                         Users can modify macros                                                    *
@@ -63,20 +69,20 @@ extern "C" {
 #define  ADC_SAMPLE_CHN_CNT         DMA_M_1_CHN_EN //Number of channels enabled
 #define  ADC_M_CHN_SAMPLE_MODE      ADC_GPIO_SAMPLE
 #define  ADC_L_CHN_SAMPLE_MODE      ADC_VBAT_SAMPLE
-#define  ADC_R_CHN_SAMPLE_MODE      ADC_GPIO_SAMPLE
+#define  ADC_R_CHN_SAMPLE_MODE      ADC_GPIO_SAMPLE_VBAT
 #else
 #define  ADC_SAMPLE_CHN_CNT         NDMA_M_1_CHN_EN
 #define  ADC_SAMPLE_MODE            ADC_GPIO_SAMPLE
 #endif
 
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)
 #define  GPIO_M_CHN_SAMPLE_PIN      ADC_GPIO_PG0
 #define  GPIO_L_CHN_SAMPLE_PIN      ADC_GPIO_PG1
 #define  GPIO_R_CHN_SAMPLE_PIN      ADC_GPIO_PG2
 #elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
-#define  GPIO_M_CHN_SAMPLE_PIN      ADC_GPIO_PB0
-#define  GPIO_L_CHN_SAMPLE_PIN      ADC_GPIO_PB1
-#define  GPIO_R_CHN_SAMPLE_PIN      ADC_GPIO_PB2
+#define  GPIO_M_CHN_SAMPLE_PIN      ADC_GPIO_PB1
+#define  GPIO_L_CHN_SAMPLE_PIN      ADC_GPIO_PB2
+#define  GPIO_R_CHN_SAMPLE_PIN      ADC_GPIO_PB3
 #endif
 
 /* Disable C linkage for C++ Compilers: */

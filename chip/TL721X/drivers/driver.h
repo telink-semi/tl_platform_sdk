@@ -53,6 +53,7 @@
 #include "uart.h"
 #include "lib/include/stimer.h"
 
+#include "lpc.h"
 #include "lib/include/clock.h"
 #include "lib/include/mspi.h"
 #include "adc.h"

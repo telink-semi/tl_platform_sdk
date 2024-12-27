@@ -24,6 +24,7 @@
 #ifndef TRNG_PORTABLE_H
 #define TRNG_PORTABLE_H
 #include "driver.h"
+#include "error_handler/error_handler.h"
 
 
 #ifdef __cplusplus

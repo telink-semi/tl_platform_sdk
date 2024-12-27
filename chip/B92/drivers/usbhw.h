@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "analog.h"
+#include "lib/include/analog.h"
 #include "gpio.h"
 #include "reg_include/register.h"
 #include <stdbool.h>

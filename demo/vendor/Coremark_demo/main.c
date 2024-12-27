@@ -39,16 +39,23 @@ unsigned char cpu_mhz;/* Note:  This gets the current main frequency of the runn
                                 if you find that the score data is not correct you can check this parameter.*/
 int main(void)
 {
-#if !defined(MCU_CORE_TL751X_N22)
+#if !(defined(MCU_CORE_TL7518_N22)||defined(MCU_CORE_TL751X_N22))
     PLATFORM_INIT;
     CLOCK_INIT;
 #endif
     user_init();
     printf ("\r\n\r\n Core Mark Starts(wait about 10s~20s...) ...\r\n");
     delay_ms (100);
-#if defined(MCU_CORE_TL751X)
-#if !defined(MCU_CORE_TL751X_N22)
+
+#if defined(MCU_CORE_TL7518)
+#if !defined(MCU_CORE_TL7518_N22)
     cpu_mhz = sys_clk.cclk_hclk;
+#else
+    cpu_mhz = sys_clk.n22_clk;
+#endif
+#elif defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL751X_N22)
+    cpu_mhz = sys_clk.cclk;
 #else
     cpu_mhz = sys_clk.n22_clk;
 #endif

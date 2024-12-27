@@ -56,6 +56,9 @@
  * [Bit1~7]: These bits are used by the driver and cannot be used by the customer.
  */
 #define PM_ANA_REG_WD_CLR_BUF0			0x35 // initial value 0xff.
+enum{
+    POWERON_FLAG                 = BIT(0),
+};
 #define PM_ANA_REG_WD_CLR_BUF1			0x36 // initial value 0x00.
 #define PM_ANA_REG_WD_CLR_BUF2			0x37 // initial value 0x00
 #define PM_ANA_REG_WD_CLR_BUF3			0x38 // initial value 0x00
@@ -70,10 +73,23 @@
  * [Bit0]: If this bit is 1, it means that reboot has occurred.
  * [Bit1]: If this bit is 1, it means that the software calls the function sys_reboot() when the crystal oscillator does not start up normally.
  * [Bit2]: If this bit is 1, it means that the pm_sleep_wakeup function failed to clear the pm wake flag bit when using the deep wake source, and the software called sys_reboot().
- * [Bit3~6]: These bits are used by the driver and cannot be used by the customer.
+ * [Bit3]: If this bit is 1, it means that the software calls the function sys_reboot() when the PLL does not start up normally.
+ * [Bit4~6]: These bits are used by the driver and cannot be used by the customer.
  * [Bit7]: The bootrom is used.
  */
 #define PM_ANA_REG_POWER_ON_CLR_BUF0	0x3a // initial value 0x00
+typedef enum{
+    REBOOT_FLAG                   = BIT(0),
+	XTAL_UNSTABLE                 = BIT(1),
+	PM_CLR_PLIC_REQUEST_FAIL      = BIT(2),
+	SW_REBOOT_REASON              = BIT_RNG(3,6),
+	BOOTROM_USED                  = BIT(7),
+}pm_poweron_clr_buf0_e;
+//Since there are only 4 bits, this enumeration ranges from 0 to 15.
+typedef enum{
+    WAIT_TIMEOUT                  = 0x00,
+}pm_sw_reboot_reason_e;
+
 #define PM_ANA_REG_POWER_ON_CLR_BUF1	0x3b // initial value 0x00
 #define PM_ANA_REG_POWER_ON_CLR_BUF2	0x3c // initial value 0xff
 
@@ -185,31 +201,21 @@ typedef enum {
 }pm_zb_voltage_e;
 
 /**
- * @brief	mcu status
+ * @brief   mcu status
  */
 typedef enum{
-	MCU_STATUS_POWER_ON			= BIT(0), /**<	power on, vbus detect or reset pin */
-	//BIT(1) RSVD
-	MCU_STATUS_REBOOT_BACK		= BIT(2), /**<	the reboot specific categories,see pm_reboot_event_e:
-												1.If want to know which reboot it is, call the pm_get_mcu_reboot_status() interface to determine after calling sys_init().
-												2.If determine whether is 32k watchdog/timer watchdog,can also use the interface wd_32k_get_status()/wd_get_status() to determine.
-	 	 	 	 	 	 	 	 	 	 	 	*/
-	MCU_STATUS_DEEPRET_BACK		= BIT(3),
-	MCU_STATUS_DEEP_BACK		= BIT(4),
+    MCU_POWER_ON                 = BIT(0),/**< power on, vbus detect or reset pin */
+    //BIT(1) RSVD
+    MCU_SW_REBOOT_BACK           = BIT(2),/**< Clear the watchdog status flag in time, otherwise, the system reboot may be wrongly judged as the watchdog.*/
+    MCU_DEEPRET_BACK             = BIT(3),
+    MCU_DEEP_BACK                = BIT(4),
+    MCU_HW_REBOOT_TIMER_WATCHDOG = BIT(5),/**< If determine whether is 32k watchdog/timer watchdog,
+                                               can also use the interface wd_32k_get_status()/wd_get_status() to determine. */
+    MCU_HW_REBOOT_32K_WATCHDOG   = BIT(6),/**< - When the 32k watchdog/timer watchdog status is set to 1, if it is not cleared:
+                                               - power cyele/vbus detect/reset pin come back, the status is lost;
+                                               - but software reboot(sys_reboot())/deep/deepretation/32k watchdog come back,the status remains;
+                                               */
 }pm_mcu_status;
-
-/**
- * @brief  reboot status
- */
-typedef enum{
-	SW_SYSTEM_REBOOT			= BIT(0),/**< Clear the watchdog status flag in time, otherwise, the system reboot may be wrongly judged as the watchdog.*/
-	HW_TIMER_WATCHDOG_REBOOT	= BIT(1),
-	HW_32K_WATCHDOG_REBOOT		= BIT(2),/**< - When the 32k watchdog/timer watchdog status is set to 1, if it is not cleared:
-	                                          - power cyele/vbus detect/reset pin come back, the status is lost;
-                                              - but software reboot(sys_reboot())/deep/deepretation/32k watchdog come back,the status remains;
-	                                          */
-}pm_reboot_event_e;
-
 
 /**
  * @brief	early wakeup time
@@ -245,6 +251,7 @@ typedef struct{
 
 extern _attribute_aligned_(4) pm_status_info_s g_pm_status_info;
 extern _attribute_data_retention_sec_ unsigned char g_pm_vbat_v;
+extern unsigned char g_areg_aon_7f;
 
 
 /**
@@ -283,6 +290,15 @@ static inline void pm_clr_irq_status(pm_wakeup_status_e status)
 static inline void pm_set_wakeup_src(pm_sleep_wakeup_src_e wakeup_src)
 {
 	analog_write_reg8(0x4b, wakeup_src);
+}
+
+/**
+ * @brief       This function is used to set reboot reason.
+ * @return      none.
+ */
+static _always_inline void pm_set_reboot_reason(pm_sw_reboot_reason_e reboot_reason)
+{
+    analog_write_reg8(PM_ANA_REG_POWER_ON_CLR_BUF0, REBOOT_FLAG | (reboot_reason<<3));
 }
 
 /**
@@ -386,17 +402,28 @@ static inline void pm_set_zb_voltage(pm_zb_voltage_e zb_voltage)
 _attribute_ram_code_sec_optimize_o2_ void pm_wait_xtal_ready(unsigned char all_ramcode_en);
 
 /**
- * @brief		This function serves to get reboot status.
- * @return		reboot enum element of pm_reboot_event_e.
- * @note        -# if return HW_TIMER_WATCHDOG_REBOOT, need call wd_clear_status() to avoid affecting the next detection of the mcu status;
- *              -# if return HW_32K_WATCHDOG_REBOOT,need call wd_32k_clear_status() to avoid affecting the next detection of the mcu status;
- *              -# if return HW_VBUS_DETECT_REBOOT,need to write 1 and 0 for 0x64(bit7) to avoid affecting the next detection of the mcu status;
- *              -# the interface sys_init() must be called before this interface can be invoked;
+ * @brief		This function serves to update wakeup status.
+ * @return		none.
  */
-pm_reboot_event_e pm_get_reboot_event(void);
+_attribute_ram_code_sec_noinline_ void pm_update_status_info(unsigned char clr_en);
 
 /**
  * @brief		this function serves to clear all irq status.
  * @return		Indicates whether clearing irq status was successful.
  */
 _attribute_ram_code_sec_optimize_o2_ unsigned char pm_clr_all_irq_status(void);
+
+/********************************************************************************************************
+ *                                          internal
+ *******************************************************************************************************/
+/********************************************************************************************************
+ *              This is just for internal debug purpose, users are prohibited from calling.
+ *******************************************************************************************************/
+/**
+ * @brief       When an error occurs, such as the crystal does not vibrate properly, the corresponding recording and reset operations are performed.
+ * @param[in]   reboot_reason  - The bit to be configured in the power on buffer.
+ * @param[in]   all_ramcode_en  - Whether all processing in this function is required to be ram code.
+ * @return      none.
+ */
+_attribute_ram_code_sec_optimize_o2_noinline_ void pm_sys_reboot_with_reason(pm_sw_reboot_reason_e reboot_reason, unsigned char all_ramcode_en);
+

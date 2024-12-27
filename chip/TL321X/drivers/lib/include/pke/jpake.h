@@ -112,9 +112,9 @@ unsigned int jpake_round1_generate_xa_xb_and_local_two_zkps(JPAKE_PARA *jpake_pa
 /**
  * @brief       J-PAKE round 1, verify ZKP(xc), ZKP(xd) of peer user
  * @param[in]   jpake_para               - JPAKE_PARA struct pointer
- * @param[in]   local_zkp_owner_info     - ID and other info of peer user
- * @param[in]   xa_zkp                   - ZKP(xc) of peer user(ZKP(x1) of Alice, or ZKP(x3) of Bob)
- * @param[in]   xb_zkp                   - ZKP(xd) of peer user(ZKP(x2) of Alice, or ZKP(x4) of Bob)
+ * @param[in]   peer_zkp_owner_info      - ID and other info of peer user
+ * @param[in]   xc_zkp                   - ZKP(xc) of peer user(ZKP(x1) of Alice, or ZKP(x3) of Bob)
+ * @param[in]   xd_zkp                   - ZKP(xd) of peer user(ZKP(x2) of Alice, or ZKP(x4) of Bob)
  * @return      0:success     other:error
  */
 unsigned int jpake_round1_verify_peer_two_zkps(JPAKE_PARA *jpake_para, JPAKE_USER_INFO *peer_zkp_owner_info,
@@ -139,7 +139,7 @@ unsigned int jpake_round2_generate_local_zkp(JPAKE_PARA *jpake_para, JPAKE_USER_
 /**
  * @brief       J-PAKE round 2, verify peer ZKP(xb*s) (ZKP(x2*s) of Alice, or ZKP(x4*s) of Bob), and compute key
  * @param[in]   jpake_para               - JPAKE_PARA struct pointer
- * @param[in]   local_zkp_owner_info     - ID and other info of peer user
+ * @param[in]   peer_zkp_owner_info      - ID and other info of peer user
  * @param[out]  round2_ctx               - JPAKE_ROUND2_CTX struct pointer of local user
  * @param[in]   xb                       - xb of local user(x2 of Alice, or x4 of Bob)
  * @param[in]   gxb                      - g^xb of local user(g^x2 of Alice, or g^x4 of Bob)
@@ -171,8 +171,8 @@ unsigned int jpake_round3_hash_hash_key(JPAKE_PARA *jpake_para, unsigned char *h
 /**
  * @brief       J-PAKE round 3, compute H(k)
  * @param[in]   jpake_para               - JPAKE_PARA struct pointer
- * @param[in]   h_key                    - the big number key after round 2
- * @param[out]  h_h_key                  - H(H(k))
+ * @param[in]   key                    - the big number key after round 2
+ * @param[out]  h_key                  - H(H(k))
  * @return      0:success     other:error
  * @note
   @verbatim

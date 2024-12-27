@@ -42,10 +42,10 @@
  */
 #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
 #define  PARA_BASE_ADDR   0x00000004
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 #define  PARA_BASE_ADDR   0x00020004    // D25
 // #define PARA_BASE_ADDR    0x50020004    // N22
-#elif defined(MCU_CORE_B931)
+#elif defined(MCU_CORE_TL751X)
 #define PARA_BASE_ADDR    0x00020004    // D25
 // #define PARA_BASE_ADDR    0x50020004    // N22
 #elif defined(MCU_CORE_TL721X)

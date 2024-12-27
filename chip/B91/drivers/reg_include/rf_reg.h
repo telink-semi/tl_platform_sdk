@@ -508,7 +508,7 @@ enum{
 	FLD_RF_R_T_TXSTL_H           =	BIT_RNG(0,3),
 };
 
-
+#define    reg_rf_ll_rxwait         REG_ADDR16(REG_BB_LL_BASE_ADDR+0x06)
 #define    reg_rf_ll_rxwait_l       REG_ADDR8(REG_BB_LL_BASE_ADDR+0x06)
 
 
@@ -536,7 +536,7 @@ enum{
 	FLD_RF_R_T_RXSTL_H            =	BIT_RNG(0,3),
 };
 
-
+#define    reg_rf_ll_txwait         REG_ADDR16(REG_BB_LL_BASE_ADDR+0x0e)
 #define    reg_rf_ll_txwait_l       REG_ADDR8(REG_BB_LL_BASE_ADDR+0x0e)
 
 

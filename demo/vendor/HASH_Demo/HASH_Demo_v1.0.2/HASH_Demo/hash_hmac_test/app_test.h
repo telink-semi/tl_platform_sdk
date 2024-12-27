@@ -33,7 +33,7 @@ extern "C"
 
 unsigned int HASH_all_test(void);
 unsigned int HMAC_all_test(void);
-#if !defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL7518)
 unsigned int pbkdf2_hmac_test(void);
 #endif
 unsigned int HASH_HMAC_sample_test(void);

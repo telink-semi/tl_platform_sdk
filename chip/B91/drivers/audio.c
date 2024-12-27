@@ -247,10 +247,11 @@ void audio_i2s_set_pin_mux(i2s_pin_e pin)
 	{
 		val = 0;//function 0
 	}
-	else if((pin==I2S_ADC_LR_PC4)||(pin==I2S_ADC_DAT_PC5)||(pin==I2S_DAC_LR_PC6)||(pin==I2S_DAC_DAT_PC7))
+	else if((pin==I2S_ADC_LR_PC6)||(pin==I2S_ADC_DAT_PC7)||(pin==I2S_DAC_LR_PC4)||(pin==I2S_DAC_DAT_PC5))
 	{
 		val = 1<<(start_bit);//function 1
 	}
+	gpio_input_en((gpio_pin_e)pin);
 	reg_gpio_func_mux(pin)=(reg_gpio_func_mux(pin)& mask)|val;
 	gpio_function_dis(pin);
 
@@ -260,14 +261,19 @@ void audio_i2s_set_pin_mux(i2s_pin_e pin)
  * @brief     This function configures i2s pin.
  * @param[in] none
  * @return    none
+ * @note      GPIO_PC3 -- I2S_BCK_IO
+ *            GPIO_PC6 -- I2S_LR_IN_IO
+ *            GPIO_PC7 -- I2S_DAT_IN_IO
+ *            GPIO_PC4 -- I2S_LR_OUT_IO
+ *            GPIO_PC5 -- I2S_DAT_OUT_IO
  */
 void audio_i2s_set_pin(void)
 {
 	audio_i2s_set_pin_mux(I2S_BCK_PC3);
-	audio_i2s_set_pin_mux(I2S_ADC_LR_PC4);
-	audio_i2s_set_pin_mux(I2S_ADC_DAT_PC5);
-	audio_i2s_set_pin_mux(I2S_DAC_LR_PC6);
-	audio_i2s_set_pin_mux(I2S_DAC_DAT_PC7);
+	audio_i2s_set_pin_mux(I2S_ADC_LR_PC6);
+	audio_i2s_set_pin_mux(I2S_ADC_DAT_PC7);
+	audio_i2s_set_pin_mux(I2S_DAC_LR_PC4);
+	audio_i2s_set_pin_mux(I2S_DAC_DAT_PC5);
 }
 
 /**
@@ -920,40 +926,38 @@ void audio_i2s_config(i2s_mode_select_e i2s_format,i2s_data_select_e wl,  i2s_co
 }
 audio_i2s_clk_config_t   audio_i2s_8k_config=
 {
-	.i2s_clk_step=1,        //set i2s clk step
-	.i2s_clk_mode=8,		//set i2s clk mode,set i2s clk=192M*(1/8)= 24M
-	.i2s_bclk_div=12,		//24M/(2*12) = 1M bclk
-	.i2s_lrclk_adc_div=125, //adc sample rate =1M/125 = 8k
-	.i2s_lrclk_dac_div=125, //dac sample rate =1M/125 = 8k
+    .i2s_clk_step=8,       //set i2s clk step
+    .i2s_clk_mode=125,     //set i2s clk mode,set i2s clk=192M*(8/125)= 12.288M
+    .i2s_bclk_div=12,      //12.288M/(2*12) = 512K bclk
+    .i2s_lrclk_adc_div=64, //adc sample rate =512K/64 = 8k
+    .i2s_lrclk_dac_div=64, //dac sample rate =512K/64 = 8k
 };
 
 audio_i2s_clk_config_t   audio_i2s_16k_config=
 {
-	.i2s_clk_step=1,        //set i2s clk step
-	.i2s_clk_mode=8,        //set i2s clk mode,set i2s clk=192M*(1/8)= 24M
-	.i2s_bclk_div=6,        //24M/(2*6) = 2M bclk
-	.i2s_lrclk_adc_div=125, //adc sample rate =2M/125 = 16k
-	.i2s_lrclk_dac_div=125, //dac sample rate =2M/125 = 16k
+    .i2s_clk_step=8,       //set i2s clk step
+    .i2s_clk_mode=125,     //set i2s clk mode,set i2s clk=192M*(8/125)= 12.288M
+    .i2s_bclk_div=6,       //12.288M/(2*6) = 1.024M bclk
+    .i2s_lrclk_adc_div=64, //adc sample rate =1.024M/64 = 16k
+    .i2s_lrclk_dac_div=64, //dac sample rate =1.024M/64 = 16k
 };
 
 audio_i2s_clk_config_t   audio_i2s_24k_config=
 {
-	.i2s_clk_step=1,        //set i2s clk step
-	.i2s_clk_mode=125,      //set i2s clk mode,set i2s clk=192M*(1/125)= 1.536 M
-	.i2s_bclk_div=0,        //1.536 M/(1) = 1.536M bclk
-	.i2s_lrclk_adc_div=64,  //adc sample rate =1.536M/64 = 24k
-	.i2s_lrclk_dac_div=64,  //dac sample rate =1.536M/64 = 24k
+    .i2s_clk_step=8,       //set i2s clk step
+    .i2s_clk_mode=125,     //set i2s clk mode,set i2s clk=192M*(8/125)= 12.288M
+    .i2s_bclk_div=4,       //12.288M/(2*4) = 1.536M bclk
+    .i2s_lrclk_adc_div=64, //adc sample rate =1.536M/64 = 24k
+    .i2s_lrclk_dac_div=64, //dac sample rate =1.536M/64 = 24k
 };
-
-
 
 audio_i2s_clk_config_t   audio_i2s_32k_config=
 {
-	.i2s_clk_step=1,        //set i2s clk step
-	.i2s_clk_mode=8,        //set i2s clk mode,set i2s clk=192M*(1/8)= 24M
-	.i2s_bclk_div=3,        //24M/(2*3) = 4M bclk
-	.i2s_lrclk_adc_div=125, //adc sample rate =4M/125 = 32k
-	.i2s_lrclk_dac_div=125, //dac sample rate =4M/125 = 32k
+    .i2s_clk_step=8,        //set i2s clk step
+    .i2s_clk_mode=125,      //set i2s clk mode,set i2s clk=192M*(8/125)= 12.288M
+    .i2s_bclk_div=3,        //12.288M/(2*3) = 2.048M bclk
+    .i2s_lrclk_adc_div=64, //adc sample rate =2.048M/64 = 32k
+    .i2s_lrclk_dac_div=64, //dac sample rate =2.048M/64 = 32k
 };
 
 audio_i2s_clk_config_t   audio_i2s_192k_config=
@@ -1231,9 +1235,80 @@ void audio_i2s_init(pwm_pin_e pwm0_pin, i2c_sda_pin_e sda_pin,i2c_scl_pin_e scl_
 	audio_clk_en(1,1);
 	audio_set_ext_codec();
 	audio_data_fifo0_path_sel(I2S_DATA_IN_FIFO,I2S_OUT);
-
 }
 
+/**
+ * @brief This function serves to initialize  configuration i2s.
+ * @param[in]  i2s_config - the relevant configuration struct pointer
+ * @return    none
+ */
+void audio_i2s_config_init(audio_i2s_config_t *i2s_config)
+{
+    audio_i2s_set_pin();
+    if (i2s_config->master_slave_mode == I2S_M_CODEC_S)
+    {
+        audio_set_i2s_clock(i2s_config->sample_rate,AUDIO_RATE_EQUAL,0);
+    }
+    audio_i2s_config(i2s_config->i2s_mode, i2s_config->data_width, i2s_config->master_slave_mode, &audio_i2s_invert_config);
+    audio_set_i2s_cmode(i2s_config->audio_io_mode);
+    audio_clk_en(1,1);
+}
+
+/**
+ * @brief This function serves to initialize  input i2s.
+ * @param[in] audio_i2s_input - the relevant input struct pointer
+ * @return    none
+ */
+void audio_i2s_input_init(audio_i2s_input_output_t *audio_i2s_input)
+{
+    unsigned char ain_mode = 0;
+    if (audio_i2s_input->audio_ch_sel == AUDIO_MONO)
+    {
+        ain_mode = audio_i2s_input->data_width == I2S_BIT_16_DATA?0:1;
+    }
+    else
+    {
+        ain_mode = audio_i2s_input->data_width == I2S_BIT_16_DATA?2:3;
+    }
+    if (audio_i2s_input->fifo_chn == FIFO0)
+    {
+        reg_audio_sel = (reg_audio_sel & (~FLD_AUDIO_AIN0_SEL)) | MASK_VAL(FLD_AUDIO_AIN0_SEL, I2S_DATA_IN_FIFO);
+        reg_audio_tune = (reg_audio_tune & (~FLD_AUDIO_I2S_I2S_AIN0_COME)) | MASK_VAL(FLD_AUDIO_I2S_I2S_AIN0_COME, ain_mode);
+    }
+    else
+    {
+        reg_audio_sel = (reg_audio_sel & (~FLD_AUDIO_AIN1_SEL)) | MASK_VAL(FLD_AUDIO_AIN1_SEL, I2S_DATA_IN_FIFO);
+        reg_audio_tune = (reg_audio_tune & (~FLD_AUDIO_I2S_I2S_AIN1_COME)) | MASK_VAL(FLD_AUDIO_I2S_I2S_AIN1_COME, ain_mode);
+    }
+}
+
+/**
+ * @brief  This function serves to initialize output i2s.
+ * @param[in] audio_i2s_output - audio_i2s_input_output_t pointer.
+ * @return    none.
+ */
+void audio_i2s_output_init(audio_i2s_input_output_t *audio_i2s_output)
+{
+    unsigned char aout_mode = 0;
+    if (audio_i2s_output->audio_ch_sel == AUDIO_MONO)
+    {
+        aout_mode = audio_i2s_output->data_width == I2S_BIT_16_DATA?0:1;
+    }
+    else
+    {
+        aout_mode = audio_i2s_output->data_width == I2S_BIT_16_DATA?2:3;
+    }
+    if (audio_i2s_output->fifo_chn == FIFO0)
+    {
+        reg_audio_sel = (reg_audio_sel & (~FLD_AUDIO_AOUT0_SEL)) | MASK_VAL(FLD_AUDIO_AOUT0_SEL, I2S_OUT);
+        reg_audio_tune= (reg_audio_tune & (~FLD_AUDIO_I2S_I2S_AOUT_COME)) | MASK_VAL(FLD_AUDIO_I2S_I2S_AOUT_COME, aout_mode);
+    }
+    else
+    {
+        reg_audio_sel = (reg_audio_sel & (~FLD_AUDIO_AOUT1_SEL)) | MASK_VAL(FLD_AUDIO_AOUT1_SEL, I2S_OUT);
+        reg_audio_tune= (reg_audio_tune & (~FLD_AUDIO_I2S_I2S_AOUT_COME)) | MASK_VAL(FLD_AUDIO_I2S_I2S_AOUT_COME, aout_mode + 4);
+    }
+}
 /**
  * @brief    This function serves to active soft mute dac and disable dma .
  * @return    none

@@ -35,11 +35,11 @@ extern "C" {
 #define  RF_BLE_1M                  1
 #define  RF_BLE_2M                  2
 #define  RF_BLE_1M_NO_PN            3
-#define  RF_ZIGBEE_250K             4 //TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+#define  RF_ZIGBEE_250K             4 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define  RF_BLE_2M_NO_PN            5
 #define  RF_LR_S2_500K              6
 #define  RF_LR_S8_125K              7
-#if !defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL7518)
 #define  RF_PRIVATE_250K            8
 #define  RF_PRIVATE_500K            9
 #define  RF_ANT                     12//TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
@@ -47,8 +47,8 @@ extern "C" {
 #define  RF_HYBEE_2M                14
 #define  RF_HYBEE_500K              15
 #endif
-#define  RF_PRIVATE_1M              10 //TODO:TL751X is temporarily unavailable, available versions will be updated in the future
-#define  RF_PRIVATE_2M              11 //TODO:TL751X is temporarily unavailable, available versions will be updated in the future
+#define  RF_PRIVATE_1M              10 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
+#define  RF_PRIVATE_2M              11 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define  RF_BLE_STX2RX              16
 #define RF_BLE_SDK_TEST             19
 
@@ -60,7 +60,7 @@ extern "C" {
 #define  RF_BLE_1M_HYPER_LENGTH     18//TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
 #endif
 
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
 #define  RF_PRI_GENERIC_1M           22
 #define  RF_PRI_GENERIC_2M           23
 #define  RF_PRI_GENERIC_250K         24
@@ -89,6 +89,36 @@ extern "C" {
 #define RF_MODE             RF_BLE_1M
 
 #if defined(MCU_CORE_TL721X)
+//The following operation is used only when CAL_0P94V_TO_0P95V is selected and an energy slot with the VANT keyword is used.
+#define rf_set_vant1p05_power_trim_vol_up()    do { \
+    pm_cal_0p94v_e pm_trim_vol = pm_get_vdd0p94_level(); \
+    if (((RF_POWER == RF_1P05_VANT_POWER_P5p11dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P5p00dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P4p60dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P4p00dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P3p52dBm)) && \
+        (pm_trim_vol == CAL_0P94V_TO_0P95V)) { \
+        pm_set_vdd0p94(CAL_0P94V_TO_1P05V); \
+    } \
+} while(0)
+//The following operation is used only when CAL_0P94V_TO_0P95V is selected and an energy slot with the VANT keyword is used.
+#define rf_set_vant1p05_power_trim_vol_down() do { \
+    pm_cal_0p94v_e pm_trim_vol = pm_get_vdd0p94_level(); \
+    if (((RF_POWER == RF_1P05_VANT_POWER_P5p11dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P5p00dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P4p60dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P4p00dBm) || \
+         (RF_POWER == RF_1P05_VANT_POWER_P3p52dBm)) && \
+        (pm_trim_vol == CAL_0P94V_TO_1P05V)) { \
+        pm_set_vdd0p94(CAL_0P94V_TO_0P95V); \
+    } \
+} while (0)
+#else
+#define rf_set_vant1p05_power_trim_vol_up()    do{}while(0)
+#define rf_set_vant1p05_power_trim_vol_down()    do{}while(0)
+#endif
+
+#if defined(MCU_CORE_TL721X)
 #define rf_stimer_get_tick()  rf_bb_timer_get_tick()
 #define RF_SYSTEM_TIMER_TICK_1US   BB_TIMER_TICK_1US
 #define RF_SYSTEM_TIMER_TICK_1MS   BB_TIMER_TICK_1MS
@@ -103,12 +133,16 @@ extern "C" {
 #define RF_POWER            RF_POWER_P4p35dBm
 #elif defined(MCU_CORE_B92)
 #define RF_POWER            RF_POWER_P5p21dBm
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 #define RF_POWER            RF_POWER_P4p92dBm
 #elif defined(MCU_CORE_TL721X)
-#define RF_POWER            RF_POWER_P4p60dBm
+#define RF_POWER            RF_POWER_P4p79dBm
 #elif defined(MCU_CORE_TL321X)
 #define RF_POWER            RF_POWER_P4p52dBm
+#elif defined(MCU_CORE_TL322X)
+#define RF_POWER            RF_POWER_P4p47dBm
+#elif defined(MCU_CORE_TL751X)
+#define RF_POWER            RF_POWER_P10p00dBm
 #endif
 
 

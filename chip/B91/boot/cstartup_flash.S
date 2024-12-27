@@ -49,6 +49,7 @@
 //When adding flash later, if tRES1 is greater than 25us, this waiting time needs to be updated. (flash tRES1, which can be viewed in the comments of the variable flash_support_mid.)
 //(add by weihua.zhang 20230811)
 #define EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM		320	//25us
+#define FLASH_LOOP_NUM_TEST                 		0
 
     .section .vectors, "ax"
 
@@ -384,11 +385,13 @@ _MSPI_WAIT:
 	beq 	t3 , t2 ,_MSPI_WAIT
 	sb		t4 , 0x101(t0)			//cs_high			:0x140101:0x10
 
-#if 0
+#if FLASH_LOOP_NUM_TEST
 	// add debug, PB4 output 1
-	lui		t0, 0x80140 			//0x8014030a
-	li		t1, 0x00
-	sb		t1, 0x30b(t0)		 	//0x8014030b  PB output  =  0x00
+	lui		t0, 0x80140 		//0x8014030a
+	li		t1, 0xef
+	li		t2, 0x10
+	sb		t1, 0x30a(t0)		//0x8014030a  PB oen     =  0xef
+	sb		t2, 0x30b(t0)		//0x8014030b  PB output  =  0x10
 #endif
 
 	/*flash wakeup need delay about 20us */
@@ -399,11 +402,11 @@ _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH:
 	addi 	t0, t0 , 1
 	bgeu 	t1, t0 , _WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH
 
-#if 0
-	// add debug, PB4 output 1
-	lui		t0, 0x80140 			//0x8014030a
-	li		t1, 0x10
-	sb		t1, 0x30b(t0)		 //0x8014030b  PB output  =  0x00
+#if FLASH_LOOP_NUM_TEST
+	// add debug, PB4 output 0
+	lui		t0, 0x80140 		//0x8014030a
+	li		t2, 0x00
+	sb		t2, 0x30b(t0)		//0x8014030b  PB output  =  0x00
 #endif
 
 _MULTI_ADDRESS_BEGIN:

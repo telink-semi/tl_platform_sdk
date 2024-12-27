@@ -30,11 +30,16 @@
 #define PWM_PIN1    GPIO_FC_PB5
 #define PWM_FUNC    PWM1
 #define PWM_FUNC1   PWM2
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 #define PWM_PIN     PWM_PWM1_PA1
 #define PWM_PIN1    PWM_PWM2_PA2
 #define PWM_FUNC    FC_PWM1
 #define PWM_FUNC1   FC_PWM2
+#elif defined(MCU_CORE_TL751X)
+#define PWM_PIN     GPIO_FC_PA0
+#define PWM_PIN1    GPIO_FC_PA1
+#define PWM_FUNC    PWM0
+#define PWM_FUNC1   PWM1
 #endif
 
 

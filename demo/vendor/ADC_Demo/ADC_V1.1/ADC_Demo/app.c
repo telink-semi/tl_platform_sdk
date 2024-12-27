@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app.c
  *
- * @brief   This is the source file for TL751X/TL721X/TL321X
+ * @brief   This is the source file for TL7518/TL721X/TL321X
  *
  * @author  Driver Group
  * @date    2024
@@ -25,34 +25,34 @@
 
 adc_gpio_cfg_t adc_gpio_cfg_m =
 {
-        .v_ref = ADC_VREF_1P2V,
 #if defined(MCU_CORE_TL721X)
-        .pre_scale = ADC_PRESCALE_1F8,
-#elif defined(MCU_CORE_TL321X)
-        .pre_scale = ADC_PRESCALE_1F4,
+        .v_ref = ADC_VREF_GPIO_1P2V,
+#else
+        .v_ref = ADC_VREF_1P2V,
 #endif
+        .pre_scale = ADC_PRESCALE_1F4,
         .sample_freq = ADC_SAMPLE_FREQ_96K,
         .pin = GPIO_M_CHN_SAMPLE_PIN,
 };
 adc_gpio_cfg_t adc_gpio_cfg_l =
 {
-        .v_ref = ADC_VREF_1P2V,
 #if defined(MCU_CORE_TL721X)
-        .pre_scale = ADC_PRESCALE_1F8,
-#elif defined(MCU_CORE_TL321X)
-        .pre_scale = ADC_PRESCALE_1F4,
+        .v_ref = ADC_VREF_GPIO_1P2V,
+#else
+        .v_ref = ADC_VREF_1P2V,
 #endif
+        .pre_scale = ADC_PRESCALE_1F4,
         .sample_freq = ADC_SAMPLE_FREQ_96K,
         .pin = GPIO_L_CHN_SAMPLE_PIN,
 };
 adc_gpio_cfg_t adc_gpio_cfg_r =
 {
-        .v_ref = ADC_VREF_1P2V,
 #if defined(MCU_CORE_TL721X)
-        .pre_scale = ADC_PRESCALE_1F8,
-#elif defined(MCU_CORE_TL321X)
-        .pre_scale = ADC_PRESCALE_1F4,
+        .v_ref = ADC_VREF_GPIO_1P2V,
+#else
+        .v_ref = ADC_VREF_1P2V,
 #endif
+        .pre_scale = ADC_PRESCALE_1F4,
         .sample_freq = ADC_SAMPLE_FREQ_96K,
         .pin = GPIO_R_CHN_SAMPLE_PIN,
 };
@@ -104,6 +104,8 @@ void user_init(void)
     adc_gpio_sample_init(ADC_M_CHANNEL,adc_gpio_cfg_m);
 #elif(ADC_M_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_M_CHANNEL);
+#elif (ADC_M_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+    adc_gpio_sample_vbat_init(ADC_M_CHANNEL,adc_gpio_cfg_m);
 #endif
 
 #endif
@@ -114,6 +116,8 @@ void user_init(void)
     adc_gpio_sample_init(ADC_L_CHANNEL,adc_gpio_cfg_l);
 #elif(ADC_L_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_L_CHANNEL);
+#elif (ADC_L_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+    adc_gpio_sample_vbat_init(ADC_L_CHANNEL,adc_gpio_cfg_l);
 #endif
 
 #endif
@@ -124,6 +128,8 @@ void user_init(void)
     adc_gpio_sample_init(ADC_R_CHANNEL,adc_gpio_cfg_r);
 #elif(ADC_R_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_R_CHANNEL);
+#elif (ADC_R_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+    adc_gpio_sample_vbat_init(ADC_R_CHANNEL,adc_gpio_cfg_r);
 #endif
 
 #endif
@@ -137,14 +143,15 @@ void user_init(void)
     adc_gpio_sample_init(ADC_M_CHANNEL,adc_gpio_cfg_m);
 #elif(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_M_CHANNEL);
+#elif (ADC_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+    adc_gpio_sample_vbat_init(ADC_M_CHANNEL,adc_gpio_cfg_m);
 #elif( INTERNAL_TEST_FUNC_EN && (ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE))
     adc_temp_init(ADC_M_CHANNEL);
 #endif
 
 #endif
     adc_power_on();
-    delay_us(30);//Wait >30us after adc_power_on() for ADC to be stable.
-
+    delay_us(100);//Wait >100us after adc_power_on() for ADC to be stable.
 }
 
 void main_loop (void)

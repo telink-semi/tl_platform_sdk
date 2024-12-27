@@ -165,7 +165,7 @@ uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin,gpio_func_pin_e rx_pin,
     uart_set_pin((uart_num_e)uart_num,tx_pin, rx_pin);
     uart_reset((uart_num_e)uart_num);
     uart_cal_div_and_bwpc(baudrate, pclk, &div, &bwpc);
-    uart_set_rx_timeout((uart_num_e)uart_num, bwpc, 12, UART_BW_MUL1,0);
+    uart_set_rx_timeout_with_exp((uart_num_e)uart_num, bwpc, 12, UART_BW_MUL1,0);
     uart_init((uart_num_e)uart_num, div, bwpc, parity, stop_bit);
 
     return uart_num;

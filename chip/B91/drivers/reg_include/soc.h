@@ -23,6 +23,7 @@
  *******************************************************************************************************/
 #pragma once
 #include "bit.h"
+#include "error_handler/error_handler.h"
 
 /*Operation register, the highest bit must be set to 1 (|0x80000000),marked by minghai,confirmed by jianzhi.20210610.*/
 #define FLASH_R_BASE_ADDR   		0x20000000

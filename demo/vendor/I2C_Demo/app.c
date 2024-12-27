@@ -28,14 +28,14 @@
                         ##### how to test demo #####
    ===============================================================================
    master and slave end hardware connection:scl <-> scl,sda <-> sda,gnd <-> gnd,during the test, power on the slave and then the master.
-   (+) I2C_DEVICE == I2C_MASTER_DEVICE(B91/B92/TL751X/TL721X)
+   (+) I2C_DEVICE == I2C_MASTER_DEVICE(B91/B92/TL7518/TL721X)
        the bin is burned into the master, and the data flow situation:
        the master writes the data to the slave end, and then reads back to determine whether the written data is consistent with the read data;
-   (+) I2C_DEVICE == I2C_SLAVE_DEVICE(B91/B92/TL751X/TL721X)
-      (+) I2C_STRETCH_MODE == I2C_STRETCH_DIS(B91/B92/TL751X/TL721X)
+   (+) I2C_DEVICE == I2C_SLAVE_DEVICE(B91/B92/TL7518/TL721X)
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_DIS(B91/B92/TL7518/TL721X)
            the bin is burned into the slave. data flow condition:
            the slave receives data from the master and then writes the received data back to the master.
-      (+) I2C_STRETCH_MODE == I2C_STRETCH_EN(B92/TL751X/TL721X)
+      (+) I2C_STRETCH_MODE == I2C_STRETCH_EN(B92/TL7518/TL721X)
           (+)Another mechanism for communicating with the master,the bin is burned into the slave. data flow condition:
              the slave receives data from the master and then writes the received data back to the master.
    @endverbatim

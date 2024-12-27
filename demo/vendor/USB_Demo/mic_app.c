@@ -28,8 +28,10 @@
 
 #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
 #define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 8000) ?  AUDIO_8K :((MIC_SAMPLE_RATE== 16000) ?  AUDIO_16K :(  (MIC_SAMPLE_RATE== 32000) ?  AUDIO_32K :( (MIC_SAMPLE_RATE== 48000) ? AUDIO_48K : AUDIO_16K) ) )
-#elif  defined(MCU_CORE_TL751X)
+#elif  defined(MCU_CORE_TL7518)
 #define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 16000) ? AUDIO_16K :((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
+#elif  defined(MCU_CORE_TL751X)
+#define MIC_SAMPLING_RATE AUDIO_16K
 #else
 #define MIC_SAMPLING_RATE   (MIC_SAMPLE_RATE== 16000) ? AUDIO_16K :((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
 #endif
@@ -42,7 +44,7 @@ int iso_in_buff[MIC_BUFFER_SIZE];
 #elif(MIC_RESOLUTION_BIT == 16)
 short iso_in_buff[MIC_BUFFER_SIZE];
 #endif
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
 #endif
@@ -606,7 +608,7 @@ else
 
           }
 }
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL7518)
 static volatile unsigned int iso_in_r = 0;
 static volatile unsigned int num_iso_in = 0;
 
@@ -891,8 +893,129 @@ void main_loop(void)
         gpio_toggle(LED1);
     }
 }
+
+#elif (defined(MCU_CORE_TL751X))
+static volatile unsigned int iso_in_r = 0;
+static volatile unsigned int num_iso_in = 0;
+
+#if (USB_MODE == INT)
+
+void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
+{
+    unsigned short length = 0;
+    usbhw_reset_ep_ptr(USB_EDP_MIC); // reset pointer of Endpoint7's buf
+    switch (audio_rate)
+    {
+    case AUDIO_16K:
+        length = 16 * MIC_CHANNEL_COUNT;
+        break;
+    case AUDIO_48K:
+        length = 48 * MIC_CHANNEL_COUNT;
+        break;
+    case AUDIO_96K:
+        length = 96 * MIC_CHANNEL_COUNT;
+            break;
+    case AUDIO_192K:
+        length = 192 * MIC_CHANNEL_COUNT;
+            break;
+    case AUDIO_384K:
+        length = 384 * 1; // only support 1 channel because of usb speed
+            break;
+    default:
+        length = 16 * MIC_CHANNEL_COUNT;
+        break;
+    }
+
+    for (unsigned short i = 0; i < length; i++)
+    {
+        short md = iso_in_buff[iso_in_r++ & (MIC_BUFFER_SIZE - 1)];
+        reg_usb_ep7_dat = md;
+        reg_usb_ep7_dat = md >> 8;
+    }
+
+    usbhw_data_ep_ack(USB_EDP_MIC);
+}
+
+/**
+ * @brief       This function serves to handle  iso in usb endpoint interrupt ,interval is 1 ms
+ * @param[in]   none
+ * @return      none
+ */
+_attribute_ram_code_sec_noinline_ void usb_endpoint_irq_handler(void)
+{
+    if (usbhw_get_eps_irq() & BIT(USB_EDP_MIC))
+    {
+        /* clear interrupt flag of endpoint 7 */
+        usbhw_clr_eps_irq(BIT(USB_EDP_MIC));
+        /* get MIC input data */
+        audio_tx_data_to_usb(MIC_SAMPLING_RATE);
+        num_iso_in++;
+        if ((num_iso_in & 0x7f) == 0)
+            gpio_toggle(LED2);
+    }
+}
+PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
 #endif
 
+void user_init(void)
+{
+    gpio_function_en(LED1);
+    gpio_output_en(LED1);
+    gpio_function_en(LED2);
+    gpio_output_en(LED2);
+
+    /* enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device) */
+    usb_init();
+    /* enable data endpoint USB_EDP_MIC. */
+    usbhw_set_eps_en(BIT(USB_EDP_MIC));
+
+    /* enable global interrupt */
+    core_interrupt_enable();
+
+    /* set data endpoint buffer size and addr */
+    usbhw_set_eps_max_size(384 * 2);
+    usbhw_set_ep_addr(USB_EDP_MIC, 0x00);
+
+    /* enable usb endpoint interrupt */
+    usbhw_set_eps_irq_mask(BIT(USB_EDP_MIC));
+    plic_interrupt_enable(IRQ_USB_ENDPOINT);
+
+    clock_pll_audio_init(PLL_AUDIO_CLK_36P864M);
+    audio_init(PLL_AUDIO_CLK_36P864M); /* must configured first. */
+
+    audio_codec0_power_on(AUDIO_CODEC0_ADC_ONLY, AUDIO_CODEC0_3P3V); /* power on adc and dac. */
+
+    /*********************** input config ****************************/
+    audio_codec0_input_config_t codec0_input_config = {
+        .input_src   = AUDIO_LINEIN_ADC_A1,
+        .data_format = AUDIO_CODEC0_BIT_16_DATA,
+        .sample_rate = MIC_SAMPLING_RATE,
+    };
+    /* matrix input config. */
+    audio_matrix_set_rx_fifo_route(FIFO0, FIFO_RX_ROUTE_CODEC0_ADCA, FIFO_RX_CODEC0_ADCA_A1_16BIT);
+    audio_codec0_input_init(&codec0_input_config);
+    /* rx dma init. */
+    audio_rx_dma_chain_init(FIFO0, DMA0, (unsigned short *)iso_in_buff, sizeof(iso_in_buff));
+    audio_rx_dma_en(DMA0);
+#if (USB_ENUM_IN_INTERRUPT == 1)
+    /* enable set intf irq */
+    usbhw_set_irq_mask(USB_IRQ_SETINF_MASK);
+    plic_interrupt_enable(IRQ_USB_CTRL_EP_SETINF);
 #endif
 
+    /* enable USB DP pull up 1.5k */
+    usb_set_pin(1);
+}
 
+static unsigned int t1 = 0;
+void main_loop(void)
+{
+    usb_handle_irq();
+    if (clock_time_exceed(t1, 500000))
+    {
+        t1 = stimer_get_tick() | 1;
+        gpio_toggle(LED1);
+    }
+}
+#endif
+#endif

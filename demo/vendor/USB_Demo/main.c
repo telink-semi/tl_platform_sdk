@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL751X) || defined(MCU_CORE_B931)
+#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 volatile unsigned int g_vbus_timer_turn_off_start_tick = 0;
 volatile unsigned int g_vbus_timer_turn_off_flag = 0;
 #endif

@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if ( !defined(MCU_CORE_TL751X)&&(RF_MODE == RF_ANT))
+#if ( !defined(MCU_CORE_TL7518)&&(RF_MODE == RF_ANT))
 
 
 unsigned char  rx_packet[128*4]  __attribute__ ((aligned (4)));

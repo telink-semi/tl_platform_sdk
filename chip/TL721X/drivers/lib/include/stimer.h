@@ -246,6 +246,26 @@ static _always_inline unsigned int stimer_get_input_capt_value(void)
 }
 
 /**
+ * @brief     This function performs to enable systimer pem.
+ * @param[in] stimer_pem_en  - systimer pem mode enable.
+ * @return    none.
+ */
+static inline void stimer_set_pem(stimer_ctrl_e stimer_pem_en)
+{
+    reg_system_timer_ctrl |= stimer_pem_en;
+}
+
+/**
+ * @brief     This function performs to disable systimer pem.
+ * @param[in] stimer_pem_dis  - systimer pem mode disable.
+ * @return    none.
+ */
+static inline void stimer_pem_dis(stimer_ctrl_e stimer_pem_dis)
+{
+    reg_system_timer_ctrl &= (~stimer_pem_dis);
+}
+
+/**
  * @brief       This function serves to set the input capture function.
  *              If this feature is used, it will take up the gpio2risc0_irq interrupt and cannot be used elsewhere.
  * @param[in]   pin         - the pin needs to set.

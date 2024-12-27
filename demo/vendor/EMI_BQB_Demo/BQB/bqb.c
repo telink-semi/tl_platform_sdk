@@ -45,10 +45,22 @@ static unsigned int pkt_interval;
 static unsigned int tick_rx = 0;
 volatile unsigned int t0,tick_tx;
 Test_Status_e test_state;
+
+extern _attribute_data_retention_sec_ rf_fast_settle_t *g_fast_settle_cal_val_ptr;
+
+_attribute_data_retention_sec_ rf_fast_settle_t fs_cv_1m;
+_attribute_data_retention_sec_ rf_fast_settle_t fs_cv_2m;
+_attribute_data_retention_sec_ rf_fast_settle_t fs_cv_s2;
+_attribute_data_retention_sec_ rf_fast_settle_t fs_cv_s8;
+
+void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t* fs_cv);
+void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t* fs_cv);
+
 #if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
 #else
 static unsigned char rxpara_flag  = 1;
 #endif
+
 unsigned char    bqbtest_buffer[272] __attribute__ ((aligned (4)));
 unsigned char __attribute__ ((aligned (4))) bqbtest_pkt [264] = {
     37, 0, 0, 0,
@@ -85,6 +97,35 @@ typedef enum
     PRIVATE_TX_BURST_MODE = 0x01,
 }private_status_e;
 #endif
+
+void fs_get_value(void)
+{
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+    rf_set_ble_500K_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_s2);
+
+    rf_set_ble_125K_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_s8);
+
+    rf_set_ble_1M_NO_PN_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
+
+    rf_set_ble_2M_NO_PN_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_2m);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    rf_set_ble_500K_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_s2);
+
+    rf_set_ble_125K_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_s8);
+
+    rf_set_ble_1M_NO_PN_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+
+    rf_set_ble_2M_NO_PN_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_2m);
+#endif
+}
 
 /**
  *  @brief      This function is used to initialize the calibration value of rf tx/rx fast settle
@@ -302,6 +343,13 @@ void bqb_serviceloop (void)
                     }
                     rf_set_tx_rx_off_auto_mode();
                     rf_set_ble_1M_NO_PN_mode();
+#if(RF_FAST_SETTLE)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+                    rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+                    rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+#endif
+#endif
                     rf_access_code_comm(ACCESS_CODE);
                     rf_pn_disable();
                     bb_mode = 1;
@@ -323,21 +371,49 @@ void bqb_serviceloop (void)
                     if(para==1)//BLE 1M
                     {
                         rf_set_ble_1M_NO_PN_mode();
+#if(RF_FAST_SETTLE)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+#endif
+#endif
                         rsp = 0;
                     }
                     else if(para==2)//BLE 2M
                     {
                         rf_set_ble_2M_NO_PN_mode();
+#if(RF_FAST_SETTLE)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_2m);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_2m);
+#endif
+#endif
                         rsp = 0;
                     }
                     else if(para==3)//s=8
                     {
                         rf_set_ble_125K_mode();
+#if(RF_FAST_SETTLE)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_s8);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_s8);
+#endif
+#endif
                         rsp = 0;
                     }
                     else if(para==4)//s=2
                     {
                         rf_set_ble_500K_mode();
+#if(RF_FAST_SETTLE)
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_s2);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+                        rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_s2);
+#endif
+#endif
                         rsp = 0;
                     }
                     else
@@ -656,9 +732,19 @@ void  bqbtest_init()
     rf_phy_test_prbs9 (bqbtest_pkt + 6, 37);
     reg_rf_ll_ctrl_1 &= ~FLD_RF_RX_FIRST_TIMEOUT_EN;//disable first timeout
 #if(RF_FAST_SETTLE)
+#if SUPPORT_CONFIGURATION
+        rf_set_power_level((usr_config.power==0)?BQB_TX_POWER:rf_power_Level_list[usr_config.power-1]);
+#else
+        rf_set_power_level(BQB_TX_POWER);
+#endif
 #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
 
+#if 0
     rf_fast_settle_setup(TX_SETTLE_TIME_50US,RX_SETTLE_TIME_45US);
+#else
+    fs_get_value();
+    rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
+#endif
     rf_fast_settle_config(TX_SETTLE_TIME_50US,RX_SETTLE_TIME_45US);
 
     rf_tx_fast_settle_en();
@@ -669,7 +755,13 @@ void  bqbtest_init()
 
     rf_set_chn(freq);
 #elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+
+#if 0
     rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
+#else
+    fs_get_value();
+    rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+#endif
     if(-1 == rf_fast_settle_config(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US))
     {
         //Incorrect configuration.
@@ -745,5 +837,82 @@ void bqb_pa_set_mode(unsigned char rtx) //0:rx, 1:tx, other:off
     }
 }
 
+/**
+ *  @brief      This function is used to get the calibration value of rf tx/rx fast settle
+ *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
+ *  @param[in]  rx_settle_us    After adjusting the timing sequence, the time required for rx to settle.
+ *  @param[in]  fs_cv           Fast settle related calibration value storage variable address.
+ *  @return     none
+ */
+void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t* fs_cv)
+{
+    //tx
+    rf_set_tx_rx_off_auto_mode();//STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);//CLEAR_ALL_RFIRQ_STATUS;
 
+    rf_set_tx_settle_time(115);//adjust TX settle time
+    rf_set_tx_dma(2,128);
+
+    for(unsigned char f_chn=0;f_chn<=80;f_chn++)
+    {
+        rf_set_chn(f_chn);
+        rf_start_stx(bqbtest_pkt,rf_stimer_get_tick());
+
+        while(!(rf_get_irq_status(FLD_RF_IRQ_TX)));
+        rf_clr_irq_status(FLD_RF_IRQ_TX);
+        rf_tx_fast_settle_get_cal_val(tx_settle_us,f_chn,fs_cv);
+
+        rf_set_tx_rx_off_auto_mode();//STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+
+    //rx
+    rf_set_rx_settle_time(85);//adjust RX settle time
+
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+    rf_start_srx(rf_stimer_get_tick());
+    delay_us(85);//Wait for the rx packetization action to complete
+    rf_rx_fast_settle_get_cal_val(rx_settle_us,0,fs_cv);
+    while(rf_receiving_flag());
+    rf_set_tx_rx_off_auto_mode();//STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    for(unsigned char f_chn=4;f_chn<=80;f_chn+=10)
+    {
+        rf_set_chn(f_chn);
+        rf_start_srx(rf_stimer_get_tick());
+        delay_us(85);//Wait for the rx packetization action to complete
+
+        rf_rx_fast_settle_get_cal_val(rx_settle_us,f_chn,fs_cv);
+        while(rf_receiving_flag());
+        rf_set_tx_rx_off_auto_mode();//STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+#endif
+}
+
+/**
+ *  @brief      This function is used to set the calibration value of rf tx/rx fast settle
+ *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
+ *  @param[in]  rx_settle_us    After adjusting the timing sequence, the time required for rx to settle.
+ *  @param[in]  fs_cv           Fast settle related calibration value storage variable address.
+ *  @return     none
+ */
+void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t* fs_cv)
+{
+    g_fast_settle_cal_val_ptr = fs_cv;
+#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)
+    for(unsigned char f_chn=4;f_chn<=80;f_chn+=10)
+    {
+        rf_tx_fast_settle_set_cal_val(tx_settle_us,f_chn,fs_cv);
+    }
+    rf_rx_fast_settle_set_cal_val(rx_settle_us,0,fs_cv);
+#elif defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+    for(unsigned char f_chn=4;f_chn<=80;f_chn+=10)
+    {
+        rf_tx_fast_settle_set_cal_val(tx_settle_us,f_chn,fs_cv);
+        rf_rx_fast_settle_set_cal_val(rx_settle_us,f_chn,fs_cv);
+    }
+#endif
+}
 #endif

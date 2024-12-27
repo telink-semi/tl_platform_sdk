@@ -86,7 +86,7 @@ _RAM_START:
     la     t0, _STACK_TOP
     mv     sp, t0
 
-#if 1
+#ifndef DUT_TEST
     /* gpio shutdown to decrease current. for retention this function was in ram segment which can be called early. */
     la     t0, gpio_shutdown_ramcode_for_asm
     jalr   t0

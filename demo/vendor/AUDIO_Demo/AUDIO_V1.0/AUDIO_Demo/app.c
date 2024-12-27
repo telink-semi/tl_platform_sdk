@@ -25,7 +25,7 @@
 #include "app_sin_data.h"
 
 unsigned int  dma_rx_irq_cnt=0;
-#if ((AUDIO_MODE==LINEIN_TO_LINEOUT)||(AUDIO_MODE==AMIC_TO_LINEOUT)||(AUDIO_MODE==DMIC_TO_LINEOUT)||(AUDIO_MODE==EXT_CODEC_LINEIN_LINEOUT))
+#if ((AUDIO_MODE==LINEIN_TO_LINEOUT)||(AUDIO_MODE==AMIC_TO_LINEOUT)||(AUDIO_MODE==DMIC_TO_LINEOUT)||(AUDIO_MODE==EXT_CODEC_LINEIN_LINEOUT)||(AUDIO_MODE==I2SIN_TO_I2SOUT))
 #define    AUDIO_BUFF_SIZE    4096
 signed short AUDIO_BUFF[AUDIO_BUFF_SIZE>>1] __attribute__((aligned(4)));
 #elif(AUDIO_MODE==BUFFER_TO_LINEOUT)
@@ -99,7 +99,41 @@ void user_init(void)
     audio_i2s_init(PWM_PWM0_PB4,I2C_GPIO_SDA_B3,I2C_GPIO_SCL_B2);
     audio_rx_dma_chain_init(DMA0,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
     audio_tx_dma_chain_init (DMA1,(unsigned short*)AUDIO_BUFF,AUDIO_BUFF_SIZE);
-
+#elif(AUDIO_MODE==I2SIN_TO_I2SOUT)
+    audio_i2s_config_t audio_i2s_config =
+    {
+        .i2s_mode = I2S_I2S_MODE,
+        .data_width = I2S_BIT_16_DATA,
+        .master_slave_mode = I2S_M_CODEC_S,
+        .sample_rate = AUDIO_16K,
+        .audio_io_mode = IO_I2S,
+    };
+    audio_i2s_input_output_t audio_i2s_input =
+    {
+        .data_width = audio_i2s_config.data_width,
+        .fifo_chn = FIFO0,
+        .audio_ch_sel = AUDIO_STEREO,
+        .dma_num = DMA0,
+        .data_buf = AUDIO_BUFF,
+        .data_buf_size = sizeof(AUDIO_BUFF),
+    };
+    audio_i2s_input_output_t audio_i2s_output =
+    {
+        .data_width = audio_i2s_config.data_width,
+        .fifo_chn = FIFO0,
+        .audio_ch_sel = AUDIO_STEREO,
+        .dma_num = DMA1,
+        .data_buf = AUDIO_BUFF,
+        .data_buf_size = sizeof(AUDIO_BUFF),
+    };
+    /**** i2s config init ****/
+    audio_i2s_config_init(&audio_i2s_config);
+    /**** i2s input init ****/
+    audio_i2s_input_init(&audio_i2s_input);
+    /**** i2s output init ****/
+    audio_i2s_output_init(&audio_i2s_output);
+    audio_rx_dma_chain_init(audio_i2s_input.dma_num,(unsigned short*)audio_i2s_input.data_buf,audio_i2s_input.data_buf_size);
+    audio_tx_dma_chain_init(audio_i2s_output.dma_num,(unsigned short*)audio_i2s_output.data_buf,audio_i2s_output.data_buf_size);
 #endif
 }
 

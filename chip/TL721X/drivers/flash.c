@@ -547,7 +547,7 @@ _attribute_text_sec_ unsigned int flash_read_mid_with_device_num(mspi_slave_devi
 _attribute_text_sec_ void flash_read_uid_with_device_num(mspi_slave_device_num_e device_num, unsigned char idcmd, unsigned char *buf)
 {
     DISABLE_BTB;
-    if(idcmd==((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH>>16)&0xff))
+    if(idcmd==((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH>>24)&0xff))
     {
         flash_mspi_read_ram(FLASH_READ_UID_CMD_GD_PUYA_ZB_TH, g_slave_base_addr[device_num], buf, 16);
     }

@@ -245,7 +245,7 @@ typedef enum{
         UART2_TX       =39,
         UART2_RTX_IO   =40,
         CLK_7816       =41,
-
+        SDM_CLK        =42,
         I2S_BCK_IO     =43,
         I2S_LR0_IO     =44,
         I2S_DAT0_IO    =45,
@@ -385,7 +385,7 @@ typedef enum{
     PROBE_PCLK              = 6,
     PROBE_CLK_MSPI          = 7,
     PROBE_CLK_GSPI          = 9,
-    PROBE_CLK_I2S0          = 10,
+    PROBE_CLK_SDM           = 10,
     PROBE_CLK_I2S2          = 12,
     PROBE_CLK_USBPHY        = 13,
     PROBE_CLK_DMIC          = 14,

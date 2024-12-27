@@ -84,7 +84,7 @@ _attribute_text_sec_ int flash_read_mid_uid_with_check( unsigned int *flash_mid 
 
 	for(i=0; i<FLASH_CNT; i++){
 		if(flash_list[i].mid  == *flash_mid){
-			flash_read_uid(((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH>>16)&0xff), (unsigned char *)flash_uid);
+			flash_read_uid(((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH>>24)&0xff), (unsigned char *)flash_uid);
 			break;
 		}
 	}

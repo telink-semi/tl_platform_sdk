@@ -140,6 +140,12 @@ extern unsigned int g_chip_version;
 _attribute_text_sec_ void sys_reboot(void);
 
 /**
+ * @brief      This function reboot mcu.
+ * @return     none
+ */
+_attribute_ram_code_sec_noinline_ void sys_reboot_ram(void);
+
+/**
  * @brief       This function serves to initialize system.
  * @param[in]   power_mode  - power mode(LDO/DCDC_LDO)
  * @param[in]   vbat_v      - This parameter is used to determine whether the VBAT voltage can be greater than 3.6V.

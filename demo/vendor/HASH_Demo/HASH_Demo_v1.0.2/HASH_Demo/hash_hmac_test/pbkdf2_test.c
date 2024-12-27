@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include "../app_config.h"
 
-#if !defined(MCU_CORE_TL751X)
+#if !defined(MCU_CORE_TL7518)
 
 
 

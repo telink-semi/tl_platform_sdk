@@ -42,13 +42,34 @@
 #define SPI_PROTOCOL                   B91M_SLAVE_PROTOCOL
 
 /**********************************************************************************************************************
- *                                         SPI module selection                                                       *
- *********************************************************************************************************************/
-/* Note:TL321X only supports gspi!!!*/
-#define LSPI_MODULE                              0
-#define GSPI_MODULE                              1
+*                                         SPI data mode selection                                                *
+*********************************************************************************************************************/
+#define ONLY_DATA_MODE                      1 // Only data is available for spi communication
+#define NORMAL_MODE                         2 // Spi communication format: cmd+dummy+data
 
-#define SPI_MODULE_SEL                       GSPI_MODULE
+
+#define DATA_MODE                      NORMAL_MODE
+
+/**********************************************************************************************************************
+*                                         SPI module selection                                                       *
+*********************************************************************************************************************/
+/* Note:TL321X only supports gspi!!!*/
+#ifndef MCU_CORE_TL321X
+#define LSPI_MODULE                              0
+#endif
+#define GSPI_MODULE                              1
+#if defined(MCU_CORE_TL322X)
+#define GSPI1_MODULE                             2
+#define GSPI2_MODULE                             3
+#define GSPI3_MODULE                             4
+#define GSPI4_MODULE                             5
+#endif
+
+#if defined(MCU_CORE_TL321X)
+#define SPI_MODULE_SEL                          GSPI_MODULE
+#else
+#define SPI_MODULE_SEL                          LSPI_MODULE
+#endif
 /**********************************************************************************************************************
  *                                         SPI multiple slave                                                                                             *
  *********************************************************************************************************************/
@@ -73,23 +94,40 @@
 /**********************************************************************************************************************
 *                                         SPI clock set
 *********************************************************************************************************************/
-#define SPI_CLK                             400000
+#define SPI_CLK                               4000000
 
 /**********************************************************************************************************************
 *                                         SPI pin set                                                     *
 *********************************************************************************************************************/
 #if (SPI_MODULE_SEL == GSPI_MODULE)
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
 gspi_pin_config_t gspi_pin_config = {
-    .spi_csn_pin        = GPIO_FC_PA0,
-    .spi_clk_pin        = GPIO_FC_PA3,
-    .spi_mosi_io0_pin   = GPIO_FC_PB3,
-    .spi_miso_io1_pin   = GPIO_FC_PB2,//3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin        = GPIO_FC_PB1,//quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin        = GPIO_FC_PB0,//quad  mode is required, otherwise it is NONE_PIN.
+   .spi_csn_pin        = GPIO_FC_PA0,
+   .spi_clk_pin        = GPIO_FC_PA1,
+   .spi_mosi_io0_pin   = GPIO_FC_PA2,
+   .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+   .spi_io2_pin        = GPIO_FC_PA3,//quad  mode is required, otherwise it is NONE_PIN.
+   .spi_io3_pin        = GPIO_FC_PA4,//quad  mode is required, otherwise it is NONE_PIN.
 };
 #endif
+
 #if defined(MCU_CORE_TL751X)
+gspi_pin_config_t gspi_pin_config = {
+    .spi_csn_pin        = GPIO_FC_PA0,
+    .spi_clk_pin        = GPIO_FC_PA1,
+    .spi_mosi_io0_pin   = GPIO_FC_PA2,
+    .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin        = GPIO_FC_PE2,//quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin        = GPIO_FC_PE3,//quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io4_pin        = GPIO_FC_PE4,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_io5_pin        = GPIO_FC_PE5,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_io6_pin        = GPIO_FC_PE6,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_io7_pin        = GPIO_FC_PE7,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_dm_pin         = GPIO_NONE_PIN,//opi psram is required,otherwise it is NONE_PIN.
+};
+#endif
+
+#if defined(MCU_CORE_TL7518)
 gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin        = GSPI_CSN0_PA0_PIN,
     .spi_clk_pin        = GSPI_CLK_PA1_PIN,
@@ -102,46 +140,119 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_io6_pin        = GSPI_IO6_PF3_PIN,//octal mode is required, otherwise it is NONE_PIN.
     .spi_io7_pin        = GSPI_IO7_PF4_PIN,//octal mode is required, otherwise it is NONE_PIN.
     .spi_dm_pin         = GSPI_NONE_PIN,//opi psram is required,otherwise it is NONE_PIN.
-
 };
 #endif
+#endif
+
+#if defined(MCU_CORE_TL322X)
+#if(SPI_MODULE_SEL == GSPI1_MODULE)
+gspi_pin_config_t gspi1_pin_config = {
+   .spi_csn_pin        = GPIO_FC_PA0,
+   .spi_clk_pin        = GPIO_FC_PA1,
+   .spi_mosi_io0_pin   = GPIO_FC_PA2,
+   .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+   .spi_io2_pin        = GPIO_FC_PA3,//quad  mode is required, otherwise it is NONE_PIN.
+   .spi_io3_pin        = GPIO_FC_PA4,//quad  mode is required, otherwise it is NONE_PIN.
+};
+#endif
+#if(SPI_MODULE_SEL == GSPI2_MODULE)
+gspi_pin_config_t gspi2_pin_config = {
+   .spi_csn_pin        = GPIO_FC_PA0,
+   .spi_clk_pin        = GPIO_FC_PA1,
+   .spi_mosi_io0_pin   = GPIO_FC_PA2,
+   .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+   .spi_io2_pin        = GPIO_FC_PA3,//quad  mode is required, otherwise it is NONE_PIN.
+   .spi_io3_pin        = GPIO_FC_PA4,//quad  mode is required, otherwise it is NONE_PIN.
+};
+#endif
+#if(SPI_MODULE_SEL == GSPI3_MODULE)
+gspi_pin_config_t gspi3_pin_config = {
+   .spi_csn_pin        = GPIO_FC_PA0,
+   .spi_clk_pin        = GPIO_FC_PA1,
+   .spi_mosi_io0_pin   = GPIO_FC_PA2,
+   .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+   .spi_io2_pin        = GPIO_FC_PA3,//quad  mode is required, otherwise it is NONE_PIN.
+   .spi_io3_pin        = GPIO_FC_PA4,//quad  mode is required, otherwise it is NONE_PIN.
+};
+#endif
+#if(SPI_MODULE_SEL == GSPI4_MODULE)
+gspi_pin_config_t gspi4_pin_config = {
+   .spi_csn_pin        = GPIO_FC_PA0,
+   .spi_clk_pin        = GPIO_FC_PA1,
+   .spi_mosi_io0_pin   = GPIO_FC_PA2,
+   .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+   .spi_io2_pin        = GPIO_FC_PA3,//quad  mode is required, otherwise it is NONE_PIN.
+   .spi_io3_pin        = GPIO_FC_PA4,//quad  mode is required, otherwise it is NONE_PIN.
+};
+#endif
+#endif
+
 #if (SPI_SLAVE_NUM == MULTI_SLAVE)
 #if defined(MCU_CORE_B92)
 //39 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
 #define SLAVE_CSN_PIN_NUM    8
 gpio_func_pin_e  slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0,GPIO_FC_PA4,GPIO_FC_PB2, GPIO_FC_PB3, GPIO_FC_PB4, GPIO_FC_PB5, GPIO_FC_PB6, GPIO_FC_PB7};
 #endif
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)
 //4 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
 #define SLAVE_CSN_PIN_NUM    4
 gspi_pin_def_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GSPI_CSN0_PA0_PIN, GSPI_CSN0_PB7_PIN, GSPI_CSN0_PG1_PIN, GSPI_CSN0_PJ2_PIN};
 #endif
+#if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL721X)
+// MCU_CORE_TL321X have 37 GPIOs,MCU_CORE_TL322X have 60 GPIOs and MCU_CORE_TL721X have 42 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
+#define SLAVE_CSN_PIN_NUM    8
+gpio_func_pin_e  slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0,GPIO_FC_PA1,GPIO_FC_PA2, GPIO_FC_PA3, GPIO_FC_PA4,GPIO_FC_PB0,GPIO_FC_PB1,GPIO_FC_PB2,};
 #endif
-#elif (SPI_MODULE_SEL == LSPI_MODULE)
+#if defined(MCU_CORE_TL751X)
+//55 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
+#define SLAVE_CSN_PIN_NUM    8
+gpio_func_pin_e  slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0,GPIO_FC_PA1,GPIO_FC_PA2, GPIO_FC_PA3, GPIO_FC_PA4, GPIO_FC_PA5, GPIO_FC_PA6, GPIO_FC_PB0};
+#endif
+#endif
+#ifndef MCU_CORE_TL321X
+#if (SPI_MODULE_SEL == LSPI_MODULE)
 #if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)
 lspi_pin_config_t lspi_pin_config = {
     .spi_csn_pin        = LSPI_CSN_PE0_PIN,
     .spi_clk_pin        = LSPI_CLK_PE1_PIN,
     .spi_mosi_io0_pin   = LSPI_MOSI_IO0_PE2_PIN,
     .spi_miso_io1_pin   = LSPI_MISO_IO1_PE3_PIN,//3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin        = LSPI_IO2_PE4_PIN,//quad mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin        = LSPI_IO3_PE5_PIN,//quad mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin        = LSPI_IO2_PE4_PIN,//quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin        = LSPI_IO3_PE5_PIN,//quad  mode is required, otherwise it is NONE_PIN.
 };
 #endif
+
 #if defined(MCU_CORE_TL751X)
+lspi_pin_config_t lspi_pin_config = {
+    .spi_csn_pin        = GPIO_FC_PA0,
+    .spi_clk_pin        = GPIO_FC_PA1,
+    .spi_mosi_io0_pin   = GPIO_FC_PA2,
+    .spi_miso_io1_pin   = GPIO_FC_PB0,//3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin        = GPIO_FC_PE2,//quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin        = GPIO_FC_PE3,//quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io4_pin        = GPIO_FC_PE4,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_io5_pin        = GPIO_FC_PE5,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_io6_pin        = GPIO_FC_PE6,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_io7_pin        = GPIO_FC_PE7,//octal mode is required, otherwise it is NONE_PIN.
+    .spi_dm_pin         = GPIO_NONE_PIN,//opi psram is required,otherwise it is NONE_PIN.
+};
+#endif
+
+#if defined(MCU_CORE_TL7518)
 lspi_pin_config_t lspi_pin_config = {
     .spi_csn_pin        = LSPI_CSN_PB0_PIN,
     .spi_clk_pin        = LSPI_CLK_PE0_PIN,
     .spi_mosi_io0_pin   = LSPI_MOSI_IO0_PE1_PIN,
     .spi_miso_io1_pin   = LSPI_MISO_IO1_PE2_PIN,//3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin        = LSPI_IO2_PE3_PIN,//quad mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin        = LSPI_IO3_PE4_PIN,//quad mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin        = LSPI_IO2_PE3_PIN,//quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin        = LSPI_IO3_PE4_PIN,//quad  mode is required, otherwise it is NONE_PIN.
     .spi_io4_pin        = LSPI_IO4_PE5_PIN,//octal mode is required, otherwise it is NONE_PIN.
     .spi_io5_pin        = LSPI_IO5_PE6_PIN,//octal mode is required, otherwise it is NONE_PIN.
     .spi_io6_pin        = LSPI_IO6_PE7_PIN,//octal mode is required, otherwise it is NONE_PIN.
     .spi_io7_pin        = LSPI_IO7_PF0_PIN,//octal mode is required, otherwise it is NONE_PIN.
     .spi_dm_pin         = LSPI_NONE_PIN,//opi psram is required,otherwise it is NONE_PIN.
 };
+#endif
 #endif
 #endif
 
@@ -169,15 +280,33 @@ spi_b85m_slave_protocol_t __attribute__((aligned(4))) spi_tx_buff = {
 #if(SPI_SLAVE_READY_TEST == 1)
 volatile unsigned char spi_b91m_slave_io_mode;
 #endif
+#if(DATA_MODE == NORMAL_MODE)
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
-    .spi_io_mode        = SPI_SINGLE_MODE,/*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
-    .spi_dummy_cnt      = 32,//B92 supports up to 32 clk cycle dummy, and TL751X, TL721X, TL321X supports up to 256 clk cycle dummy.
-    .spi_cmd_en         = 1,
-    .spi_addr_en        = 0,
-    .spi_addr_len       = 0,//when spi_addr_en = 0,invalid set.
-    .spi_cmd_fmt_en     = 0,//when spi_cmd_en = 0,invalid set.
-    .spi_addr_fmt_en    = 0,//when spi_addr_en = 0,invalid set.
+   .spi_io_mode        = SPI_SINGLE_MODE,/*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
+   .spi_dummy_cnt      = 32,//B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+#if defined(MCU_CORE_TL322X)
+   .spi_dummy_hold     = 0,
+#endif
+   .spi_cmd_en         = 1,
+   .spi_addr_en        = 0,
+   .spi_addr_len       = 0,//when spi_addr_en = 0,invalid set.
+   .spi_cmd_fmt_en     = 0,//when spi_cmd_en = 0,invalid set.
+   .spi_addr_fmt_en    = 0,//when spi_addr_en = 0,invalid set.
 };
+#elif(DATA_MODE == ONLY_DATA_MODE)
+spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
+   .spi_io_mode        = SPI_SINGLE_MODE,/*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
+   .spi_dummy_cnt      = 0,//B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+#if defined(MCU_CORE_TL322X)
+   .spi_dummy_hold     = 0,
+#endif
+   .spi_cmd_en         = 0,
+   .spi_addr_en        = 0,
+   .spi_addr_len       = 0,//when spi_addr_en = 0,invalid set.
+   .spi_cmd_fmt_en     = 0,//when spi_cmd_en = 0,invalid set.
+   .spi_addr_fmt_en    = 0,//when spi_addr_en = 0,invalid set.
+};
+#endif
 
 typedef struct
 {
@@ -193,7 +322,7 @@ spi_b91m_slave_protocol_t __attribute__((aligned(4))) spi_tx_buff =
 };
 
 #elif(SPI_PROTOCOL == B91M_SPI_SLAVE_PROTOCOL)
-#define spi_slave_address   0xc0200400
+#define spi_slave_address   0x0008001c//When master and slave spi communicate, first compile the slave demo to get the value of spi_sspi_slave_rx_buff as the address of spi_slave_address.
 spi_wr_rd_config_t spi_b91m_spi_slave_protocol_config = {
     .spi_io_mode        = SPI_SINGLE_MODE,
     .spi_dummy_cnt      = 8,
@@ -223,14 +352,33 @@ void user_init(void)
     gpio_input_dis(LED2);       //disable input
     gpio_set_low_level(LED2);   //LED Off
     gpio_function_en(LED2);     //enable gpio
-
+#if defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)
+    spi_master_init(SPI_MODULE_SEL, SRC_CLK_XTAL_48M,SRC_CLK_XTAL_48M /SPI_CLK, SPI_MODE0);
+#else
     spi_master_init(SPI_MODULE_SEL, sys_clk.pll_clk * 1000000/SPI_CLK, SPI_MODE0);
+#endif
 #if (SPI_MODULE_SEL == GSPI_MODULE)
-    gspi_set_pin(&gspi_pin_config);
-#elif(SPI_MODULE_SEL == LSPI_MODULE)
+   gspi_set_pin(&gspi_pin_config);
+#endif
+#if defined(MCU_CORE_TL322X)
+#if(SPI_MODULE_SEL == GSPI1_MODULE)
+   gspi1_set_pin(&gspi1_pin_config);
+#endif
+#if(SPI_MODULE_SEL == GSPI2_MODULE)
+   gspi2_set_pin(&gspi2_pin_config);
+#endif
+#if(SPI_MODULE_SEL == GSPI3_MODULE)
+   gspi3_set_pin(&gspi3_pin_config);
+#endif
+#if(SPI_MODULE_SEL == GSPI4_MODULE)
+   gspi4_set_pin(&gspi4_pin_config);
+#endif
+#endif
+#ifndef MCU_CORE_TL321X
+#if(SPI_MODULE_SEL == LSPI_MODULE)
     lspi_set_pin(&lspi_pin_config);
 #endif
-
+#endif
 #if (SPI_PROTOCOL == B85M_SLAVE_PROTOCOL)
     spi_master_config(SPI_MODULE_SEL, SPI_NORMAL);
 
@@ -266,7 +414,7 @@ drv_api_status_e spi_master_get_slave_ready(spi_sel_e spi_sel,spi_io_mode_e mode
         case SPI_QUAD_MODE:
             spi_master_read_plus(spi_sel, SPI_READ_STATUS_QUAD_CMD, (unsigned int)NULL, (unsigned char*)slave_ready_flag, 1, SPI_MODE_RD_DUMMY_READ);
             break;
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)
         case SPI_OCTAL_MODE:
             spi_master_read_plus(spi_sel, SPI_READ_STATUS_OCTAL_CMD, (unsigned int)NULL, (unsigned char*)(&slave_ready_flag), 1, SPI_MODE_RD_DUMMY_READ);
             break;
@@ -327,17 +475,22 @@ void main_loop (void)
         }
     }
 #else
-    spi_master_write_plus(SPI_MODULE_SEL, SPI_WRITE_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff), SPI_MODE_WR_DUMMY_WRITE);
-    spi_master_read_plus(SPI_MODULE_SEL, SPI_READ_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)spi_rx_buff, DATA_BYTE_LEN, SPI_MODE_RD_DUMMY_READ);
-    for (unsigned char i = 0; i < DATA_BYTE_LEN; i++)
-    {
-        if(spi_tx_buff.data[3 + i] != (spi_rx_buff[i]))
-        {
-            gpio_set_high_level(LED2);//LED on indicate data error
-            while(1);
-        }
-    }
-    spi_tx_buff.data[3]++;
+#if(DATA_MODE == NORMAL_MODE)
+   spi_master_write_plus(SPI_MODULE_SEL, SPI_WRITE_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff), SPI_MODE_WR_DUMMY_WRITE);
+   spi_master_read_plus(SPI_MODULE_SEL, SPI_READ_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char*)spi_rx_buff, DATA_BYTE_LEN, SPI_MODE_RD_DUMMY_READ);
+#elif(DATA_MODE == ONLY_DATA_MODE)
+   spi_master_write_plus(SPI_MODULE_SEL, (unsigned char)0, (unsigned int)NULL, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff), SPI_MODE_WR_WRITE_ONLY);
+   spi_master_read_plus(SPI_MODULE_SEL, (unsigned char)0, (unsigned int)NULL, (unsigned char*)spi_rx_buff, DATA_BYTE_LEN, SPI_MODE_RD_READ_ONLY);
+#endif
+   for (unsigned char i = 0; i < DATA_BYTE_LEN; i++)
+   {
+       if(spi_tx_buff.data[3 + i] != (spi_rx_buff[i]))
+       {
+           gpio_set_high_level(LED2);//LED on indicate data error
+           while(1);
+       }
+   }
+   spi_tx_buff.data[3]++;
 #endif
 #elif(SPI_PROTOCOL == B91M_SPI_SLAVE_PROTOCOL)
     spi_master_write_plus(SPI_MODULE_SEL, SPI_SLAVE_WRITE_DATA_CMD, spi_slave_address, (unsigned char*)&spi_tx_buff, sizeof(spi_tx_buff), SPI_MODE_WR_WRITE_ONLY);
@@ -353,6 +506,19 @@ void main_loop (void)
     spi_tx_buff.data[0]++;
 #endif
 #if (SPI_SLAVE_NUM == MULTI_SLAVE)
+#if defined(MCU_CORE_TL321X)
+#if (SPI_MODULE_SEL == TL321X_GSPI_MODULE)
+    for(unsigned char i = 0;i < SLAVE_CSN_PIN_NUM-1; i++)
+    {
+        if (gspi_pin_config.spi_csn_pin == slave_csn_pin[i])
+            {
+                gspi_change_csn_pin(slave_csn_pin[i],slave_csn_pin[i+1]);
+                gspi_pin_config.spi_csn_pin = slave_csn_pin[i+1];
+                break;
+            }
+    }
+#endif
+#else
 #if (SPI_MODULE_SEL == GSPI_MODULE)
 
     for(unsigned char i = 0;i < SLAVE_CSN_PIN_NUM-1; i++)
@@ -366,7 +532,9 @@ void main_loop (void)
     }
 #endif
 #endif
+#endif
 }
+
 
 #elif(SPI_DEVICE == SPI_SLAVE_DEVICE)
    /**********************************************************************************************************************
@@ -380,8 +548,15 @@ unsigned char spi_slave_rx_buff[SPI_RX_BUFF_LEN+4] __attribute__((aligned(4))) =
 volatile unsigned int spi_irq_rx_cnt = 0;
 volatile unsigned int spi_tx_cntn = 0;
 volatile unsigned int spi_tx_num = 0;
-#endif
 
+#if(DATA_MODE == ONLY_DATA_MODE)
+volatile unsigned int spi_slave_flag = 0;
+#endif
+#endif
+#if(SPI_PROTOCOL == B91M_SPI_SLAVE_PROTOCOL)
+#define DATA_BYTE_LEN       16
+volatile unsigned char spi_sspi_slave_rx_buff[DATA_BYTE_LEN+4] __attribute__((aligned(4))) = {0x00};
+#endif
 void user_init(void)
 {
     gpio_output_en(LED1);       //enable output
@@ -394,22 +569,58 @@ void user_init(void)
     gpio_function_en(LED2);     //enable gpio
     
 #if(SPI_PROTOCOL == B91M_SLAVE_PROTOCOL)
-
-    spi_slave_init(SPI_MODULE_SEL, SPI_MODE0);
-    spi_clr_irq_status(SPI_MODULE_SEL, SPI_SLV_CMD_INT|SPI_RXF_INT|SPI_END_INT);
-    spi_set_irq_mask(SPI_MODULE_SEL, SPI_SLV_CMD_EN |SPI_RXFIFO_INT_EN |SPI_END_INT_EN );//endint_en txfifoint_en rxfifoint_en
-    //B92 supports up to 32 clk cycle dummy, and TL751X, TL721X supports up to 256 clk cycle dummy.
-    //When B92 and B91 communicate with SPI, B91 as slave supports up to 8 clk cycle dummy. When B91 is master, invalid data can be added before tx_buff to act as dummy.
-    spi_set_dummy_cnt(SPI_MODULE_SEL, 32);
-#if(SPI_SLAVE_MODE == SPI_3LINE_SLAVE)
-    spi_set_io_mode(SPI_MODULE_SEL,SPI_3_LINE_MODE);
+#if defined(MCU_CORE_TL751X)
+   spi_slave_init(SPI_MODULE_SEL,SRC_CLK_XTAL_48M, SPI_MODE0);
+#else
+   spi_slave_init(SPI_MODULE_SEL, SPI_MODE0);
 #endif
+   spi_clr_irq_status(SPI_MODULE_SEL, SPI_SLV_CMD_INT|SPI_RXF_INT|SPI_END_INT);
+#if(DATA_MODE == NORMAL_MODE)
+   spi_set_irq_mask(SPI_MODULE_SEL, SPI_SLV_CMD_EN |SPI_RXFIFO_INT_EN |SPI_END_INT_EN );//endint_en txfifoint_en rxfifoint_en
+#elif(DATA_MODE == ONLY_DATA_MODE)
+   spi_set_irq_mask(SPI_MODULE_SEL,SPI_RXFIFO_INT_EN |SPI_END_INT_EN );//endint_en txfifoint_en rxfifoint_en
+#endif
+   //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+   //When B92 and B91 communicate with SPI, B91 as slave supports up to 8 clk cycle dummy. When B91 is master, invalid data can be added before tx_buff to act as dummy.
+#if(DATA_MODE == NORMAL_MODE)
+   spi_set_dummy_cnt(SPI_MODULE_SEL, 32);
+#elif(DATA_MODE == ONLY_DATA_MODE)
+   spi_cmd_dis(SPI_MODULE_SEL);
+   spi_addr_dis(SPI_MODULE_SEL);
+   spi_set_dummy_cnt(SPI_MODULE_SEL, 0);
+   spi_set_io_mode(SPI_MODULE_SEL,SPI_SINGLE_MODE);
+   spi_set_transmode(SPI_MODULE_SEL,SPI_MODE_READ_ONLY);
+#endif
+#if(SPI_SLAVE_MODE == SPI_3LINE_SLAVE)
+   spi_set_io_mode(SPI_MODULE_SEL,SPI_3_LINE_MODE);
+#endif
+
 #if (SPI_MODULE_SEL == GSPI_MODULE)
-    gspi_set_pin(&gspi_pin_config);
-    plic_interrupt_enable(IRQ_GSPI);
-#elif(SPI_MODULE_SEL == LSPI_MODULE)
+   gspi_set_pin(&gspi_pin_config);
+   plic_interrupt_enable(IRQ_GSPI);
+#endif
+#if defined(MCU_CORE_TL322X)
+#if(SPI_MODULE_SEL == GSPI1_MODULE)
+   gspi1_set_pin(&gspi1_pin_config);
+   plic_interrupt_enable(IRQ_GSPI1);
+#endif
+#if(SPI_MODULE_SEL == GSPI2_MODULE)
+   gspi2_set_pin(&gspi2_pin_config);
+   plic_interrupt_enable(IRQ_GSPI2);
+#if(SPI_MODULE_SEL == GSPI3_MODULE)
+   gspi3_set_pin(&gspi3_pin_config);
+   plic_interrupt_enable(IRQ_GSPI3);
+#endif
+#if(SPI_MODULE_SEL == GSPI4_MODULE)
+   gspi4_set_pin(&gspi4_pin_config);
+   plic_interrupt_enable(IRQ_GSPI4);
+#endif
+#endif
+#ifndef MCU_CORE_TL321X
+#if(SPI_MODULE_SEL == LSPI_MODULE)
     lspi_set_pin(&lspi_pin_config);
     plic_interrupt_enable(IRQ_LSPI);
+#endif
 #endif
     spi_slave_ready_en(SPI_MODULE_SEL);
     core_interrupt_enable();
@@ -417,21 +628,24 @@ void user_init(void)
 #if defined(MCU_CORE_B92)
     spi_slave_set_pin();//spi slave only need set pin.
 #else
-    sspi_pin_config_t  sspi_pin_config =
-    {
-        .spi_clk_pin        = GPIO_FC_PA0,
-        .spi_csn_pin        = GPIO_FC_PA1,
-        .spi_mosi_io0_pin   = GPIO_FC_PA2,
-        .spi_miso_io1_pin   = GPIO_FC_PA3,
-    };
-    spi_slave_set_pin(&sspi_pin_config);//spi slave only need set pin.
+   sspi_pin_config_t  sspi_pin_config =
+   {
+       .spi_csn_pin        = GPIO_FC_PA0,
+       .spi_clk_pin        = GPIO_FC_PA1,
+       .spi_mosi_io0_pin   = GPIO_FC_PA2,
+       .spi_miso_io1_pin   = GPIO_FC_PB0,
+   };
+   spi_slave_set_pin(&sspi_pin_config);//spi slave only need set pin.
 #endif
 #endif
 }
 
 void main_loop(void)
 {
-    delay_ms(200);
+   delay_ms(200);
+#if(SPI_PROTOCOL == B91M_SPI_SLAVE_PROTOCOL)
+   spi_slave_rx_buff[DATA_BYTE_LEN+3] = 0x5a;
+#endif
 #if(SPI_SLAVE_READY_TEST == 1)
     spi_slave_ready_en(SPI_MODULE_SEL);
 #endif
@@ -448,7 +662,7 @@ _attribute_ram_code_sec_noinline_ void spi_irq_slv_cmd_process(void)
         case SPI_READ_DATA_SINGLE_CMD:
         case SPI_READ_DATA_DUAL_CMD:
         case SPI_READ_DATA_QUAD_CMD:
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)
         case SPI_READ_DATA_OCTAL_CMD:
 #endif
             spi_set_irq_mask(SPI_MODULE_SEL,SPI_TXFIFO_INT_EN);//enable txfifo_int
@@ -501,10 +715,28 @@ _attribute_ram_code_sec_noinline_ void spi_irq_end_process(void)
     spi_rx_fifo_clr(SPI_MODULE_SEL);
     spi_irq_rx_cnt = 0;
 }
+
 #if(SPI_MODULE_SEL == GSPI_MODULE)
 _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
-#elif(SPI_MODULE_SEL == LSPI_MODULE)
+#endif
+#if defined(MCU_CORE_TL322X)
+#if(SPI_MODULE_SEL == GSPI1_MODULE)
+_attribute_ram_code_sec_noinline_ void gspi1_irq_handler(void)
+#endif
+#if(SPI_MODULE_SEL == GSPI2_MODULE)
+_attribute_ram_code_sec_noinline_ void gspi2_irq_handler(void)
+#endif
+#if(SPI_MODULE_SEL == GSPI3_MODULE)
+_attribute_ram_code_sec_noinline_ void gspi3_irq_handler(void)
+#endif
+#if(SPI_MODULE_SEL == GSPI4_MODULE)
+_attribute_ram_code_sec_noinline_ void gspi4_irq_handler(void)
+#endif
+#endif
+#ifndef MCU_CORE_TL321X
+#if(SPI_MODULE_SEL == LSPI_MODULE)
 _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
+#endif
 #endif
 {
     if (spi_get_irq_status(SPI_MODULE_SEL,SPI_SLV_CMD_INT))
@@ -519,25 +751,53 @@ _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
         spi_clr_irq_status(SPI_MODULE_SEL,SPI_RXF_INT);//clr
     }
 
-    if(spi_get_irq_status(SPI_MODULE_SEL,SPI_END_INT))
-    {
-        spi_irq_end_process();
-        spi_clr_irq_status(SPI_MODULE_SEL,SPI_END_INT|SPI_RXF_INT);//clr
-    }
+   if(spi_get_irq_status(SPI_MODULE_SEL,SPI_END_INT))
+   {
+       spi_irq_end_process();
+       spi_clr_irq_status(SPI_MODULE_SEL,SPI_END_INT|SPI_RXF_INT);//clr
+#if(DATA_MODE == ONLY_DATA_MODE)
+       if(!spi_slave_flag)
+       {
+           spi_set_transmode(SPI_MODULE_SEL,SPI_MODE_WRITE_ONLY);
+           spi_set_irq_mask(SPI_MODULE_SEL,SPI_TXFIFO_INT_EN);
+       }
+       else{
+           spi_set_transmode(SPI_MODULE_SEL,SPI_MODE_READ_ONLY);
+       }
+       spi_slave_flag = !spi_slave_flag;
+#endif
+   }
 
-    if (spi_get_irq_mask(SPI_MODULE_SEL,SPI_TXFIFO_INT_EN)&&spi_get_irq_status(SPI_MODULE_SEL,SPI_TXF_INT))
-    {
-        spi_irq_tx_fifo_process();
-        spi_clr_irq_status(SPI_MODULE_SEL,SPI_TXF_INT);//clr
-    }
+   if (spi_get_irq_mask(SPI_MODULE_SEL,SPI_TXFIFO_INT_EN)&&spi_get_irq_status(SPI_MODULE_SEL,SPI_TXF_INT))
+   {
+       spi_irq_tx_fifo_process();
+       spi_clr_irq_status(SPI_MODULE_SEL,SPI_TXF_INT);//clr
+   }
 }
+
 #if(SPI_MODULE_SEL == GSPI_MODULE)
 PLIC_ISR_REGISTER(gspi_irq_handler, IRQ_GSPI)
-#elif(SPI_MODULE_SEL == LSPI_MODULE)
+#endif
+#if defined(MCU_CORE_TL322X)
+#if(SPI_MODULE_SEL == GSPI1_MODULE)
+PLIC_ISR_REGISTER(gspi1_irq_handler, IRQ_GSPI1)
+#endif
+#if(SPI_MODULE_SEL == GSPI2_MODULE)
+PLIC_ISR_REGISTER(gspi2_irq_handler, IRQ_GSPI2)
+#endif
+#if(SPI_MODULE_SEL == GSPI3_MODULE)
+PLIC_ISR_REGISTER(gspi3_irq_handler, IRQ_GSPI3)
+#endif
+#if(SPI_MODULE_SEL == GSPI4_MODULE)
+PLIC_ISR_REGISTER(gspi4_irq_handler, IRQ_GSPI4)
+#endif
+#endif
+#if defined(MCU_CORE_TL322X)
+#if(SPI_MODULE_SEL == LSPI_MODULE)
 PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
 #endif
 #endif
 #endif
 #endif
-
-
+#endif
+#endif
