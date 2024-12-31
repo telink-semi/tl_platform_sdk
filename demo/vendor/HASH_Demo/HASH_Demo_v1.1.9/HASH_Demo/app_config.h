@@ -33,10 +33,6 @@ extern "C"
 #include "hash_hmac_test/app_test.h"
 
 
-
-
-
-
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

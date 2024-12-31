@@ -25,7 +25,7 @@
 
 
 extern void user_init(void);
-extern void main_loop (void);
+extern void main_loop(void);
 
 extern volatile unsigned char irq_flag;
 
@@ -37,8 +37,7 @@ extern volatile unsigned char irq_flag;
 #if defined(MCU_CORE_B91)
 _attribute_ram_code_sec_ void rf_dm_irq_handler(void)
 {
-    if(aes_get_irq_status(FLD_CRYPT_IRQ))
-    {
+    if (aes_get_irq_status(FLD_CRYPT_IRQ)) {
         gpio_toggle(LED1);
         irq_flag = 1;
     }
@@ -48,8 +47,7 @@ PLIC_ISR_REGISTER(rf_dm_irq_handler, IRQ_ZB_DM)
 #elif defined(MCU_CORE_B92)
 _attribute_ram_code_sec_ void rf_bt_irq_handler(void)
 {
-    if(aes_get_irq_status(FLD_CRYPT_IRQ))
-    {
+    if (aes_get_irq_status(FLD_CRYPT_IRQ)) {
         gpio_toggle(LED1);
         irq_flag = 1;
     }
@@ -70,8 +68,7 @@ int main(void)
     CLOCK_INIT;
     user_init();
 
-    while(1)
-    {
+    while (1) {
         main_loop();
     }
     return 0;

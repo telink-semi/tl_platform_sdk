@@ -25,73 +25,81 @@
 
 unsigned int pke_app_test(void)
 {
-#if defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_W92)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_W92)
     pke_dig_en();
 #endif
 
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
-    if(DH_all_test())
+    if (DH_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(ECCp_get_curve_paras_test())
+    if (ECCp_get_curve_paras_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(ECCp_get_key_all_test())
+    if (ECCp_get_key_all_test()) {
         return 1;
-#endif
-
-#if 1
-    /*This demo uses the trng module and must call the trng_dig_en function interface.*/
-     trng_dig_en();
-    if(ECDH_all_test())
-        return 1;
+    }
 #endif
 
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
-   trng_dig_en();
-    if(ECDSA_all_test())
+    trng_dig_en();
+    if (ECDH_all_test()) {
         return 1;
+    }
+#endif
+
+#if 1
+    /*This demo uses the trng module and must call the trng_dig_en function interface.*/
+    trng_dig_en();
+    if (ECDSA_all_test()) {
+        return 1;
+    }
 #endif
 
 #if 1
     /*This demo uses the trng and hash module and must call the trng_dig_en hash_dig_en function interface.*/
     trng_dig_en();
     hash_dig_en();
-    if(ECIES_all_test())
+    if (ECIES_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
-    if(Ed25519_all_test())
+    if (Ed25519_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
-    if(RSA_all_test())
+    if (RSA_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
-    if(X25519_all_test())
+    if (X25519_all_test()) {
         return 1;
+    }
 #endif
 
     return 0;
 }
-
 
 void user_init(void)
 {
@@ -101,8 +109,8 @@ void user_init(void)
     pke_app_test();
 }
 
-void main_loop (void)
+void main_loop(void)
 {
-     gpio_toggle(LED1);
-     delay_ms(50);
+    gpio_toggle(LED1);
+    delay_ms(50);
 }

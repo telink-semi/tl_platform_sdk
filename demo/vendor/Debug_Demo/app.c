@@ -22,6 +22,7 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
+
 void user_init(void)
 {
     gpio_function_en(LED1);
@@ -36,35 +37,34 @@ void user_init(void)
     gpio_function_en(LED4);
     gpio_output_en(LED4);
     gpio_input_dis(LED4);
-#if(DEBUG_BUS==USB_PRINT_DEBUG_ENABLE)
+#if (DEBUG_BUS == USB_PRINT_DEBUG_ENABLE)
     /*                                 Note
      * TL7518, TL721X, TL321X don't support hardware enumeration into print device.
      * See the print demo in the USB_Demo for a software enumeration instead of a hardware enumeration.
      */
-#if !defined(MCU_CORE_TL7518) && !defined(MCU_CORE_TL721X) && !defined(MCU_CORE_TL321X)
-#if !defined(MCU_CORE_B91) && !defined(MCU_CORE_B92)
+    #if !defined(MCU_CORE_TL7518) && !defined(MCU_CORE_TL721X) && !defined(MCU_CORE_TL321X)
+        #if !defined(MCU_CORE_B91) && !defined(MCU_CORE_B92)
     usbhw_init();
-#endif
+        #endif
     usbhw_set_printer_threshold(1);
     usbhw_set_ep8_fifo_mode();
     usb_set_pin(1);
     delay_ms(1000);
-    printf("\n Driver version: %2x \n Copyright (c) %d Telink semiconductor (%s) Ltd, Co \n",0xa001,2019,"shanghai");
-#endif
-#elif(DEBUG_BUS==UART_PRINT_DEBUG_ENABLE)
-    printf("  \n");                             // caution: The first byte will be error
-    printf("\n Driver version: %2x \n",0xa001);
-    printf("\n Copyright (c) %d \n",2020);
-    printf("\n Telink semiconductor (%s)Ltd, Co \n","shanghai");
+    printf("\n Driver version: %2x \n Copyright (c) %d Telink semiconductor (%s) Ltd, Co \n", 0xa001, 2019, "shanghai");
+    #endif
+#elif (DEBUG_BUS == UART_PRINT_DEBUG_ENABLE)
+    printf("  \n"); // caution: The first byte will be error
+    printf("\n Driver version: %2x \n", 0xa001);
+    printf("\n Copyright (c) %d \n", 2020);
+    printf("\n Telink semiconductor (%s)Ltd, Co \n", "shanghai");
 
 #endif
-
 }
 
 /////////////////////////////////////////////////////////////////////
 // main loop flow
 /////////////////////////////////////////////////////////////////////
-void main_loop (void)
+void main_loop(void)
 {
     printf(" Hello world! \n");
     gpio_toggle(LED1);
@@ -73,7 +73,3 @@ void main_loop (void)
     gpio_toggle(LED4);
     delay_ms(500);
 }
-
-
-
-

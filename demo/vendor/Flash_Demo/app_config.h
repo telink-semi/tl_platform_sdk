@@ -28,7 +28,8 @@
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 
 /*
@@ -37,16 +38,16 @@ extern "C" {
  *          and it also can be used for if the ATE does not receive the notification of enabling flash QE function,
  *          however it needs to be enabled by Lidong and the fixture department in the future.
  */
-#define FLASH_QE_ENABLE         1
+#define FLASH_QE_ENABLE 1
 
 /*
  * @note    It is used to verify the read, erase and write functions, lock and unlock functions��read decrypt of and umid functions of Flash,
  *          and the read, erase and write functions of the security registers.
  *          You can judge which functions pass the test through structures err_status and check_status.
  */
-#define FLASH_TEST              2
+#define FLASH_TEST          2
 
-#define FLASH_FUNCTION_MODE     FLASH_TEST
+#define FLASH_FUNCTION_MODE FLASH_TEST
 
 
 /* Enable C linkage for C++ Compilers: */

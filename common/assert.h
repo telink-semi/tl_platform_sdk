@@ -24,18 +24,20 @@
 #ifndef _ASSERT_H_
 #define _ASSERT_H_
 #include <printf.h>
-#if(!DEBUG_MODE)
-#define assert(expression) ((void) 0)
+#if (!DEBUG_MODE)
+    #define assert(expression) ((void)0)
 #else
 
-static inline void bad_assertion(const char *mess) {
+static inline void bad_assertion(const char *mess)
+{
     printf(mess);
-    while(1);
+    while (1)
+        ;
 }
 
-#define  __str(x)   # x
-#define  __xstr(x)  __str(x)
-#define  assert(expr)  ((expr)? (void)0 : \
-         bad_assertion("Assertion failed, file "__xstr(__FILE__)", line" __xstr(__LINE__) "\n"))
+    #define __str(x)     #x
+    #define __xstr(x)    __str(x)
+    #define assert(expr) ((expr) ? (void)0 : \
+                                   bad_assertion("Assertion failed, file "__xstr(__FILE__) ", line" __xstr(__LINE__) "\n"))
 #endif
 #endif

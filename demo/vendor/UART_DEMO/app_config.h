@@ -24,144 +24,143 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
 #if defined(MCU_CORE_B91)
-#define UART0_RTX_PIN   UART0_RX_PB3
-#define UART0_TX_PIN    UART0_TX_PB2
-#define UART0_RX_PIN    UART0_RX_PB3
-#define UART0_CTS_PIN   UART0_CTS_PA1
-#define UART0_RTS_PIN   UART0_RTS_PA2
+    #define UART0_RTX_PIN UART0_RX_PB3
+    #define UART0_TX_PIN  UART0_TX_PB2
+    #define UART0_RX_PIN  UART0_RX_PB3
+    #define UART0_CTS_PIN UART0_CTS_PA1
+    #define UART0_RTS_PIN UART0_RTS_PA2
 
-#define UART1_RTX_PIN   UART1_RX_PC7
-#define UART1_TX_PIN    UART1_TX_PC6
-#define UART1_RX_PIN    UART1_RX_PC7
-#define UART1_CTS_PIN   UART1_CTS_PC4
-#define UART1_RTS_PIN   UART1_RTS_PC5
-
-
+    #define UART1_RTX_PIN UART1_RX_PC7
+    #define UART1_TX_PIN  UART1_TX_PC6
+    #define UART1_RX_PIN  UART1_RX_PC7
+    #define UART1_CTS_PIN UART1_CTS_PC4
+    #define UART1_RTS_PIN UART1_RTS_PC5
 
 
 #elif defined(MCU_CORE_B92)
 
-#define UART0_RTX_PIN           GPIO_FC_PB3
-#define UART0_TX_PIN            GPIO_FC_PB1
-#define UART0_RX_PIN            GPIO_FC_PB2
-#define UART0_CTS_PIN           GPIO_FC_PB4
-#define UART0_RTS_PIN           GPIO_FC_PA0
+    #define UART0_RTX_PIN GPIO_FC_PB3
+    #define UART0_TX_PIN  GPIO_FC_PB1
+    #define UART0_RX_PIN  GPIO_FC_PB2
+    #define UART0_CTS_PIN GPIO_FC_PB4
+    #define UART0_RTS_PIN GPIO_FC_PA0
 
-#define UART1_RTX_PIN           GPIO_FC_PB3
-#define UART1_TX_PIN            GPIO_FC_PB1
-#define UART1_RX_PIN            GPIO_FC_PB2
-#define UART1_CTS_PIN           GPIO_FC_PB4
-#define UART1_RTS_PIN           GPIO_FC_PA0
+    #define UART1_RTX_PIN GPIO_FC_PB3
+    #define UART1_TX_PIN  GPIO_FC_PB1
+    #define UART1_RX_PIN  GPIO_FC_PB2
+    #define UART1_CTS_PIN GPIO_FC_PB4
+    #define UART1_RTS_PIN GPIO_FC_PA0
 #elif defined(MCU_CORE_TL7518)
-#define UART0_RTX_PIN           UART0_RX_PB2
-#define UART0_TX_PIN            UART0_TX_PB1
-#define UART0_RX_PIN            UART0_RX_PB2
-#define UART0_CTS_PIN           UART0_CTS_PB3
-#define UART0_RTS_PIN           UART0_RTS_PB4
+    #define UART0_RTX_PIN UART0_RX_PB2
+    #define UART0_TX_PIN  UART0_TX_PB1
+    #define UART0_RX_PIN  UART0_RX_PB2
+    #define UART0_CTS_PIN UART0_CTS_PB3
+    #define UART0_RTS_PIN UART0_RTS_PB4
 
-#define UART1_RTX_PIN           UART1_RX_PB2
-#define UART1_TX_PIN            UART1_TX_PB1
-#define UART1_RX_PIN            UART1_RX_PB2
-#define UART1_CTS_PIN           UART1_CTS_PB3
-#define UART1_RTS_PIN           UART1_RTS_PB4
+    #define UART1_RTX_PIN UART1_RX_PB2
+    #define UART1_TX_PIN  UART1_TX_PB1
+    #define UART1_RX_PIN  UART1_RX_PB2
+    #define UART1_CTS_PIN UART1_CTS_PB3
+    #define UART1_RTS_PIN UART1_RTS_PB4
 
-#define UART2_RTX_PIN           UART2_RX_PB2
-#define UART2_TX_PIN            UART2_TX_PB1
-#define UART2_RX_PIN            UART2_RX_PB2
-#define UART2_CTS_PIN           UART2_CTS_PB3
-#define UART2_RTS_PIN           UART2_RTS_PB4
+    #define UART2_RTX_PIN UART2_RX_PB2
+    #define UART2_TX_PIN  UART2_TX_PB1
+    #define UART2_RX_PIN  UART2_RX_PB2
+    #define UART2_CTS_PIN UART2_CTS_PB3
+    #define UART2_RTS_PIN UART2_RTS_PB4
 
-#define UART3_RTX_PIN           UART3_RX_PB2
-#define UART3_TX_PIN            UART3_TX_PB1
-#define UART3_RX_PIN            UART3_RX_PB2
-#define UART3_CTS_PIN           UART3_CTS_PB3
-#define UART3_RTS_PIN           UART3_RTS_PB4
+    #define UART3_RTX_PIN UART3_RX_PB2
+    #define UART3_TX_PIN  UART3_TX_PB1
+    #define UART3_RX_PIN  UART3_RX_PB2
+    #define UART3_CTS_PIN UART3_CTS_PB3
+    #define UART3_RTS_PIN UART3_RTS_PB4
 #elif defined(MCU_CORE_TL751X)
-#define UART0_RTX_PIN           GPIO_FC_PC5
-#define UART0_TX_PIN            GPIO_FC_PC4
-#define UART0_RX_PIN            GPIO_FC_PC5
-#define UART0_CTS_PIN           GPIO_FC_PC6
-#define UART0_RTS_PIN           GPIO_FC_PC7
+    #define UART0_RTX_PIN GPIO_FC_PC5
+    #define UART0_TX_PIN  GPIO_FC_PC4
+    #define UART0_RX_PIN  GPIO_FC_PC5
+    #define UART0_CTS_PIN GPIO_FC_PC6
+    #define UART0_RTS_PIN GPIO_FC_PC7
 
-#define UART1_RTX_PIN           GPIO_FC_PC5
-#define UART1_TX_PIN            GPIO_FC_PC4
-#define UART1_RX_PIN            GPIO_FC_PC5
-#define UART1_CTS_PIN           GPIO_FC_PC6
-#define UART1_RTS_PIN           GPIO_FC_PC7
+    #define UART1_RTX_PIN GPIO_FC_PC5
+    #define UART1_TX_PIN  GPIO_FC_PC4
+    #define UART1_RX_PIN  GPIO_FC_PC5
+    #define UART1_CTS_PIN GPIO_FC_PC6
+    #define UART1_RTS_PIN GPIO_FC_PC7
 
-#define UART2_RTX_PIN           GPIO_FC_PC5
-#define UART2_TX_PIN            GPIO_FC_PC4
-#define UART2_RX_PIN            GPIO_FC_PC5
-#define UART2_CTS_PIN           GPIO_FC_PC6
-#define UART2_RTS_PIN           GPIO_FC_PC7
+    #define UART2_RTX_PIN GPIO_FC_PC5
+    #define UART2_TX_PIN  GPIO_FC_PC4
+    #define UART2_RX_PIN  GPIO_FC_PC5
+    #define UART2_CTS_PIN GPIO_FC_PC6
+    #define UART2_RTS_PIN GPIO_FC_PC7
 
-#define UART3_RTX_PIN           GPIO_FC_PC5
-#define UART3_TX_PIN            GPIO_FC_PC4
-#define UART3_RX_PIN            GPIO_FC_PC5
-#define UART3_CTS_PIN           GPIO_FC_PC6
-#define UART3_RTS_PIN           GPIO_FC_PC7
+    #define UART3_RTX_PIN GPIO_FC_PC5
+    #define UART3_TX_PIN  GPIO_FC_PC4
+    #define UART3_RX_PIN  GPIO_FC_PC5
+    #define UART3_CTS_PIN GPIO_FC_PC6
+    #define UART3_RTS_PIN GPIO_FC_PC7
 #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
-#define UART0_RTX_PIN           GPIO_FC_PC5
-#define UART0_TX_PIN            GPIO_FC_PC4
-#define UART0_RX_PIN            GPIO_FC_PC5
-#define UART0_CTS_PIN           GPIO_FC_PC6
-#define UART0_RTS_PIN           GPIO_FC_PC7
+    #define UART0_RTX_PIN GPIO_FC_PC5
+    #define UART0_TX_PIN  GPIO_FC_PC4
+    #define UART0_RX_PIN  GPIO_FC_PC5
+    #define UART0_CTS_PIN GPIO_FC_PC6
+    #define UART0_RTS_PIN GPIO_FC_PC7
 
-#define UART1_RTX_PIN           GPIO_FC_PC5
-#define UART1_TX_PIN            GPIO_FC_PC4
-#define UART1_RX_PIN            GPIO_FC_PC5
-#define UART1_CTS_PIN           GPIO_FC_PC6
-#define UART1_RTS_PIN           GPIO_FC_PC7
+    #define UART1_RTX_PIN GPIO_FC_PC5
+    #define UART1_TX_PIN  GPIO_FC_PC4
+    #define UART1_RX_PIN  GPIO_FC_PC5
+    #define UART1_CTS_PIN GPIO_FC_PC6
+    #define UART1_RTS_PIN GPIO_FC_PC7
 
-#define UART2_RTX_PIN           GPIO_FC_PC5
-#define UART2_TX_PIN            GPIO_FC_PC4
-#define UART2_RX_PIN            GPIO_FC_PC5
-#define UART2_CTS_PIN           GPIO_FC_PC6
-#define UART2_RTS_PIN           GPIO_FC_PC7
+    #define UART2_RTX_PIN GPIO_FC_PC5
+    #define UART2_TX_PIN  GPIO_FC_PC4
+    #define UART2_RX_PIN  GPIO_FC_PC5
+    #define UART2_CTS_PIN GPIO_FC_PC6
+    #define UART2_RTS_PIN GPIO_FC_PC7
 #elif defined(MCU_CORE_TL322X)
-#define UART0_RTX_PIN           GPIO_FC_PC5
-#define UART0_TX_PIN            GPIO_FC_PC4
-#define UART0_RX_PIN            GPIO_FC_PC5
-#define UART0_CTS_PIN           GPIO_FC_PC6
-#define UART0_RTS_PIN           GPIO_FC_PC7
+    #define UART0_RTX_PIN GPIO_FC_PC5
+    #define UART0_TX_PIN  GPIO_FC_PC4
+    #define UART0_RX_PIN  GPIO_FC_PC5
+    #define UART0_CTS_PIN GPIO_FC_PC6
+    #define UART0_RTS_PIN GPIO_FC_PC7
 
-#define UART1_RTX_PIN           GPIO_FC_PC5
-#define UART1_TX_PIN            GPIO_FC_PC4
-#define UART1_RX_PIN            GPIO_FC_PC5
-#define UART1_CTS_PIN           GPIO_FC_PC6
-#define UART1_RTS_PIN           GPIO_FC_PC7
+    #define UART1_RTX_PIN GPIO_FC_PC5
+    #define UART1_TX_PIN  GPIO_FC_PC4
+    #define UART1_RX_PIN  GPIO_FC_PC5
+    #define UART1_CTS_PIN GPIO_FC_PC6
+    #define UART1_RTS_PIN GPIO_FC_PC7
 
-#define UART2_RTX_PIN           GPIO_FC_PC5
-#define UART2_TX_PIN            GPIO_FC_PC4
-#define UART2_RX_PIN            GPIO_FC_PC5
-#define UART2_CTS_PIN           GPIO_FC_PC6
-#define UART2_RTS_PIN           GPIO_FC_PC7
+    #define UART2_RTX_PIN GPIO_FC_PC5
+    #define UART2_TX_PIN  GPIO_FC_PC4
+    #define UART2_RX_PIN  GPIO_FC_PC5
+    #define UART2_CTS_PIN GPIO_FC_PC6
+    #define UART2_RTS_PIN GPIO_FC_PC7
 
-#define UART3_RTX_PIN           GPIO_FC_PC5
-#define UART3_TX_PIN            GPIO_FC_PC4
-#define UART3_RX_PIN            GPIO_FC_PC5
-#define UART3_CTS_PIN           GPIO_FC_PC6
-#define UART3_RTS_PIN           GPIO_FC_PC7
+    #define UART3_RTX_PIN GPIO_FC_PC5
+    #define UART3_TX_PIN  GPIO_FC_PC4
+    #define UART3_RX_PIN  GPIO_FC_PC5
+    #define UART3_CTS_PIN GPIO_FC_PC6
+    #define UART3_RTS_PIN GPIO_FC_PC7
 
-#define UART4_RTX_PIN           GPIO_FC_PC5
-#define UART4_TX_PIN            GPIO_FC_PC4
-#define UART4_RX_PIN            GPIO_FC_PC5
-#define UART4_CTS_PIN           GPIO_FC_PC6
-#define UART4_RTS_PIN           GPIO_FC_PC7
+    #define UART4_RTX_PIN GPIO_FC_PC5
+    #define UART4_TX_PIN  GPIO_FC_PC4
+    #define UART4_RX_PIN  GPIO_FC_PC5
+    #define UART4_CTS_PIN GPIO_FC_PC6
+    #define UART4_RTS_PIN GPIO_FC_PC7
 #endif
 
-#define UART_DMA            1     //uart use dma
-#define UART_NDMA           2     //uart not use dma
+#define UART_DMA  1 //uart use dma
+#define UART_NDMA 2 //uart not use dma
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
-#define UART_DMA_LLP        3
+    #define UART_DMA_LLP 3
 #endif
-#define UART_MODE           UART_NDMA
+#define UART_MODE       UART_NDMA
 
 #define BASE_TX         0 //just for NDMA
 #define NORMAL          1
@@ -170,9 +169,9 @@ extern "C" {
 #define FLOW_CTR        NORMAL
 
 
-#define UART_1WIRE_MODE       0  //tx and rx is a same line
-#define UART_2WIRE_MODE       1  //tx and rx are two lines
-#define UART_WIRE_MODE        UART_2WIRE_MODE
+#define UART_1WIRE_MODE 0 //tx and rx is a same line
+#define UART_2WIRE_MODE 1 //tx and rx are two lines
+#define UART_WIRE_MODE  UART_2WIRE_MODE
 
 /*Previously, the external general feedback was about the abnormal combination of uart and pm,
  *sample code combining Pm is given in no_dma and dma, respectively,things to pay attention to in use are as follows:
@@ -188,23 +187,12 @@ extern "C" {
  *2.uart_receive_dma configured after suspend or before sleep is invalid, and you need to call uart_receive_dma again ,
  *if you are receiving data.
 */
-#define WAKEUP_PAD                  GPIO_PA0
-#define UART_DEMO_WITH_PM_FUNC      1
-#define UART_DEMO_WITHOUT_PM_FUNC   0
+#define WAKEUP_PAD                      GPIO_PA0
+#define UART_DEMO_WITH_PM_FUNC          1
+#define UART_DEMO_WITHOUT_PM_FUNC       0
 
 
-
-#define UART_DEMO_COMBINED_WITH_PM_FUNC   UART_DEMO_WITHOUT_PM_FUNC //
-
-
-
-
-
-
-
-
-
-
+#define UART_DEMO_COMBINED_WITH_PM_FUNC UART_DEMO_WITHOUT_PM_FUNC //
 
 
 /* Disable C linkage for C++ Compilers: */

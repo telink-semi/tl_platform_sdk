@@ -23,13 +23,14 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 volatile unsigned int g_vbus_timer_turn_off_start_tick = 0;
-volatile unsigned int g_vbus_timer_turn_off_flag = 0;
+volatile unsigned int g_vbus_timer_turn_off_flag       = 0;
 #endif
 
 extern void user_init(void);
-extern void main_loop (void);
+extern void main_loop(void);
+
 /**
  * @brief       This is main function
  * @param[in]   none
@@ -41,10 +42,8 @@ int main(void)
     CLOCK_INIT;
     user_init();
 
-    while(1)
-    {
+    while (1) {
         main_loop();
     }
     return 0;
 }
-

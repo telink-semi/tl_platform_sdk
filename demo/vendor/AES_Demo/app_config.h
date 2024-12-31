@@ -24,15 +24,16 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
-#define AES_ECB_MODE    1
-#define AES_CBC_MODE    2
+#define AES_ECB_MODE 1
+#define AES_CBC_MODE 2
 
-#define AES_MODE    AES_ECB_MODE
+#define AES_MODE     AES_ECB_MODE
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

@@ -24,14 +24,11 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
-
-
-
-
 
 
 #define SPI_NDMA_MODE              1
@@ -39,7 +36,7 @@ extern "C" {
 #define SPI_XIP_MODE               3
 
 #define SPI_MODE                   SPI_NDMA_MODE
-#define CCLK_96M_HCLK_48M_PCLK_24M  clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
+#define CCLK_96M_HCLK_48M_PCLK_24M clock_init(PLL_CLK_192M, PAD_PLL_DIV, PLL_DIV2_TO_CCLK, CCLK_DIV2_TO_HCLK, HCLK_DIV2_TO_PCLK, PLL_DIV4_TO_MSPI_CLK)
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

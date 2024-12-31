@@ -22,6 +22,7 @@
  *
  *******************************************************************************************************/
 #include "core.h"
+
 /**********************************************************************************************************************
  *                                         global function implementation                                             *
  *********************************************************************************************************************/
@@ -32,6 +33,7 @@
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void core_cclk_delay_tick(unsigned long long core_cclk_tick)
 {
-	unsigned long long start = rdmcycle();
-	while (rdmcycle() - start < core_cclk_tick) {}
+    unsigned long long start = rdmcycle();
+    while (rdmcycle() - start < core_cclk_tick) {
+    }
 }

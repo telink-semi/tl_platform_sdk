@@ -27,31 +27,31 @@
 #include "driver.h"
 
 #ifndef FLASH_CAP_VALUE_ADDR_64K
-#define FLASH_CAP_VALUE_ADDR_64K        0xe000
+    #define FLASH_CAP_VALUE_ADDR_64K 0xe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_128K
-#define FLASH_CAP_VALUE_ADDR_128K       0x1e000
+    #define FLASH_CAP_VALUE_ADDR_128K 0x1e000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_512K
-#define FLASH_CAP_VALUE_ADDR_512K       0x7e000
+    #define FLASH_CAP_VALUE_ADDR_512K 0x7e000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_1M
-#define FLASH_CAP_VALUE_ADDR_1M         0xfe000
+    #define FLASH_CAP_VALUE_ADDR_1M 0xfe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_2M
-#define FLASH_CAP_VALUE_ADDR_2M         0x1fe000
+    #define FLASH_CAP_VALUE_ADDR_2M 0x1fe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_4M
-#define FLASH_CAP_VALUE_ADDR_4M         0x3fe000
+    #define FLASH_CAP_VALUE_ADDR_4M 0x3fe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_16M
-#define FLASH_CAP_VALUE_ADDR_16M            0xffe000
+    #define FLASH_CAP_VALUE_ADDR_16M 0xffe000
 #endif
 
 /**

@@ -1,3 +1,80 @@
+## V3.3.1
+
+### Version
+
+* SDK version: tl_platform_sdk V3.3.1
+* This version of the SDK supports TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL721X(A2),TL321X(A0) chips.
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+* Toolchain version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
+
+### Bug Fixes
+
+* N/A
+
+### Features
+
+* N/A
+
+### Refactoring
+
+* **code format**
+  * (B91/B92/TL321X/TL721x)For the sake of consistency in the code style of the company's projects, all .c and .h code is formatted uniformly, except for the 3rd-patry directory.(merge_requests/@1487)
+
+
+### BREAKING CHANGES
+
+* N/A
+
+### Performance Improvements
+
+* N/A
+
+### 版本
+
+* SDK版本: tl_platform_sdk V3.3.1
+* 此版本SDK支持 TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL721X(A2),TL321X(A0) 芯片。
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))
+
+### Bug Fixes
+
+* N/A
+
+### Features
+
+* N/A
+
+### Refactoring
+
+* **code format**
+  * (B91/B92/TL321X/TL721x)为了公司项目代码风格保持一致，除 3rd-patry 目录外，将所有 .c 和 .h 代码统一格式化.(merge_requests/@1487)
+
+### BREAKING CHANGES
+
+* N/A
+
+### Performance Improvements
+
+* N/A
+
+---
+
 ## V3.3.0
 
 ### Version
@@ -266,6 +343,7 @@
   * (TL321X)修改rf_set_xx_xx_mode()函数的配置以提升2M phy下模式的bandage性能。(merge_requests/@1296)
   * (TL721x)修改 rf_mode_init()函数的配置，以提高 fdev 的性能。（merge_requests/@1326）
 
+---
 
 ## V3.2.0
 

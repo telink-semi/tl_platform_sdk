@@ -35,7 +35,7 @@ void user_init(void)
     lpc_set_input_chn(LPC_INPUT_PB1);
 #endif
     //When the chip works in low power mode, the reference voltage can only be provided by UVLO or from PB0 and PB3.
-    lpc_set_input_ref(LPC_NORMAL,LPC_REF_872MV);
+    lpc_set_input_ref(LPC_NORMAL, LPC_REF_872MV);
     lpc_set_scaling_coeff(LPC_SCALING_PER50);
     //LPC POWER must be turned on last.
     lpc_power_on();
@@ -43,13 +43,10 @@ void user_init(void)
     delay_us(64);
 }
 
-
 void main_loop(void)
 {
-    printf("result = %d\r\n",lpc_get_result());
+    printf("result = %d\r\n", lpc_get_result());
 
     gpio_toggle(LED1);
     delay_ms(200);
 }
-
-

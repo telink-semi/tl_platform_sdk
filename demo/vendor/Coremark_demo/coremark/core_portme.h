@@ -40,33 +40,33 @@
     Define to 1 if the platform supports floating point.
 */
 #ifndef HAS_FLOAT
-#define HAS_FLOAT 1
+    #define HAS_FLOAT 1
 #endif
 /* Configuration : HAS_TIME_H
     Define to 1 if platform has the time.h header file,
     and implementation of functions thereof.
 */
 #ifndef HAS_TIME_H
-#define HAS_TIME_H 0
+    #define HAS_TIME_H 0
 #endif
 /* Configuration : USE_CLOCK
     Define to 1 if platform has the time.h header file,
     and implementation of functions thereof.
 */
 #ifndef USE_CLOCK
-#define USE_CLOCK 0
+    #define USE_CLOCK 0
 #endif
 /* Configuration : HAS_STDIO
     Define to 1 if the platform has stdio.h.
 */
 #ifndef HAS_STDIO
-#define HAS_STDIO 0
+    #define HAS_STDIO 0
 #endif
 /* Configuration : HAS_PRINTF
     Define to 1 if the platform has stdio.h and implements the printf function.
 */
 #ifndef HAS_PRINTF
-#define HAS_PRINTF 0
+    #define HAS_PRINTF 0
 #endif
 
 
@@ -74,17 +74,17 @@
     Initialize these strings per platform
 */
 #ifndef COMPILER_VERSION
- #ifdef __GNUC__
- #define COMPILER_VERSION "GCC"__VERSION__
- #else
- #define COMPILER_VERSION "Keil3.8"
- #endif
+    #ifdef __GNUC__
+        #define COMPILER_VERSION "GCC"__VERSION__
+    #else
+        #define COMPILER_VERSION "Keil3.8"
+    #endif
 #endif
 #ifndef COMPILER_FLAGS
- #define COMPILER_FLAGS "ADP-AE350-D25F"
+    #define COMPILER_FLAGS "ADP-AE350-D25F"
 #endif
 #ifndef MEM_LOCATION
- #define MEM_LOCATION "RAM"
+    #define MEM_LOCATION "RAM"
 #endif
 
 /* Data Types :
@@ -93,15 +93,15 @@
     *Imprtant* :
     ee_ptr_int needs to be the data type used to hold pointers, otherwise coremark may fail!!!
 */
-typedef signed short ee_s16;
+typedef signed short   ee_s16;
 typedef unsigned short ee_u16;
-typedef signed int ee_s32;
-typedef double ee_f32;
-typedef unsigned char ee_u8;
-typedef unsigned int ee_u32;
-typedef ee_u32 ee_ptr_int;
-typedef unsigned int size_t;
-typedef size_t ee_size_t;
+typedef signed int     ee_s32;
+typedef double         ee_f32;
+typedef unsigned char  ee_u8;
+typedef unsigned int   ee_u32;
+typedef ee_u32         ee_ptr_int;
+typedef unsigned int   size_t;
+typedef size_t         ee_size_t;
 #define NULL ((void *)0)
 /* align_mem :
     This macro is used to align an offset to point to a 32b value. It is used in the Matrix algorithm to initialize the input memory blocks.
@@ -123,7 +123,7 @@ typedef ee_u32 CORE_TICKS;
     SEED_VOLATILE - from volatile variables.
 */
 #ifndef SEED_METHOD
-#define SEED_METHOD SEED_VOLATILE
+    #define SEED_METHOD SEED_VOLATILE
 #endif
 
 /* Configuration : MEM_METHOD
@@ -135,7 +135,7 @@ typedef ee_u32 CORE_TICKS;
     MEM_STACK - to allocate the data block on the stack (NYI).
 */
 #ifndef MEM_METHOD
-#define MEM_METHOD MEM_STATIC
+    #define MEM_METHOD MEM_STATIC
 #endif
 
 /* Configuration : MULTITHREAD
@@ -154,10 +154,10 @@ typedef ee_u32 CORE_TICKS;
     to fit a particular architecture.
 */
 #ifndef MULTITHREAD
-#define MULTITHREAD 1
-#define USE_PTHREAD 0
-#define USE_FORK 0
-#define USE_SOCKET 0
+    #define MULTITHREAD 1
+    #define USE_PTHREAD 0
+    #define USE_FORK    0
+    #define USE_SOCKET  0
 #endif
 
 /* Configuration : MAIN_HAS_NOARGC
@@ -171,7 +171,7 @@ typedef ee_u32 CORE_TICKS;
     This flag only matters if MULTITHREAD has been defined to a value greater then 1.
 */
 #ifndef MAIN_HAS_NOARGC
-#define MAIN_HAS_NOARGC 1
+    #define MAIN_HAS_NOARGC 1
 #endif
 
 /* Configuration : MAIN_HAS_NORETURN
@@ -182,7 +182,7 @@ typedef ee_u32 CORE_TICKS;
     1 - platform does not support returning a value from main
 */
 #ifndef MAIN_HAS_NORETURN
-#define MAIN_HAS_NORETURN 0
+    #define MAIN_HAS_NORETURN 0
 #endif
 
 /* Variable : default_num_contexts
@@ -190,8 +190,9 @@ typedef ee_u32 CORE_TICKS;
 */
 extern ee_u32 default_num_contexts;
 
-typedef struct CORE_PORTABLE_S {
-    ee_u8   portable_id;
+typedef struct CORE_PORTABLE_S
+{
+    ee_u8 portable_id;
 } core_portable;
 
 /* target specific init/fini */
@@ -199,19 +200,19 @@ void portable_init(core_portable *p, int *argc, char *argv[]);
 void portable_fini(core_portable *p);
 
 #if !defined(PROFILE_RUN) && !defined(PERFORMANCE_RUN) && !defined(VALIDATION_RUN)
-#if (TOTAL_DATA_SIZE==1200)
-#define PROFILE_RUN 1
-#define PERFORMANCE_RUN 0
-#define VALIDATION_RUN 0
-#elif (TOTAL_DATA_SIZE==2000)
-#define PROFILE_RUN 0
-#define PERFORMANCE_RUN 1
-#define VALIDATION_RUN 0
-#else
-#define PROFILE_RUN 0
-#define PERFORMANCE_RUN 0
-#define VALIDATION_RUN 1
-#endif
+    #if (TOTAL_DATA_SIZE == 1200)
+        #define PROFILE_RUN     1
+        #define PERFORMANCE_RUN 0
+        #define VALIDATION_RUN  0
+    #elif (TOTAL_DATA_SIZE == 2000)
+        #define PROFILE_RUN     0
+        #define PERFORMANCE_RUN 1
+        #define VALIDATION_RUN  0
+    #else
+        #define PROFILE_RUN     0
+        #define PERFORMANCE_RUN 0
+        #define VALIDATION_RUN  1
+    #endif
 #endif
 
 #include "printf.h"

@@ -23,49 +23,41 @@
  *******************************************************************************************************/
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
-#define  PWM_CONTINUE           1
-#define  PWM_COUNT              2
-#define  PWM_IR                 3
-#define  PWM_IR_FIFO            4
-#define  PWM_IR_DMA             5
+#define PWM_CONTINUE 1
+#define PWM_COUNT    2
+#define PWM_IR       3
+#define PWM_IR_FIFO  4
+#define PWM_IR_DMA   5
 #if !defined(MCU_CORE_B91)
-#define  PWM_CENTER_ALIGNED     6
+    #define PWM_CENTER_ALIGNED 6
 #endif
-#define  SET_PWM_MODE          PWM_CONTINUE
+#define SET_PWM_MODE   PWM_CONTINUE
 
 
-#define     PWM_PCLK_SPEED              12000000 //pwm clock 12M.
-#define     PWM_32K_SPEED               32000    //pwm 32K
+#define PWM_PCLK_SPEED 12000000 //pwm clock 12M.
+#define PWM_32K_SPEED  32000    //pwm 32K
 
-
-/**
+    /**
  * This configure is for PWM Ticks.
  */
-enum{
-    CLOCK_PWM_CLOCK_1S = PWM_PCLK_SPEED,
-    CLOCK_PWM_CLOCK_1MS = (CLOCK_PWM_CLOCK_1S / 1000),
-    CLOCK_PWM_CLOCK_1US = (CLOCK_PWM_CLOCK_1S / 1000000),
-};
+    enum
+    {
+        CLOCK_PWM_CLOCK_1S  = PWM_PCLK_SPEED,
+        CLOCK_PWM_CLOCK_1MS = (CLOCK_PWM_CLOCK_1S / 1000),
+        CLOCK_PWM_CLOCK_1US = (CLOCK_PWM_CLOCK_1S / 1000000),
+    };
 
-enum{
-    CLOCK_PWM_32K_1S = PWM_32K_SPEED,
-    CLOCK_PWM_32K_1MS = (CLOCK_PWM_32K_1S  / 1000),
-};
-
-
-
-
-
-
-
-
-
-
+    enum
+    {
+        CLOCK_PWM_32K_1S  = PWM_32K_SPEED,
+        CLOCK_PWM_32K_1MS = (CLOCK_PWM_32K_1S / 1000),
+    };
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

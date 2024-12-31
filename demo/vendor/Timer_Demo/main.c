@@ -24,8 +24,7 @@
 #include "app_config.h"
 
 extern void user_init(void);
-extern void main_loop (void);
-
+extern void main_loop(void);
 
 /**
  * @brief       This is main function
@@ -38,8 +37,7 @@ int main(void)
     CLOCK_INIT;
     user_init();
 
-    while(1)
-    {
+    while (1) {
         main_loop();
     }
 

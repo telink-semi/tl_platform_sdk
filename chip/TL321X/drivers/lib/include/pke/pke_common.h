@@ -25,22 +25,18 @@
 #define PKE_COMMON_H
 
 
-
 #include "lib/include/pke/pke_config.h"
 #include "reg_include/pke_reg.h"
 
 
-
-
 //ECC point conversion form
-#define POINT_COMPRESSED          (0x02U)   //pc||x, pc = 0x02|LSB(y)
-#define POINT_UNCOMPRESSED        (0x04U)   //pc||x||y, pc=0x04
+#define POINT_COMPRESSED   (0x02U) //pc||x, pc = 0x02|LSB(y)
+#define POINT_UNCOMPRESSED (0x04U) //pc||x||y, pc=0x04
 typedef unsigned char EC_POINT_FORM;
 
 
-
 //define KDF
-typedef void *(*KDF_FUNC)( void *input, unsigned int byteLen, unsigned char *key, unsigned int keyByteLen);
+typedef void *(*KDF_FUNC)(void *input, unsigned int byteLen, unsigned char *key, unsigned int keyByteLen);
 
 
 //APIs
@@ -108,4 +104,3 @@ void pke_set_operand_uint32_value(unsigned int *baseaddr, unsigned int wordLen, 
 void x25519_decode_scalar(unsigned char *k, unsigned char *out, unsigned int bytes);
 
 #endif
-

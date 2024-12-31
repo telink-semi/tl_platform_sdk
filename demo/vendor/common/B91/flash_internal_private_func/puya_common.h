@@ -26,37 +26,42 @@
 #include "driver.h"
 #include "compiler.h"
 void audio_set_chn_wl(audio_channel_wl_mode_e chn_wl);
-void audio_mux_config(audio_flow_e audio_flow, audio_in_mode_e ain0_mode , audio_in_mode_e ain1_mode,audio_out_mode_e i2s_aout_mode);
-void audio_i2s_config(i2s_mode_select_e i2s_format,i2s_data_select_e wl,  i2s_codec_m_s_mode_e m_s , audio_i2s_invert_config_t * i2s_config_t);
+void audio_mux_config(audio_flow_e audio_flow, audio_in_mode_e ain0_mode, audio_in_mode_e ain1_mode, audio_out_mode_e i2s_aout_mode);
+void audio_i2s_config(i2s_mode_select_e i2s_format, i2s_data_select_e wl, i2s_codec_m_s_mode_e m_s, audio_i2s_invert_config_t *i2s_config_t);
+
 /**
  * @brief       This function serves to pull up wp.
  * @return      none.
  */
-_attribute_ram_code_sec_ static inline void mspi_wp_low(void){
+_attribute_ram_code_sec_ static inline void mspi_wp_low(void)
+{
     BM_CLR(reg_gpio_out(GPIO_PF5), BIT(5));
 }
+
 /**
  * @brief       This function serves to pull down wp.
  * @return      none.
  */
-_attribute_ram_code_sec_ static inline void mspi_wp_high(void){
+_attribute_ram_code_sec_ static inline void mspi_wp_high(void)
+{
     BM_SET(reg_gpio_out(GPIO_PF5), BIT(5));
 }
+
 /**
  * @brief       This function set GPIO_PF5 as gpio function.
  * @return      none.
  */
-_attribute_ram_code_sec_noinline_  void mspi_as_gpio();
+_attribute_ram_code_sec_noinline_ void mspi_as_gpio();
 /**
  * @brief       This function set GPIO_PF5 as mspi function.
  * @return      none.
  */
-_attribute_ram_code_sec_noinline_  void mspi_as_mspi();
+_attribute_ram_code_sec_noinline_ void mspi_as_mspi();
 /**
  * @brief       This function serves to enter flash test mode.
  * @return      none.
  */
-_attribute_ram_code_sec_noinline_  void flash_enter_test_mode(unsigned char *data);
+_attribute_ram_code_sec_noinline_ void flash_enter_test_mode(unsigned char *data);
 
 /**
  * @brief       This function serves to exit flash test mode.
@@ -72,7 +77,7 @@ _attribute_ram_code_sec_noinline_ void flash_exit_test_mode(void);
  * @param[out]  buf         - the start address of the data buffer.
  * @return      none.
  */
-_attribute_ram_code_sec_noinline_  void flash_read_testmode(unsigned char cmd,unsigned int addr,unsigned long len, unsigned char *buf);
+_attribute_ram_code_sec_noinline_ void flash_read_testmode(unsigned char cmd, unsigned int addr, unsigned long len, unsigned char *buf);
 
 /**
  * @brief       This function serves to flash write in test mode.
@@ -82,7 +87,7 @@ _attribute_ram_code_sec_noinline_  void flash_read_testmode(unsigned char cmd,un
  * @param[out]  buf         - the start address of the data buffer.
  * @return      none.
  */
-_attribute_ram_code_sec_noinline_  void flash_write_testmode(unsigned char cmd,unsigned int addr,unsigned long len, unsigned char *buf);
+_attribute_ram_code_sec_noinline_ void flash_write_testmode(unsigned char cmd, unsigned int addr, unsigned long len, unsigned char *buf);
 
 
 /**
@@ -95,7 +100,7 @@ _attribute_ram_code_sec_noinline_  void flash_write_testmode(unsigned char cmd,u
  *            but have some simplify to save running time. It is configure to make 1V8 power down more quickly.And
  *            it can not use as the normal audio init.
  */
-void audio_config_on(audio_flow_mode_e flow_mode,audio_sample_rate_e rate,audio_channel_wl_mode_e channel_wl);
+void audio_config_on(audio_flow_mode_e flow_mode, audio_sample_rate_e rate, audio_channel_wl_mode_e channel_wl);
 
 
 /**

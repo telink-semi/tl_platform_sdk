@@ -24,7 +24,8 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-    extern "C" {
+extern "C"
+{
 #endif
 
 #include "../usbstd/HIDClassCommon.h"
@@ -32,15 +33,12 @@
 #include "driver.h"
 
 
-
-
-
-#define MOUSE_REPORT_DATA_LEN     (sizeof(mouse_data_t))
-#define MEDIA_REPORT_DATA_LEN       4
-int usbmouse_hid_report(unsigned char report_id, unsigned char *data, int cnt);
+#define MOUSE_REPORT_DATA_LEN (sizeof(mouse_data_t))
+#define MEDIA_REPORT_DATA_LEN 4
+    int usbmouse_hid_report(unsigned char report_id, unsigned char *data, int cnt);
 
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-    }
+}
 #endif

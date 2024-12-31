@@ -33,8 +33,6 @@ extern "C"
 #include "pke_test/app_test.h"
 
 
-
-
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

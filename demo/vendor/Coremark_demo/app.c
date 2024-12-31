@@ -31,11 +31,6 @@ void user_init(void)
 
 void main_loop(void)
 {
-
     delay_ms(200);
     gpio_toggle(LED2);
-
-
-
 }
-

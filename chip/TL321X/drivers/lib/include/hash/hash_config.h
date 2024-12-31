@@ -25,7 +25,6 @@
 #define DRIVERS_LIB_INCLUDE_HASH_HASH_CONFIG_H_
 
 
-
 //#define SUPPORT_HASH_SM3//hw not support
 #define SUPPORT_HASH_MD5
 #define SUPPORT_HASH_SHA256
@@ -39,7 +38,6 @@
 //#define SUPPORT_HASH_SHA3_256 //hw not support
 //#define SUPPORT_HASH_SHA3_384 //hw not support
 //#define SUPPORT_HASH_SHA3_512 //hw not support
-
 
 
 //#define HASH_CPU_BIG_ENDIAN        //endian choice.
@@ -56,19 +54,19 @@
 
 
 #ifdef SUPPORT_PBKDF2
-#define PBKDF2_HIGH_SPEED
+    #define PBKDF2_HIGH_SPEED
 #endif
 
 #ifdef HASH_DMA_FUNCTION
 extern int buf_hash_dma[0x600];
-//#define CONFIG_HASH_SUPPORT_ADDRESS_HIGH_LOW
-#define HASH_DMA_RAM_BASE           (buf_hash_dma)
-//support dma node style
-#define SUPPORT_HASH_DMA_NODE
+    //#define CONFIG_HASH_SUPPORT_ADDRESS_HIGH_LOW
+    #define HASH_DMA_RAM_BASE (buf_hash_dma)
+    //support dma node style
+    #define SUPPORT_HASH_DMA_NODE
 #endif
 
 #ifdef SUPPORT_PBKDF2
-#define PBKDF2_HIGH_SPEED
+    #define PBKDF2_HIGH_SPEED
 #endif
 
 #endif /* DRIVERS_LIB_INCLUDE_HASH_HASH_CONFIG_H_ */

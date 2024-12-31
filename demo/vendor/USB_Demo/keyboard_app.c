@@ -22,14 +22,14 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if(USB_DEMO_TYPE==USB_KEYBOARD)
-#include "application/usb_app/usbkb.h"
-#include "application/usbstd/usb.h"
-unsigned char  kb_data[6];
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+#if (USB_DEMO_TYPE == USB_KEYBOARD)
+    #include "application/usb_app/usbkb.h"
+    #include "application/usbstd/usb.h"
+unsigned char kb_data[6];
+    #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
-#endif
+    #endif
 
 // BYTE0: special key(Ctrl/shift ...);
 // BYTE1: reserved;
@@ -84,73 +84,64 @@ void user_init(void)
     gpio_set_low_level(KEY3);
 }
 
-
-void main_loop (void)
+void main_loop(void)
 {
     /**
      * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
      *              otherwise the MCU will be reset after 8s.
     */
-#if( (defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)) && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY) )
+    #if ((defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)) && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
     /**
      *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
      */
-if(usb_get_vbus_detect_status())
-{
-    if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
-    {
-        /**
+    if (usb_get_vbus_detect_status()) {
+        if (clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100 * 1000) && (g_vbus_timer_turn_off_flag == 0)) {
+            /**
          * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
          * The vbus detect status will not be clear to 0.
          */
-        wd_turn_off_vbus_timer();
-        g_vbus_timer_turn_off_flag = 1;
+            wd_turn_off_vbus_timer();
+            g_vbus_timer_turn_off_flag = 1;
+        }
+    } else {
+        g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+        g_vbus_timer_turn_off_flag       = 0;
     }
-}
-else
-{
-    g_vbus_timer_turn_off_start_tick = stimer_get_tick();
-    g_vbus_timer_turn_off_flag = 0;
-}
-#endif
+    #endif
 
     usb_handle_irq();
-    if(g_usb_config != 0 )
-    {
-        if(gpio_get_level(KEY1)==0)
-        {
+    if (g_usb_config != 0) {
+        if (gpio_get_level(KEY1) == 0) {
             delay_us(10000);
-            if(gpio_get_level(KEY1)==0)
-            {
-                while(gpio_get_level(KEY1)==0);
+            if (gpio_get_level(KEY1) == 0) {
+                while (gpio_get_level(KEY1) == 0)
+                    ;
                 gpio_set_high_level(LED1);
                 // normal key: data[0]~data[5]
                 kb_data[0] = 0;
                 kb_data[1] = 0;
-                kb_data[2] = 0x59;  // number key: 1
-                kb_data[3] = 0;     // number key: 2
+                kb_data[2] = 0x59; // number key: 1
+                kb_data[3] = 0;    // number key: 2
                 kb_data[4] = 0;
                 kb_data[5] = 0;
 
-                usbkb_hid_report_normal(0x00,kb_data);
+                usbkb_hid_report_normal(0x00, kb_data);
             }
         }
 
-        if(gpio_get_level(KEY2)==0)
-        {
+        if (gpio_get_level(KEY2) == 0) {
             delay_us(10000);
-            if(gpio_get_level(KEY2)==0)
-            {
-                while(gpio_get_level(KEY2)==0);
+            if (gpio_get_level(KEY2) == 0) {
+                while (gpio_get_level(KEY2) == 0)
+                    ;
                 gpio_set_low_level(LED1);
-            {
-                    for(int i=0;i<6;i++)
-                    {
-                        kb_data[i]=0;
+                {
+                    for (int i = 0; i < 6; i++) {
+                        kb_data[i] = 0;
                     }
                 }
 
-                usbkb_hid_report_normal(0,kb_data);
+                usbkb_hid_report_normal(0, kb_data);
             }
         }
     }

@@ -31,8 +31,7 @@ extern "C"
 #include "driver.h"
 #include "common.h"
 
-unsigned int CHACHA20_POLY1305_all_test(void);
-
+    unsigned int CHACHA20_POLY1305_all_test(void);
 
 
 /* Disable C linkage for C++ Compilers: */

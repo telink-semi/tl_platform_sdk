@@ -25,35 +25,34 @@
 #define SHA512_224_H
 
 
-
 #include "hash.h"
 
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
 #ifdef SUPPORT_HASH_SHA512_224
 
 
-typedef HASH_CTX SHA512_224_CTX;
+    typedef HASH_CTX SHA512_224_CTX;
 
-#ifdef HASH_DMA_FUNCTION
-typedef HASH_DMA_CTX SHA512_224_DMA_CTX;
-#endif
+    #ifdef HASH_DMA_FUNCTION
+    typedef HASH_DMA_CTX SHA512_224_DMA_CTX;
+    #endif
 
 
-//APIs
-/**
+    //APIs
+    /**
  * @brief       init sha512_224
  * @param[in]   ctx         - SHA512_224_CTX context pointer.
  * @return      0:success     other:error
  */
-unsigned int sha512_224_init(SHA512_224_CTX *ctx);
+    unsigned int sha512_224_init(SHA512_224_CTX *ctx);
 
-/**
+    /**
  * @brief       sha512_224 update message
  * @param[in]   ctx            - SHA512_224_CTX context pointer.
  * @param[in]   msg            - message.
@@ -64,9 +63,9 @@ unsigned int sha512_224_init(SHA512_224_CTX *ctx);
       -# 1.please make sure the three parameters are valid, and ctx is initialized.
   @endverbatim
  */
-unsigned int sha512_224_update(SHA512_224_CTX *ctx, unsigned char *msg, unsigned int msg_bytes);
+    unsigned int sha512_224_update(SHA512_224_CTX *ctx, unsigned char *msg, unsigned int msg_bytes);
 
-/**
+    /**
  * @brief       message update done, get the sha512_224 digest
  * @param[out]  digest            - sha512_224 digest, 28 bytes.
  * @return      0:success     other:error
@@ -75,9 +74,9 @@ unsigned int sha512_224_update(SHA512_224_CTX *ctx, unsigned char *msg, unsigned
       -# 1. please make sure the digest buffer is sufficient.
   @endverbatim
  */
-unsigned int sha512_224_final(SHA512_224_CTX *ctx, unsigned char *digest);
+    unsigned int sha512_224_final(SHA512_224_CTX *ctx, unsigned char *digest);
 
-/**
+    /**
  * @brief       input whole message and get its sha512_224 digest
  * @param[in]   msg            - message.
  * @param[in]   msg_bytes      - byte length of the input message, it could be 0.
@@ -88,10 +87,10 @@ unsigned int sha512_224_final(SHA512_224_CTX *ctx, unsigned char *digest);
       -# 1. please make sure the digest buffer is sufficient.
   @endverbatim
  */
-unsigned int sha512_224(unsigned char *msg, unsigned int msg_bytes, unsigned char *digest);
+    unsigned int sha512_224(unsigned char *msg, unsigned int msg_bytes, unsigned char *digest);
 
-#ifdef SUPPORT_HASH_NODE
-/**
+    #ifdef SUPPORT_HASH_NODE
+    /**
  * @brief       input whole message and get its sha512_224 digest(node style)
  * @param[in]   node           - input, message node pointer
  * @param[in]   node_num       - input, number of hash nodes, i.e. number of message segments.
@@ -104,19 +103,19 @@ unsigned int sha512_224(unsigned char *msg, unsigned int msg_bytes, unsigned cha
  *        address and byte length.
   @endverbatim
  */
-unsigned int sha512_224_node_steps(HASH_NODE *node, unsigned int node_num, unsigned char *digest);
-#endif
+    unsigned int sha512_224_node_steps(HASH_NODE *node, unsigned int node_num, unsigned char *digest);
+    #endif
 
-#ifdef HASH_DMA_FUNCTION
-/**
+    #ifdef HASH_DMA_FUNCTION
+    /**
  * @brief       init dma sha512_224
  * @param[in]   ctx           - SHA512_224_DMA_CTX context pointer.
  * @param[in]   callback      - callback function pointer.
  * @return      0:success     other:error
  */
-unsigned int sha512_224_dma_init(SHA512_224_DMA_CTX *ctx, HASH_CALLBACK callback);
+    unsigned int sha512_224_dma_init(SHA512_224_DMA_CTX *ctx, HASH_CALLBACK callback);
 
-/**
+    /**
  * @brief       dma sha512_224 update some message blocks
  * @param[in]   ctx         - SHA512_224_DMA_CTX context pointer.
  * @param[in]   msg         - message blocks.
@@ -128,9 +127,9 @@ unsigned int sha512_224_dma_init(SHA512_224_DMA_CTX *ctx, HASH_CALLBACK callback
       -# 1. please make sure the four parameters are valid, and ctx is initialized.
   @endverbatim
  */
-unsigned int sha512_224_dma_update_blocks(SHA512_224_DMA_CTX *ctx, unsigned int *msg, unsigned int msg_bytes);
+    unsigned int sha512_224_dma_update_blocks(SHA512_224_DMA_CTX *ctx, unsigned int *msg, unsigned int msg_bytes);
 
-/**
+    /**
  * @brief       dma sha512_224 final(input the remainder message and get the digest)
  * @param[in]   ctx               - SHA512_224_DMA_CTX context pointer.
  * @param[in]   remainder_msg     - remainder message.
@@ -143,10 +142,9 @@ unsigned int sha512_224_dma_update_blocks(SHA512_224_DMA_CTX *ctx, unsigned int 
       -# 1. please make sure the four parameters are valid, and ctx is initialized.
   @endverbatim
   */
-unsigned int sha512_224_dma_final(SHA512_224_DMA_CTX *ctx, unsigned int *remainder_msg, unsigned int remainder_bytes, 
-        unsigned int *digest);
+    unsigned int sha512_224_dma_final(SHA512_224_DMA_CTX *ctx, unsigned int *remainder_msg, unsigned int remainder_bytes, unsigned int *digest);
 
-/**
+    /**
  * @brief       dma sha512_224 digest calculate
  * @param[in]   msg           - message.
  * @param[in]   msg_bytes     - byte length of the message, it could be 0.
@@ -158,10 +156,10 @@ unsigned int sha512_224_dma_final(SHA512_224_DMA_CTX *ctx, unsigned int *remaind
       -# 1. please make sure the four parameters are valid.
   @endverbatim
  */
-unsigned int sha512_224_dma(unsigned int *msg, unsigned int msg_bytes, unsigned int *digest, HASH_CALLBACK callback);
+    unsigned int sha512_224_dma(unsigned int *msg, unsigned int msg_bytes, unsigned int *digest, HASH_CALLBACK callback);
 
-#ifdef SUPPORT_HASH_DMA_NODE
-/**
+        #ifdef SUPPORT_HASH_DMA_NODE
+    /**
  * @brief       input whole message and get its sha512_224 digest(dma node style)
  * @param[in]   node              - input, message node pointer
  * @param[in]   node_num          - input, number of hash nodes, i.e. number of message segments.
@@ -176,11 +174,10 @@ unsigned int sha512_224_dma(unsigned int *msg, unsigned int msg_bytes, unsigned 
  *     3. for every node or segment except the last, its message length must be a multiple of block length.
   @endverbatim
  */
-unsigned int sha512_224_dma_node_steps(HASH_DMA_NODE *node, unsigned int node_num, unsigned int *digest, 
-        HASH_CALLBACK callback);
-#endif
+    unsigned int sha512_224_dma_node_steps(HASH_DMA_NODE *node, unsigned int node_num, unsigned int *digest, HASH_CALLBACK callback);
+        #endif
 
-#endif
+    #endif
 
 #endif
 

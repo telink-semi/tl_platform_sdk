@@ -21,10 +21,11 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-typedef struct{
-    unsigned int oled_addr;//oled operating register address
-    unsigned char oled_data;//oled data written to operating register address
-}oled_init_t;
+typedef struct
+{
+    unsigned int  oled_addr; //oled operating register address
+    unsigned char oled_data; //oled data written to operating register address
+} oled_init_t;
 
 ////rgb configuration parameter
 oled_init_t oled_rgb565 = {0x003A00, 0x55};
@@ -36,24 +37,24 @@ oled_init_t oled_init[284] = {
     {0x000500, 0x00},
     {0x000600, 0x72},
     {0x000D00, 0x00},
-    {0x000E00, 0x81},//AVDD=6V
+    {0x000E00, 0x81}, //AVDD=6V
     {0x000F00, 0x81},
-    {0x001000, 0x11},//AVDD=3VCI
-    {0x001100, 0x81},//VCL=-VCI
+    {0x001000, 0x11}, //AVDD=3VCI
+    {0x001100, 0x81}, //VCL=-VCI
     {0x001200, 0x81},
-    {0x001300, 0x80},//VGH=AVDD
+    {0x001300, 0x80}, //VGH=AVDD
     {0x001400, 0x80},
-    {0x001500, 0x81},//VGL=
+    {0x001500, 0x81}, //VGL=
     {0x001600, 0x81},
-    {0x001800, 0x66},//VGHR=6V
-    {0x001900, 0x88},//VGLR=-6V
-    {0x005B00, 0x10},//VREFPN5 Regulator Enable
+    {0x001800, 0x66}, //VGHR=6V
+    {0x001900, 0x88}, //VGLR=-6V
+    {0x005B00, 0x10}, //VREFPN5 Regulator Enable
     {0x005C00, 0x55},
-    {0x006200, 0x19},//Normal VREFN
-    {0x006300, 0x19},//Idle VREFN
+    {0x006200, 0x19}, //Normal VREFN
+    {0x006300, 0x19}, //Idle VREFN
     {0x007000, 0x54},
     {0x007400, 0x0C},
-    {0x00C500, 0x10},// NOR=IDLE=GAM1 // HBM=GAM2
+    {0x00C500, 0x10}, // NOR=IDLE=GAM1 // HBM=GAM2
 
     {0x00FE00, 0x01},
     {0x002500, 0x03},
@@ -64,14 +65,14 @@ oled_init_t oled_init[284] = {
     {0x002B00, 0x32},
     {0x002D00, 0x0A},
     {0x002F00, 0x08},
-    {0x003000, 0x43},//43: 15Hz
+    {0x003000, 0x43}, //43: 15Hz
 
     {0x006600, 0x90},
-    {0x007200, 0x1A},//OVDD  4.6V
-    {0x007300, 0x13},//OVSS  -2.2V
+    {0x007200, 0x1A}, //OVDD  4.6V
+    {0x007300, 0x13}, //OVSS  -2.2V
 
     {0x00FE00, 0x01},
-    {0x006A00, 0x17},//RT4723  daz20013  0x17=-2.2
+    {0x006A00, 0x17}, //RT4723  daz20013  0x17=-2.2
 
     {0x001B00, 0x00},
     //VSR power saving
@@ -82,20 +83,20 @@ oled_init_t oled_init[284] = {
     {0x00FE00, 0x01},
     {0x003600, 0x00},
     {0x006C00, 0x80},
-    {0x006D00, 0x19},//VGMP VGSP turn off at idle mode
+    {0x006D00, 0x19}, //VGMP VGSP turn off at idle mode
 
     {0x00FE00, 0x04},
     {0x006300, 0x00},
     {0x006400, 0x0E},
     //Gamma1 - AOD/Normal
     {0x00FE00, 0x02},
-    {0x00A900, 0x30},//5.8V VGMPS
-    {0x00AA00, 0xB9},//2.5V VGSP
+    {0x00A900, 0x30}, //5.8V VGMPS
+    {0x00AA00, 0xB9}, //2.5V VGSP
     {0x00AB00, 0x01},
     //Gamma2 - HBM
-    {0x00FE00, 0x03},//page2
-    {0x00A900, 0x30},//5.8V VGMP
-    {0x00AA00, 0x90},//2V VGSP
+    {0x00FE00, 0x03}, //page2
+    {0x00A900, 0x30}, //5.8V VGMP
+    {0x00AA00, 0x90}, //2V VGSP
     {0x00AB00, 0x01},
     //SW MAPPING
     {0x00FE00, 0x0C},
@@ -165,7 +166,7 @@ oled_init_t oled_init[284] = {
     {0x007800, 0x49},
     {0x007900, 0xF3},
     {0x007A00, 0xFF},
-     //VSR1-STV
+    //VSR1-STV
     {0x00FE00, 0x04},
     {0x000000, 0x9D},
     {0x000100, 0x00},
@@ -231,10 +232,10 @@ oled_init_t oled_init[284] = {
     {0x006500, 0x76},
     {0x006600, 0x19},
     {0x006700, 0x00},
-    
+
     {0x00FE00, 0x07},
     {0x001500, 0x04},
-    
+
     {0x00FE00, 0x05},
     {0x004C00, 0x01},
     {0x004D00, 0x82},
@@ -318,7 +319,7 @@ oled_init_t oled_init[284] = {
     {0x009B00, 0x04},
     {0x009C00, 0x02},
     {0x009D00, 0x03},
-    
+
     {0x00FE00, 0x0C},
     {0x002500, 0x00},
     {0x003100, 0xEF},
@@ -338,10 +339,9 @@ oled_init_t oled_init[284] = {
     {0x004100, 0x00},
     {0x004200, 0x00},
     {0x004300, 0x01},
-    
+
     {0x00FE00, 0x00},
     {0x003500, 0x00},
     {0x00C400, 0x80},
     {0x005100, 0xFF},
 };
-

@@ -24,28 +24,26 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-    extern "C" {
+extern "C"
+{
 #endif
 #include "../../../../vendor/USB_Demo/usb_default.h"
 #if USB_CDC_ENABLE
-#include "driver.h"
-#include "../usbstd/HIDClassCommon.h"
-#include "../usbstd/HIDReportData.h"
-#include "../usbstd/CDCClassDevice.h"
-#include "../usbstd/usbdesc.h"
+    #include "driver.h"
+    #include "../usbstd/HIDClassCommon.h"
+    #include "../usbstd/HIDReportData.h"
+    #include "../usbstd/CDCClassDevice.h"
+    #include "../usbstd/usbdesc.h"
 
 
+    extern unsigned char  usb_cdc_data[CDC_TXRX_EPSIZE];
+    extern unsigned short usb_cdc_data_len;
+
+    extern unsigned int  usb_cdc_tx_cnt;
+    extern unsigned char LineCoding[7];
 
 
-
-extern unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];
-extern unsigned short usb_cdc_data_len;
-
-extern unsigned int usb_cdc_tx_cnt;
-extern unsigned char LineCoding[7];
-
-
-/**
+    /**
  * @brief       This function serves to send data to USB host in CDC device.
  * @param[in]   data_ptr -  the pointer of data, which need to be sent.
  * @param[in]   data_len -  the length of data, which need to be sent.
@@ -55,34 +53,13 @@ extern unsigned char LineCoding[7];
  *              - This function supports sending an arbitrary length to the host;
  *              - This function is blocking and will not return until all data has been sent.
  */
-unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data_len);
+    unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data_len);
 
-void usb_cdc_rx_data_from_host(unsigned char* rx_buff);
-
-
+    void usb_cdc_rx_data_from_host(unsigned char *rx_buff);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Disable C linkage for C++ Compilers: */
-#if defined(__cplusplus)
-    }
-#endif
+    /* Disable C linkage for C++ Compilers: */
+    #if defined(__cplusplus)
+}
+    #endif
 #endif

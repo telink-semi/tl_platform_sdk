@@ -24,38 +24,28 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "driver.h"
 #include "common.h"
 
 
+#define LINEIN_TO_LINEOUT        1
+#define AMIC_TO_LINEOUT          2
+#define DMIC_TO_LINEOUT          3
+#define BUFFER_TO_LINEOUT        4
+#define EXT_CODEC_LINEIN_LINEOUT 5
+#define FLASH_TO_LINEOUT         6
+#define I2SIN_TO_I2SOUT          7
 
 
-
-
-
-#define LINEIN_TO_LINEOUT               1
-#define AMIC_TO_LINEOUT                 2
-#define DMIC_TO_LINEOUT                 3
-#define BUFFER_TO_LINEOUT               4
-#define EXT_CODEC_LINEIN_LINEOUT        5
-#define FLASH_TO_LINEOUT                6
-#define I2SIN_TO_I2SOUT                 7
-
-
-#define AUDIO_MODE     DMIC_TO_LINEOUT
+#define AUDIO_MODE               DMIC_TO_LINEOUT
 
 #define CHIP_VER_A0              0
 #define CHIP_VER_A1              1
-#define CHIP_VER             CHIP_VER_A1
-
-
-
-
-
-
+#define CHIP_VER                 CHIP_VER_A1
 
 
 /* Disable C linkage for C++ Compilers: */

@@ -31,15 +31,15 @@ extern "C"
 #include "driver.h"
 #include "common.h"
 
-unsigned int ECCp_get_key_all_test(void);
-unsigned int ECDH_all_test(void);
-unsigned int ECDSA_all_test(void);
-unsigned int RSA_all_test(void);
-unsigned int X25519_all_test(void);
-unsigned int Ed25519_all_test(void);
-unsigned int DH_all_test(void);
-unsigned int ECCp_get_curve_paras_test(void);
-unsigned int ECIES_all_test(void);
+    unsigned int ECCp_get_key_all_test(void);
+    unsigned int ECDH_all_test(void);
+    unsigned int ECDSA_all_test(void);
+    unsigned int RSA_all_test(void);
+    unsigned int X25519_all_test(void);
+    unsigned int Ed25519_all_test(void);
+    unsigned int DH_all_test(void);
+    unsigned int ECCp_get_curve_paras_test(void);
+    unsigned int ECIES_all_test(void);
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

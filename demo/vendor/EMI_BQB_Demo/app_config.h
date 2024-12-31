@@ -24,16 +24,16 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
 
-
-#define EMI_DEMO    0
-#define BQB_DEMO    1
-#define TEST_DEMO   EMI_DEMO
+#define EMI_DEMO  0
+#define BQB_DEMO  1
+#define TEST_DEMO EMI_DEMO
 
 
 /**
@@ -43,50 +43,52 @@ extern "C" {
  *          At the same time, delete the AT instruction content after sdk_version segment.
  *          (The ram_boot.link file does not need to be modified when compiling the flash bin)
  */
-#define EMI_SUPPORT_SETTING            0
+#define EMI_SUPPORT_SETTING 0
 
 #if TEST_DEMO == EMI_DEMO
 
-#if EMI_SUPPORT_SETTING
-/**
+    #if EMI_SUPPORT_SETTING
+    /**
  * @brief Structure to save general setting.
  */
-typedef struct{
-    unsigned char ptr[0];
-    unsigned char calib_pos:2;
-    unsigned char pa_bypass_en:1;
-    unsigned char :1;
-    unsigned char swire_through_usb_en:1;
-    unsigned char power_mode:2;
-    unsigned char cap:1;
-}general_setting_t, *general_setting_t_ptr;
+    typedef struct
+    {
+        unsigned char ptr[0];
+        unsigned char calib_pos            : 2;
+        unsigned char pa_bypass_en         : 1;
+        unsigned char                      : 1;
+        unsigned char swire_through_usb_en : 1;
+        unsigned char power_mode           : 2;
+        unsigned char cap                  : 1;
+    } general_setting_t, *general_setting_t_ptr;
 
-/**
+    /**
  * @brief Structure to save emi configuration.
  */
-typedef struct{
-    unsigned int pa_setting_pos;
-    general_setting_t general_setting;
-}emi_setting_t, *emi_setting_t_ptr;
-#endif
+    typedef struct
+    {
+        unsigned int      pa_setting_pos;
+        general_setting_t general_setting;
+    } emi_setting_t, *emi_setting_t_ptr;
+    #endif
 
 #endif
 
 /**
  * @brief Define where the configuration data will be saved in the binary file.
  */
-#define VERSION_ADDR                (0x02)
-#define PA_SETTING_ADDR             (0x04)
-#define GENERAL_SETTING_ADDR        (0x16)
+#define VERSION_ADDR         (0x02)
+#define PA_SETTING_ADDR      (0x04)
+#define GENERAL_SETTING_ADDR (0x16)
 
 #if defined(MCU_CORE_TL721X)
-#define rf_stimer_get_tick()       rf_bb_timer_get_tick()
-#define RF_SYSTEM_TIMER_TICK_1US   BB_TIMER_TICK_1US
-#define RF_SYSTEM_TIMER_TICK_1MS   BB_TIMER_TICK_1MS
+    #define rf_stimer_get_tick()     rf_bb_timer_get_tick()
+    #define RF_SYSTEM_TIMER_TICK_1US BB_TIMER_TICK_1US
+    #define RF_SYSTEM_TIMER_TICK_1MS BB_TIMER_TICK_1MS
 #else
-#define rf_stimer_get_tick()       stimer_get_tick()
-#define RF_SYSTEM_TIMER_TICK_1US   SYSTEM_TIMER_TICK_1US
-#define RF_SYSTEM_TIMER_TICK_1MS   SYSTEM_TIMER_TICK_1MS
+    #define rf_stimer_get_tick()     stimer_get_tick()
+    #define RF_SYSTEM_TIMER_TICK_1US SYSTEM_TIMER_TICK_1US
+    #define RF_SYSTEM_TIMER_TICK_1MS SYSTEM_TIMER_TICK_1MS
 #endif
 
 /* Disable C linkage for C++ Compilers: */

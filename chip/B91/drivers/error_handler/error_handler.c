@@ -65,6 +65,7 @@ __attribute__((weak)) void _attribute_ram_code_sec_noinline_ drv_timeout_handler
  * @param[in] timeout_us - the error timeout(us).
  * @return    none.
  */
-void drv_set_error_timeout(unsigned int timeout_us){
+void drv_set_error_timeout(unsigned int timeout_us)
+{
     g_drv_api_error_timeout_us = timeout_us;
 }

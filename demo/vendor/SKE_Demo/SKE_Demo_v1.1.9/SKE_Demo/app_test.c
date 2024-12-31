@@ -25,40 +25,44 @@
 
 unsigned int ske_app_test(void)
 {
-     ske_dig_en();
+    ske_dig_en();
 #ifdef SKE_LP_DMA_FUNCTION
-     ske_set_tx_dma_config(DMA0);
-     ske_set_rx_dma_config(DMA1,DMA_BURST_1_WORD);
+    ske_set_tx_dma_config(DMA0);
+    ske_set_rx_dma_config(DMA1, DMA_BURST_1_WORD);
 #endif /* SKE_LP_DMA_FUNCTION */
 
 #if 1
-    if(SKE_LP_CCM_all_Test())
+    if (SKE_LP_CCM_all_Test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(SKE_LP_GCM_all_test())
+    if (SKE_LP_GCM_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(SKE_LP_GMAC_all_test())
+    if (SKE_LP_GMAC_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(SKE_sample_all_test())
+    if (SKE_sample_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(SKE_all_test())
+    if (SKE_all_test()) {
         return 1;
+    }
 #endif
 
     return 0;
 }
-
 
 void user_init(void)
 {
@@ -68,8 +72,8 @@ void user_init(void)
     ske_app_test();
 }
 
-void main_loop (void)
+void main_loop(void)
 {
-     gpio_toggle(LED1);
-     delay_ms(50);
+    gpio_toggle(LED1);
+    delay_ms(50);
 }

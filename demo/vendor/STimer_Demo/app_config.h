@@ -24,49 +24,49 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
-#define N22_TEST                0
-#define DSP_TEST                0
+#define N22_TEST 0
+#define DSP_TEST 0
 
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
-#define PWM0_PIN                GPIO_FC_PA1
-#define INPUT_CAPT_PIN          GPIO_PD0
-#define CAPT_DMA_CHN            DMA0
-#define CAPT_DMA_STATUS         BIT(CAPT_DMA_CHN)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #define PWM0_PIN        GPIO_FC_PA1
+    #define INPUT_CAPT_PIN  GPIO_PD0
+    #define CAPT_DMA_CHN    DMA0
+    #define CAPT_DMA_STATUS BIT(CAPT_DMA_CHN)
 #endif
 
 
-#define STIMER_DELAY                            1
+#define STIMER_DELAY 1
 
-#if defined(MCU_CORE_B91)|| defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
-#define STIMER_IRQ                              2
-#elif  defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
-#define STIMER_IRQ_D25                          3
-#define STIMER_IRQ_D25_N22_DSP                  4
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+    #define STIMER_IRQ 2
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+    #define STIMER_IRQ_D25         3
+    #define STIMER_IRQ_D25_N22_DSP 4
 #endif
 
-#define STIMER_GET_32K_TICK                     5
-#define STIMER_SET_32K_TICK                     6
+#define STIMER_GET_32K_TICK 5
+#define STIMER_SET_32K_TICK 6
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
-#define STIMER_SET_32K_TICK_LVL                 7
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #define STIMER_SET_32K_TICK_LVL 7
 #endif
 
-#define STIMER_TRACK_32K_TICK                   8
-#define STIMER_GET_TICK                         9
+#define STIMER_TRACK_32K_TICK 8
+#define STIMER_GET_TICK       9
 
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
-#define STIMER_INPUT_CAPTURE                    10
-#define STIMER_INPUT_CAPTURE_DMA                11
-#define STIMER_INPUT_CAPTURE_DMA_LLP_MODE       12
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #define STIMER_INPUT_CAPTURE              10
+    #define STIMER_INPUT_CAPTURE_DMA          11
+    #define STIMER_INPUT_CAPTURE_DMA_LLP_MODE 12
 #endif
 
-#define STIMER_MODE                             STIMER_DELAY
-
+#define STIMER_MODE STIMER_DELAY
 
 
 /* Disable C linkage for C++ Compilers: */

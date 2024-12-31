@@ -38,8 +38,7 @@ int main(void)
     CLOCK_INIT;
     user_init();
 
-    while (1)
-    {
+    while (1) {
         main_loop();
     }
     return 0;

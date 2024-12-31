@@ -26,7 +26,8 @@
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
@@ -38,13 +39,13 @@ extern "C" {
 #define IR_LEARN_MODE      IR_ANALOG_RX_MODE
 
 #if ((IR_LEARN_MODE == IR_DIGITAL_RX_MODE) || (IR_LEARN_MODE == IR_ANALOG_RX_MODE))
-#define DMA_EN 0
-#if (DMA_EN)
-#define DMA_LLP_PINGPONG  1
-#define DMA_MODE_NO_CHAIN 2
-#define DMA_MODE          DMA_LLP_PINGPONG
-#endif
-#define IR_LEARN_RX_DATA_WIDTH 16 /* 16bits or 24bits. */
+    #define DMA_EN 0
+    #if (DMA_EN)
+        #define DMA_LLP_PINGPONG  1
+        #define DMA_MODE_NO_CHAIN 2
+        #define DMA_MODE          DMA_LLP_PINGPONG
+    #endif
+    #define IR_LEARN_RX_DATA_WIDTH 16 /* 16bits or 24bits. */
 #endif
 
 #define IR_LEARN_PM_FUNCTION_EN 1

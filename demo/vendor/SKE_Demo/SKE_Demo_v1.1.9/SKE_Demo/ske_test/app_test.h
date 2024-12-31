@@ -31,12 +31,11 @@ extern "C"
 #include "driver.h"
 #include "common.h"
 
-unsigned int SKE_LP_CCM_all_Test(void);
-unsigned int SKE_LP_GCM_all_test(void);
-unsigned int SKE_LP_GMAC_all_test(void);
-unsigned char SKE_sample_all_test(void);
-unsigned int SKE_all_test(void);
-
+    unsigned int  SKE_LP_CCM_all_Test(void);
+    unsigned int  SKE_LP_GCM_all_test(void);
+    unsigned int  SKE_LP_GMAC_all_test(void);
+    unsigned char SKE_sample_all_test(void);
+    unsigned int  SKE_all_test(void);
 
 
 /* Disable C linkage for C++ Compilers: */

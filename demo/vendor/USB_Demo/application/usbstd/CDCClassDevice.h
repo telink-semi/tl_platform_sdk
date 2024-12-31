@@ -24,41 +24,41 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-    extern "C" {
+extern "C"
+{
 #endif
 /* Includes: */
 #include "CDCClassCommon.h"
 
-typedef struct
-{
-    struct
-    {
-        unsigned char ControlInterfaceNumber;
-        unsigned char DataINEndpointNumber;
-        unsigned short DataINEndpointSize;
-        _Bool DataINEndpointDoubleBank;
-        unsigned char DataOUTEndpointNumber;
-        unsigned short DataOUTEndpointSize;
-        _Bool DataOUTEndpointDoubleBank;
-        unsigned char NotificationEndpointNumber;
-        unsigned short NotificationEndpointSize;
-        _Bool NotificationEndpointDoubleBank;
-    } __attribute__((packed)) Config;
-
-    struct
+    typedef struct
     {
         struct
         {
-            unsigned short HostToDevice;
-            unsigned short DeviceToHost;
-        } ControlLineStates;
+            unsigned char  ControlInterfaceNumber;
+            unsigned char  DataINEndpointNumber;
+            unsigned short DataINEndpointSize;
+            _Bool          DataINEndpointDoubleBank;
+            unsigned char  DataOUTEndpointNumber;
+            unsigned short DataOUTEndpointSize;
+            _Bool          DataOUTEndpointDoubleBank;
+            unsigned char  NotificationEndpointNumber;
+            unsigned short NotificationEndpointSize;
+            _Bool          NotificationEndpointDoubleBank;
+        } __attribute__((packed)) Config;
 
-        CDC_LineEncoding_t LineEncoding;
-    } __attribute__((packed)) State;
-} __attribute__((packed)) USB_ClassInfo_CDC_Device_t;
+        struct
+        {
+            struct
+            {
+                unsigned short HostToDevice;
+                unsigned short DeviceToHost;
+            } ControlLineStates;
 
+            CDC_LineEncoding_t LineEncoding;
+        } __attribute__((packed)) State;
+    } __attribute__((packed)) USB_ClassInfo_CDC_Device_t;
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-    }
+}
 #endif

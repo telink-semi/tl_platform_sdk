@@ -22,15 +22,15 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if(USB_DEMO_TYPE==USB_MOUSE)
-#include "application/usbstd/usb.h"
-#include "application/usb_app/usbmouse.h"
+#if (USB_DEMO_TYPE == USB_MOUSE)
+    #include "application/usbstd/usb.h"
+    #include "application/usb_app/usbmouse.h"
 
-char  mouse[4];
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+char mouse[4];
+    #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
-#endif
+    #endif
 void user_init(void)
 {
     //enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device)
@@ -82,67 +82,60 @@ void user_init(void)
 }
 
 /* enum to USB input device and simulate the left click and right click of mouse */
-void main_loop (void)
+void main_loop(void)
 {
-/**
+    /**
  * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
  *              otherwise the MCU will be reset after 8s.
 */
-#if( (defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X))&& (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+    #if ((defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)) && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
     /**
      *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
      */
-if(usb_get_vbus_detect_status())
-{
-    if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
-    {
-        /**
+    if (usb_get_vbus_detect_status()) {
+        if (clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100 * 1000) && (g_vbus_timer_turn_off_flag == 0)) {
+            /**
          * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
          * The vbus detect status will not be clear to 0.
          */
-        wd_turn_off_vbus_timer();
-        g_vbus_timer_turn_off_flag = 1;
+            wd_turn_off_vbus_timer();
+            g_vbus_timer_turn_off_flag = 1;
+        }
+    } else {
+        g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+        g_vbus_timer_turn_off_flag       = 0;
     }
-}
-else
-{
-    g_vbus_timer_turn_off_start_tick = stimer_get_tick();
-    g_vbus_timer_turn_off_flag = 0;
-}
-#endif
+    #endif
 
     usb_handle_irq();
-    if(g_usb_config != 0 )
-    {
-        if(gpio_get_level(KEY1)==0)
-        {
+    if (g_usb_config != 0) {
+        if (gpio_get_level(KEY1) == 0) {
             delay_us(10000);
-            if(gpio_get_level(KEY1)==0)
-            {
-                while(gpio_get_level(KEY1)==0);
+            if (gpio_get_level(KEY1) == 0) {
+                while (gpio_get_level(KEY1) == 0)
+                    ;
                 gpio_set_high_level(LED1);
                 //printf("Key:Mouse  Click ! \r\n");
-                mouse[0] = BIT(1);// BIT(0) - left key; BIT(1) - right key; BIT(2) - middle key; BIT(3) - side key; BIT(4) - external key
-                mouse[1] = -2;    // Displacement relative to x coordinate
-                mouse[2] = 2;     // Displacement relative to y coordinate
-                mouse[3] = 0;     // Displacement relative to the roller
-                usbmouse_hid_report(USB_HID_MOUSE,(unsigned char*)mouse,4);
+                mouse[0] = BIT(1); // BIT(0) - left key; BIT(1) - right key; BIT(2) - middle key; BIT(3) - side key; BIT(4) - external key
+                mouse[1] = -2;     // Displacement relative to x coordinate
+                mouse[2] = 2;      // Displacement relative to y coordinate
+                mouse[3] = 0;      // Displacement relative to the roller
+                usbmouse_hid_report(USB_HID_MOUSE, (unsigned char *)mouse, 4);
             }
         }
 
-        if(gpio_get_level(KEY2)==0)
-        {
+        if (gpio_get_level(KEY2) == 0) {
             delay_us(10000);
-            if(gpio_get_level(KEY2)==0)
-            {
-                while(gpio_get_level(KEY2)==0);
+            if (gpio_get_level(KEY2) == 0) {
+                while (gpio_get_level(KEY2) == 0)
+                    ;
                 gpio_set_low_level(LED1);
                 //printf("Key:release \r\n");
                 mouse[0] = 0;
                 mouse[1] = 0;
                 mouse[2] = 0;
                 mouse[3] = 0;
-                usbmouse_hid_report(USB_HID_MOUSE,(unsigned char*)mouse,4);
+                usbmouse_hid_report(USB_HID_MOUSE, (unsigned char *)mouse, 4);
             }
         }
     }

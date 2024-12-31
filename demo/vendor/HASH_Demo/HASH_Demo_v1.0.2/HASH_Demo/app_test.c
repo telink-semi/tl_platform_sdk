@@ -28,33 +28,36 @@ unsigned int hash_app_test(void)
     hash_dig_en();
 #ifdef HASH_DMA_FUNCTION
     hash_set_tx_dma_config(DMA0);
-    hash_set_rx_dma_config(DMA1,DMA_BURST_1_WORD);
+    hash_set_rx_dma_config(DMA1, DMA_BURST_1_WORD);
 #endif /* HASH_DMA_FUNCTION */
 
 #if 1
-    if(HASH_all_test())
+    if (HASH_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-    if(HMAC_all_test())
+    if (HMAC_all_test()) {
         return 1;
+    }
 #endif
 
 #if 1
-#if !defined(MCU_CORE_TL7518)
-    if(pbkdf2_hmac_test())
+    #if !defined(MCU_CORE_TL7518)
+    if (pbkdf2_hmac_test()) {
         return 1;
-#endif
+    }
+    #endif
 #endif
 
 #if 1
-    if(HASH_HMAC_sample_test())
+    if (HASH_HMAC_sample_test()) {
         return 1;
+    }
 #endif
     return 0;
 }
-
 
 void user_init(void)
 {
@@ -64,8 +67,8 @@ void user_init(void)
     hash_app_test();
 }
 
-void main_loop (void)
+void main_loop(void)
 {
-     gpio_toggle(LED1);
-     delay_ms(50);
+    gpio_toggle(LED1);
+    delay_ms(50);
 }
