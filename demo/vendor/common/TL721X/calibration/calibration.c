@@ -41,8 +41,7 @@ unsigned char user_calib_freq_offset(unsigned int addr)
 
     flash_read_page(addr, 1, &frequency_offset_value);
 
-    if((0xff != frequency_offset_value)&&(frequency_offset_value<=63))
-    {
+    if ((0xff != frequency_offset_value) && (frequency_offset_value <= 63)) {
         rf_update_internal_cap(frequency_offset_value);
         return 1;
     }
@@ -69,52 +68,48 @@ void calibration_func(void)
     flash_mid_sure = flash_read_mid_uid_with_check_with_device_num(0, (unsigned int *)flash_mid, flash_uid);
 
 
-    if (1 == flash_mid_sure)
-    {
-        switch (flash_mid[2])
-        {
-            case FLASH_SIZE_64K:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_64K ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_64K;
-                break;
-            case FLASH_SIZE_128K:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_128K ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_128K;
-                break;
-            case FLASH_SIZE_512K:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_512K ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_512K;
-                break;
-            case FLASH_SIZE_1M:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_1M ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_1M;
-                break;
-            case FLASH_SIZE_2M:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_2M ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_2M;
-                break;
-            case FLASH_SIZE_4M:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_4M ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_4M;
-                break;
-            case FLASH_SIZE_16M:
-                cap_value_addr = FLASH_CAP_VALUE_ADDR_16M ;
-                ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_16M;
-                break;
-            default:
-                break;
+    if (1 == flash_mid_sure) {
+        switch (flash_mid[2]) {
+        case FLASH_SIZE_64K:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_64K;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_64K;
+            break;
+        case FLASH_SIZE_128K:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_128K;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_128K;
+            break;
+        case FLASH_SIZE_512K:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_512K;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_512K;
+            break;
+        case FLASH_SIZE_1M:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_1M;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_1M;
+            break;
+        case FLASH_SIZE_2M:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_2M;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_2M;
+            break;
+        case FLASH_SIZE_4M:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_4M;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_4M;
+            break;
+        case FLASH_SIZE_16M:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_16M;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_16M;
+            break;
+        default:
+            break;
         }
-        if(cap_value_addr){
-             user_calib_freq_offset(cap_value_addr);
+        if (cap_value_addr) {
+            user_calib_freq_offset(cap_value_addr);
         }
-        if(ieee_flash_pos){
-            user_get_ieee_addr(ieee_flash_pos,ieee_addr);
+        if (ieee_flash_pos) {
+            user_get_ieee_addr(ieee_flash_pos, ieee_addr);
         }
 
-    }
-    else
-    {
-        user_get_ieee_addr(0,ieee_addr);
+    } else {
+        user_get_ieee_addr(0, ieee_addr);
     }
 }
 
@@ -135,7 +130,6 @@ unsigned char user_check_ieee_addr(unsigned char *value)
     return (value[0] == 0x00 || value[0] == 0xFF) ? 0 : 1;
 }
 
-
 /**
  * @brief      This function serves to read IEEE address from OTP.
  * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
@@ -145,15 +139,13 @@ ieee_addr_source_e user_get_otp_ieee_addr(unsigned char *buf)
 {
     //Read IEEE address priority: FLASH > OTP
     otp_get_ieee_addr(buf);
-    if(user_check_ieee_addr(buf))
-    {
+    if (user_check_ieee_addr(buf)) {
         return IEEE_ADDR_FROM_OTP;
-    }
-    else
-    {
+    } else {
         return IEEE_ADDR_NOT_EXIST;
     }
 }
+
 /**
  * @brief      This function serves to read IEEE address from FLASH or OTP.
  * @param[in]  addr - the IEEE address of flash
@@ -163,18 +155,17 @@ ieee_addr_source_e user_get_otp_ieee_addr(unsigned char *buf)
  * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
  * @return     ieee_addr_source_e
  */
-ieee_addr_source_e user_get_ieee_addr(unsigned int addr,unsigned char *buf)
+ieee_addr_source_e user_get_ieee_addr(unsigned int addr, unsigned char *buf)
 {
-    if(addr == 0){
+    if (addr == 0) {
         return user_get_otp_ieee_addr(buf);
-    }else{
+    } else {
         //Read IEEE address priority: FLASH > OTP
         flash_read_page(addr, 8, buf);
-        if(user_check_ieee_addr(buf)){
+        if (user_check_ieee_addr(buf)) {
             return IEEE_ADDR_FROM_FLASH;
-        }else{
+        } else {
             return user_get_otp_ieee_addr(buf);
         }
     }
-
 }

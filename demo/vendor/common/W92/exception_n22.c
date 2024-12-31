@@ -72,14 +72,13 @@ __attribute__((weak)) void mswi_irq_handler(void)
 __attribute__((weak)) void except_handler(void)
 {
     /* unhandled trap */
-    exception_mtval = read_csr(NDS_MTVAL);
-    exception_mepc = read_csr(NDS_MEPC);
+    exception_mtval   = read_csr(NDS_MTVAL);
+    exception_mepc    = read_csr(NDS_MEPC);
     exception_mstatus = read_csr(NDS_MSTATUS);
-    exception_mcause = read_csr(NDS_MCAUSE);
+    exception_mcause  = read_csr(NDS_MCAUSE);
     exception_mdcause = read_csr(NDS_MDCAUSE);
 
-    while (1)
-    {
+    while (1) {
         __asm__("nop");
     }
 }
@@ -90,6 +89,7 @@ __attribute__((weak)) void except_handler(void)
  * @note        trap_entry() must align 64bytes.
  */
 _attribute_ram_code_sec_noinline_ void trap_entry(void) __attribute__((interrupt("machine"), aligned(64)));
+
 __attribute__((weak)) void trap_entry(void)
 {
     except_handler();

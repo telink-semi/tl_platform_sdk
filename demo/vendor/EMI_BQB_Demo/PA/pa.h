@@ -28,12 +28,13 @@
 /**
  * @brief       Enumeration type of PA state.
  */
-typedef enum{
-    PA_SETTING_STATE_INIT = 0x01,
-    PA_SETTING_STATE_TX = 0x02,
-    PA_SETTING_STATE_RX = 0x03,
+typedef enum
+{
+    PA_SETTING_STATE_INIT   = 0x01,
+    PA_SETTING_STATE_TX     = 0x02,
+    PA_SETTING_STATE_RX     = 0x03,
     PA_SETTING_STATE_BYPASS = 0x04,
-}pa_setting_state_e;
+} pa_setting_state_e;
 
 /**
  * @brief       This function serves to execute PA operations according to the state.
@@ -43,13 +44,13 @@ typedef enum{
 extern void pa_operation(pa_setting_state_e state);
 
 
-#if(EMI_SUPPORT_SETTING)
-/**
+#if (EMI_SUPPORT_SETTING)
+    /**
  * @brief       This function serves to converts the pin value of a single byte to the actual pin value.
  * @para[in]    value  - One-byte pin value.
  * @return      Result of actual pin value.
  */
-#define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
+    #define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
 
 /**
  * @brief       This function serves to read data saved in binary file.

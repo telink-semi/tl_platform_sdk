@@ -33,10 +33,9 @@ extern "C"
 #include "chacha20_play1305/app_test.h"
 
 #ifdef CHACHA20_POLY1305_DMA_FUNCTION
-extern int buf_chacha20_dma[0x2000];
-#define DMA_RAM_BASE                        (buf_chacha20_dma)           //just for temporary use
-#endif /* CHACHA20_POLY1305_DMA_FUNCTION */
-
+    extern int buf_chacha20_dma[0x2000];
+    #define DMA_RAM_BASE (buf_chacha20_dma) //just for temporary use
+#endif                                      /* CHACHA20_POLY1305_DMA_FUNCTION */
 
 
 /* Disable C linkage for C++ Compilers: */

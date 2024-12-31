@@ -26,108 +26,109 @@
 
 #include "../app_config.h"
 
-#if(TEST_DEMO==BQB_DEMO)
+#if (TEST_DEMO == BQB_DEMO)
 
-/*Set to 1, open the code related to BQB tool configuration (uart port, CAP value, TX Power, PA port, calibration position, etc.).*/
-#define SUPPORT_CONFIGURATION   0
+    /*Set to 1, open the code related to BQB tool configuration (uart port, CAP value, TX Power, PA port, calibration position, etc.).*/
+    #define SUPPORT_CONFIGURATION 0
 
-/* set power of Tx */
-#if defined(MCU_CORE_B91)
-#define BQB_TX_POWER        RF_POWER_P6p98dBm
-#elif defined(MCU_CORE_TL321X)
-#define BQB_TX_POWER        RF_POWER_P7p19dBm
-#else
-#define BQB_TX_POWER        RF_POWER_P7p00dBm
-#endif
+    /* set power of Tx */
+    #if defined(MCU_CORE_B91)
+        #define BQB_TX_POWER RF_POWER_P6p98dBm
+    #elif defined(MCU_CORE_TL321X)
+        #define BQB_TX_POWER RF_POWER_P7p19dBm
+    #else
+        #define BQB_TX_POWER RF_POWER_P7p00dBm
+    #endif
 
-#define ACCESS_CODE         0x29417671
+    #define ACCESS_CODE 0x29417671
 
-/* set configuration flash address */
-#if SUPPORT_CONFIGURATION
-#define CONFIGURATION_ADDR_UART_TX      0x12
-#define CONFIGURATION_ADDR_UART_RX      0x13
-#define CONFIGURATION_ADDR_PA_TX        0x14
-#define CONFIGURATION_ADDR_PA_RX        0x15
-#define CONFIGURATION_ADDR_CAP          0x16
-#define CONFIGURATION_ADDR_POWER        0x17
-#endif
-#define CALIBRATION_CAP_RAM_ADDR        0x06
+    /* set configuration flash address */
+    #if SUPPORT_CONFIGURATION
+        #define CONFIGURATION_ADDR_UART_TX 0x12
+        #define CONFIGURATION_ADDR_UART_RX 0x13
+        #define CONFIGURATION_ADDR_PA_TX   0x14
+        #define CONFIGURATION_ADDR_PA_RX   0x15
+        #define CONFIGURATION_ADDR_CAP     0x16
+        #define CONFIGURATION_ADDR_POWER   0x17
+    #endif
+    #define CALIBRATION_CAP_RAM_ADDR 0x06
 
-/* set flash address to set internal cap value and switch internal/external cap */
-#define CAP_SET_FLASH_ADDR_4M       0x3fe000
-#define CAP_SET_FLASH_ADDR_2M       0x1fe000
-#define CAP_SET_FLASH_ADDR_1M       0xfe000
-#define CAP_SET_FLASH_ADDR_512K     0x7e000//B85m:0x77000 Telink RISC-V MCU:0x7e000
-#define CAP_SET_FLASH_ADDR_128K     0x1e000
-#define CAP_SET_FLASH_ADDR_64K      0xe000
-#if !SUPPORT_CONFIGURATION
-#define SWITCH_INTERNAL_CAP         1       // 0: external cap, 1: internal cap
-#define CAP_SET_FLASH_ADDR          0xfe000 // 512K Flash: 0x7e000, 1M FLASH: 0xfe000, 2M FLASH: 0x1fe000
-#endif
+    /* set flash address to set internal cap value and switch internal/external cap */
+    #define CAP_SET_FLASH_ADDR_4M   0x3fe000
+    #define CAP_SET_FLASH_ADDR_2M   0x1fe000
+    #define CAP_SET_FLASH_ADDR_1M   0xfe000
+    #define CAP_SET_FLASH_ADDR_512K 0x7e000 //B85m:0x77000 Telink RISC-V MCU:0x7e000
+    #define CAP_SET_FLASH_ADDR_128K 0x1e000
+    #define CAP_SET_FLASH_ADDR_64K  0xe000
+    #if !SUPPORT_CONFIGURATION
+        #define SWITCH_INTERNAL_CAP 1       // 0: external cap, 1: internal cap
+        #define CAP_SET_FLASH_ADDR  0xfe000 // 512K Flash: 0x7e000, 1M FLASH: 0xfe000, 2M FLASH: 0x1fe000
+    #endif
 
-/* set uart port */
-#if defined(MCU_CORE_B91)
-#define BQB_UART_TX_PORT    UART0_TX_PB2
-#define BQB_UART_RX_PORT    UART0_RX_PB3
-#elif defined(MCU_CORE_B92)
-#define BQB_UART_TX_PORT       GPIO_FC_PB1
-#define BQB_UART_RX_PORT       GPIO_FC_PB2
-#elif defined(MCU_CORE_TL721X)
-#define BQB_UART_TX_PORT       GPIO_FC_PF5
-#define BQB_UART_RX_PORT       GPIO_FC_PF6
-#elif defined(MCU_CORE_TL321X)
-#define BQB_UART_TX_PORT       GPIO_FC_PC4
-#define BQB_UART_RX_PORT       GPIO_FC_PC5
-#endif
-#define BQB_UART_BAUD       115200
+    /* set uart port */
+    #if defined(MCU_CORE_B91)
+        #define BQB_UART_TX_PORT UART0_TX_PB2
+        #define BQB_UART_RX_PORT UART0_RX_PB3
+    #elif defined(MCU_CORE_B92)
+        #define BQB_UART_TX_PORT GPIO_FC_PB1
+        #define BQB_UART_RX_PORT GPIO_FC_PB2
+    #elif defined(MCU_CORE_TL721X)
+        #define BQB_UART_TX_PORT GPIO_FC_PF5
+        #define BQB_UART_RX_PORT GPIO_FC_PF6
+    #elif defined(MCU_CORE_TL321X)
+        #define BQB_UART_TX_PORT GPIO_FC_PC4
+        #define BQB_UART_RX_PORT GPIO_FC_PC5
+    #endif
+    #define BQB_UART_BAUD 115200
 
-/* set pa port */
-#if !SUPPORT_CONFIGURATION
-#define BQB_PA_TX_PORT      GPIO_PA0
-#define BQB_PA_RX_PORT      GPIO_PA0
-#endif
+    /* set pa port */
+    #if !SUPPORT_CONFIGURATION
+        #define BQB_PA_TX_PORT GPIO_PA0
+        #define BQB_PA_RX_PORT GPIO_PA0
+    #endif
 
-/* choose calibration position */
-#if !SUPPORT_CONFIGURATION
-#define SWITCH_CALIBRATION_POSITION     1   //0:SRAM 1:FLASH
-#endif
+    /* choose calibration position */
+    #if !SUPPORT_CONFIGURATION
+        #define SWITCH_CALIBRATION_POSITION 1 //0:SRAM 1:FLASH
+    #endif
 
-/* switch power mode */
-#if !SUPPORT_CONFIGURATION
-#define SWITCH_POWER_MODE               1   //0:DCDC(B91 not support) 1:LDO
-#endif
-/* set TX return result */
-#define RETURN_TX_LEN_EN    0      //1: return tx length, 0:do not return tx length
-
+    /* switch power mode */
+    #if !SUPPORT_CONFIGURATION
+        #define SWITCH_POWER_MODE 1 //0:DCDC(B91 not support) 1:LDO
+    #endif
+    /* set TX return result */
+    #define RETURN_TX_LEN_EN 0 //1: return tx length, 0:do not return tx length
 
 /**
  *  @brief  command type for BQB Test
  */
-typedef enum{
-    CMD_SETUP=0,
-    CMD_RX_TEST=1,
-    CMD_TX_TEST=2,
-    CMD_END=3,
-}Test_Command_e;
+typedef enum
+{
+    CMD_SETUP   = 0,
+    CMD_RX_TEST = 1,
+    CMD_TX_TEST = 2,
+    CMD_END     = 3,
+} Test_Command_e;
 
 /**
  *  @brief  command status for BQB Test
  */
-typedef enum {
-    SETUP_STATE=0x10,
+typedef enum
+{
+    SETUP_STATE = 0x10,
     RX_STATE,
     TX_STATE,
     END_STATE
-}Test_Status_e;
+} Test_Status_e;
 
 typedef enum
 {
     UART_NUM0 = UART0,
     UART_NUM1 = UART1,
     UART_NONE,
-}uart_num_redef_e;
+} uart_num_redef_e;
 
-#if SUPPORT_CONFIGURATION
+    #if SUPPORT_CONFIGURATION
 /**
  *  @brief  union structure for configuration
  */
@@ -137,23 +138,20 @@ typedef struct
     unsigned char uart_rx;
     unsigned char pa_tx;
     unsigned char pa_rx;
-    unsigned char flash:7;
-    unsigned char cap:1;
-    unsigned char cal_pos:2;
-    unsigned char power_mode:2;
+    unsigned char flash      : 7;
+    unsigned char cap        : 1;
+    unsigned char cal_pos    : 2;
+    unsigned char power_mode : 2;
     unsigned char power;
-}usr_def_t;
+} usr_def_t;
 
 /* global value for configuration */
 extern usr_def_t usr_config;
-#define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
-#endif
+        #define get_pin(value) (((unsigned short)((value) >> 3) << 8) | BIT((value) & 0x07))
+    #endif
 
 /* global value for uart */
 extern uart_num_redef_e uart_using;
-
-
-
 
 
 /**
@@ -161,7 +159,7 @@ extern uart_num_redef_e uart_using;
  * @param[in]   flash_size - flash size: 0->512K, 1->2M, 2-0xff->1M.
  * @return      none.
  */
-void  bqbtest_init(void);
+void bqbtest_init(void);
 
 
 /**
@@ -169,7 +167,7 @@ void  bqbtest_init(void);
  * @param   none.
  * @return  none.
  */
-void bqb_serviceloop (void);
+void bqb_serviceloop(void);
 
 
 /**
@@ -195,4 +193,4 @@ extern void bqb_pa_init(void);
 extern void bqb_pa_set_mode(unsigned char rtx); //0:rx, 1:tx, other:off
 #endif
 
-#endif /* BQB_H_ */
+#endif                                          /* BQB_H_ */

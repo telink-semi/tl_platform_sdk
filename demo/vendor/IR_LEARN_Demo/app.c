@@ -26,36 +26,37 @@
 
 #define BUFF_DATA_LEN 12
 #if ((IR_LEARN_MODE == IR_DIGITAL_RX_MODE) || (IR_LEARN_MODE == IR_ANALOG_RX_MODE))
-#if (DMA_EN)
-#define IR_LEARN_DMA_CHANNEL DMA1
-dma_chain_config_t rx_dma_list[2];
+    #if (DMA_EN)
+        #define IR_LEARN_DMA_CHANNEL DMA1
+dma_chain_config_t    rx_dma_list[2];
 volatile unsigned int g_dma_chain_cnt = 0;
-#if (IR_LEARN_RX_DATA_WIDTH == 16)
-unsigned short g_ir_dma_rx_buff[BUFF_DATA_LEN] __attribute__((aligned(4))) = { 0 };
-unsigned short g_rec_buff0[BUFF_DATA_LEN] __attribute__((aligned(4)))      = { 0 };
-unsigned short g_rec_buff1[BUFF_DATA_LEN] __attribute__((aligned(4)))      = { 0 };
-#elif (IR_LEARN_RX_DATA_WIDTH == 24)
-unsigned int g_ir_dma_rx_buff[BUFF_DATA_LEN] __attribute__((aligned(4))) = { 0 };
-unsigned int g_rec_buff0[BUFF_DATA_LEN] __attribute__((aligned(4)))      = { 0 };
-unsigned int g_rec_buff1[BUFF_DATA_LEN] __attribute__((aligned(4)))      = { 0 };
-#endif /* IR_LEARN_RX_DATA_WIDTH */
-#endif /* DMA_EN */
+        #if (IR_LEARN_RX_DATA_WIDTH == 16)
+unsigned short g_ir_dma_rx_buff[BUFF_DATA_LEN] __attribute__((aligned(4))) = {0};
+unsigned short g_rec_buff0[BUFF_DATA_LEN] __attribute__((aligned(4)))      = {0};
+unsigned short g_rec_buff1[BUFF_DATA_LEN] __attribute__((aligned(4)))      = {0};
+        #elif (IR_LEARN_RX_DATA_WIDTH == 24)
+unsigned int g_ir_dma_rx_buff[BUFF_DATA_LEN] __attribute__((aligned(4))) = {0};
+unsigned int g_rec_buff0[BUFF_DATA_LEN] __attribute__((aligned(4)))      = {0};
+unsigned int g_rec_buff1[BUFF_DATA_LEN] __attribute__((aligned(4)))      = {0};
+        #endif /* IR_LEARN_RX_DATA_WIDTH */
+    #endif          /* DMA_EN */
 
 volatile unsigned int g_ir_timeout_irq_cnt = 0;
 volatile unsigned int g_ir_rx_buf_irq_cnt  = 0;
 volatile unsigned int g_il_index           = 0;
-#if (IR_LEARN_RX_DATA_WIDTH == 16)
-volatile unsigned short g_il_wave_receive_buff[BUFF_DATA_LEN] = { 0 };
-#elif (IR_LEARN_RX_DATA_WIDTH == 24)
-volatile unsigned int g_il_wave_receive_buff[BUFF_DATA_LEN] = { 0 };
-#endif /* IR_LEARN_RX_DATA_WIDTH */
+    #if (IR_LEARN_RX_DATA_WIDTH == 16)
+volatile unsigned short g_il_wave_receive_buff[BUFF_DATA_LEN] = {0};
+    #elif (IR_LEARN_RX_DATA_WIDTH == 24)
+volatile unsigned int g_il_wave_receive_buff[BUFF_DATA_LEN] = {0};
+    #endif /* IR_LEARN_RX_DATA_WIDTH */
 #endif
 
 #if (IR_LEARN_MODE == IR_DIGITAL_TX_MODE) || (IR_LEARN_MODE == IR_ANALOG_TX_MODE)
-volatile unsigned short g_il_wave_send_buff[BUFF_DATA_LEN] = { 0 }; /* For comparison with data received by ir. */
-unsigned short g_ir_dma_send_buff[BUFF_DATA_LEN]           = { 0 };
+volatile unsigned short g_il_wave_send_buff[BUFF_DATA_LEN] = {0}; /* For comparison with data received by ir. */
+unsigned short          g_ir_dma_send_buff[BUFF_DATA_LEN]  = {0};
 
-#define PWM_PCLK_SPEED 24000000
+    #define PWM_PCLK_SPEED 24000000
+
 enum
 {
     CLOCK_PWM_CLOCK_1S  = PWM_PCLK_SPEED,
@@ -74,15 +75,13 @@ void pwm_send_init(void)
     /* prepare pwm send data. */
     unsigned char index = 0;
     /* normal. */
-    for (unsigned char i = 0; i < 6; i++)
-    {
+    for (unsigned char i = 0; i < 6; i++) {
         unsigned char carrier       = (i % 2 == 0) ? 1 : 0;
         g_ir_dma_send_buff[index++] = pwm_cal_pwm0_ir_fifo_cfg_data(0x0001, 0, carrier);
     }
 
     /* shadow. */
-    for (unsigned char i = 0; i < 6; i++)
-    {
+    for (unsigned char i = 0; i < 6; i++) {
         unsigned char carrier       = (i % 2 == 0) ? 1 : 0;
         g_ir_dma_send_buff[index++] = pwm_cal_pwm0_ir_fifo_cfg_data(0x0001, 1, carrier);
     }
@@ -146,23 +145,23 @@ void user_init(void)
         .timeout_en    = 1,
         .rx_invert_en  = 0,
         .cnt_mode      = RISING_EDGE_START_CNT,
-#if (IR_LEARN_RX_DATA_WIDTH == 16)
+    #if (IR_LEARN_RX_DATA_WIDTH == 16)
         .data_format = IR_LEARN_BIT_16_DATA,
-#elif (IR_LEARN_RX_DATA_WIDTH == 24)
+    #elif (IR_LEARN_RX_DATA_WIDTH == 24)
         .data_format = IR_LEARN_BIT_24_DATA,
-#endif
+    #endif
         .rx_mode = DIGITAL_RX_MODE,
     };
 
     ir_learn_rx_init(&ir_learn_rx);
     ir_learn_set_dig_rx_pin(GPIO_PA0, GPIO_PIN_PULLDOWN_100K);
-#if (DMA_EN)
-#if (DMA_MODE == DMA_MODE_NO_CHAIN)
+    #if (DMA_EN)
+        #if (DMA_MODE == DMA_MODE_NO_CHAIN)
     /**
      * API ir_learn_receive_dma is responsible for moving the data received by the ir-learn module from the ir-learn fifo to the sram.
      */
     ir_learn_receive_dma(IR_LEARN_DMA_CHANNEL, (unsigned int *)(g_ir_dma_rx_buff), sizeof(g_ir_dma_rx_buff));
-#elif (DMA_MODE == DMA_LLP_PINGPONG)
+        #elif (DMA_MODE == DMA_LLP_PINGPONG)
     /* DMA irq init. */
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_DMA);
@@ -173,13 +172,13 @@ void user_init(void)
     ir_learn_rx_dma_add_list_element(IR_LEARN_DMA_CHANNEL, &rx_dma_list[0], &rx_dma_list[1], (unsigned char *)(g_rec_buff1), sizeof(g_rec_buff1));
     ir_learn_rx_dma_add_list_element(IR_LEARN_DMA_CHANNEL, &rx_dma_list[1], &rx_dma_list[0], (unsigned char *)(g_rec_buff0), sizeof(g_rec_buff0));
     dma_chn_en(IR_LEARN_DMA_CHANNEL);
-#endif
-#else
+        #endif
+    #else
     ir_learn_rx_irq_trig_cnt(0x03);
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_IR_LEARN);
     ir_learn_set_irq_mask(FLD_IR_LEARN_TIMEOUT_IRQ | FLD_IR_LEARN_RXFIFO_IRQ);
-#endif
+    #endif
     ir_learn_en();
 #elif (IR_LEARN_MODE == IR_ANALOG_TX_MODE)
     /* pwm config. */
@@ -207,22 +206,22 @@ void user_init(void)
         .timeout_en    = 1,
         .rx_invert_en  = 1,
         .cnt_mode      = RISING_EDGE_START_CNT,
-#if (IR_LEARN_RX_DATA_WIDTH == 16)
+    #if (IR_LEARN_RX_DATA_WIDTH == 16)
         .data_format = IR_LEARN_BIT_16_DATA,
-#elif (IR_LEARN_RX_DATA_WIDTH == 24)
+    #elif (IR_LEARN_RX_DATA_WIDTH == 24)
         .data_format = IR_LEARN_BIT_24_DATA,
-#endif
+    #endif
         .rx_mode = ANALOG_RX_MODE,
     };
     ir_learn_rx_init(&ir_learn_rx);
 
-#if (DMA_EN)
-#if (DMA_MODE == DMA_MODE_NO_CHAIN)
+    #if (DMA_EN)
+        #if (DMA_MODE == DMA_MODE_NO_CHAIN)
     /**
      * API ir_learn_receive_dma is responsible for moving the data received by the ir-learn module from the ir-learn fifo to the sram.
      */
     ir_learn_receive_dma(IR_LEARN_DMA_CHANNEL, (unsigned int *)(g_ir_dma_rx_buff), sizeof(g_ir_dma_rx_buff));
-#elif (DMA_MODE == DMA_LLP_PINGPONG)
+        #elif (DMA_MODE == DMA_LLP_PINGPONG)
     /* DMA irq init. */
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_DMA);
@@ -233,20 +232,20 @@ void user_init(void)
     ir_learn_rx_dma_add_list_element(IR_LEARN_DMA_CHANNEL, &rx_dma_list[0], &rx_dma_list[1], (unsigned char *)(g_rec_buff1), sizeof(g_rec_buff1));
     ir_learn_rx_dma_add_list_element(IR_LEARN_DMA_CHANNEL, &rx_dma_list[1], &rx_dma_list[0], (unsigned char *)(g_rec_buff0), sizeof(g_rec_buff0));
     dma_chn_en(IR_LEARN_DMA_CHANNEL);
-#endif
-#else
+        #endif
+    #else
     ir_learn_rx_irq_trig_cnt(0x03);
 
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_IR_LEARN);
     ir_learn_set_irq_mask(FLD_IR_LEARN_TIMEOUT_IRQ | FLD_IR_LEARN_RXFIFO_IRQ);
-#endif
+    #endif
     ir_learn_en();
-#if (IR_LEARN_PM_FUNCTION_EN)
+    #if (IR_LEARN_PM_FUNCTION_EN)
     ir_learn_ana_rx_dis();
     pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, 500);
     ir_learn_ana_rx_en();
-#endif /* IR_LEARN_PM_FUNCTION_EN */
+    #endif /* IR_LEARN_PM_FUNCTION_EN */
 
 #endif
 }
@@ -258,45 +257,39 @@ void user_init(void)
 #if ((IR_LEARN_MODE == IR_DIGITAL_RX_MODE) || (IR_LEARN_MODE == IR_ANALOG_RX_MODE)) && (!DMA_EN)
 _attribute_ram_code_sec_noinline_ void ir_learn_irq_handler(void)
 {
-    if (ir_learn_get_irq_status(FLD_IR_LEARN_RXFIFO_IRQ))
-    {
+    if (ir_learn_get_irq_status(FLD_IR_LEARN_RXFIFO_IRQ)) {
         gpio_toggle(LED4);
         g_ir_rx_buf_irq_cnt++;
         unsigned char fifo_cnt = ir_learn_get_rx_fifo_status(FLD_IR_LEARN_FIFO_RX_CNT);
-#if (IR_LEARN_RX_DATA_WIDTH == 16)
-        for (unsigned char i = 0; i < fifo_cnt / 2; i++)
-        {
+    #if (IR_LEARN_RX_DATA_WIDTH == 16)
+        for (unsigned char i = 0; i < fifo_cnt / 2; i++) {
             g_il_wave_receive_buff[g_il_index++] = ir_learn_get_data_by_hword();
             g_il_index %= BUFF_DATA_LEN;
         }
-#elif (IR_LEARN_RX_DATA_WIDTH == 24)
-        for (unsigned char i = 0; i < fifo_cnt / 4; i++)
-        {
+    #elif (IR_LEARN_RX_DATA_WIDTH == 24)
+        for (unsigned char i = 0; i < fifo_cnt / 4; i++) {
             g_il_wave_receive_buff[g_il_index++] = ir_learn_get_data_by_word();
             g_il_index %= BUFF_DATA_LEN;
         }
-#endif
+    #endif
         ir_learn_clr_irq_status(FLD_IR_LEARN_RXFIFO_IRQ);
     }
 
-    if (ir_learn_get_irq_status(FLD_IR_LEARN_TIMEOUT_IRQ))
-    {
+    if (ir_learn_get_irq_status(FLD_IR_LEARN_TIMEOUT_IRQ)) {
         gpio_toggle(LED3);
         g_ir_timeout_irq_cnt++;
         unsigned char fifo_cnt = ir_learn_get_rx_fifo_status(FLD_IR_LEARN_FIFO_RX_CNT);
-#if (IR_LEARN_RX_DATA_WIDTH == 16)
-        for (unsigned char i = 0; i < fifo_cnt / 2; i++)
-        {
+    #if (IR_LEARN_RX_DATA_WIDTH == 16)
+        for (unsigned char i = 0; i < fifo_cnt / 2; i++) {
             g_il_wave_receive_buff[g_il_index++] = ir_learn_get_data_by_hword();
             g_il_index %= BUFF_DATA_LEN;
         }
-#elif (IR_LEARN_RX_DATA_WIDTH == 24)
-        for (unsigned char i = 0; i < fifo_cnt / 4; i++)
-        {
+    #elif (IR_LEARN_RX_DATA_WIDTH == 24)
+        for (unsigned char i = 0; i < fifo_cnt / 4; i++) {
             g_il_wave_receive_buff[g_il_index++] = ir_learn_get_data_by_word();
             g_il_index %= BUFF_DATA_LEN;
         }
-#endif
+    #endif
         ir_learn_clr_irq_status(FLD_IR_LEARN_TIMEOUT_IRQ);
     }
 }
@@ -306,8 +299,7 @@ PLIC_ISR_REGISTER(ir_learn_irq_handler, IRQ_IR_LEARN)
 #if (IR_LEARN_MODE == IR_DIGITAL_TX_MODE) || (IR_LEARN_MODE == IR_ANALOG_TX_MODE)
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-    if (pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ))
-    {
+    if (pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ)) {
         pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ);
         gpio_toggle(LED2);
     }
@@ -316,18 +308,17 @@ PLIC_ISR_REGISTER(pwm_irq_handler, IRQ_PWM)
 #endif
 
 #if ((IR_LEARN_MODE == IR_DIGITAL_RX_MODE) || (IR_LEARN_MODE == IR_ANALOG_RX_MODE))
-#if ((DMA_EN) && (DMA_MODE == DMA_LLP_PINGPONG))
+    #if ((DMA_EN) && (DMA_MODE == DMA_LLP_PINGPONG))
 void dma_irq_handler(void)
 {
-    if (dma_get_tc_irq_status(BIT(IR_LEARN_DMA_CHANNEL)))
-    {
+    if (dma_get_tc_irq_status(BIT(IR_LEARN_DMA_CHANNEL))) {
         dma_clr_tc_irq_status(BIT(IR_LEARN_DMA_CHANNEL));
         g_dma_chain_cnt++;
         gpio_toggle(LED3);
     }
 }
 PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
-#endif
+    #endif
 #endif
 
 void main_loop(void)

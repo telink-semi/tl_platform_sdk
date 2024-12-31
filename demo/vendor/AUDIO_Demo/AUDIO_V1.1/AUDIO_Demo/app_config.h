@@ -24,7 +24,8 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
@@ -35,27 +36,27 @@ extern "C" {
  *  stream 0 support line_in/amic_in/dmic0_in
  *  stream 1 support dmic1_in
  */
-#define    LINE_INPUT_TO_BUF_TO_LINEOUT        1  //stream 0
-#define    AMIC_INPUT_TO_BUF_TO_LINEOUT        2  //stream 0
-#define    DMIC0_INPUT_TO_BUF_TO_LINEOUT       3  //stream 0
-#define    DMIC1_INPUT_TO_BUF_TO_LINEOUT       4  //stream 1
-#define    AMIC_AND_DMIC1_INPUT_TO_TWO_BUF     5  //amic stream 0 and dmic1 stream 1 to two buff independently
-#define    DMIC0_AND_DMIC1_INPUT_TO_ONE_BUF    6  //dmic0 stream 0 and dmic1 stream 1 share one fifo  to one buff
-#define    BUFFER_TO_LINEOUT                   7  //buff to line_out
-#define    DMA_IRQ_Test                        8  //dma llp_irq
+#define LINE_INPUT_TO_BUF_TO_LINEOUT     1 //stream 0
+#define AMIC_INPUT_TO_BUF_TO_LINEOUT     2 //stream 0
+#define DMIC0_INPUT_TO_BUF_TO_LINEOUT    3 //stream 0
+#define DMIC1_INPUT_TO_BUF_TO_LINEOUT    4 //stream 1
+#define AMIC_AND_DMIC1_INPUT_TO_TWO_BUF  5 //amic stream 0 and dmic1 stream 1 to two buff independently
+#define DMIC0_AND_DMIC1_INPUT_TO_ONE_BUF 6 //dmic0 stream 0 and dmic1 stream 1 share one fifo  to one buff
+#define BUFFER_TO_LINEOUT                7 //buff to line_out
+#define DMA_IRQ_Test                     8 //dma llp_irq
 /**
  * there has 2 i2s
  */
-#define    TWO_I2S_ALIGN                       9 //Two I2S align function share a fifo and buff
-#define    I2S_OUTPUT_DOUBLE_BUFF               10 /*I2S(I2S0 or I2S1) outputs double buff data: buff_L-->fifo0-->I2S0_L/I2S1_L,buff_R-->fifo1-->I2S0_R/I2S1_R*/
-#define    AUDIO_FIFO_IRQ_Test                 11 //fifo threshold irq
-#define    I2S_TO_EXT_CODEC_WM                 12 //I2S input->buff->I2S out for WM8731 external codec
+#define TWO_I2S_ALIGN          9  //Two I2S align function share a fifo and buff
+#define I2S_OUTPUT_DOUBLE_BUFF 10 /*I2S(I2S0 or I2S1) outputs double buff data: buff_L-->fifo0-->I2S0_L/I2S1_L,buff_R-->fifo1-->I2S0_R/I2S1_R*/
+#define AUDIO_FIFO_IRQ_Test    11 //fifo threshold irq
+#define I2S_TO_EXT_CODEC_WM    12 //I2S input->buff->I2S out for WM8731 external codec
 
 #if defined(MCU_CORE_B92)
-#define    I2S_TO_CODEC_0581                   13 //I2S input->buff->I2S out for Telink inside codec 0581
+    #define I2S_TO_CODEC_0581 13  //I2S input->buff->I2S out for Telink inside codec 0581
 #endif
 
-#define    AUDIO_MODE                    BUFFER_TO_LINEOUT
+#define AUDIO_MODE BUFFER_TO_LINEOUT
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

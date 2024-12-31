@@ -31,7 +31,7 @@
  */
 unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
 {
-/********************************************************************************************
+    /********************************************************************************************
     There have two kind of calibration value of GPIO sampling of ADC 1.2V vref in flash,and one calibration value of GPIO sampling in Efuse.
     Two kind of ADC calibration value in flash are one-point calibration and two-point calibration.
     The kind of ADC calibration value in efuse only is two-point calibration.
@@ -42,60 +42,47 @@ unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
     deviation of one-point calibrate  in flash:-20~20mv.
     The above statistical results are obtained by testing only 19 9213A chips.
 ********************************************************************************************/
-    unsigned char adc_vref_calib_value[7] = {0};
-    unsigned short gpio_calib_value = 0;
-    signed char gpio_calib_value_offset = 0;
-    if(addr == 0)
-    {
+    unsigned char  adc_vref_calib_value[7] = {0};
+    unsigned short gpio_calib_value        = 0;
+    signed char    gpio_calib_value_offset = 0;
+    if (addr == 0) {
         /****** If flash check mid fail,use the Efuse calibration value ********/
-        if(0 != efuse_get_adc_calib_value(&gpio_calib_value, &gpio_calib_value_offset))
-        {
-            if((gpio_calib_value > 1100) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 43))
-            {
+        if (0 != efuse_get_adc_calib_value(&gpio_calib_value, &gpio_calib_value_offset)) {
+            if ((gpio_calib_value > 1100) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 43)) {
                 adc_set_gpio_calib_vref(gpio_calib_value);
                 adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
                 return 1;
             }
         }
-    }
-    else
-    {
-        if(velfrom == USER_CALIB_FROM_FLASH)
-        {
+    } else {
+        if (velfrom == USER_CALIB_FROM_FLASH) {
             flash_read_page(addr, 7, adc_vref_calib_value);
         }
         /****** Check the two-point gpio calibration value whether is exist ********/
-        if((adc_vref_calib_value[4] != 0xff) && (adc_vref_calib_value[4] <= 0x7f) && (((adc_vref_calib_value[6] << 8) + adc_vref_calib_value[5]) != 0xffff)){
+        if ((adc_vref_calib_value[4] != 0xff) && (adc_vref_calib_value[4] <= 0x7f) && (((adc_vref_calib_value[6] << 8) + adc_vref_calib_value[5]) != 0xffff)) {
             /****** Method of calculating two-point gpio calibration Flash_gain and Flash_offset value: ********/
             /****** Vref = [(Seven_Byte << 8) + Six_Byte + 1000]mv ********/
             /****** offset = [Five_Byte - 20] mv ********/
-            gpio_calib_value = (adc_vref_calib_value[6] << 8) + adc_vref_calib_value[5] + 1000;
+            gpio_calib_value        = (adc_vref_calib_value[6] << 8) + adc_vref_calib_value[5] + 1000;
             gpio_calib_value_offset = adc_vref_calib_value[4] - 20;
-            if ((gpio_calib_value > 1047) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 107))
-            {
-               adc_set_gpio_calib_vref(gpio_calib_value);
-               adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
-               return 1;
-            }
-        }
-        else
-        {
-            if(0 != efuse_get_adc_calib_value(&gpio_calib_value, &gpio_calib_value_offset))
-            {
-                if((gpio_calib_value > 1100) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 43))
-                {
+            if ((gpio_calib_value > 1047) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 107)) {
                 adc_set_gpio_calib_vref(gpio_calib_value);
                 adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
                 return 1;
-                }
             }
-            else{
+        } else {
+            if (0 != efuse_get_adc_calib_value(&gpio_calib_value, &gpio_calib_value_offset)) {
+                if ((gpio_calib_value > 1100) && (gpio_calib_value < 1300) && (gpio_calib_value_offset > -20) && (gpio_calib_value_offset < 43)) {
+                    adc_set_gpio_calib_vref(gpio_calib_value);
+                    adc_set_gpio_two_point_calib_offset(gpio_calib_value_offset);
+                    return 1;
+                }
+            } else {
                 /****** Method of calculating one-point calibration Flash_gpio_Vref value: ********/
                 /****** Vref = [1175 +First_Byte-255+Second_Byte] mV = [920 + First_Byte + Second_Byte] mV ********/
                 gpio_calib_value = 920 + adc_vref_calib_value[0] + adc_vref_calib_value[1];
                 /****** Check the calibration value whether is correct ********/
-                if ((gpio_calib_value > 1047) && (gpio_calib_value < 1300))
-                {
+                if ((gpio_calib_value > 1047) && (gpio_calib_value < 1300)) {
                     adc_set_gpio_calib_vref(gpio_calib_value);
                     return 1;
                 }
@@ -115,12 +102,10 @@ unsigned char user_calib_adc_vref(user_calib_from_e velfrom, unsigned int addr)
 unsigned char user_calib_freq_offset(user_calib_from_e velfrom, unsigned int addr)
 {
     unsigned char frequency_offset_value = 0xff;
-    if(velfrom == USER_CALIB_FROM_FLASH)
-    {
+    if (velfrom == USER_CALIB_FROM_FLASH) {
         flash_read_page(addr, 1, &frequency_offset_value);
     }
-    if((0xff != frequency_offset_value)&&(frequency_offset_value<=63))
-    {
+    if ((0xff != frequency_offset_value) && (frequency_offset_value <= 63)) {
         rf_update_internal_cap(frequency_offset_value);
         return 1;
     }
@@ -144,52 +129,48 @@ void user_read_flash_value_calib(void)
     /******check for flash mid********/
     flash_mid_sure = flash_read_mid_uid_with_check((unsigned int *)flash_mid, flash_uid);
 
-    if (1 == flash_mid_sure)
-    {
-        switch (flash_mid[2])
-        {
-            case FLASH_SIZE_64K:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_64K);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_64K);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K);
-                break;
-            case FLASH_SIZE_128K:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_128K);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_128K);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K);
-                break;
-            case FLASH_SIZE_512K:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_512K);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_512K);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K);
-                break;
-            case FLASH_SIZE_1M:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_1M);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_1M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M);
-                break;
-            case FLASH_SIZE_2M:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_2M);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_2M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M);
-                break;
-            case FLASH_SIZE_4M:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_4M);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_4M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M);
-                break;
-            case FLASH_SIZE_16M:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_16M);
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_16M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M);
-                break;
-            default:
-                user_calib_adc_vref(USER_CALIB_FROM_FLASH, 0);
-                break;
+    if (1 == flash_mid_sure) {
+        switch (flash_mid[2]) {
+        case FLASH_SIZE_64K:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_64K);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_64K);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K);
+            break;
+        case FLASH_SIZE_128K:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_128K);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_128K);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K);
+            break;
+        case FLASH_SIZE_512K:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_512K);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_512K);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K);
+            break;
+        case FLASH_SIZE_1M:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_1M);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_1M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M);
+            break;
+        case FLASH_SIZE_2M:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_2M);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_2M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M);
+            break;
+        case FLASH_SIZE_4M:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_4M);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_4M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M);
+            break;
+        case FLASH_SIZE_16M:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, FLASH_ADC_VREF_CALIB_ADDR_16M);
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_16M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M);
+            break;
+        default:
+            user_calib_adc_vref(USER_CALIB_FROM_FLASH, 0);
+            break;
         }
-    }
-    else
-    {
+    } else {
         user_calib_adc_vref(USER_CALIB_FROM_FLASH, 0);
     }
 }
@@ -203,18 +184,15 @@ void user_read_flash_value_calib(void)
 unsigned short user_calib_rf_rx_dcoc(user_calib_from_e velfrom, unsigned int addr)
 {
     unsigned short flash_iq_code = 0xffff;
-    if(velfrom == USER_CALIB_FROM_FLASH)
-    {
+    if (velfrom == USER_CALIB_FROM_FLASH) {
         flash_read_page(addr, 2, (unsigned char *)&flash_iq_code);
     }
-    if((0xffff != flash_iq_code) &&
-        ( 1 == (flash_iq_code & 0x0001)) &&
+    if ((0xffff != flash_iq_code) &&
+        (1 == (flash_iq_code & 0x0001)) &&
         (((flash_iq_code & 0x007e) >> 1) > 0) && (((flash_iq_code & 0x007e) >> 1) < 63) &&
-        (((flash_iq_code & 0x1f80) >> 7) > 0) && (((flash_iq_code & 0x1f80) >> 7) < 63))
-    {
+        (((flash_iq_code & 0x1f80) >> 7) > 0) && (((flash_iq_code & 0x1f80) >> 7) < 63)) {
         rf_update_rx_dcoc_calib_code(flash_iq_code);
         return 1;
     }
     return 0;
 }
-

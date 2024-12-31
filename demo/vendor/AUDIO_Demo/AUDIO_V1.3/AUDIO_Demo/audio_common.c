@@ -25,6 +25,7 @@
 #include "app_config.h"
 
 extern unsigned int audio_sample_rate_value[AUDIO_ASCL_RATE_SIZE];
+
 /**
  * @brief       This function serves to configure audio data fade in
  * @param[in]   source          - audio channel select.
@@ -35,40 +36,37 @@ extern unsigned int audio_sample_rate_value[AUDIO_ASCL_RATE_SIZE];
  * @param[in]   t_end           - end time of audio fade in.
  * @return      none.
  */
-void audio_linear_fade_in_config(audio_channel_select_e source, audio_codec_wl_mode_e data_width, audio_sample_rate_e rate, char* audio_data, unsigned short t_start, unsigned short t_end)
+void audio_linear_fade_in_config(audio_channel_select_e source, audio_codec_wl_mode_e data_width, audio_sample_rate_e rate, char *audio_data, unsigned short t_start, unsigned short t_end)
 {
     /* Do not change these variables to unsigned int or an arithmetic error will occur 
      * because signed short data will expand to an unsigned int type, which will produce undesired value when that data is negative.
      */
     short index;
-    short audio_start_idx =  audio_sample_rate_value[rate] / 1000 * t_start;
-    short audio_end_idx =  audio_sample_rate_value[rate] / 1000 * t_end;
+    short audio_start_idx = audio_sample_rate_value[rate] / 1000 * t_start;
+    short audio_end_idx   = audio_sample_rate_value[rate] / 1000 * t_end;
 
-    if (source == AUDIO_STEREO && data_width == CODEC_BIT_16_DATA)/* stereo 16bit*/
+    if (source == AUDIO_STEREO && data_width == CODEC_BIT_16_DATA) /* stereo 16bit*/
     {
-        for (index = audio_start_idx; index < audio_end_idx; index++)
-        {
-            *(short *)(audio_data + index * 4) = *(short *)(audio_data + index * 4) * (index - audio_start_idx) / (audio_end_idx - audio_start_idx) ;
+        for (index = audio_start_idx; index < audio_end_idx; index++) {
+            *(short *)(audio_data + index * 4)     = *(short *)(audio_data + index * 4) * (index - audio_start_idx) / (audio_end_idx - audio_start_idx);
             *(short *)(audio_data + index * 4 + 2) = *(short *)(audio_data + index * 4);
         }
-    }
-    else if (source == AUDIO_STEREO && data_width == CODEC_BIT_20_DATA)/* stereo 20bit*/
+    } else if (source == AUDIO_STEREO && data_width == CODEC_BIT_20_DATA) /* stereo 20bit*/
     {
-        for (index = audio_start_idx; index < audio_end_idx; index++)
-        {
-            *(int *)(audio_data + index * 8) =  *(int *)(audio_data + index * 8) * (index - audio_start_idx) / (audio_end_idx - audio_start_idx);
+        for (index = audio_start_idx; index < audio_end_idx; index++) {
+            *(int *)(audio_data + index * 8)     = *(int *)(audio_data + index * 8) * (index - audio_start_idx) / (audio_end_idx - audio_start_idx);
             *(int *)(audio_data + index * 8 + 4) = *(int *)(audio_data + index * 8);
         }
-    }
-    else if (data_width == CODEC_BIT_16_DATA)/* mono 16bit*/
+    } else if (data_width == CODEC_BIT_16_DATA) /* mono 16bit*/
     {
-        for (index = audio_start_idx; index < audio_end_idx; index++)
+        for (index = audio_start_idx; index < audio_end_idx; index++) {
             *(short *)(audio_data + index * 2) = *(short *)(audio_data + index * 2) * (index - audio_start_idx) / (audio_end_idx - audio_start_idx);
-    }
-    else/* mono 20bit*/
+        }
+    } else /* mono 20bit*/
     {
-        for (index = audio_start_idx; index < audio_end_idx; index++)
+        for (index = audio_start_idx; index < audio_end_idx; index++) {
             *(int *)(audio_data + index * 4) = *(int *)(audio_data + index * 4) * (index - audio_start_idx) / (audio_end_idx - audio_start_idx);
+        }
     }
 }
 
@@ -81,18 +79,13 @@ void audio_fade_pga_gain(codec_in_pga_gain_e gain)
 {
     codec_in_pga_gain_e value = audio_get_adc_pga_gain();
 
-    if (gain > value)
-    {
-        for(value++; (signed int)value <= (signed int)gain; value++)
-        {
+    if (gain > value) {
+        for (value++; (signed int)value <= (signed int)gain; value++) {
             delay_ms(1);
             audio_set_adc_pga_gain(value);
         }
-    }
-    else if (gain < value)
-    {
-        for(value--; (signed int)value >= (signed int)gain; value--)
-        {
+    } else if (gain < value) {
+        for (value--; (signed int)value >= (signed int)gain; value--) {
             delay_ms(1);
             audio_set_adc_pga_gain(value);
         }
@@ -108,18 +101,13 @@ void audio_stream0_fade_dig_gain(codec_in_path_digital_gain_e gain)
 {
     codec_in_path_digital_gain_e value = audio_get_stream0_dig_gain();
 
-    if (gain > value)
-    {
-        for(value += 4; (signed int)value <= (signed int)gain; value += 4)
-        {
+    if (gain > value) {
+        for (value += 4; (signed int)value <= (signed int)gain; value += 4) {
             delay_ms(1);
             audio_set_stream0_dig_gain(value);
         }
-    }
-    else if (gain < value)
-    {
-        for(value -= 4; (signed int)value >= (signed int)gain; value -= 4)
-        {
+    } else if (gain < value) {
+        for (value -= 4; (signed int)value >= (signed int)gain; value -= 4) {
             delay_ms(1);
             audio_set_stream0_dig_gain(value);
         }

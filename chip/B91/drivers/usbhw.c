@@ -22,14 +22,16 @@
  *
  *******************************************************************************************************/
 #include "usbhw.h"
+
 /**
  * @brief      This function disables the manual interrupt
  *             (Endpoint8 is the alias of endpoint0)
  * @param[in]  m - the irq mode needs to set
  * @return     none
  */
-void usbhw_disable_manual_interrupt(int m) {
-	BM_SET(reg_ctrl_ep_irq_mode, m);
+void usbhw_disable_manual_interrupt(int m)
+{
+    BM_SET(reg_ctrl_ep_irq_mode, m);
 }
 
 /**
@@ -37,8 +39,9 @@ void usbhw_disable_manual_interrupt(int m) {
  * @param[in]  m - the irq mode needs to set
  * @return     none
  */
-void usbhw_enable_manual_interrupt(int m) {
-	BM_CLR(reg_ctrl_ep_irq_mode, m);
+void usbhw_enable_manual_interrupt(int m)
+{
+    BM_CLR(reg_ctrl_ep_irq_mode, m);
 }
 
 /**
@@ -48,13 +51,14 @@ void usbhw_enable_manual_interrupt(int m) {
  * @param[in]  len - length in byte of the data need to send
  * @return     none
  */
-void usbhw_write_ep(unsigned int ep, unsigned char * data, int len) {
-	reg_usb_ep_ptr(ep) = 0;
+void usbhw_write_ep(unsigned int ep, unsigned char *data, int len)
+{
+    reg_usb_ep_ptr(ep) = 0;
 
-	for(int i = 0; i < (len); ++i){
-		reg_usb_ep_dat(ep) = data[i];
-	}
-	reg_usb_ep_ctrl(ep) = FLD_EP_DAT_ACK;		// ACK
+    for (int i = 0; i < (len); ++i) {
+        reg_usb_ep_dat(ep) = data[i];
+    }
+    reg_usb_ep_ctrl(ep) = FLD_EP_DAT_ACK; // ACK
 }
 
 /**
@@ -63,9 +67,10 @@ void usbhw_write_ep(unsigned int ep, unsigned char * data, int len) {
  * @param[in]  v - the two bytes data need to send
  * @return     none
  */
-void usbhw_write_ctrl_ep_u16(unsigned short v){
-	usbhw_write_ctrl_ep_data(v & 0xff);
-	usbhw_write_ctrl_ep_data(v >> 8);
+void usbhw_write_ctrl_ep_u16(unsigned short v)
+{
+    usbhw_write_ctrl_ep_data(v & 0xff);
+    usbhw_write_ctrl_ep_data(v >> 8);
 }
 
 /**
@@ -73,9 +78,10 @@ void usbhw_write_ctrl_ep_u16(unsigned short v){
  * @param   none
  * @return  the two bytes data read from the control endpoint
  */
-unsigned short usbhw_read_ctrl_ep_u16(void){
-	unsigned short v = usbhw_read_ctrl_ep_data();
-	return (usbhw_read_ctrl_ep_data() << 8) | v;
+unsigned short usbhw_read_ctrl_ep_u16(void)
+{
+    unsigned short v = usbhw_read_ctrl_ep_data();
+    return (usbhw_read_ctrl_ep_data() << 8) | v;
 }
 
 /**
@@ -85,12 +91,9 @@ unsigned short usbhw_read_ctrl_ep_u16(void){
  */
 void dp_through_swire_en(bool dp_through_swire)
 {
-    if (dp_through_swire)
-    {
-        write_reg8(0x100c01, (read_reg8(0x100c01) | BIT(7))); // BIT(7) = 1 : swire_usb_en
-    }
-    else
-    {
+    if (dp_through_swire) {
+        write_reg8(0x100c01, (read_reg8(0x100c01) | BIT(7)));  // BIT(7) = 1 : swire_usb_en
+    } else {
         write_reg8(0x100c01, (read_reg8(0x100c01) & ~BIT(7))); // BIT(7) = 0 : swire_usb_dis
     }
 }
@@ -118,5 +121,3 @@ void usb_set_pin(bool dp_through_swire)
      */
     dp_through_swire_en(dp_through_swire);
 }
-
-

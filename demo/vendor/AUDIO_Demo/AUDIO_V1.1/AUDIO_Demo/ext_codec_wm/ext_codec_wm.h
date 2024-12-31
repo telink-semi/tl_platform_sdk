@@ -37,4 +37,4 @@ void audio_set_ext_codec_wm(void);
  *             I2C frequency = System_clock / (4*DivClock).
  * @return     none.
  */
-void audio_i2c_init_wm( gpio_func_pin_e sda_pin,gpio_func_pin_e scl_pin,unsigned char clock);
+void audio_i2c_init_wm(gpio_func_pin_e sda_pin, gpio_func_pin_e scl_pin, unsigned char clock);

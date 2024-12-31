@@ -47,18 +47,19 @@
  * 4. 0x140300<1:0>=3 to enable GPIO MUX function as DBG_BB0
  * */
 
-#define REG_BTCORE_BASE_ADDR    (0x160400)
-#define BT_DIAGCNTL_ADDR        (REG_BTCORE_BASE_ADDR+0x50)
+#define REG_BTCORE_BASE_ADDR (0x160400)
+#define BT_DIAGCNTL_ADDR     (REG_BTCORE_BASE_ADDR + 0x50)
 
-typedef enum{
-    BT_DBG0_BB0_A0  = GPIO_PA0,
-    BT_DBG0_BB1_A1  = GPIO_PA1,
-    BT_DBG0_BB2_A2  = GPIO_PA2,
-    BT_DBG0_BB3_A3  = GPIO_PA3,
-    BT_DBG0_BB4_A4  = GPIO_PA4,
-    BT_DBG0_BB5_B0  = GPIO_PB0,
-    BT_DBG0_BB6_B1  = GPIO_PB1,
-    BT_DBG0_BB7_B2  = GPIO_PB2,
+typedef enum
+{
+    BT_DBG0_BB0_A0 = GPIO_PA0,
+    BT_DBG0_BB1_A1 = GPIO_PA1,
+    BT_DBG0_BB2_A2 = GPIO_PA2,
+    BT_DBG0_BB3_A3 = GPIO_PA3,
+    BT_DBG0_BB4_A4 = GPIO_PA4,
+    BT_DBG0_BB5_B0 = GPIO_PB0,
+    BT_DBG0_BB6_B1 = GPIO_PB1,
+    BT_DBG0_BB7_B2 = GPIO_PB2,
 
     BT_DBG1_BB8_B3  = GPIO_PB3,
     BT_DBG1_BB9_B4  = GPIO_PB4,
@@ -86,21 +87,21 @@ typedef enum{
     BT_DBG3_BB29_E0 = GPIO_PE0,
     BT_DBG3_BB30_E1 = GPIO_PE1,
     BT_DBG3_BB31_E2 = GPIO_PE2,
-}btdbg_pin_e;
+} btdbg_pin_e;
 
+#define reg_bt_dbg_sel REG_ADDR16(0x140354)
 
-
-#define reg_bt_dbg_sel      REG_ADDR16(0x140354)
-typedef enum{
+typedef enum
+{
     BT_DBG_SEL_EN   = BIT(8),
     BT_DBG_SEL_DBG0 = BIT(12),
     BT_DBG_SEL_DBG1 = BIT(13),
     BT_DBG_SEL_DBG2 = BIT(14),
     BT_DBG_SEL_DBG3 = BIT(15),
-}bt_signal_group_e;
+} bt_signal_group_e;
 
 void bt_dbg_set_pin(btdbg_pin_e pin);
-void bt_dbg_set_signal(bt_signal_group_e signal_group,unsigned char signal_byte);
+void bt_dbg_set_signal(bt_signal_group_e signal_group, unsigned char signal_byte);
 
 static inline void bt_diagcntl_diag0_setf(unsigned char diag0)
 {

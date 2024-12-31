@@ -33,11 +33,9 @@ extern "C"
 #include "hash_hmac_test/app_test.h"
 
 #ifdef HASH_DMA_FUNCTION
-extern int buf_hash_dma[0x600];
-#define DMA_RAM_BASE                        (buf_hash_dma)           //just for temporary use
+    extern int buf_hash_dma[0x600];
+    #define DMA_RAM_BASE (buf_hash_dma) //just for temporary use
 #endif
-
-
 
 
 /* Disable C linkage for C++ Compilers: */

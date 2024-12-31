@@ -25,34 +25,33 @@
 #define HMAC_SM3_H
 
 
-
 #include "hmac.h"
 
 
-
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
 #ifdef SUPPORT_HASH_SM3
 
 
-typedef HMAC_CTX HMAC_SM3_CTX;
+    typedef HMAC_CTX HMAC_SM3_CTX;
 
-#ifdef HASH_DMA_FUNCTION
-typedef HMAC_DMA_CTX HMAC_SM3_DMA_CTX;
-#endif
+    #ifdef HASH_DMA_FUNCTION
+    typedef HMAC_DMA_CTX HMAC_SM3_DMA_CTX;
+    #endif
 
 
-//APIs
+    //APIs
 
-unsigned int hmac_sm3_init(HMAC_SM3_CTX *ctx, unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes);
+    unsigned int hmac_sm3_init(HMAC_SM3_CTX *ctx, unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes);
 
-unsigned int hmac_sm3_update(HMAC_SM3_CTX *ctx, unsigned char *msg, unsigned int msg_bytes);
+    unsigned int hmac_sm3_update(HMAC_SM3_CTX *ctx, unsigned char *msg, unsigned int msg_bytes);
 
-unsigned int hmac_sm3_final(HMAC_SM3_CTX *ctx, unsigned char *mac);
-/**
+    unsigned int hmac_sm3_final(HMAC_SM3_CTX *ctx, unsigned char *mac);
+    /**
  * @brief       input key and whole message, get the hmac
  * @param[in]   key               - key.
  * @param[in]   sp_key_idx        - index of secure port key.
@@ -66,47 +65,38 @@ unsigned int hmac_sm3_final(HMAC_SM3_CTX *ctx, unsigned char *mac);
       -# 1. please make sure the mac buffer is sufficient.
   @endverbatim
  */
-unsigned int hmac_sm3(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned char *msg, 
-        unsigned int msg_bytes, unsigned char *mac);
+    unsigned int hmac_sm3(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned char *msg, unsigned int msg_bytes, unsigned char *mac);
 
-#ifdef SUPPORT_HASH_NODE
-unsigned int hmac_sm3_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, 
-        HASH_NODE *node, unsigned int node_num, unsigned char *mac);
-#endif
+    #ifdef SUPPORT_HASH_NODE
+    unsigned int hmac_sm3_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_NODE *node, unsigned int node_num, unsigned char *mac);
+    #endif
 
 
-#ifdef HASH_DMA_FUNCTION
-unsigned int hmac_sm3_dma_init(HMAC_SM3_DMA_CTX *ctx, unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes,
-        HASH_CALLBACK callback);
+    #ifdef HASH_DMA_FUNCTION
+    unsigned int hmac_sm3_dma_init(HMAC_SM3_DMA_CTX *ctx, unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_CALLBACK callback);
 
-#ifdef CONFIG_HASH_SUPPORT_ADDRESS_HIGH_LOW
-unsigned int hmac_sm3_dma_update_blocks(HMAC_SM3_DMA_CTX *ctx, unsigned int msg_h, unsigned int msg_l, unsigned int msg_bytes);
+        #ifdef CONFIG_HASH_SUPPORT_ADDRESS_HIGH_LOW
+    unsigned int hmac_sm3_dma_update_blocks(HMAC_SM3_DMA_CTX *ctx, unsigned int msg_h, unsigned int msg_l, unsigned int msg_bytes);
 
-unsigned int hmac_sm3_dma_final(HMAC_SM3_DMA_CTX *ctx, unsigned int remainder_msg_h, unsigned int remainder_msg_l, 
-        unsigned int remainder_bytes, unsigned int mac_h, unsigned int mac_l);
+    unsigned int hmac_sm3_dma_final(HMAC_SM3_DMA_CTX *ctx, unsigned int remainder_msg_h, unsigned int remainder_msg_l, unsigned int remainder_bytes, unsigned int mac_h, unsigned int mac_l);
 
-unsigned int hmac_sm3_dma(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned int msg_h, unsigned int msg_l, 
-        unsigned int msg_bytes, unsigned int mac_h, unsigned int mac_l, HASH_CALLBACK callback);
+    unsigned int hmac_sm3_dma(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned int msg_h, unsigned int msg_l, unsigned int msg_bytes, unsigned int mac_h, unsigned int mac_l, HASH_CALLBACK callback);
 
-#ifdef SUPPORT_HASH_DMA_NODE
-unsigned int hmac_sm3_dma_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, 
-        HASH_DMA_NODE *node, unsigned int node_num, unsigned int mac_h, unsigned int mac_l, HASH_CALLBACK callback);
-#endif
-#else
-unsigned int hmac_sm3_dma_update_blocks(HMAC_SM3_DMA_CTX *ctx, unsigned int *msg, unsigned int msg_bytes);
+            #ifdef SUPPORT_HASH_DMA_NODE
+    unsigned int hmac_sm3_dma_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_DMA_NODE *node, unsigned int node_num, unsigned int mac_h, unsigned int mac_l, HASH_CALLBACK callback);
+            #endif
+        #else
+    unsigned int hmac_sm3_dma_update_blocks(HMAC_SM3_DMA_CTX *ctx, unsigned int *msg, unsigned int msg_bytes);
 
-unsigned int hmac_sm3_dma_final(HMAC_SM3_DMA_CTX *ctx, unsigned int *remainder_msg, unsigned int remainder_bytes, 
-        unsigned int *mac);
+    unsigned int hmac_sm3_dma_final(HMAC_SM3_DMA_CTX *ctx, unsigned int *remainder_msg, unsigned int remainder_bytes, unsigned int *mac);
 
-unsigned int hmac_sm3_dma(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned int *msg, unsigned int msg_bytes, 
-        unsigned int *mac, HASH_CALLBACK callback);
+    unsigned int hmac_sm3_dma(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned int *msg, unsigned int msg_bytes, unsigned int *mac, HASH_CALLBACK callback);
 
-#ifdef SUPPORT_HASH_DMA_NODE
-unsigned int hmac_sm3_dma_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, 
-        HASH_DMA_NODE *node, unsigned int node_num, unsigned int *mac, HASH_CALLBACK callback);
-#endif
-#endif
-#endif
+            #ifdef SUPPORT_HASH_DMA_NODE
+    unsigned int hmac_sm3_dma_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_DMA_NODE *node, unsigned int node_num, unsigned int *mac, HASH_CALLBACK callback);
+            #endif
+        #endif
+    #endif
 
 
 #endif
@@ -118,4 +108,3 @@ unsigned int hmac_sm3_dma_node_steps(unsigned char *key, unsigned short sp_key_i
 
 
 #endif
-

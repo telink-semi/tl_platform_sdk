@@ -21,8 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#ifndef     __MYUDB_H__
-#define     __MYUDB_H__
+#ifndef __MYUDB_H__
+#define __MYUDB_H__
 #pragma once
 
 #include "log_def_stack.h"
@@ -33,43 +33,46 @@
  * @note
  *        - This version only TL7518 support USB1.
  */
-#if defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)
-#define USB_CNT  1
+#if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #define USB_CNT 1
 #else
-#define USB_CNT  0
+    #define USB_CNT 0
 #endif
 
-#define         SL_STACK_EN             1
-#define         SL_BASE_EN              1
-#define         SL_SNIFF_EN             0
-#define         SL_TIMEOUT_EN           0
+#define SL_STACK_EN   1
+#define SL_BASE_EN    1
+#define SL_SNIFF_EN   0
+#define SL_TIMEOUT_EN 0
 
-#define my_dump_str_data(en,s,p,n)      if(en){usb_send_str_data(s,(unsigned char*)(p),n);}
+#define my_dump_str_data(en, s, p, n)                  \
+    if (en) {                                          \
+        usb_send_str_data(s, (unsigned char *)(p), n); \
+    }
 
 
-typedef int (*func_myudb_hci_cmd_cb_t) (unsigned char *, int);
+typedef int (*func_myudb_hci_cmd_cb_t)(unsigned char *, int);
 
-void    myudb_register_hci_cb (void *p);
+void myudb_register_hci_cb(void *p);
 
-void    myudb_usb_init(unsigned short id, void *p);
+void myudb_usb_init(unsigned short id, void *p);
 
-void    myudb_usb_bulkout_ready (void);
+void myudb_usb_bulkout_ready(void);
 
-void    myudb_usb_handle_irq(void);
+void myudb_usb_handle_irq(void);
 
-int     myudb_usb_get_packet (unsigned char *p);
+int myudb_usb_get_packet(unsigned char *p);
 
-void    usb_send_status_pkt(unsigned char status, unsigned char buffer_num, unsigned char *pkt, unsigned short len);
+void usb_send_status_pkt(unsigned char status, unsigned char buffer_num, unsigned char *pkt, unsigned short len);
 
-void    myudb_capture_enable (int en);
+void myudb_capture_enable(int en);
 
-void    usb_send_str_data (char *str, unsigned char *ph, int n);
+void usb_send_str_data(char *str, unsigned char *ph, int n);
 
-void    myudb_set_txfifo_local (void);
+void myudb_set_txfifo_local(void);
 
-void    myudb_set_txfifo (void *p);
+void myudb_set_txfifo(void *p);
 
-#define         my_irq_disable()        unsigned int rie = core_interrupt_disable ()
-#define         my_irq_restore()        core_restore_interrupt(rie)
+#define my_irq_disable() unsigned int rie = core_interrupt_disable()
+#define my_irq_restore() core_restore_interrupt(rie)
 
 #endif

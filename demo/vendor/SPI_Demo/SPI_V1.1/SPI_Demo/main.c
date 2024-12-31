@@ -26,8 +26,6 @@
 extern void user_init(void);
 extern void main_loop(void);
 
-
-
 /**
  * @brief       This is main function
  * @param[in]   none
@@ -39,8 +37,7 @@ int main(void)
     CLOCK_INIT;
     user_init();
 
-    while(1)
-    {
+    while (1) {
         main_loop();
     }
     return 0;

@@ -26,18 +26,19 @@
 
 #include "hmac.h"
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #ifdef SUPPORT_HASH_SHA512_256
-typedef HMAC_CTX HMAC_SHA512_256_CTX;
-#ifdef HASH_DMA_FUNCTION
-typedef HMAC_DMA_CTX HMAC_SHA512_256_DMA_CTX;
-#endif
+    typedef HMAC_CTX HMAC_SHA512_256_CTX;
+    #ifdef HASH_DMA_FUNCTION
+    typedef HMAC_DMA_CTX HMAC_SHA512_256_DMA_CTX;
+    #endif
 
 
-//APIs
-/**
+    //APIs
+    /**
  * @brief       init hmac-sha512_256
  * @param[in]   ctx                 - HMAC_SHA512_256_CTX context pointer.
  * @param[in]   key                 - key.
@@ -45,9 +46,8 @@ typedef HMAC_DMA_CTX HMAC_SHA512_256_DMA_CTX;
  * @param[in]   key_bytes           - byte length of key, it could be 0.
  * @return      0:success     other:error
  */
-unsigned int hmac_sha512_256_init(HMAC_SHA512_256_CTX *ctx, unsigned char *key, unsigned short sp_key_idx,
-        unsigned int key_bytes);
-/**
+    unsigned int hmac_sha512_256_init(HMAC_SHA512_256_CTX *ctx, unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes);
+    /**
  * @brief       hmac-sha512_256 update message
  * @param[in]   ctx                 - HMAC_SHA512_256_CTX context pointer.
  * @param[in]   msg                 - message.
@@ -58,8 +58,8 @@ unsigned int hmac_sha512_256_init(HMAC_SHA512_256_CTX *ctx, unsigned char *key, 
       -# 1. please make sure the three parameters are valid, and ctx is initialized.
   @endverbatim
  */
-unsigned int hmac_sha512_256_update(HMAC_SHA512_256_CTX *ctx, unsigned char *msg, unsigned int msg_bytes);
-/**
+    unsigned int hmac_sha512_256_update(HMAC_SHA512_256_CTX *ctx, unsigned char *msg, unsigned int msg_bytes);
+    /**
  * @brief       message update done, get the hmac
  * @param[in]   ctx                 - HMAC_CTX context pointer.
  * @param[out]   mac                 - hmac.
@@ -70,8 +70,8 @@ unsigned int hmac_sha512_256_update(HMAC_SHA512_256_CTX *ctx, unsigned char *msg
       -# 2. please make sure the mac buffer is sufficient.
   @endverbatim
  */
-unsigned int hmac_sha512_256_final(HMAC_SHA512_256_CTX *ctx, unsigned char *mac);
-/**
+    unsigned int hmac_sha512_256_final(HMAC_SHA512_256_CTX *ctx, unsigned char *mac);
+    /**
  * @brief       input key and whole message, get the hmac
  * @param[in]   key                 - key.
  * @param[in]   sp_key_idx          - index of secure port key.
@@ -85,11 +85,10 @@ unsigned int hmac_sha512_256_final(HMAC_SHA512_256_CTX *ctx, unsigned char *mac)
       -# 1. please make sure the mac buffer is sufficient.
   @endverbatim
  */
-unsigned int hmac_sha512_256(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned char *msg, 
-        unsigned int msg_bytes, unsigned char *mac);
+    unsigned int hmac_sha512_256(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned char *msg, unsigned int msg_bytes, unsigned char *mac);
 
-#ifdef SUPPORT_HASH_NODE
-/**
+    #ifdef SUPPORT_HASH_NODE
+    /**
  * @brief       input key and whole message, get the hmac(node style)
  * @param[in]   key           - input, key
  * @param[in]   sp_key_idx    - input, index of secure port key
@@ -105,13 +104,12 @@ unsigned int hmac_sha512_256(unsigned char *key, unsigned short sp_key_idx, unsi
  *        address and byte length.
   @endverbatim
  */
-unsigned int hmac_sha512_256_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, 
-        HASH_NODE *node, unsigned int node_num, unsigned char *mac);
-#endif
+    unsigned int hmac_sha512_256_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_NODE *node, unsigned int node_num, unsigned char *mac);
+    #endif
 
 
-#ifdef HASH_DMA_FUNCTION
-/**
+    #ifdef HASH_DMA_FUNCTION
+    /**
  * @brief       init dma hmac-sha512_256
  * @param[in]   ctx                 - HMAC_SHA512_256_CTX context pointer.
  * @param[in]   key                 - key.
@@ -120,9 +118,8 @@ unsigned int hmac_sha512_256_node_steps(unsigned char *key, unsigned short sp_ke
  * @param[in]   callback            - callback function pointer.
  * @return      0:success     other:error
  */
-unsigned int hmac_sha512_256_dma_init(HMAC_SHA512_256_DMA_CTX *ctx, unsigned char *key, unsigned short sp_key_idx,
-        unsigned int key_bytes, HASH_CALLBACK callback);
-/**
+    unsigned int hmac_sha512_256_dma_init(HMAC_SHA512_256_DMA_CTX *ctx, unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_CALLBACK callback);
+    /**
  * @brief       dma hmac-sha512_256 update message
  * @param[in]   ctx                 - HMAC_SHA512_256_CTX context pointer.
  * @param[in]   msg                 - key.
@@ -133,8 +130,8 @@ unsigned int hmac_sha512_256_dma_init(HMAC_SHA512_256_DMA_CTX *ctx, unsigned cha
       -# 1. please make sure the four parameters are valid, and ctx is initialized.
   @endverbatim
  */
-unsigned int hmac_sha512_256_dma_update_blocks(HMAC_SHA512_256_DMA_CTX *ctx, unsigned int *msg, unsigned int msg_bytes);
-/**
+    unsigned int hmac_sha512_256_dma_update_blocks(HMAC_SHA512_256_DMA_CTX *ctx, unsigned int *msg, unsigned int msg_bytes);
+    /**
  * @brief       dma hmac-sha512_256 message update done, get the hmac
  * @param[in]   ctx                 - HMAC_SHA512_256_DMA_CTX context pointer.
  * @param[in]   remainder_msg       - message.
@@ -147,10 +144,9 @@ unsigned int hmac_sha512_256_dma_update_blocks(HMAC_SHA512_256_DMA_CTX *ctx, uns
       -# 1. please make sure the three parameters are valid, and ctx is initialized.
   @endverbatim
  */
-unsigned int hmac_sha512_256_dma_final(HMAC_SHA512_256_DMA_CTX *ctx, unsigned int *remainder_msg, 
-        unsigned int remainder_bytes, unsigned int *mac);
+    unsigned int hmac_sha512_256_dma_final(HMAC_SHA512_256_DMA_CTX *ctx, unsigned int *remainder_msg, unsigned int remainder_bytes, unsigned int *mac);
 
-/**
+    /**
  * @brief         dma hmac-sha512_256 input key and message, get the hmac
  * @param[in]   key                 - key.
  * @param[in]   sp_key_idx       - index of secure port key.
@@ -161,9 +157,8 @@ unsigned int hmac_sha512_256_dma_final(HMAC_SHA512_256_DMA_CTX *ctx, unsigned in
  * @param[in]   callback         - callback function pointer.
  * @return      0:success     other:error
  */
-unsigned int hmac_sha512_256_dma(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned int *msg, 
-        unsigned int msg_bytes, unsigned int *mac, HASH_CALLBACK callback);
-/**
+    unsigned int hmac_sha512_256_dma(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, unsigned int *msg, unsigned int msg_bytes, unsigned int *mac, HASH_CALLBACK callback);
+        /**
  * @brief       dma hmac input key and message, get the hmac(node style).
  * @param[in]   key               - key.
  * @param[in]   sp_key_idx        - index of secure port key.
@@ -181,11 +176,10 @@ unsigned int hmac_sha512_256_dma(unsigned char *key, unsigned short sp_key_idx, 
       -# 3. for every node or segment except the last, its message length must be a multiple of block length.
   @endverbatim
  */
-#ifdef SUPPORT_HASH_DMA_NODE
-unsigned int hmac_sha512_256_dma_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, 
-        HASH_DMA_NODE *node, unsigned int node_num, unsigned int *mac, HASH_CALLBACK callback);
-#endif
-#endif
+        #ifdef SUPPORT_HASH_DMA_NODE
+    unsigned int hmac_sha512_256_dma_node_steps(unsigned char *key, unsigned short sp_key_idx, unsigned int key_bytes, HASH_DMA_NODE *node, unsigned int node_num, unsigned int *mac, HASH_CALLBACK callback);
+        #endif
+    #endif
 
 
 #endif

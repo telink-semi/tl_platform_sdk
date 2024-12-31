@@ -23,12 +23,12 @@
  *******************************************************************************************************/
 #include "usbcdc.h"
 #if (USB_CDC_ENABLE)
-#include "../usbstd/usb.h"
+    #include "../usbstd/usb.h"
 
-unsigned char usb_cdc_data[CDC_TXRX_EPSIZE];
+unsigned char  usb_cdc_data[CDC_TXRX_EPSIZE];
 unsigned short usb_cdc_data_len;
-unsigned int usb_cdc_tx_cnt;
-unsigned char LineCoding[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08};
+unsigned int   usb_cdc_tx_cnt;
+unsigned char  LineCoding[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08};
 
 /**
  * @brief       This function serves to send data to USB host in CDC device.
@@ -42,15 +42,13 @@ unsigned char LineCoding[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08};
  */
 unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data_len)
 {
-    unsigned int div         = data_len / CDC_TXRX_EPSIZE;
-    unsigned int remain      = data_len % CDC_TXRX_EPSIZE;
+    unsigned int div    = data_len / CDC_TXRX_EPSIZE;
+    unsigned int remain = data_len % CDC_TXRX_EPSIZE;
 
     /* send divisor data of CDC_TXRX_EPSIZE.*/
-    for (unsigned int i = 0; i < div; i++)
-    {
+    for (unsigned int i = 0; i < div; i++) {
         usbhw_reset_ep_ptr(USB_PHYSICAL_EDP_CDC_IN);
-        for (unsigned char j = 0; j < CDC_TXRX_EPSIZE; j++)
-        {
+        for (unsigned char j = 0; j < CDC_TXRX_EPSIZE; j++) {
             reg_usb_ep_dat(USB_PHYSICAL_EDP_CDC_IN) = (*data_ptr);
             ++data_ptr;
         }
@@ -59,7 +57,7 @@ unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data
         unsigned int ref_tick = stimer_get_tick();
         while (usbhw_is_ep_busy(USB_PHYSICAL_EDP_CDC_IN)) /* waiting for endpoint to not be busy. */
         {
-            if (clock_time_exceed(ref_tick, 1000)) /* some exceptions occur, such as the usb disconnecting. */
+            if (clock_time_exceed(ref_tick, 1000))        /* some exceptions occur, such as the usb disconnecting. */
             {
                 return 1;
             }
@@ -67,11 +65,9 @@ unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data
     }
 
     /* send remainder data of CDC_TXRX_EPSIZE.*/
-    if (remain)
-    {
+    if (remain) {
         usbhw_reset_ep_ptr(USB_PHYSICAL_EDP_CDC_IN);
-        while (remain-- > 0)
-        {
+        while (remain-- > 0) {
             reg_usb_ep_dat(USB_PHYSICAL_EDP_CDC_IN) = (*data_ptr);
             ++data_ptr;
         }
@@ -80,14 +76,12 @@ unsigned char usb_cdc_tx_data_to_host(unsigned char *data_ptr, unsigned int data
         unsigned int ref_tick = stimer_get_tick();
         while (usbhw_is_ep_busy(USB_PHYSICAL_EDP_CDC_IN)) /* waiting for endpoint to not be busy. */
         {
-            if (clock_time_exceed(ref_tick, 1000)) /* some exceptions occur, such as the usb disconnecting. */
+            if (clock_time_exceed(ref_tick, 1000))        /* some exceptions occur, such as the usb disconnecting. */
             {
                 return 1;
             }
         }
-    }
-    else
-    {
+    } else {
         /** If the length of the last data sent is equal to the wMaxPacketSize (CDC_TXRX_EPSIZE), \n
         the device must return a zero-length packet to indicate the end of the data stage, \n
         The following is the process of sending zero-length packet. */
@@ -103,10 +97,8 @@ void usb_cdc_rx_data_from_host(unsigned char *rx_buff)
     unsigned char rx_from_usbhost_len = reg_usb_ep_ptr(USB_PHYSICAL_EDP_CDC_OUT);
     usbhw_reset_ep_ptr(USB_PHYSICAL_EDP_CDC_OUT);
 
-    if (rx_from_usbhost_len > 0 && rx_from_usbhost_len <= CDC_TXRX_EPSIZE)
-    {
-        for (int i = 0; i < rx_from_usbhost_len; ++i)
-        {
+    if (rx_from_usbhost_len > 0 && rx_from_usbhost_len <= CDC_TXRX_EPSIZE) {
+        for (int i = 0; i < rx_from_usbhost_len; ++i) {
             rx_buff[i] = reg_usb_ep_dat(USB_PHYSICAL_EDP_CDC_OUT);
         }
         usb_cdc_data_len = rx_from_usbhost_len & 0xff;

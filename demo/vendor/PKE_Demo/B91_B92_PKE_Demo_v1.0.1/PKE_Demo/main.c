@@ -25,23 +25,22 @@
 
 
 extern void user_init(void);
-extern void main_loop (void);
+extern void main_loop(void);
 
 /**
  * @brief       This is main function
  * @return      none
  */
-int main (void)
+int main(void)
 {
     PLATFORM_INIT;
     CLOCK_INIT;
 
-            
+
     user_init();
 
-    while (1)
-    {
-        main_loop ();
+    while (1) {
+        main_loop();
     }
 
     return 0;

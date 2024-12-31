@@ -23,33 +23,21 @@
  *******************************************************************************************************/
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "driver.h"
 #include "common.h"
 
 
+#define QDEC_32K_SPEED 32000 //pwm 32K
 
-#define     QDEC_32K_SPEED               32000    //pwm 32K
-
-
-
-
-enum{
-    CLOCK_QDEC_32K_1S = QDEC_32K_SPEED,
-    CLOCK_QDEC_32K_1MS = (CLOCK_QDEC_32K_1S  / 1000),
-};
-
-
-
-
-
-
-
-
-
-
+    enum
+    {
+        CLOCK_QDEC_32K_1S  = QDEC_32K_SPEED,
+        CLOCK_QDEC_32K_1MS = (CLOCK_QDEC_32K_1S / 1000),
+    };
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

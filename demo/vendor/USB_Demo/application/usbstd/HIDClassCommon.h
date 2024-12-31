@@ -24,7 +24,8 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 /* Includes: */
 #include "StdDescriptors.h"
@@ -261,187 +262,186 @@ extern "C" {
 #define HID_KEYBOARD_SC_RIGHT_GUI                         231
 
 #define HID_DESCRIPTOR_JOYSTICK(NumAxis, MinAxisVal, MaxAxisVal, MinPhysicalVal, MaxPhysicalVal, Buttons) \
-        HID_RPT_USAGE_PAGE      (8,  0x01), \
-        HID_RPT_USAGE          (8,  0x04), \
-        HID_RPT_COLLECTION      (8,  0x01), \
-            HID_RPT_USAGE           (8,  0x01), \
-            HID_RPT_COLLECTION      (8,  0x00), \
-            HID_RPT_USAGE_MINIMUM   (8,  0x30), \
-            HID_RPT_USAGE_MAXIMUM   (8, (0x30 + (NumAxis - 1))), \
-            HID_RPT_LOGICAL_MINIMUM (16, MinAxisVal), \
-            HID_RPT_LOGICAL_MAXIMUM (16, MaxAxisVal), \
-            HID_RPT_PHYSICAL_MINIMUM(16, MinPhysicalVal), \
-            HID_RPT_PHYSICAL_MAXIMUM(16, MaxPhysicalVal), \
-            HID_RPT_REPORT_COUNT    (8,  NumAxis), \
-            HID_RPT_REPORT_SIZE     (8, ((((MinAxisVal >= -0xFF) && (MaxAxisVal <= 0xFF)) ? 8 : 16))), \
-            HID_RPT_INPUT           (8,  HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
-            HID_RPT_END_COLLECTION  (0), \
-            HID_RPT_USAGE_PAGE      (8,  0x09), \
-            HID_RPT_USAGE_MINIMUM   (8,  0x01), \
-            HID_RPT_USAGE_MAXIMUM   (8,  Buttons), \
-            HID_RPT_LOGICAL_MINIMUM (8,  0x00), \
-            HID_RPT_LOGICAL_MAXIMUM (8,  0x01), \
-            HID_RPT_REPORT_SIZE     (8,  0x01), \
-            HID_RPT_REPORT_COUNT    (8,  Buttons), \
-            HID_RPT_INPUT           (8,  HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
-            HID_RPT_REPORT_SIZE     (8, (8 - (Buttons % 8))), \
-            HID_RPT_REPORT_COUNT    (8,  0x01), \
-            HID_RPT_INPUT           (8,  HID_IOF_CONSTANT), \
-        HID_RPT_END_COLLECTION  (0)
-
-#define HID_DESCRIPTOR_KEYBOARD(MaxKeys) \
-        HID_RPT_USAGE_PAGE          (8, 0x01), \
-        HID_RPT_USAGE               (8, 0x06), \
-        HID_RPT_COLLECTION          (8, 0x01), \
-            HID_RPT_USAGE_PAGE      (8, 0x07), \
-        HID_RPT_USAGE_MINIMUM       (8, 0xE0), \
-            HID_RPT_USAGE_MAXIMUM   (8, 0xE7), \
-            HID_RPT_LOGICAL_MINIMUM (8, 0x00), \
-            HID_RPT_LOGICAL_MAXIMUM (8, 0x01), \
-            HID_RPT_REPORT_COUNT        (8, 0x08), \
-            HID_RPT_REPORT_SIZE     (8, 0x01), \
-            HID_RPT_INPUT           (8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
-            HID_RPT_INPUT           (8, HID_IOF_CONSTANT | HID_IOF_VARIABLE), \
-            HID_RPT_REPORT_COUNT        (8, 0x05), \
-            HID_RPT_USAGE_PAGE      (8, 0x08), \
-            HID_RPT_USAGE_MINIMUM   (8, 0x01), \
-            HID_RPT_USAGE_MAXIMUM   (8, 0x05), \
-            HID_RPT_OUTPUT          (8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE), \
-            HID_RPT_REPORT_COUNT        (8, 0x01), \
-            HID_RPT_REPORT_SIZE     (8, 0x03), \
-            HID_RPT_OUTPUT          (8, HID_IOF_CONSTANT), \
-            HID_RPT_REPORT_COUNT        (8, 0x06), \
-            HID_RPT_REPORT_SIZE     (8, 0x08), \
-            HID_RPT_LOGICAL_MINIMUM (8, 0x00), \
-            0x26,   0xa4,   0x00, \
-            HID_RPT_USAGE_PAGE      (8, 0x07), \
-            HID_RPT_USAGE_MINIMUM   (8, 0x00), \
-            0x2a,   0xa4,   0x00, \
-            HID_RPT_INPUT           (8, HID_IOF_DATA | HID_IOF_ARRAY | HID_IOF_ABSOLUTE), \
+    HID_RPT_USAGE_PAGE(8, 0x01),                                                                          \
+        HID_RPT_USAGE(8, 0x04),                                                                           \
+        HID_RPT_COLLECTION(8, 0x01),                                                                      \
+        HID_RPT_USAGE(8, 0x01),                                                                           \
+        HID_RPT_COLLECTION(8, 0x00),                                                                      \
+        HID_RPT_USAGE_MINIMUM(8, 0x30),                                                                   \
+        HID_RPT_USAGE_MAXIMUM(8, (0x30 + (NumAxis - 1))),                                                 \
+        HID_RPT_LOGICAL_MINIMUM(16, MinAxisVal),                                                          \
+        HID_RPT_LOGICAL_MAXIMUM(16, MaxAxisVal),                                                          \
+        HID_RPT_PHYSICAL_MINIMUM(16, MinPhysicalVal),                                                     \
+        HID_RPT_PHYSICAL_MAXIMUM(16, MaxPhysicalVal),                                                     \
+        HID_RPT_REPORT_COUNT(8, NumAxis),                                                                 \
+        HID_RPT_REPORT_SIZE(8, ((((MinAxisVal >= -0xFF) && (MaxAxisVal <= 0xFF)) ? 8 : 16))),             \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),                             \
+        HID_RPT_END_COLLECTION(0),                                                                        \
+        HID_RPT_USAGE_PAGE(8, 0x09),                                                                      \
+        HID_RPT_USAGE_MINIMUM(8, 0x01),                                                                   \
+        HID_RPT_USAGE_MAXIMUM(8, Buttons),                                                                \
+        HID_RPT_LOGICAL_MINIMUM(8, 0x00),                                                                 \
+        HID_RPT_LOGICAL_MAXIMUM(8, 0x01),                                                                 \
+        HID_RPT_REPORT_SIZE(8, 0x01),                                                                     \
+        HID_RPT_REPORT_COUNT(8, Buttons),                                                                 \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),                             \
+        HID_RPT_REPORT_SIZE(8, (8 - (Buttons % 8))),                                                      \
+        HID_RPT_REPORT_COUNT(8, 0x01),                                                                    \
+        HID_RPT_INPUT(8, HID_IOF_CONSTANT),                                                               \
         HID_RPT_END_COLLECTION(0)
 
-#define HID_DESCRIPTOR_MOUSE(MinAxisVal, MaxAxisVal, MinPhysicalVal, MaxPhysicalVal, Buttons, AbsoluteCoords) \
-        HID_RPT_USAGE_PAGE              (8, 0x01), \
-        HID_RPT_USAGE                   (8, 0x02), \
-        HID_RPT_COLLECTION              (8, 0x01), \
-            HID_RPT_USAGE               (8, 0x01), \
-            HID_RPT_COLLECTION          (8, 0x00), \
-                HID_RPT_USAGE_PAGE      (8, 0x09), \
-                HID_RPT_USAGE_MINIMUM   (8, 0x01), \
-                HID_RPT_USAGE_MAXIMUM   (8, Buttons), \
-                HID_RPT_LOGICAL_MINIMUM (8, 0x00), \
-                HID_RPT_LOGICAL_MAXIMUM (8, 0x01), \
-                HID_RPT_REPORT_COUNT        (8, Buttons), \
-                HID_RPT_REPORT_SIZE     (8, 0x01), \
-                HID_RPT_INPUT           (8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
-                HID_RPT_REPORT_COUNT        (8, 0x01), \
-                HID_RPT_REPORT_SIZE     (8, (8 - (Buttons % 8))), \
-                HID_RPT_INPUT           (8, HID_IOF_CONSTANT), \
-                HID_RPT_USAGE_PAGE      (8, 0x01), \
-                HID_RPT_USAGE           (8, 0x30), \
-                HID_RPT_USAGE           (8, 0x31), \
-                HID_RPT_LOGICAL_MINIMUM (16, MinAxisVal), \
-                HID_RPT_LOGICAL_MAXIMUM (16, MaxAxisVal), \
-                HID_RPT_PHYSICAL_MINIMUM    (16, MinPhysicalVal), \
-                HID_RPT_PHYSICAL_MAXIMUM    (16, MaxPhysicalVal), \
-                HID_RPT_REPORT_COUNT        (8, 0x02), \
-                HID_RPT_REPORT_SIZE     (8, ((((MinAxisVal >= -0xFF) && (MaxAxisVal <= 0xFF)) ? 8 : 16))), \
-                HID_RPT_INPUT           (8, HID_IOF_DATA | HID_IOF_VARIABLE | (AbsoluteCoords ? HID_IOF_ABSOLUTE : HID_IOF_RELATIVE)), \
-            HID_RPT_END_COLLECTION      (0), \
+#define HID_DESCRIPTOR_KEYBOARD(MaxKeys)                                                              \
+    HID_RPT_USAGE_PAGE(8, 0x01),                                                                      \
+        HID_RPT_USAGE(8, 0x06),                                                                       \
+        HID_RPT_COLLECTION(8, 0x01),                                                                  \
+        HID_RPT_USAGE_PAGE(8, 0x07),                                                                  \
+        HID_RPT_USAGE_MINIMUM(8, 0xE0),                                                               \
+        HID_RPT_USAGE_MAXIMUM(8, 0xE7),                                                               \
+        HID_RPT_LOGICAL_MINIMUM(8, 0x00),                                                             \
+        HID_RPT_LOGICAL_MAXIMUM(8, 0x01),                                                             \
+        HID_RPT_REPORT_COUNT(8, 0x08),                                                                \
+        HID_RPT_REPORT_SIZE(8, 0x01),                                                                 \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),                         \
+        HID_RPT_INPUT(8, HID_IOF_CONSTANT | HID_IOF_VARIABLE),                                        \
+        HID_RPT_REPORT_COUNT(8, 0x05),                                                                \
+        HID_RPT_USAGE_PAGE(8, 0x08),                                                                  \
+        HID_RPT_USAGE_MINIMUM(8, 0x01),                                                               \
+        HID_RPT_USAGE_MAXIMUM(8, 0x05),                                                               \
+        HID_RPT_OUTPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE), \
+        HID_RPT_REPORT_COUNT(8, 0x01),                                                                \
+        HID_RPT_REPORT_SIZE(8, 0x03),                                                                 \
+        HID_RPT_OUTPUT(8, HID_IOF_CONSTANT),                                                          \
+        HID_RPT_REPORT_COUNT(8, 0x06),                                                                \
+        HID_RPT_REPORT_SIZE(8, 0x08),                                                                 \
+        HID_RPT_LOGICAL_MINIMUM(8, 0x00),                                                             \
+        0x26, 0xa4, 0x00,                                                                             \
+        HID_RPT_USAGE_PAGE(8, 0x07),                                                                  \
+        HID_RPT_USAGE_MINIMUM(8, 0x00),                                                               \
+        0x2a, 0xa4, 0x00,                                                                             \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_ARRAY | HID_IOF_ABSOLUTE),                            \
         HID_RPT_END_COLLECTION(0)
 
-#define HID_DESCRIPTOR_VENDOR(VendorPageNum, CollectionUsage, DataINUsage, DataOUTUsage, NumBytes) \
-        HID_RPT_USAGE_PAGE              (16, (0xFF00 | VendorPageNum)), \
-        HID_RPT_USAGE                   (8, CollectionUsage), \
-        HID_RPT_COLLECTION              (8, 0x01), \
-            HID_RPT_USAGE               (8, DataINUsage), \
-            HID_RPT_LOGICAL_MINIMUM     (8, 0x00), \
-            HID_RPT_LOGICAL_MAXIMUM     (8, 0xFF), \
-            HID_RPT_REPORT_SIZE         (8, 0x08), \
-            HID_RPT_REPORT_COUNT            (8, NumBytes), \
-            HID_RPT_INPUT               (8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
-            HID_RPT_USAGE               (8, DataOUTUsage), \
-            HID_RPT_LOGICAL_MINIMUM     (8, 0x00), \
-            HID_RPT_LOGICAL_MAXIMUM     (8, 0xFF), \
-            HID_RPT_REPORT_SIZE         (8, 0x08), \
-            HID_RPT_REPORT_COUNT            (8, NumBytes), \
-            HID_RPT_OUTPUT              (8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE), \
-        HID_RPT_END_COLLECTION          (0)
+#define HID_DESCRIPTOR_MOUSE(MinAxisVal, MaxAxisVal, MinPhysicalVal, MaxPhysicalVal, Buttons, AbsoluteCoords)       \
+    HID_RPT_USAGE_PAGE(8, 0x01),                                                                                    \
+        HID_RPT_USAGE(8, 0x02),                                                                                     \
+        HID_RPT_COLLECTION(8, 0x01),                                                                                \
+        HID_RPT_USAGE(8, 0x01),                                                                                     \
+        HID_RPT_COLLECTION(8, 0x00),                                                                                \
+        HID_RPT_USAGE_PAGE(8, 0x09),                                                                                \
+        HID_RPT_USAGE_MINIMUM(8, 0x01),                                                                             \
+        HID_RPT_USAGE_MAXIMUM(8, Buttons),                                                                          \
+        HID_RPT_LOGICAL_MINIMUM(8, 0x00),                                                                           \
+        HID_RPT_LOGICAL_MAXIMUM(8, 0x01),                                                                           \
+        HID_RPT_REPORT_COUNT(8, Buttons),                                                                           \
+        HID_RPT_REPORT_SIZE(8, 0x01),                                                                               \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),                                       \
+        HID_RPT_REPORT_COUNT(8, 0x01),                                                                              \
+        HID_RPT_REPORT_SIZE(8, (8 - (Buttons % 8))),                                                                \
+        HID_RPT_INPUT(8, HID_IOF_CONSTANT),                                                                         \
+        HID_RPT_USAGE_PAGE(8, 0x01),                                                                                \
+        HID_RPT_USAGE(8, 0x30),                                                                                     \
+        HID_RPT_USAGE(8, 0x31),                                                                                     \
+        HID_RPT_LOGICAL_MINIMUM(16, MinAxisVal),                                                                    \
+        HID_RPT_LOGICAL_MAXIMUM(16, MaxAxisVal),                                                                    \
+        HID_RPT_PHYSICAL_MINIMUM(16, MinPhysicalVal),                                                               \
+        HID_RPT_PHYSICAL_MAXIMUM(16, MaxPhysicalVal),                                                               \
+        HID_RPT_REPORT_COUNT(8, 0x02),                                                                              \
+        HID_RPT_REPORT_SIZE(8, ((((MinAxisVal >= -0xFF) && (MaxAxisVal <= 0xFF)) ? 8 : 16))),                       \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | (AbsoluteCoords ? HID_IOF_ABSOLUTE : HID_IOF_RELATIVE)), \
+        HID_RPT_END_COLLECTION(0),                                                                                  \
+        HID_RPT_END_COLLECTION(0)
 
-enum HID_Descriptor_ClassSubclassProtocol_t
-{
-    HID_CSCP_NonBootSubclass = 0x00,
-    HID_CSCP_NonBootProtocol = 0x00,
-    HID_CSCP_BootSubclass = 0x01,
-    HID_CSCP_KeyboardBootProtocol = 0x01,
-    HID_CSCP_MouseBootProtocol,
-    HID_CSCP_HIDClass,
-};
+#define HID_DESCRIPTOR_VENDOR(VendorPageNum, CollectionUsage, DataINUsage, DataOUTUsage, NumBytes)    \
+    HID_RPT_USAGE_PAGE(16, (0xFF00 | VendorPageNum)),                                                 \
+        HID_RPT_USAGE(8, CollectionUsage),                                                            \
+        HID_RPT_COLLECTION(8, 0x01),                                                                  \
+        HID_RPT_USAGE(8, DataINUsage),                                                                \
+        HID_RPT_LOGICAL_MINIMUM(8, 0x00),                                                             \
+        HID_RPT_LOGICAL_MAXIMUM(8, 0xFF),                                                             \
+        HID_RPT_REPORT_SIZE(8, 0x08),                                                                 \
+        HID_RPT_REPORT_COUNT(8, NumBytes),                                                            \
+        HID_RPT_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),                         \
+        HID_RPT_USAGE(8, DataOUTUsage),                                                               \
+        HID_RPT_LOGICAL_MINIMUM(8, 0x00),                                                             \
+        HID_RPT_LOGICAL_MAXIMUM(8, 0xFF),                                                             \
+        HID_RPT_REPORT_SIZE(8, 0x08),                                                                 \
+        HID_RPT_REPORT_COUNT(8, NumBytes),                                                            \
+        HID_RPT_OUTPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE), \
+        HID_RPT_END_COLLECTION(0)
 
-enum HID_ClassRequests_t
-{
-    HID_REQ_GetReport = 0x01,
-    HID_REQ_GetIdle,
-    HID_REQ_GetProtocol,
-    HID_REQ_SetReport = 0x09,
-    HID_REQ_SetIdle,
-    HID_REQ_SetProtocol,
-};
+    enum HID_Descriptor_ClassSubclassProtocol_t
+    {
+        HID_CSCP_NonBootSubclass      = 0x00,
+        HID_CSCP_NonBootProtocol      = 0x00,
+        HID_CSCP_BootSubclass         = 0x01,
+        HID_CSCP_KeyboardBootProtocol = 0x01,
+        HID_CSCP_MouseBootProtocol,
+        HID_CSCP_HIDClass,
+    };
 
-enum HID_DescriptorTypes_t
-{
-    HID_DTYPE_HID = 0x21,
-    HID_DTYPE_Report,
-};
+    enum HID_ClassRequests_t
+    {
+        HID_REQ_GetReport = 0x01,
+        HID_REQ_GetIdle,
+        HID_REQ_GetProtocol,
+        HID_REQ_SetReport = 0x09,
+        HID_REQ_SetIdle,
+        HID_REQ_SetProtocol,
+    };
 
-enum HID_ReportItemTypes_t
-{
-    HID_REPORT_ITEM_In,
-    HID_REPORT_ITEM_Out,
-    HID_REPORT_ITEM_Feature,
-    HID_REPORT_CUSTOM,
-};
+    enum HID_DescriptorTypes_t
+    {
+        HID_DTYPE_HID = 0x21,
+        HID_DTYPE_Report,
+    };
 
-typedef struct
-{
-    USB_Descriptor_Hdr_t Header;
+    enum HID_ReportItemTypes_t
+    {
+        HID_REPORT_ITEM_In,
+        HID_REPORT_ITEM_Out,
+        HID_REPORT_ITEM_Feature,
+        HID_REPORT_CUSTOM,
+    };
 
-    unsigned short HIDSpec;
-    unsigned char  CountryCode;
-    unsigned char TotalReportDescriptors;
-    unsigned char HIDReportType;
-    unsigned char HIDReportLength[2];
-} __attribute__((packed)) USB_HID_Descriptor_HID_t;
+    typedef struct
+    {
+        USB_Descriptor_Hdr_t Header;
 
-typedef struct
-{
-    unsigned char Length;
-    unsigned char DescriptorType;
-    unsigned short BcdHID;
-    unsigned char CountryCode;
-    unsigned char NumDescriptors;
-    unsigned char DescriptorType2;
-    unsigned char DescriptorLength[2];
-} __attribute__((packed)) USB_HID_StdDescriptor_HID_t;
+        unsigned short HIDSpec;
+        unsigned char  CountryCode;
+        unsigned char  TotalReportDescriptors;
+        unsigned char  HIDReportType;
+        unsigned char  HIDReportLength[2];
+    } __attribute__((packed)) USB_HID_Descriptor_HID_t;
 
-typedef struct
-{
-    unsigned char Button;
-    signed char  X;
-    signed char  Y;
-} __attribute__((packed)) USB_MouseReport_Data_t;
+    typedef struct
+    {
+        unsigned char  Length;
+        unsigned char  DescriptorType;
+        unsigned short BcdHID;
+        unsigned char  CountryCode;
+        unsigned char  NumDescriptors;
+        unsigned char  DescriptorType2;
+        unsigned char  DescriptorLength[2];
+    } __attribute__((packed)) USB_HID_StdDescriptor_HID_t;
 
-typedef struct
-{
-    unsigned char Modifier;
-    unsigned char Reserved;
-    unsigned char KeyCode[6];
-}USB_KeyboardReport_Data_t;
+    typedef struct
+    {
+        unsigned char Button;
+        signed char   X;
+        signed char   Y;
+    } __attribute__((packed)) USB_MouseReport_Data_t;
 
-typedef unsigned char USB_Descriptor_HIDReport_Datatype_t;
+    typedef struct
+    {
+        unsigned char Modifier;
+        unsigned char Reserved;
+        unsigned char KeyCode[6];
+    } USB_KeyboardReport_Data_t;
+
+    typedef unsigned char USB_Descriptor_HIDReport_Datatype_t;
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }
 #endif
-

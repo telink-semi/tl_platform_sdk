@@ -28,96 +28,98 @@
 
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_64K
-#define FLASH_ADC_VREF_CALIB_ADDR_64K   0xe0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_64K 0xe0c0
 #endif
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_128K
-#define FLASH_ADC_VREF_CALIB_ADDR_128K  0x1e0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_128K 0x1e0c0
 #endif
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_512K
-#define FLASH_ADC_VREF_CALIB_ADDR_512K  0x7e0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_512K 0x7e0c0
 #endif
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_1M
-#define FLASH_ADC_VREF_CALIB_ADDR_1M    0xfe0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_1M 0xfe0c0
 #endif
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_2M
-#define FLASH_ADC_VREF_CALIB_ADDR_2M    0x1fe0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_2M 0x1fe0c0
 #endif
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_4M
-#define FLASH_ADC_VREF_CALIB_ADDR_4M    0x3fe0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_4M 0x3fe0c0
 #endif
 
 #ifndef FLASH_ADC_VREF_CALIB_ADDR_16M
-#define FLASH_ADC_VREF_CALIB_ADDR_16M   0xffe0c0
+    #define FLASH_ADC_VREF_CALIB_ADDR_16M 0xffe0c0
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_64K
-#define FLASH_CAP_VALUE_ADDR_64K        0xe000
+    #define FLASH_CAP_VALUE_ADDR_64K 0xe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_128K
-#define FLASH_CAP_VALUE_ADDR_128K       0x1e000
+    #define FLASH_CAP_VALUE_ADDR_128K 0x1e000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_512K
-#define FLASH_CAP_VALUE_ADDR_512K       0x7e000
+    #define FLASH_CAP_VALUE_ADDR_512K 0x7e000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_1M
-#define FLASH_CAP_VALUE_ADDR_1M         0xfe000
+    #define FLASH_CAP_VALUE_ADDR_1M 0xfe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_2M
-#define FLASH_CAP_VALUE_ADDR_2M         0x1fe000
+    #define FLASH_CAP_VALUE_ADDR_2M 0x1fe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_4M
-#define FLASH_CAP_VALUE_ADDR_4M         0x3fe000
+    #define FLASH_CAP_VALUE_ADDR_4M 0x3fe000
 #endif
 
 #ifndef FLASH_CAP_VALUE_ADDR_16M
-#define FLASH_CAP_VALUE_ADDR_16M            0xffe000
+    #define FLASH_CAP_VALUE_ADDR_16M 0xffe000
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K        0xe280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K 0xe280
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K       0x1e280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K 0x1e280
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K       0x7e280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K 0x7e280
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M         0xfe280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M 0xfe280
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M         0x1fe280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M 0x1fe280
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M         0x3fe280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M 0x3fe280
 #endif
 
 #ifndef FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M
-#define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M        0xffe280
+    #define FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M 0xffe280
 #endif
 
 /**
  * @brief   flash voltage definition
  */
-typedef enum {
-    USER_CALIB_FROM_FLASH   = 0x01,
-    USER_CALIB_FROM_OTP     = 0x02,
-}user_calib_from_e;
+typedef enum
+{
+    USER_CALIB_FROM_FLASH = 0x01,
+    USER_CALIB_FROM_OTP   = 0x02,
+} user_calib_from_e;
+
 /**
  * @brief       This function is used to calibrate the user's parameters.
  *              This function is to read the calibration value stored in flash,

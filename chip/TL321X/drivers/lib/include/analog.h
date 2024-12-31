@@ -53,7 +53,7 @@
 /**********************************************************************************************************************
  *                                           global macro                                                             *
  *********************************************************************************************************************/
-#define ANALOG_TIMEOUT                0
+#define ANALOG_TIMEOUT 0
 
 /**********************************************************************************************************************
  *                                         global data type                                                           *
@@ -141,26 +141,23 @@ _attribute_ram_code_sec_noinline_ void analog_write_buff(unsigned char addr, uns
  * @brief      This function serves to judge whether analog Tx buffer is empty.
  * @return     0:not empty      1: empty
  */
-_attribute_ram_code_sec_noinline_  bool analog_txbuf_no_empty(void);
+_attribute_ram_code_sec_noinline_ bool analog_txbuf_no_empty(void);
 
 /**
  * @brief      This function serves to judge whether analog is busy.
  * @return     0: not busy  1:busy
  */
-_attribute_ram_code_sec_noinline_  bool analog_busy(void);
+_attribute_ram_code_sec_noinline_ bool analog_busy(void);
 
-/**
+    /**
  * @brief      This function serves to judge whether analog write/read is busy .
  * @return     none.
  */
-#define analog_wait()                  wait_condition_fails_or_timeout(analog_busy,g_drv_api_error_timeout_us,drv_timeout_handler,(unsigned int)DRV_API_ERROR_TIMEOUT_ANALOG_WAIT)
+    #define analog_wait() wait_condition_fails_or_timeout(analog_busy, g_drv_api_error_timeout_us, drv_timeout_handler, (unsigned int)DRV_API_ERROR_TIMEOUT_ANALOG_WAIT)
 
-/**
+    /**
  * @brief      This function serves to judge whether analog Tx buffer is empty.
  * @return     none.
  */
-#define analog_wait_txbuf_no_empty()  wait_condition_fails_or_timeout(analog_txbuf_no_empty,g_drv_api_error_timeout_us,drv_timeout_handler,(unsigned int)DRV_API_ERROR_TIMEOUT_ANA_TX_BUFCNT)
+    #define analog_wait_txbuf_no_empty() wait_condition_fails_or_timeout(analog_txbuf_no_empty, g_drv_api_error_timeout_us, drv_timeout_handler, (unsigned int)DRV_API_ERROR_TIMEOUT_ANA_TX_BUFCNT)
 #endif
-
-
-

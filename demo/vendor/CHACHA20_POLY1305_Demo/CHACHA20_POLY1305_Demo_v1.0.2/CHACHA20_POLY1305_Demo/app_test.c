@@ -28,16 +28,16 @@ unsigned int chacha20_poly1305_app_test(void)
     chacha20_poly1305_dig_en();
 #ifdef CHACHA20_POLY1305_DMA_FUNCTION
     chacha20_poly1305_set_tx_dma_config(DMA0);
-    chacha20_poly1305_set_rx_dma_config(DMA1,DMA_BURST_1_WORD);
+    chacha20_poly1305_set_rx_dma_config(DMA1, DMA_BURST_1_WORD);
 #endif /* CHACHA20_POLY1305_DMA_FUNCTION */
 
 #if 1
-    if(CHACHA20_POLY1305_all_test())
+    if (CHACHA20_POLY1305_all_test()) {
         return 1;
+    }
 #endif
     return 0;
 }
-
 
 void user_init(void)
 {

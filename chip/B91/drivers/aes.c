@@ -26,12 +26,12 @@
 #include "compiler.h"
 
 /**********************************************************************************************************************
- *                                			  local constants                                                       *
+ *                                            local constants                                                       *
  *********************************************************************************************************************/
 
 
 /**********************************************************************************************************************
- *                                           	local macro                                                        *
+ *                                              local macro                                                        *
  *********************************************************************************************************************/
 
 
@@ -44,8 +44,8 @@
  *                                              global variable                                                       *
  *********************************************************************************************************************/
 _attribute_aes_data_sec_ unsigned int aes_data_buff[8];
-unsigned int aes_base_addr = 0xc0000000;
-static unsigned int embase_offset = 0;    //the embase address offset with IRAM head address.
+unsigned int                          aes_base_addr = 0xc0000000;
+static unsigned int                   embase_offset = 0; //the embase address offset with IRAM head address.
 /**********************************************************************************************************************
  *                                              local variable                                                     *
  *********************************************************************************************************************/
@@ -58,6 +58,7 @@ static unsigned int embase_offset = 0;    //the embase address offset with IRAM 
  * @return    none.
  */
 static inline void aes_wait_done(void);
+
 /**********************************************************************************************************************
  *                                         global function implementation                                             *
  *********************************************************************************************************************/
@@ -66,25 +67,25 @@ static inline void aes_wait_done(void);
  * @param[in] key  - the key of encrypt/decrypt, big--endian.
  * @param[in] data - the data which to do encrypt/decrypt, big--endian. 
  * @return    none.
- * @note	  The AES module register must be used by word and the key and data lengths must be 16 bytes.
+ * @note      The AES module register must be used by word and the key and data lengths must be 16 bytes.
  */
-void aes_set_key_data(unsigned char *key, unsigned char* data)
+void aes_set_key_data(unsigned char *key, unsigned char *data)
 {
-	/*
-		The reg_aes_ptr register is 32 bits, but only the lower 16 bits can be used. The actual access address is obtained by 
-		reg_embase_addr (32bit) + reg_aes_ptr (16bit) which means the accessible space is only 64K.
-		The reg_embase_addr can adjust by call aes_set_em_base_addr().
-	*/
-	unsigned int temp;
-	reg_embase_addr = aes_base_addr;  //set the embase addr
-	for (unsigned char i = 0; i < 4; i++) {
-		temp = key[16-(4*i)-4]<<24 | key[16-(4*i)-3]<<16 | key[16-(4*i)-2]<<8 | key[16-(4*i)-1];
-		reg_aes_key(i) = temp;
-		temp = data[16-(4*i)-4]<<24 | data[16-(4*i)-3]<<16 | data[16-(4*i)-2]<<8 | data[16-(4*i)-1];
-		aes_data_buff[i] = temp;
-	}
+    /*
+        The reg_aes_ptr register is 32 bits, but only the lower 16 bits can be used. The actual access address is obtained by 
+        reg_embase_addr (32bit) + reg_aes_ptr (16bit) which means the accessible space is only 64K.
+        The reg_embase_addr can adjust by call aes_set_em_base_addr().
+    */
+    unsigned int temp;
+    reg_embase_addr = aes_base_addr; //set the embase addr
+    for (unsigned char i = 0; i < 4; i++) {
+        temp             = key[16 - (4 * i) - 4] << 24 | key[16 - (4 * i) - 3] << 16 | key[16 - (4 * i) - 2] << 8 | key[16 - (4 * i) - 1];
+        reg_aes_key(i)   = temp;
+        temp             = data[16 - (4 * i) - 4] << 24 | data[16 - (4 * i) - 3] << 16 | data[16 - (4 * i) - 2] << 8 | data[16 - (4 * i) - 1];
+        aes_data_buff[i] = temp;
+    }
 
-	reg_aes_ptr = (reg_aes_ptr&0xffff0000)|((unsigned int)(aes_data_buff - embase_offset)&0xffff);  //the aes data ptr is base on embase address.
+    reg_aes_ptr = (reg_aes_ptr & 0xffff0000) | ((unsigned int)(aes_data_buff - embase_offset) & 0xffff); //the aes data ptr is base on embase address.
 }
 
 /**
@@ -94,11 +95,11 @@ void aes_set_key_data(unsigned char *key, unsigned char* data)
  */
 void aes_get_result(unsigned char *result)
 {
-	/* read out the result */
-	unsigned char *ptr = (unsigned char *)&aes_data_buff[4];
-	for (unsigned char i=0; i<16; i++) {
-		result[i] = ptr[15 - i];
-	}
+    /* read out the result */
+    unsigned char *ptr = (unsigned char *)&aes_data_buff[4];
+    for (unsigned char i = 0; i < 16; i++) {
+        result[i] = ptr[15 - i];
+    }
 }
 
 /**
@@ -108,11 +109,11 @@ void aes_get_result(unsigned char *result)
  * @param[out] result    - the result of encrypt, big--endian.
  * @return     none
  */
-int aes_encrypt(unsigned char *key, unsigned char* plaintext, unsigned char *result)
+int aes_encrypt(unsigned char *key, unsigned char *plaintext, unsigned char *result)
 {
-	aes_set_key_data(key, plaintext);	 //set the key
+    aes_set_key_data(key, plaintext); //set the key
 
-    aes_set_mode(AES_ENCRYPT_MODE);      //cipher mode
+    aes_set_mode(AES_ENCRYPT_MODE);   //cipher mode
 
     aes_wait_done();
 
@@ -129,50 +130,40 @@ int aes_encrypt(unsigned char *key, unsigned char* plaintext, unsigned char *res
  * @return     none
  * @note       Invoking this interface avoids the risk of AES conflicts when BT is connected.
  */
-int aes_encrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned char *result)
+int aes_encrypt_bt_en(unsigned char *key, unsigned char *plaintext, unsigned char *result)
 {
-	int i, aes_correct = 0;
-	unsigned char temp_result[AES_MAX_CNT][16];
+    int           i, aes_correct = 0;
+    unsigned char temp_result[AES_MAX_CNT][16];
 
-	for(i=0; i<AES_MAX_CNT; i++)
-	{
-		 aes_encrypt(key, plaintext, temp_result[i]);
+    for (i = 0; i < AES_MAX_CNT; i++) {
+        aes_encrypt(key, plaintext, temp_result[i]);
 
-		if(i > 0)
-		{
-			if(!memcmp(temp_result[i], temp_result[i-1], 16))
-			{
-				aes_correct = 1;
-				break;
-			}
-			else
-			{
-				if(i >= 2)
-				{
-					for(int j=0; j<i-1; j++)
-					{
-						if(!memcmp(temp_result[i], temp_result[j], 16))
-						{
-							aes_correct = 1;
-							break;
-						}
-					}
-				}
+        if (i > 0) {
+            if (!memcmp(temp_result[i], temp_result[i - 1], 16)) {
+                aes_correct = 1;
+                break;
+            } else {
+                if (i >= 2) {
+                    for (int j = 0; j < i - 1; j++) {
+                        if (!memcmp(temp_result[i], temp_result[j], 16)) {
+                            aes_correct = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-			}
-		}
+        if (aes_correct) {
+            break;
+        }
+    }
 
-		if(aes_correct){
-			break;
-		}
-	}
-
-	if(aes_correct)
-	{
-		memcpy(result, temp_result[i], 16);
-		return 1;
-	}
-	return 0;
+    if (aes_correct) {
+        memcpy(result, temp_result[i], 16);
+        return 1;
+    }
+    return 0;
 }
 
 /**
@@ -182,17 +173,17 @@ int aes_encrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned cha
  * @param[out] result      - the result of decrypt, big--endian.
  * @return     none.
  */
-int aes_decrypt(unsigned char *key, unsigned char* decrypttext, unsigned char *result)
+int aes_decrypt(unsigned char *key, unsigned char *decrypttext, unsigned char *result)
 {
-	aes_set_key_data(key, decrypttext);	 //set the key
+    aes_set_key_data(key, decrypttext); //set the key
 
-    aes_set_mode(AES_DECRYPT_MODE);      //decipher mode
+    aes_set_mode(AES_DECRYPT_MODE);     //decipher mode
 
     aes_wait_done();
 
     aes_get_result(result);
 
-	return 1;
+    return 1;
 }
 
 /**
@@ -203,68 +194,59 @@ int aes_decrypt(unsigned char *key, unsigned char* decrypttext, unsigned char *r
  * @return     none.
  * @note       Invoking this interface avoids the risk of AES conflicts when BT is connected.
  */
-int aes_decrypt_bt_en(unsigned char* key, unsigned char* plaintext, unsigned char *result)
+int aes_decrypt_bt_en(unsigned char *key, unsigned char *plaintext, unsigned char *result)
 {
-	int i, aes_correct = 0;
-	unsigned char temp_result[AES_MAX_CNT][16];
+    int           i, aes_correct = 0;
+    unsigned char temp_result[AES_MAX_CNT][16];
 
-	for(i=0; i<AES_MAX_CNT; i++)
-	{
-		aes_decrypt(key, plaintext, temp_result[i]);
+    for (i = 0; i < AES_MAX_CNT; i++) {
+        aes_decrypt(key, plaintext, temp_result[i]);
 
-		if(i > 0)
-		{
-			if(!memcmp(temp_result[i], temp_result[i-1], 16))
-			{
-				aes_correct = 1;
-				break;
-			}
-			else
-			{
-				if(i >= 2)
-				{
-					for(int j=0; j<i-1; j++)
-					{
-						if(!memcmp(temp_result[i], temp_result[j], 16))
-						{
-							aes_correct = 1;
-							break;
-						}
-					}
-				}
+        if (i > 0) {
+            if (!memcmp(temp_result[i], temp_result[i - 1], 16)) {
+                aes_correct = 1;
+                break;
+            } else {
+                if (i >= 2) {
+                    for (int j = 0; j < i - 1; j++) {
+                        if (!memcmp(temp_result[i], temp_result[j], 16)) {
+                            aes_correct = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-			}
-		}
+        if (aes_correct) {
+            break;
+        }
+    }
 
-		if(aes_correct){
-			break;
-		}
-	}
-
-	if(aes_correct)
-	{
-		memcpy(result, temp_result[i], 16);
-		return 1;
-	}
-	return 0;
+    if (aes_correct) {
+        memcpy(result, temp_result[i], 16);
+        return 1;
+    }
+    return 0;
 }
 
 /**
  * @brief     This function refer to set the em base address.
  * @param[in] addr - The range of em base address that can be set is the address space of DLM and ILM, which can view the Memory Map of datasheets.
- * 					 The current driver default setting is em_base_addr = 0xc0000000, if you call this function to modify the em base address,
- * 					 you need to ensure that the _attribute_aes_data_sec_ section in the link file (AES-related functions will use this section)
- * 					 is set in the following address range: [em_base_addr,em_base_addr+64KB] (chip design requirements)
+ *                   The current driver default setting is em_base_addr = 0xc0000000, if you call this function to modify the em base address,
+ *                   you need to ensure that the _attribute_aes_data_sec_ section in the link file (AES-related functions will use this section)
+ *                   is set in the following address range: [em_base_addr,em_base_addr+64KB] (chip design requirements)
  * @return    none.
  * @attention If you are using a BT-related SDK, you must follow the planning of BT's sdk to handle this address and not call this function
  */
-void aes_set_em_base_addr(unsigned int addr){
-	aes_base_addr = addr;   //set the embase addr
-	embase_offset = convert_ram_addr_bus2cpu(addr);
+void aes_set_em_base_addr(unsigned int addr)
+{
+    aes_base_addr = addr; //set the embase addr
+    embase_offset = convert_ram_addr_bus2cpu(addr);
 }
 
 /**********************************************************************************************************************
-  *                    						local function implementation                                             *
+  *                                         local function implementation                                             *
   *********************************************************************************************************************/
 /**
  * @brief     This function refer to wait aes crypt done.
@@ -272,6 +254,6 @@ void aes_set_em_base_addr(unsigned int addr){
  */
 static inline void aes_wait_done(void)
 {
-	while(FLD_AES_START == (reg_aes_mode & FLD_AES_START));
+    while (FLD_AES_START == (reg_aes_mode & FLD_AES_START))
+        ;
 }
-

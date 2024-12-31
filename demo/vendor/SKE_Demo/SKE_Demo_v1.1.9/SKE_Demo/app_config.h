@@ -33,11 +33,9 @@ extern "C"
 #include "ske_test/app_test.h"
 
 #ifdef SKE_LP_DMA_FUNCTION
-extern int buf_ske_dma[0xC00];
-#define DMA_RAM_BASE                        (buf_ske_dma)           //just for temporary use
-#endif /* SKE_LP_DMA_FUNCTION */
-
-
+    extern int buf_ske_dma[0xC00];
+    #define DMA_RAM_BASE (buf_ske_dma) //just for temporary use
+#endif                                 /* SKE_LP_DMA_FUNCTION */
 
 
 /* Disable C linkage for C++ Compilers: */

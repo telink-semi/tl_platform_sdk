@@ -26,22 +26,21 @@
 #include "driver.h"
 #include "common.h"
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 
 
-/* Enable C linkage for C++ Compilers: */
+    /* Enable C linkage for C++ Compilers: */
 
 
-
-#define SPI_NDMA_MODE               1//spi master and slave demo without DMA
-#define SPI_DMA_MODE                2//spi master and slave demo with DMA
+#define SPI_NDMA_MODE 1        //spi master and slave demo without DMA
+#define SPI_DMA_MODE  2        //spi master and slave demo with DMA
 #if !defined(MCU_CORE_B92)
-#define SPI_DMA_LLP_MODE            3//spi rx with DMA chain transmission
+    #define SPI_DMA_LLP_MODE 3 //spi rx with DMA chain transmission
 #endif
 
-#define SPI_MODE                   SPI_DMA_MODE
-
+#define SPI_MODE SPI_DMA_MODE
 
 
 /* Disable C linkage for C++ Compilers: */

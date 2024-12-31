@@ -25,8 +25,3 @@
 
 #include "usbcdc.h"
 #include "../usbstd/usb.h"
-
-
-
-
-

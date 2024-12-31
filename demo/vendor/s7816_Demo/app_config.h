@@ -47,15 +47,11 @@
  */
 
 
-
-
-
-
-
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
@@ -63,35 +59,35 @@ extern "C" {
 
 #define S7816_UART0    0
 #define S7816_UART1    1
-#define S7816_UART_CHN      S7816_UART0
+#define S7816_UART_CHN S7816_UART0
 
 
 #if defined(MCU_CORE_B91)
-#define S7816_TRX_PIN    S7816_UART1_RTX_E2
-#define S7816_VCC_PIN    GPIO_PE0
-#define S7816_RST_PIN    GPIO_PB1
-#define S7816_CLK_PIN    S7817_CLK_PA0
+    #define S7816_TRX_PIN S7816_UART1_RTX_E2
+    #define S7816_VCC_PIN GPIO_PE0
+    #define S7816_RST_PIN GPIO_PB1
+    #define S7816_CLK_PIN S7817_CLK_PA0
 #elif defined(MCU_CORE_B92)
-#define S7816_TRX_PIN    GPIO_FC_PB3
-#define S7816_VCC_PIN    GPIO_PB4
-#define S7816_RST_PIN    GPIO_PB1
-#define S7816_CLK_PIN    GPIO_FC_PA0
+    #define S7816_TRX_PIN GPIO_FC_PB3
+    #define S7816_VCC_PIN GPIO_PB4
+    #define S7816_RST_PIN GPIO_PB1
+    #define S7816_CLK_PIN GPIO_FC_PA0
 #elif defined(MCU_CORE_TL7518)
-#define S7816_TRX_PIN    GPIO_FC_PB3
-#define S7816_VCC_PIN    GPIO_PB4
-#define S7816_RST_PIN    GPIO_PB1
-#define S7816_CLK_PIN    GPIO_FC_PA0
+    #define S7816_TRX_PIN GPIO_FC_PB3
+    #define S7816_VCC_PIN GPIO_PB4
+    #define S7816_RST_PIN GPIO_PB1
+    #define S7816_CLK_PIN GPIO_FC_PA0
 #elif defined(MCU_CORE_TL721X)
-#define S7816_TRX_PIN    GPIO_FC_PB3
-#define S7816_VCC_PIN    GPIO_PB4
-#define S7816_RST_PIN    GPIO_PB1
-#define S7816_CLK_PIN    GPIO_FC_PA0
+    #define S7816_TRX_PIN GPIO_FC_PB3
+    #define S7816_VCC_PIN GPIO_PB4
+    #define S7816_RST_PIN GPIO_PB1
+    #define S7816_CLK_PIN GPIO_FC_PA0
 #endif
 
-#define F   372      //clock frequency regulator ,372 is the initialized  value.
-#define D    1       //bitrate regulator,1 is the initialized value.
+#define F                 372 //clock frequency regulator ,372 is the initialized  value.
+#define D                 1   //bitrate regulator,1 is the initialized value.
 
-#define S7816_RX_BUFF_LEN    48
+#define S7816_RX_BUFF_LEN 48
 
 
 /* Disable C linkage for C++ Compilers: */

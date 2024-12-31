@@ -23,12 +23,13 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-#define QDEC_CHA    GPIO_PA2
-#define QDEC_CHB    GPIO_PA3
+#define QDEC_CHA GPIO_PA2
+#define QDEC_CHB GPIO_PA3
 
-volatile signed int total_count;
-volatile signed char qdec_count = 0;
-volatile unsigned int pol = 0x100;
+volatile signed int   total_count;
+volatile signed char  qdec_count = 0;
+volatile unsigned int pol        = 0x100;
+
 void user_init(void)
 {
     gpio_function_en(LED1);
@@ -51,23 +52,21 @@ void user_init(void)
 
     qdec_clk_en();
     qdec_set_mode(DOUBLE_ACCURACY_MODE);
-    qdec_set_pin(QDEC_CHN_PA2,QDEC_CHN_PA3);
+    qdec_set_pin(QDEC_CHN_PA2, QDEC_CHN_PA3);
 
-    qdec_set_debouncing(1);   //set debouncing
+    qdec_set_debouncing(1); //set debouncing
 }
 
-void main_loop (void)
+void main_loop(void)
 {
     qdec_count = qdec_get_count_value();
-    if((qdec_count >> 7) == 0x01)
-        total_count -= (pol-qdec_count);
-    else
+    if ((qdec_count >> 7) == 0x01) {
+        total_count -= (pol - qdec_count);
+    } else {
         total_count += qdec_count;
-    printf("  \n");                             // caution: The first byte will be error
+    }
+    printf("  \n"); // caution: The first byte will be error
     printf("total_count: %d \t", total_count);
     printf("qdec_count: %d \n", qdec_count);
     delay_ms(1000);
 }
-
-
-

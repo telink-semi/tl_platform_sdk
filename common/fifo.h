@@ -24,13 +24,14 @@
 #ifndef FIFO_H_
 #define FIFO_H_
 
-typedef struct {
-    unsigned int        size;
-    unsigned short      num;
-    unsigned char       wptr;
-    unsigned char       rptr;
-    unsigned char*      p;
-}   my_fifo_t;
+typedef struct
+{
+    unsigned int   size;
+    unsigned short num;
+    unsigned char  wptr;
+    unsigned char  rptr;
+    unsigned char *p;
+} my_fifo_t;
 
 
 #endif /* FIFO_H_ */

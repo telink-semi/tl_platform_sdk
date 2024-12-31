@@ -24,5 +24,3 @@
 #include "sdk_version.h"
 
 volatile __attribute__((section(".sdk_version"))) unsigned char sdk_version[] = {SDK_VERSION(SDK_VERSION_NUM)};
-
-

@@ -24,10 +24,10 @@
 #include "app_config.h"
 
 extern void user_init(void);
-extern void main_loop (void);
+extern void main_loop(void);
 
 #ifdef HASH_DMA_FUNCTION
-int buf_hash_dma[0x600]__attribute__((aligned(4)));
+int buf_hash_dma[0x600] __attribute__((aligned(4)));
 #endif /* HASH_DMA_FUNCTION */
 
 /**
@@ -41,8 +41,7 @@ int main(void)
     CLOCK_INIT;
     user_init();
 
-    while(1)
-    {
+    while (1) {
         main_loop();
     }
     return 0;

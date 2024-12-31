@@ -24,21 +24,16 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
 
-#define CLOCK_AHB_CLOCK_HZ      48000000
+#define CLOCK_AHB_CLOCK_HZ 48000000
 
-#define CLOCK_APB_CLOCK_HZ      48000000
-
-
-
-
-
-
+#define CLOCK_APB_CLOCK_HZ 48000000
 
 
 /* Disable C linkage for C++ Compilers: */

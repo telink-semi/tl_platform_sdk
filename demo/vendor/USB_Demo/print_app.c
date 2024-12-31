@@ -22,14 +22,15 @@
  *
  *******************************************************************************************************/
 #include "app_config.h"
-#if(USB_DEMO_TYPE==USB_PRINT)
-#include "application/usbstd/usb.h"
+#if (USB_DEMO_TYPE == USB_PRINT)
+    #include "application/usbstd/usb.h"
 
-#if defined(MCU_CORE_B92)||defined (MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 extern volatile unsigned int g_vbus_timer_turn_off_start_tick;
 extern volatile unsigned int g_vbus_timer_turn_off_flag;
-#endif
+    #endif
 static unsigned int t1 = 0;
+
 void user_init(void)
 {
     //enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device)
@@ -42,40 +43,34 @@ void user_init(void)
 }
 
 /* enum to USB input device and simulate the left click and right click of mouse */
-void main_loop (void)
+void main_loop(void)
 {
-/**
+    /**
  * @attention   When using the vbus (not vbat) power supply, you must turn off the vbus timer,
  *              otherwise the MCU will be reset after 8s.
 */
-#if( (defined(MCU_CORE_B92)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X))&& (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
+    #if ((defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)) && (POWER_SUPPLY_MODE == VBUS_POWER_SUPPLY))
     /**
      *When using the vbus (not vbat) power supply, the vbus detect status remains at 1. Conversely, it is 0.
      */
-if(usb_get_vbus_detect_status())
-{
-    if(clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100*1000) && (g_vbus_timer_turn_off_flag == 0))
-    {
-        /**
+    if (usb_get_vbus_detect_status()) {
+        if (clock_time_exceed(g_vbus_timer_turn_off_start_tick, 100 * 1000) && (g_vbus_timer_turn_off_flag == 0)) {
+            /**
          * wd_turn_off_vbus_timer() is used to turn off the 8s vbus timer.
          * The vbus detect status will not be clear to 0.
          */
-        wd_turn_off_vbus_timer();
-        g_vbus_timer_turn_off_flag = 1;
+            wd_turn_off_vbus_timer();
+            g_vbus_timer_turn_off_flag = 1;
+        }
+    } else {
+        g_vbus_timer_turn_off_start_tick = stimer_get_tick();
+        g_vbus_timer_turn_off_flag       = 0;
     }
-}
-else
-{
-    g_vbus_timer_turn_off_start_tick = stimer_get_tick();
-    g_vbus_timer_turn_off_flag = 0;
-}
-#endif
+    #endif
 
     usb_handle_irq();
-    if(g_usb_config != 0)
-    {
-        if (clock_time_exceed(t1, 500000))
-        {
+    if (g_usb_config != 0) {
+        if (clock_time_exceed(t1, 500000)) {
             t1 = stimer_get_tick() | 1;
             printf(" Hello World! \n");
         }

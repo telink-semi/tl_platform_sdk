@@ -25,10 +25,10 @@
 #define __FLASH_TYPE_H__
 
 #include "flash.h"
-#include "flash_mid146085.h"    // P25Q80SU
-#include "flash_mid136085.h"    // P25Q40SU
-#include "flash_mid156085.h"    // P25Q16SU
-#include "flash_mid166085.h"    // P25Q32SU
+#include "flash_mid146085.h" // P25Q80SU
+#include "flash_mid136085.h" // P25Q40SU
+#include "flash_mid156085.h" // P25Q16SU
+#include "flash_mid166085.h" // P25Q32SU
 /**
  * @brief       This function reads the status of flash.
  * @param[in]   cmd  - the cmd of read status. FLASH_READ_STATUS_CMD_LOWBYTE or FLASH_READ_STATUS_CMD_HIGHBYTE.
@@ -78,7 +78,7 @@ void flash_write_status(flash_status_typedef_e type, unsigned short data);
  *              there may be a risk of error in the operation of the flash (especially for the write and erase operations.
  *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
  */
-void flash_read_otp(unsigned long addr, unsigned long len, unsigned char* buf);
+void flash_read_otp(unsigned long addr, unsigned long len, unsigned char *buf);
 
 /**
  * @brief       This function serves to write data to the Security Registers of the flash you choose.
@@ -154,4 +154,3 @@ _attribute_text_sec_ void flash_write_config(unsigned long addr, unsigned int cm
 _attribute_text_sec_ unsigned char flash_read_config(unsigned long addr, unsigned int cmd);
 
 #endif
-

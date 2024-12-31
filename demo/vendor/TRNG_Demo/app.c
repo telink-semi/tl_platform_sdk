@@ -26,17 +26,15 @@
 #include "printf.h"
 
 
-volatile  unsigned long   g_rns_val_trng;
+volatile unsigned long g_rns_val_trng;
 
 void user_init(void)
 {
     trng_init();
 }
 
-
 void main_loop(void)
 {
     g_rns_val_trng = trng_rand();
-    printf("g_rns_val_trng = 0x%x\r\n",(unsigned int)g_rns_val_trng);
+    printf("g_rns_val_trng = 0x%x\r\n", (unsigned int)g_rns_val_trng);
 }
-

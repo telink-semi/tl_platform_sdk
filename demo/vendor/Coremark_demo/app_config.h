@@ -24,11 +24,11 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
-
 
 
 #define TIMER_SYS_CLOCK_MODE    1
@@ -38,19 +38,6 @@ extern "C" {
 #define TIMER_WATCHDOG_MODE     5
 
 #define TIMER_MODE              2
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* Disable C linkage for C++ Compilers: */

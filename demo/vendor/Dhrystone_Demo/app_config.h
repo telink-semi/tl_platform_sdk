@@ -24,34 +24,34 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
 #if defined(MCU_CORE_TL321X)
-#define MANUAL_TEST_MODE        1 // For internal testing, users need not care
-#define AUTO_TEST_MODE          2 // For internal testing, users need not care
-#define GPIO_TEST_MODE          MANUAL_TEST_MODE
+    #define MANUAL_TEST_MODE           1 // For internal testing, users need not care
+    #define AUTO_TEST_MODE             2 // For internal testing, users need not care
+    #define GPIO_TEST_MODE             MANUAL_TEST_MODE
 
 
-#define CURRENT_PER_MHZ_TEST                1
+    #define CURRENT_PER_MHZ_TEST       1
 
-#define CCLK_24M_HCLK_12M_PCLK_12M          1
-#define CCLK_24M_HCLK_24M_PCLK_12M          2
-#define CCLK_24M_HCLK_24M_PCLK_24M          3
-#define CCLK_48M_HCLK_24M_PCLK_24M          4
-#define CCLK_48M_HCLK_48M_PCLK_24M          5
-#define CCLK_96M_HCLK_48M_PCLK_24M          6
-#define CCLK_48M_HCLK_48M_PCLK_48M          7
-#define CCLK_96M_HCLK_48M_PCLK_48M          8
-#define CLOCK_FREQUENCY                     CCLK_24M_HCLK_24M_PCLK_12M
+    #define CCLK_24M_HCLK_12M_PCLK_12M 1
+    #define CCLK_24M_HCLK_24M_PCLK_12M 2
+    #define CCLK_24M_HCLK_24M_PCLK_24M 3
+    #define CCLK_48M_HCLK_24M_PCLK_24M 4
+    #define CCLK_48M_HCLK_48M_PCLK_24M 5
+    #define CCLK_96M_HCLK_48M_PCLK_24M 6
+    #define CCLK_48M_HCLK_48M_PCLK_48M 7
+    #define CCLK_96M_HCLK_48M_PCLK_48M 8
+    #define CLOCK_FREQUENCY            CCLK_24M_HCLK_24M_PCLK_12M
 
 #endif
 
-extern void dhry_main (void);
-extern float Dhrystone_DMIPS_Per_MHz;
-
+    extern void  dhry_main(void);
+    extern float Dhrystone_DMIPS_Per_MHz;
 
 
 /* Disable C linkage for C++ Compilers: */

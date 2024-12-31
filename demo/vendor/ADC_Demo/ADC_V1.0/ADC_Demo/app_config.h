@@ -24,16 +24,17 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 
-#define ADC_DMA_MODE                1
-#define ADC_NDMA_MODE               2
+#define ADC_DMA_MODE    1
+#define ADC_NDMA_MODE   2
 
 #define ADC_MODE        ADC_NDMA_MODE
 
-#define ADC_GPIO_SAMPLE         1   //GPIO voltage
+#define ADC_GPIO_SAMPLE 1 //GPIO voltage
 /**
     *   The Vbat channel battery voltage sample range is 1.8~3.5V and is low accuracy,
     *   and must set sys_init with the mode for battery voltage less than 3.6V.
@@ -48,24 +49,24 @@ extern "C" {
 /**
     *   B92 supports Vbat channel battery voltage sample, and the range is 1.9~4.3V
 **/
-#define ADC_VBAT_SAMPLE         2   //Vbat channel Battery Voltage with low accuracy.
+#define ADC_VBAT_SAMPLE 2            //Vbat channel Battery Voltage with low accuracy.
 #if INTERNAL_TEST_FUNC_EN
-#define ADC_TEMP_SENSOR_SAMPLE  3   //Temp test
+    #define ADC_TEMP_SENSOR_SAMPLE 3 //Temp test
 #endif
-#define ADC_SAMPLE_MODE             ADC_GPIO_SAMPLE
+#define ADC_SAMPLE_MODE ADC_GPIO_SAMPLE
 
 #if defined(MCU_CORE_B91)
 
-#if(ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
-/**
+    #if (ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
+        /**
         The Vbat channel battery voltage sample range is 1.8~3.5V and is low accuracy,
         and must set sys_init with the mode for battery voltage less than 3.6V.
         changed by chaofan.20201230.
 **/
-#define PLATFORM_INIT   platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_LESS_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
-#else
-#define PLATFORM_INIT   platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M,1)
-#endif
+        #define PLATFORM_INIT platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_LESS_THAN_3V6, INTERNAL_CAP_XTAL24M, 1)
+    #else
+        #define PLATFORM_INIT platform_init(LDO_1P4_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 1)
+    #endif
 
 #endif
 #include "common.h"

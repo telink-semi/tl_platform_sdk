@@ -24,47 +24,48 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "driver.h"
 #include "common.h"
 
-#define     I2C_MASTER_WRITE_READ_NO_DMA                  1  //this mode can read and write data from fifo one byte a time
-#define     I2C_MASTER_WRITE_READ_DMA                     2  //this mode can read and write data through DMA, four byte a time
+#define I2C_MASTER_WRITE_READ_NO_DMA 1        //this mode can read and write data from fifo one byte a time
+#define I2C_MASTER_WRITE_READ_DMA    2        //this mode can read and write data through DMA, four byte a time
 #if !defined(MCU_CORE_B91)
-#define     I2C1_M_MASTER_WRITE_READ_NO_DMA               3  //this mode can read and write data from fifo one byte a time. Only supports master.
+    #define I2C1_M_MASTER_WRITE_READ_NO_DMA 3 //this mode can read and write data from fifo one byte a time. Only supports master.
 #endif
 
-#define     I2C_MASTER_WRITE_READ_MODE                    I2C_MASTER_WRITE_READ_NO_DMA
+#define I2C_MASTER_WRITE_READ_MODE I2C_MASTER_WRITE_READ_NO_DMA
 
 #if defined(MCU_CORE_B91)
-#define I2C_GPIO_SDA_PIN   I2C_GPIO_SDA_B3
-#define I2C_GPIO_SCL_PIN   I2C_GPIO_SCL_B2
+    #define I2C_GPIO_SDA_PIN I2C_GPIO_SDA_B3
+    #define I2C_GPIO_SCL_PIN I2C_GPIO_SCL_B2
 #elif defined(MCU_CORE_B92)
-#define I2C_GPIO_SDA_PIN   GPIO_FC_PB3
-#define I2C_GPIO_SCL_PIN   GPIO_FC_PB2
+    #define I2C_GPIO_SDA_PIN GPIO_FC_PB3
+    #define I2C_GPIO_SCL_PIN GPIO_FC_PB2
 #elif defined(MCU_CORE_TL7518)
-#if(I2C_MASTER_WRITE_READ_MODE == I2C1_M_MASTER_WRITE_READ_NO_DMA)
-#define I2C_GPIO_SDA_PIN   I2C1_GPIO_SDA_B6
-#define I2C_GPIO_SCL_PIN   I2C1_GPIO_SCL_B7
-#else
-#define I2C_GPIO_SDA_PIN   I2C_GPIO_SDA_B6
-#define I2C_GPIO_SCL_PIN   I2C_GPIO_SCL_B7
-#endif
+    #if (I2C_MASTER_WRITE_READ_MODE == I2C1_M_MASTER_WRITE_READ_NO_DMA)
+        #define I2C_GPIO_SDA_PIN I2C1_GPIO_SDA_B6
+        #define I2C_GPIO_SCL_PIN I2C1_GPIO_SCL_B7
+    #else
+        #define I2C_GPIO_SDA_PIN I2C_GPIO_SDA_B6
+        #define I2C_GPIO_SCL_PIN I2C_GPIO_SCL_B7
+    #endif
 #elif defined(MCU_CORE_TL751X)
-#if(I2C_MASTER_WRITE_READ_MODE == I2C1_M_MASTER_WRITE_READ_NO_DMA)
-#define I2C_GPIO_SDA_PIN   I2C1_GPIO_SDA_B6
-#define I2C_GPIO_SCL_PIN   I2C1_GPIO_SCL_B7
-#else
-#define I2C_GPIO_SDA_PIN   I2C_GPIO_SDA_B6
-#define I2C_GPIO_SCL_PIN   I2C_GPIO_SCL_B7
-#endif
+    #if (I2C_MASTER_WRITE_READ_MODE == I2C1_M_MASTER_WRITE_READ_NO_DMA)
+        #define I2C_GPIO_SDA_PIN I2C1_GPIO_SDA_B6
+        #define I2C_GPIO_SCL_PIN I2C1_GPIO_SCL_B7
+    #else
+        #define I2C_GPIO_SDA_PIN I2C_GPIO_SDA_B6
+        #define I2C_GPIO_SCL_PIN I2C_GPIO_SCL_B7
+    #endif
 #elif defined(MCU_CORE_TL721X)
-#define I2C_GPIO_SDA_PIN   GPIO_FC_PB3
-#define I2C_GPIO_SCL_PIN   GPIO_FC_PB2
-#elif(MCU_CORE_TL321X)
-#define I2C_GPIO_SDA_PIN   GPIO_FC_PB5
-#define I2C_GPIO_SCL_PIN   GPIO_FC_PB6
+    #define I2C_GPIO_SDA_PIN GPIO_FC_PB3
+    #define I2C_GPIO_SCL_PIN GPIO_FC_PB2
+#elif (MCU_CORE_TL321X)
+    #define I2C_GPIO_SDA_PIN GPIO_FC_PB5
+    #define I2C_GPIO_SCL_PIN GPIO_FC_PB6
 #endif
 
 /* Disable C linkage for C++ Compilers: */

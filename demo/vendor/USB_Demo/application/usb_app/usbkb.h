@@ -24,47 +24,49 @@
 #pragma once
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
 #include "../usbstd/HIDClassCommon.h"
 #include "../usbstd/HIDReportData.h"
 #include "driver.h"
 
-#define KB_RETURN_KEY_MAX   6
-typedef struct{
-    unsigned char cnt;
-    unsigned char ctrl_key;
-    unsigned char keycode[KB_RETURN_KEY_MAX];
-    //unsigned char padding[2]; //  for  32 bit padding,  if KB_RETURN_KEY_MAX change,  this should be changed
-} __attribute__((packed)) kb_data_t;
-#define DAT_TYPE_KB         1
-#define DAT_TYPE_MOUSE      2
+#define KB_RETURN_KEY_MAX 6
 
-#define USB_FIFO_NUM        4
-#define USB_FIFO_SIZE       8
+    typedef struct
+    {
+        unsigned char cnt;
+        unsigned char ctrl_key;
+        unsigned char keycode[KB_RETURN_KEY_MAX];
+        //unsigned char padding[2]; //  for  32 bit padding,  if KB_RETURN_KEY_MAX change,  this should be changed
+    } __attribute__((packed)) kb_data_t;
 
-extern unsigned char usb_fifo[USB_FIFO_NUM][USB_FIFO_SIZE];
-extern unsigned char usb_ff_rptr;
-extern unsigned char usb_ff_wptr;
+#define DAT_TYPE_KB    1
+#define DAT_TYPE_MOUSE 2
 
+#define USB_FIFO_NUM   4
+#define USB_FIFO_SIZE  8
 
+    extern unsigned char usb_fifo[USB_FIFO_NUM][USB_FIFO_SIZE];
+    extern unsigned char usb_ff_rptr;
+    extern unsigned char usb_ff_wptr;
 
-typedef struct {
-#define KEYBOARD_REPORT_KEY_MAX     6
-    unsigned char Modifier; /**< Keyboard modifier byte, indicating pressed modifier keys (a combination of
+    typedef struct
+    {
+#define KEYBOARD_REPORT_KEY_MAX 6
+        unsigned char Modifier;                         /**< Keyboard modifier byte, indicating pressed modifier keys (a combination of
                        *   \c HID_KEYBOARD_MODIFIER_* masks).
                        */
-    unsigned char Reserved; /**< Reserved for OEM use, always set to 0. */
-    unsigned char KeyCode[KEYBOARD_REPORT_KEY_MAX]; /**< Key codes of the currently pressed keys. */
-} __attribute__((packed)) usbkb_hid_report_t;
+        unsigned char Reserved;                         /**< Reserved for OEM use, always set to 0. */
+        unsigned char KeyCode[KEYBOARD_REPORT_KEY_MAX]; /**< Key codes of the currently pressed keys. */
+    } __attribute__((packed)) usbkb_hid_report_t;
 
-int usbkb_hid_report_normal(unsigned char ctrl_key, unsigned char *keycode);
+    int usbkb_hid_report_normal(unsigned char ctrl_key, unsigned char *keycode);
 
-int usb_hid_report_fifo_proc(void);
+    int usb_hid_report_fifo_proc(void);
 
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }
 #endif
-

@@ -24,7 +24,7 @@
 #include "app_config.h"
 
 extern void user_init(void);
-extern void main_loop (void);
+extern void main_loop(void);
 
 /**
  * @brief       This is main function
@@ -34,14 +34,13 @@ extern void main_loop (void);
 
 int main(void)
 {
-#if !(defined(MCU_CORE_TL7518_N22)||defined(MCU_CORE_TL751X_N22))
+#if !(defined(MCU_CORE_TL7518_N22) || defined(MCU_CORE_TL751X_N22))
     PLATFORM_INIT;
 #endif
 
     user_init();
 
-    while(1)
-    {
+    while (1) {
         main_loop();
     }
 

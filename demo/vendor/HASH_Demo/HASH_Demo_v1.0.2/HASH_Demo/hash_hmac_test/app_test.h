@@ -31,12 +31,12 @@ extern "C"
 #include "driver.h"
 #include "common.h"
 
-unsigned int HASH_all_test(void);
-unsigned int HMAC_all_test(void);
+    unsigned int HASH_all_test(void);
+    unsigned int HMAC_all_test(void);
 #if !defined(MCU_CORE_TL7518)
-unsigned int pbkdf2_hmac_test(void);
+    unsigned int pbkdf2_hmac_test(void);
 #endif
-unsigned int HASH_HMAC_sample_test(void);
+    unsigned int HASH_HMAC_sample_test(void);
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

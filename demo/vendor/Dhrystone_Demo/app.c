@@ -27,44 +27,42 @@
 
 void user_init(void)
 {
-#if defined(MCU_CORE_TL321X)&&(CURRENT_PER_MHZ_TEST)
-#if(CLOCK_FREQUENCY == CCLK_24M_HCLK_12M_PCLK_12M)
+    #if defined(MCU_CORE_TL321X) && (CURRENT_PER_MHZ_TEST)
+        #if (CLOCK_FREQUENCY == CCLK_24M_HCLK_12M_PCLK_12M)
     PLL_192M_CCLK_24M_HCLK_12M_PCLK_12M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_12M)
+        #elif (CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_12M)
     PLL_192M_CCLK_24M_HCLK_24M_PCLK_12M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_24M)
+        #elif (CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_24M)
     PLL_192M_CCLK_24M_HCLK_24M_PCLK_24M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_24M)
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_24M)
     PLL_192M_CCLK_48M_HCLK_24M_PCLK_24M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_24M)
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_24M)
     PLL_192M_CCLK_48M_HCLK_48M_PCLK_24M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_24M)
+        #elif (CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_24M)
     PLL_192M_CCLK_96M_HCLK_48M_PCLK_24M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_48M)
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_48M)
     PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M;
-#elif(CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_48M)
+        #elif (CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_48M)
     PLL_192M_CCLK_96M_HCLK_48M_PCLK_48M_MSPI_48M;
-#endif
+        #endif
 
     gpio_shutdown(GPIO_ALL);
-    for (int i=0; i<10; i++)
-    {
+    for (int i = 0; i < 10; i++) {
         dhry_main();
     }
 
-#else
+    #else
     CLOCK_INIT;
-    printf ("\r\n\r\n Drystone Benchmark %d Starts ...", 1);
+    printf("\r\n\r\n Drystone Benchmark %d Starts ...", 1);
     dhry_main();
-#endif
+    #endif
 
-    printf("\r\n[dhrystone] : %6.2f\r\n",Dhrystone_DMIPS_Per_MHz);
-    delay_ms (100);
+    printf("\r\n[dhrystone] : %6.2f\r\n", Dhrystone_DMIPS_Per_MHz);
+    delay_ms(100);
 
     gpio_function_en(LED2);
     gpio_output_en(LED2);
 }
-
 
 void main_loop(void)
 {

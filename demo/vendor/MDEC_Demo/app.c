@@ -23,8 +23,8 @@
  *******************************************************************************************************/
 #include "app_config.h"
 
-unsigned char dat[5]={0};
-unsigned char  mdec_test_cnt = 0;
+unsigned char dat[5]        = {0};
+unsigned char mdec_test_cnt = 0;
 
 /**
  * @brief       This function serves to handle the interrupt of MCU.
@@ -32,8 +32,7 @@ unsigned char  mdec_test_cnt = 0;
  */
 _attribute_ram_code_sec_noinline_ void pm_irq_handler(void)
 {
-    if(mdec_get_irq_status(FLD_WKUP_MDEC))
-    {
+    if (mdec_get_irq_status(FLD_WKUP_MDEC)) {
         mdec_test_cnt = 1;
         mdec_clr_irq_status(FLD_WKUP_MDEC);
     }
@@ -57,7 +56,7 @@ void user_init(void)
     //need to clear interrupt state:FLD_WKUP_TIMER,FLD_WKUP_DIG,avoid MDEC interrupt misjudgment,
     //due to FLD_WKUP_TIMER,FLD_WKUP_DIG is 1,plic receives the result,once enable plic, will request an interrupt to the CPU.
     //Therefore, notice the processing of the interrupt sequence here.changed by shuaixing,confirmed by jianzhi.20201104.
-    mdec_clr_irq_status(FLD_WKUP_MDEC|FLD_WKUP_TIMER|FLD_WKUP_DIG);
+    mdec_clr_irq_status(FLD_WKUP_MDEC | FLD_WKUP_TIMER | FLD_WKUP_DIG);
     plic_interrupt_enable(IRQ_PM_TM);
     plic_interrupt_claim();
     plic_interrupt_complete(IRQ_PM_TM);
@@ -65,16 +64,13 @@ void user_init(void)
     mdec_reset();
 }
 
-void main_loop (void)
+void main_loop(void)
 {
-    if(mdec_test_cnt)
-    {
+    if (mdec_test_cnt) {
         mdec_test_cnt = 0;
-        if(mdec_read_dat(dat))
-        {
+        if (mdec_read_dat(dat)) {
             gpio_toggle(LED2);
             delay_ms(2000);
         }
     }
 }
-

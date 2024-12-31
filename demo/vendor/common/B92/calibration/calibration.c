@@ -23,7 +23,6 @@
  *******************************************************************************************************/
 #include "calibration.h"
 
-
 /**
  * @brief      This function serves to update rf frequency offset.
  * @param[in]  velfrom - the calibration value from flash or otp.
@@ -33,12 +32,10 @@
 unsigned char user_calib_freq_offset(user_calib_from_e velfrom, unsigned int addr)
 {
     unsigned char frequency_offset_value = 0xff;
-    if(velfrom == USER_CALIB_FROM_FLASH)
-    {
+    if (velfrom == USER_CALIB_FROM_FLASH) {
         flash_read_page(addr, 1, &frequency_offset_value);
     }
-    if((0xff != frequency_offset_value)&&(frequency_offset_value<=63))
-    {
+    if ((0xff != frequency_offset_value) && (frequency_offset_value <= 63)) {
         rf_update_internal_cap(frequency_offset_value);
         return 1;
     }
@@ -66,45 +63,40 @@ void calibration_func(gpio_voltage_e gpio_type)
     /******check for flash mid********/
     flash_mid_sure = flash_read_mid_uid_with_check((unsigned int *)flash_mid, flash_uid);
 
-    if (1 == flash_mid_sure)
-    {
-        switch (flash_mid[2])
-        {
-            case FLASH_SIZE_64K:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_64K);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K);
-                break;
-            case FLASH_SIZE_128K:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_128K);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K);
-                break;
-            case FLASH_SIZE_512K:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_512K);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K);
-                break;
-            case FLASH_SIZE_1M:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_1M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M);
-                break;
-            case FLASH_SIZE_2M:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_2M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M);
-                break;
-            case FLASH_SIZE_4M:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_4M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M);
-                break;
-            case FLASH_SIZE_16M:
-                user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_16M);
-                user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M);
-                break;
-            default:
-                break;
+    if (1 == flash_mid_sure) {
+        switch (flash_mid[2]) {
+        case FLASH_SIZE_64K:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_64K);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_64K);
+            break;
+        case FLASH_SIZE_128K:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_128K);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_128K);
+            break;
+        case FLASH_SIZE_512K:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_512K);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_512K);
+            break;
+        case FLASH_SIZE_1M:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_1M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_1M);
+            break;
+        case FLASH_SIZE_2M:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_2M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_2M);
+            break;
+        case FLASH_SIZE_4M:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_4M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_4M);
+            break;
+        case FLASH_SIZE_16M:
+            user_calib_freq_offset(USER_CALIB_FROM_FLASH, FLASH_CAP_VALUE_ADDR_16M);
+            user_calib_rf_rx_dcoc(USER_CALIB_FROM_FLASH, FLASH_RF_RX_DCOC_CALI_VALUE_ADDR_16M);
+            break;
+        default:
+            break;
         }
-    }
-    else
-    {
-
+    } else {
     }
 }
 
@@ -117,19 +109,16 @@ void calibration_func(gpio_voltage_e gpio_type)
 unsigned short user_calib_rf_rx_dcoc(user_calib_from_e velfrom, unsigned int addr)
 {
     unsigned short flash_iq_code = 0xffff;
-    if(velfrom == USER_CALIB_FROM_FLASH)
-    {
+    if (velfrom == USER_CALIB_FROM_FLASH) {
         flash_read_page(addr, 2, (unsigned char *)&flash_iq_code);
     }
 
-    if((0xffff != flash_iq_code) &&
-        ( 1 == (flash_iq_code & 0x0001)) &&
+    if ((0xffff != flash_iq_code) &&
+        (1 == (flash_iq_code & 0x0001)) &&
         (((flash_iq_code & 0x007e) >> 1) > 0) && (((flash_iq_code & 0x007e) >> 1) < 63) &&
-        (((flash_iq_code & 0x1f80) >> 7) > 0) && (((flash_iq_code & 0x1f80) >> 7) < 63))
-    {
+        (((flash_iq_code & 0x1f80) >> 7) > 0) && (((flash_iq_code & 0x1f80) >> 7) < 63)) {
         rf_update_rx_dcoc_calib_code(flash_iq_code);
         return 1;
     }
     return 0;
 }
-

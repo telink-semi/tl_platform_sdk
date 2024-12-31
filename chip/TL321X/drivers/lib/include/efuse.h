@@ -21,12 +21,13 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#ifndef  EFUSE_H_
-#define  EFUSE_H_
+#ifndef EFUSE_H_
+#define EFUSE_H_
 
-#define ADC_CALIB_EN     0
+#define ADC_CALIB_EN 0
 #if ADC_CALIB_EN
-typedef struct{
+typedef struct
+{
     unsigned char ft_vbat_gain;
     unsigned char ft_vbat_offset;
     unsigned char ft_gpio_gain;
@@ -35,7 +36,7 @@ typedef struct{
     unsigned char cp_vbat_offset;
     unsigned char cp_gpio_gain;
     unsigned char cp_gpio_offset;
-}adc_ft_cp_calib_t;
+} adc_ft_cp_calib_t;
 
 /**
  * @brief      This function servers to get calibration value from EFUSE.

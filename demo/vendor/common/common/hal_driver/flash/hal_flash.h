@@ -42,11 +42,11 @@
  *         and the probability of the above risk is increased if the data area is written more frequently,
  *         and cancel protection and adding protection is done continuously.
  */
-#define FLASH_PROTECT_MODIFY_CONFIG   0
+#define FLASH_PROTECT_MODIFY_CONFIG 0
 
-#if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
 extern flash_hal_handler_t g_flash_handler;
-extern bool g_mid_matched;
+extern bool                g_mid_matched;
 /**
  * @brief       This function is used to initializing flash configurations.
  *              it must be called before the hal_xx function can be called.
@@ -57,7 +57,7 @@ extern bool g_mid_matched;
  *              1:flash_init mid matches fail;
  *              2:handler(flash_init_list) mid matches fail;
  */
-unsigned char hal_flash_init(flash_hal_user_handler_t* handler);
+unsigned char hal_flash_init(flash_hal_user_handler_t *handler);
 
 /**
  * @brief       This function is used to enable the 4line function of flash.
@@ -84,8 +84,8 @@ unsigned char hal_flash_lock(void);
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported
  */
 unsigned char hal_flash_unlock(void);
-#elif  defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_W92)
-extern bool g_mid_matched[SLAVE_CNT];
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+extern bool                g_mid_matched[SLAVE_CNT];
 extern flash_hal_handler_t g_flash_handler[SLAVE_CNT];
 /**
  * @brief       This function is used to initializing flash configurations (Lock/unlock/4line).
@@ -97,7 +97,7 @@ extern flash_hal_handler_t g_flash_handler[SLAVE_CNT];
  *              return (slave_id*3)+1:slave_id flash_init mid matches fail;
  *              (slave_id*3)+2:slave_id handler(flash_init_list) mid matches fail;
  */
-unsigned char hal_flash_init(flash_hal_user_handler_t* handler);
+unsigned char hal_flash_init(flash_hal_user_handler_t *handler);
 /**
  * @brief       This function is used to enable the 4line function of flash.
  * @param[in]   device_num  - the number of slave device.
