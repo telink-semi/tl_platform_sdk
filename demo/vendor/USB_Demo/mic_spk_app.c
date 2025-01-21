@@ -33,15 +33,14 @@
     #define MIC_BUFFER_SIZE 4096
     #define SPK_BUFFER_SIZE 4096
 
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
-        #define MIC_SAMPLING_RATE (MIC_SAMPLE_RATE == 8000) ? AUDIO_8K : ((MIC_SAMPLE_RATE == 16000) ? AUDIO_16K : ((MIC_SAMPLE_RATE == 32000) ? AUDIO_32K : ((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : AUDIO_16K)))
-        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 8000) ? AUDIO_8K : ((SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 32000) ? AUDIO_32K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : AUDIO_16K)))
-    #elif defined(MCU_CORE_TL7518)
-        #define MIC_SAMPLING_RATE (MIC_SAMPLE_RATE == 16000) ? AUDIO_16K : ((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
-        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
+    #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518)
+        #define MIC_SAMPLING_RATE (MIC_SAMPLE_RATE == 16000) ? AUDIO_16K : ((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : ((MIC_SAMPLE_RATE == 96000) ? AUDIO_96K : ((MIC_SAMPLE_RATE == 192000) ? AUDIO_192K : (MIC_SAMPLE_RATE == 384000) ? AUDIO_384K : \
+                                                                                                                                                                                                                                         AUDIO_16K)))
+        #define SPK_SAMPLING_RATE (SPK_SAMPLING_RATE == 16000) ? AUDIO_16K : ((SPK_SAMPLING_RATE == 48000) ? AUDIO_48K : ((SPK_SAMPLING_RATE == 96000) ? AUDIO_96K : ((SPK_SAMPLING_RATE == 192000) ? AUDIO_192K : (SPK_SAMPLING_RATE == 384000) ? AUDIO_384K : \
+                                                                                                                                                                                                                                                   AUDIO_16K)))
     #else
-        #define MIC_SAMPLING_RATE (MIC_SAMPLE_RATE == 16000) ? AUDIO_16K : ((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
-        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
+        #define MIC_SAMPLING_RATE (MIC_SAMPLE_RATE == 8000) ? AUDIO_8K : ((MIC_SAMPLE_RATE == 16000) ? AUDIO_16K : ((MIC_SAMPLE_RATE == 32000) ? AUDIO_32K : ((MIC_SAMPLE_RATE == 48000) ? AUDIO_48K : AUDIO_16K)))
+        #define SPK_SAMPLING_RATE (SPK_SAMPLING_RATE == 8000) ? AUDIO_8K : ((SPK_SAMPLING_RATE == 16000) ? AUDIO_16K : ((SPK_SAMPLING_RATE == 32000) ? AUDIO_32K : ((SPK_SAMPLING_RATE == 48000) ? AUDIO_48K : AUDIO_16K)))
     #endif
 
 short iso_in_buff[MIC_BUFFER_SIZE];

@@ -46,7 +46,7 @@ unsigned short flash_read_status_mid1560c8(void)
 /**
  * @brief       This function write the status of flash.
  * @param[in]   data    - the status value of the flash after the mask.
- * @param[in]   mask        - mid1560c8_write_status_mask_e.
+ * @param[in]   mask    - mid1560c8_write_status_mask_e.
  * @return      1: success, 0: error, 2: parameter error.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
  *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
@@ -93,7 +93,7 @@ unsigned char flash_write_status_mid1560c8(unsigned short data, unsigned int mas
  */
 unsigned char flash_lock_mid1560c8(unsigned int data)
 {
-    return flash_write_status_mid1560c8(data, FLASH_WRITE_STATUS_BP_MID1560c8);
+    return flash_write_status_mid1560c8(data, FLASH_WRITE_STATUS_BP_MID1560C8);
 }
 
 /**
@@ -111,7 +111,7 @@ unsigned char flash_lock_mid1560c8(unsigned int data)
  */
 unsigned char flash_unlock_mid1560c8(void)
 {
-    return flash_write_status_mid1560c8(FLASH_LOCK_NONE_MID1560c8, FLASH_WRITE_STATUS_BP_MID1560c8);
+    return flash_write_status_mid1560c8(FLASH_LOCK_NONE_MID1560C8, FLASH_WRITE_STATUS_BP_MID1560C8);
 }
 
 /**
@@ -129,7 +129,7 @@ unsigned char flash_unlock_mid1560c8(void)
  */
 unsigned int flash_get_lock_block_mid1560c8(void)
 {
-    return flash_read_status_mid1560c8() & FLASH_WRITE_STATUS_BP_MID1560c8;
+    return flash_read_status_mid1560c8() & FLASH_WRITE_STATUS_BP_MID1560C8;
 }
 
 /**
@@ -224,5 +224,5 @@ void flash_erase_otp_mid1560c8(mid1560c8_otp_block_e addr)
  */
 void flash_lock_otp_mid1560c8(mid1560c8_lock_otp_e data)
 {
-    flash_write_status_mid1560c8(data, FLASH_WRITE_STATUS_OTP_MID1560c8);
+    flash_write_status_mid1560c8(data, FLASH_WRITE_STATUS_OTP_MID1560C8);
 }

@@ -797,13 +797,15 @@ void flash_mid186085_test(void)
     check_status.otp_lock_check = 1;
     #endif
 }
+#endif
 
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
 void flash_mid1560c8_test(void)
 {
     int i;
 
     status1 = flash_read_status_mid1560c8();
-    flash_lock_mid1560c8(FLASH_LOCK_LOW_64K_MID1560c8);
+    flash_lock_mid1560c8(FLASH_LOCK_LOW_64K_MID1560C8);
     status2 = flash_read_status_mid1560c8();
     flash_erase_sector(FLASH_ADDR);
     flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
@@ -853,7 +855,7 @@ void flash_mid1560c8_test(void)
 
     #if FLASH_OTP_LOCK
     status4 = flash_read_status_mid1560c8();
-    flash_lock_otp_mid1560c8(FLASH_LOCK_OTP_0x001000_1024B_MID1560c8);
+    flash_lock_otp_mid1560c8(FLASH_LOCK_OTP_0x001000_1024B_MID1560C8);
     status5 = flash_read_status_mid1560c8();
     flash_erase_otp_mid1560c8(FLASH_SECURITY_ADDR);
     flash_read_otp_mid1560c8(FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
@@ -873,7 +875,7 @@ void flash_mid1460c8_test(void)
     int i;
 
     status1 = flash_read_status_mid1460c8();
-    flash_lock_mid1460c8(FLASH_LOCK_LOW_64K_MID1460c8);
+    flash_lock_mid1460c8(FLASH_LOCK_LOW_64K_MID1460C8);
     status2 = flash_read_status_mid1460c8();
     flash_erase_sector(FLASH_ADDR);
     flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
@@ -923,7 +925,7 @@ void flash_mid1460c8_test(void)
 
     #if FLASH_OTP_LOCK
     status4 = flash_read_status_mid1460c8();
-    flash_lock_otp_mid1460c8(FLASH_LOCK_OTP_0x001000_1024B_MID1460c8);
+    flash_lock_otp_mid1460c8(FLASH_LOCK_OTP_0x001000_1024B_MID1460C8);
     status5 = flash_read_status_mid1460c8();
     flash_erase_otp_mid1460c8(FLASH_SECURITY_ADDR);
     flash_read_otp_mid1460c8(FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
@@ -1365,6 +1367,7 @@ void flash_mid166085_test(void)
     #endif
 }
 #endif
+
 #if defined(MCU_CORE_TL321X)
 void flash_mid136085_test(void)
 {
@@ -1436,6 +1439,7 @@ void flash_mid136085_test(void)
     #endif
 }
 #endif
+
 #if defined(MCU_CORE_TL751X)
 static inline void flash_mspi_set_48Mclk(void)
 {
@@ -1555,10 +1559,10 @@ void user_init(void)
     case MID186085:
         flash_mid186085_test();
         break;
-    case MID1560c8:
+    case MID1560C8:
         flash_mid1560c8_test();
         break;
-    case MID1460c8:
+    case MID1460C8:
         flash_mid1460c8_test();
         break;
     case MID1660C8:
@@ -1608,11 +1612,17 @@ void user_init(void)
     case MID146085:
         flash_mid146085_test();
         break;
+    case MID1460C8:
+        flash_mid1460c8_test();
+        break;
     case MID136085:
         flash_mid136085_test();
         break;
     case MID156085:
         flash_mid156085_test();
+        break;
+    case MID1560C8:
+        flash_mid1560c8_test();
         break;
     case MID166085:
         flash_mid166085_test();
@@ -1756,12 +1766,12 @@ void user_init(void)
         flash_write_status_mid186085(0x200, FLASH_WRITE_STATUS_QE_MID186085);
         g_qe_status = flash_read_status_mid186085();
         break;
-    case MID1560c8:
-        flash_write_status_mid1560c8(0x200, FLASH_WRITE_STATUS_QE_MID1560c8);
+    case MID1560C8:
+        flash_write_status_mid1560c8(0x200, FLASH_WRITE_STATUS_QE_MID1560C8);
         g_qe_status = flash_read_status_mid1560c8();
         break;
-    case MID1460c8:
-        flash_write_status_mid1460c8(0x200, FLASH_WRITE_STATUS_QE_MID1460c8);
+    case MID1460C8:
+        flash_write_status_mid1460c8(0x200, FLASH_WRITE_STATUS_QE_MID1460C8);
         g_qe_status = flash_read_status_mid1460c8();
         break;
     case MID1660C8:
@@ -1820,6 +1830,10 @@ void user_init(void)
         flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
         g_qe_status = flash_read_status_mid146085();
         break;
+    case MID1460C8:
+        flash_write_status_mid1460c8(0x200, FLASH_WRITE_STATUS_QE_MID1460C8);
+        g_qe_status = flash_read_status_mid1460c8();
+        break;
     case MID136085:
         flash_write_status_mid136085(0x200, FLASH_WRITE_STATUS_QE_MID136085);
         g_qe_status = flash_read_status_mid136085();
@@ -1827,6 +1841,10 @@ void user_init(void)
     case MID156085:
         flash_write_status_mid156085(0x200, FLASH_WRITE_STATUS_QE_MID156085);
         g_qe_status = flash_read_status_mid156085();
+        break;
+    case MID1560C8:
+        flash_write_status_mid1560c8(0x200, FLASH_WRITE_STATUS_QE_MID1560C8);
+        g_qe_status = flash_read_status_mid1560c8();
         break;
     case MID166085:
         flash_write_status_mid166085(0x200, FLASH_WRITE_STATUS_QE_MID166085);

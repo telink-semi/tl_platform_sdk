@@ -43,6 +43,7 @@
 #include "reg_include/register.h"
 #include "dma.h"
 #include "pwm.h"
+#include "lib/include/stimer.h"
 
 /**
  * @brief ir_learn capture mode
@@ -166,6 +167,11 @@ static inline void ir_learn_dis(void)
 static inline void ir_learn_ana_rx_en(void)
 {
     analog_write_reg8(0x0f, (analog_read_reg8(0x0f) | 0x08));
+    if (g_chip_version == 0x81) {
+        analog_write_reg8(0x14, (analog_read_reg8(0x14) | 0x08));
+        delay_us(1);
+        analog_write_reg8(0x14, (analog_read_reg8(0x14) & 0xf7));
+    }
 }
 
 /**

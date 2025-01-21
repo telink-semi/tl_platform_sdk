@@ -515,8 +515,8 @@ const USB_Descriptor_Configuration_t
             USB_INTF_MAX,                           // NumInterfaces
             1,                                      // Configuration index
             NO_DESCRIPTOR,                          // Configuration String
-            //USB_CONFIG_ATTR_RESERVED | USB_CONFIG_ATTR_REMOTEWAKEUP, // Attributes
-            USB_CONFIG_ATTR_RESERVED, //don't support remote wakeup
+            USB_CONFIG_ATTR_RESERVED | USB_CONFIG_ATTR_REMOTEWAKEUP, // Attributes
+            // USB_CONFIG_ATTR_RESERVED, //don't support remote wakeup
             USB_CONFIG_POWER_MA(50)   // MaxPower = 2*50mA
         },
 

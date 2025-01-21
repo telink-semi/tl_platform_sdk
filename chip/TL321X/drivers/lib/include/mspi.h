@@ -116,7 +116,7 @@ typedef enum
  * @brief      This function serves to judge whether mspi is busy.
  * @return     0:not busy   1:busy.
  */
-static _attribute_ram_code_sec_ inline bool mspi_busy(void)
+static _attribute_ram_code_sec_ _always_inline bool mspi_busy(void)
 {
     return reg_mspi_status & FLD_MSPI_BUSY;
 }

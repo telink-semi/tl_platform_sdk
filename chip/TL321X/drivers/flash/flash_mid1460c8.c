@@ -1,12 +1,12 @@
 /********************************************************************************************************
  * @file    flash_mid1460c8.c
  *
- * @brief   This is the source file for B92
+ * @brief   This is the source file for TL321X
  *
  * @author  Driver Group
- * @date    2024
+ * @date    2025
  *
- * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2025, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.

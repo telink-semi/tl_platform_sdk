@@ -145,12 +145,13 @@ typedef enum
 /**
  * @brief   Power type for different application
  * @note    Chip version A0 don't support DCDC_1P25_LDO_1P8 mode, only A1 can use.
+ *          Chip version A0/A1 don't support DCDC_1P25_DCDC_1P8 mode, only A2 can use.
  */
 typedef enum
 {
     LDO_1P25_LDO_1P8  = 0x00, /**< 1.25V-LDO & 1.8V-LDO mode */
     DCDC_1P25_LDO_1P8 = 0x01, /**< 1.25V-DCDC & 1.8V-LDO mode */
-    // DCDC_1P25_DCDC_1P8   = 0x03, /**< 1.25V-DCDC & 1.8V-DCDC mode */
+    //DCDC_1P25_DCDC_1P8   = 0x03, /**< 1.25V-DCDC & 1.8V-DCDC mode */
 } power_mode_e;
 
 /**
@@ -188,6 +189,7 @@ typedef enum
 {
     CHIP_VERSION_A0 = 0x00,
     CHIP_VERSION_A1 = 0x01,
+    CHIP_VERSION_A2 = 0x81,
 } sys_chip_version_e;
 
 /**********************************************************************************************************************
@@ -217,11 +219,13 @@ _attribute_ram_code_sec_noinline_ void sys_reboot_ram(void);
  * @param[in]   vbat_v      - This parameter is used to determine whether the VBAT voltage can be greater than 3.6V.
  * @attention   If vbat_v is set to VBAT_MAX_VALUE_LESS_THAN_3V6, then gpio_v can only be set to GPIO_VOLTAGE_3V3.
  * @return      none
- * @note        For crystal oscillator with slow start-up or poor quality, after calling this function, 
- *              a reboot will be triggered(whether a reboot has occurred can be judged by using pm_update_status_info() and pm_get_sw_reboot_event()).
- *              For the case where the crystal oscillator used is very slow to start-up, you can call the pm_set_xtal_stable_timer_param interface 
- *              to adjust the waiting time for the crystal oscillator to start before calling the sys_init interface.
- *              When this time is adjusted to meet the crystal oscillator requirements, it will not reboot.
+ * @note        -# For crystal oscillator with slow start-up or poor quality, after calling this function,
+ *                 a reboot will be triggered(whether a reboot has occurred can be judged by using pm_update_status_info() and pm_get_sw_reboot_event()).
+ *                 For the case where the crystal oscillator used is very slow to start-up, you can call the pm_set_xtal_stable_timer_param interface
+ *                 to adjust the waiting time for the crystal oscillator to start before calling the sys_init interface.
+ *                 When this time is adjusted to meet the crystal oscillator requirements, it will not reboot.
+ *              -# Before calling this interface, you need to ensure that the input function of PA2 is disable.
+ *                 and in order to prevent errors, the PA2 input function is disabled on this interface.(BUT-53)
  */
 _attribute_ram_code_sec_noinline_ void sys_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap);
 

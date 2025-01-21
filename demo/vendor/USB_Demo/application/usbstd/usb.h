@@ -49,6 +49,13 @@ extern "C"
         USB_REPORT_RELEASE  = 0xff,
     };
 
+    typedef enum {
+        USB_DEVICE_IDLE,
+        USB_DEVICE_CONFIGURED,
+        USB_DEVICE_SUSPEND,
+        USB_DEVICE_DISCONNECT,
+    } usb_device_status_e;
+
     extern unsigned char g_usb_config;
 #if (USB_MIC_ENABLE)
     extern unsigned char usb_alt_intf[USB_INTF_MAX];
@@ -78,7 +85,8 @@ extern "C"
 
 #define MS_OS_DESCRIPTOR_ENABLE 0   //1.1or 2.0
 
-
+    void usb_device_status_update(void);
+    usb_device_status_e usb_device_status_get(void);
     void usb_init_interrupt(void);
     void usb_handle_irq(void);
 

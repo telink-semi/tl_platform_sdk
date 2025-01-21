@@ -120,6 +120,9 @@ void main_loop(void)
                 mouse[1] = -2;     // Displacement relative to x coordinate
                 mouse[2] = 2;      // Displacement relative to y coordinate
                 mouse[3] = 0;      // Displacement relative to the roller
+                if (usb_device_status_get() == USB_DEVICE_SUSPEND) {
+                    usb_hardware_remote_wakeup();
+                }
                 usbmouse_hid_report(USB_HID_MOUSE, (unsigned char *)mouse, 4);
             }
         }
@@ -135,6 +138,9 @@ void main_loop(void)
                 mouse[1] = 0;
                 mouse[2] = 0;
                 mouse[3] = 0;
+                if (usb_device_status_get() == USB_DEVICE_SUSPEND) {
+                    usb_hardware_remote_wakeup();
+                }
                 usbmouse_hid_report(USB_HID_MOUSE, (unsigned char *)mouse, 4);
             }
         }

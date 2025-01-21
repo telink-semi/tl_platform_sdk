@@ -121,7 +121,11 @@ static inline void lpc_set_scaling_coeff(lpc_scaling_e divider)
  */
 static inline unsigned char lpc_get_result(void)
 {
-    return ((analog_read_reg8(0x88) & 0x01));
+    if (g_chip_version == CHIP_VERSION_A1) {
+        return (!(analog_read_reg8(0x88) & 0x01));
+    } else {
+        return ((analog_read_reg8(0x88) & 0x01));
+    }
 }
 
 /**

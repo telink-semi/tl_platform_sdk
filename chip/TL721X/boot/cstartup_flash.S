@@ -177,16 +177,18 @@ _START:
     la     t0, _STACK_TOP
     mv     sp, t0
 
-#if 1
-    /* gpio shutdown to decrease current. for power on or deep this function was in flash code segment. */
-    la     t0, gpio_shutdown_flashcode_for_asm
-    jalr   t0
-#endif
-
+    /* This code should be placed before the following gpio_shutdown_flashcode_for_asm interface because 
+    when using the Os compilation option, the gpio_shutdown_flashcode_for_asm will use the EXEC.IT table. */
 #ifdef __nds_execit
     /* Initialize EXEC.IT table */
     la t0, _ITB_BASE_
     csrw uitb, t0
+#endif
+
+#if 1
+    /* gpio shutdown to decrease current. for power on or deep this function was in flash code segment. */
+    la     t0, gpio_shutdown_flashcode_for_asm
+    jalr   t0
 #endif
 
 #ifdef __riscv_flen
@@ -369,16 +371,18 @@ _ISTART:
     la     t0, _STACK_TOP
     mv     sp, t0
 
-#if 1
-    /* gpio shutdown to decrease current. for retention this function was in ram segment which can be called early. */
-    la     t0, gpio_shutdown_ramcode_for_asm
-    jalr   t0
-#endif
-
+    /* This code should be placed before the following gpio_shutdown_ramcode_for_asm interface because 
+    when using the Os compilation option, the gpio_shutdown_ramcode_for_asm will use the EXEC.IT table. */
 #ifdef __nds_execit
     /* Initialize EXEC.IT table */
     la t0, _ITB_BASE_
     csrw uitb, t0
+#endif
+
+#if 1
+    /* gpio shutdown to decrease current. for retention this function was in ram segment which can be called early. */
+    la     t0, gpio_shutdown_ramcode_for_asm
+    jalr   t0
 #endif
 
 #ifdef __riscv_flen

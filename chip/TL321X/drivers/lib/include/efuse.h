@@ -54,4 +54,18 @@ drv_api_status_e efuse_calib_adc_vref(void);
 */
 drv_api_status_e efuse_get_chip_id(unsigned char *chip_id_buff);
 
+/**
+ * @brief      This function serves to read IEEE address from EFUSE.
+ * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
+ * @return     none
+ */
+void efuse_get_ieee_addr(unsigned char *buf);
+
+/**
+ * @brief        This function serves to check protection code according SDK version.
+ * @param[in]    sdk_version, 0:driver sdk  0xff:sdk_version_ignore
+ * @return       none.
+ */
+void efuse_check_protection_code(unsigned char sdk_version);
+
 #endif

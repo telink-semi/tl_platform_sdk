@@ -26,12 +26,11 @@
     #include "usb_default.h"
     #include "application/usbstd/usb.h"
 
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
-        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 8000) ? AUDIO_8K : ((SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 32000) ? AUDIO_32K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : AUDIO_16K)))
-    #elif defined(MCU_CORE_TL7518)
-        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
+    #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518)
+        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : ((SPEAKER_SAMPLE_RATE == 96000) ? AUDIO_96K : ((SPEAKER_SAMPLE_RATE == 192000) ? AUDIO_192K : (SPEAKER_SAMPLE_RATE == 384000) ? AUDIO_384K : \
+                                                                                                                                                                                                                                                             AUDIO_16K)))
     #else
-        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : (AUDIO_16K))
+        #define SPK_SAMPLING_RATE (SPEAKER_SAMPLE_RATE == 8000) ? AUDIO_8K : ((SPEAKER_SAMPLE_RATE == 16000) ? AUDIO_16K : ((SPEAKER_SAMPLE_RATE == 32000) ? AUDIO_32K : ((SPEAKER_SAMPLE_RATE == 48000) ? AUDIO_48K : AUDIO_16K)))
     #endif
 
     #define SPK_DMA_CHN     DMA3
@@ -497,9 +496,38 @@ void main_loop(void)
         gpio_toggle(LED1);
     }
 }
-    #elif defined(MCU_CORE_TL721X)
+    #elif defined(MCU_CORE_TL721X) || (defined(MCU_CORE_TL321X))
 static volatile unsigned int iso_out_w   = 0;
 static volatile unsigned int num_iso_out = 0;
+
+        #define TX_FIFO_NUM FIFO0 // TX Hardware is fixed to FIFO and cannot be modified.
+        #define OUTPUT_SRC  (SPK_CHANNEL_COUNT == 2) ? SDM_STEREO : SDM_MONO
+
+        #if defined(MCU_CORE_TL721X)
+sdm_pin_config_t sdm_pin_config = {
+    .sdm0_p_pin = GPIO_FC_PA0, //Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
+    .sdm0_n_pin = GPIO_FC_PA1,
+    .sdm1_p_pin = GPIO_FC_PF4,
+    .sdm1_n_pin = GPIO_FC_PF5,
+};
+        #elif defined(MCU_CORE_TL321X)
+sdm_pin_config_t sdm_pin_config = {
+    .sdm0_p_pin = GPIO_FC_PD5,
+    .sdm0_n_pin = GPIO_FC_PE2,
+    .sdm1_p_pin = GPIO_FC_PE3,
+    .sdm1_n_pin = GPIO_FC_PA0, //Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
+};
+        #endif
+
+audio_codec_output_t audio_stream_output =
+    {
+        .output_src    = OUTPUT_SRC,
+        .sample_rate   = SPK_SAMPLING_RATE,
+        .data_width    = CODEC_BIT_16_DATA,
+        .dma_num       = SPK_DMA_CHN,
+        .data_buf      = iso_out_buff,
+        .data_buf_size = sizeof(iso_out_buff),
+};
 
 void user_init(void)
 {
@@ -507,6 +535,13 @@ void user_init(void)
     gpio_output_en(LED1);
     gpio_function_en(LED2);
     gpio_output_en(LED2);
+    /****audio init start****/
+    audio_init();
+    audio_codec_stream_output_init(&audio_stream_output);
+    audio_tx_dma_chain_init(TX_FIFO_NUM, audio_stream_output.dma_num, (unsigned short *)audio_stream_output.data_buf, audio_stream_output.data_buf_size);
+    audio_set_sdm_pin(&sdm_pin_config);
+    audio_codec_stream_output_en(audio_stream_output.dma_num);
+    /****audio init end****/
 
     /* enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device) */
     usb_init();
@@ -541,7 +576,7 @@ void user_init(void)
  */
 void audio_rx_data_from_usb(void)
 {
-    unsigned char len = reg_usb_ep6_ptr;
+    unsigned short len = reg_usb_ep6_ptr;
     usbhw_reset_ep_ptr(USB_EDP_SPEAKER);
     for (unsigned int i = 0; i < len; i += 4) {
         signed short d0 = reg_usb_ep6_dat;
@@ -584,95 +619,6 @@ void main_loop(void)
         gpio_toggle(LED1);
     }
 }
-
-    #elif (defined(MCU_CORE_TL321X))
-static volatile unsigned int iso_out_w   = 0;
-static volatile unsigned int num_iso_out = 0;
-
-void user_init(void)
-{
-    gpio_function_en(LED1);
-    gpio_output_en(LED1);
-    gpio_function_en(LED2);
-    gpio_output_en(LED2);
-
-    /* enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device) */
-    usb_init();
-    /* enable data endpoint USB_EDP_SPEAKER. */
-    usbhw_set_eps_en(BIT(USB_EDP_SPEAKER));
-
-    /* enable global interrupt */
-    core_interrupt_enable();
-
-    /* set data endpoint addr */
-    usbhw_set_ep_addr(USB_EDP_SPEAKER, 0x00);
-
-    /* enable usb endpoint interrupt */
-    usbhw_set_eps_irq_mask(BIT(USB_EDP_SPEAKER));
-    plic_interrupt_enable(IRQ_USB_ENDPOINT);
-
-        #if (USB_ENUM_IN_INTERRUPT == 1)
-    /* enable set intf irq */
-    usbhw_set_irq_mask(USB_IRQ_SETINF_MASK);
-    plic_interrupt_enable(IRQ_USB_CTRL_EP_SETINF);
-        #endif
-
-    /* enable USB DP pull up 1.5k */
-    usb_set_pin(1);
-}
-
-        #if (USB_MODE == INT)
-/**
- * @brief     This function servers to set USB Input.
- * @param[in] none
- * @return    none.
- */
-void audio_rx_data_from_usb(void)
-{
-    unsigned char len = reg_usb_ep6_ptr;
-    usbhw_reset_ep_ptr(USB_EDP_SPEAKER);
-    for (unsigned int i = 0; i < len; i += 4) {
-        signed short d0 = reg_usb_ep6_dat;
-        d0 |= reg_usb_ep6_dat << 8;
-        signed short d1 = reg_usb_ep6_dat;
-        d1 |= reg_usb_ep6_dat << 8;
-
-        iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d0;
-        iso_out_buff[iso_out_w++ & (SPK_BUFFER_SIZE - 1)] = d1;
-    }
-    usbhw_data_ep_ack(USB_EDP_SPEAKER);
-}
-
-_attribute_ram_code_sec_ void usb_endpoint_irq_handler(void)
-{
-    /////////////////////////////////////
-    // ISO OUT
-    /////////////////////////////////////
-    if (usbhw_get_eps_irq() & BIT(USB_EDP_SPEAKER)) {
-        usbhw_clr_eps_irq(BIT(USB_EDP_SPEAKER));
-        ///////////// output to audio fifo out ////////////////
-        audio_rx_data_from_usb();
-        num_iso_out++;
-        if ((num_iso_out & 0x7f) == 0) {
-            gpio_toggle(LED2);
-        }
-    }
-}
-PLIC_ISR_REGISTER(usb_endpoint_irq_handler, IRQ_USB_ENDPOINT)
-        #endif
-
-static unsigned int t1 = 0;
-
-void main_loop(void)
-{
-    usb_handle_irq();
-
-    if (clock_time_exceed(t1, 500000)) {
-        t1 = stimer_get_tick() | 1;
-        gpio_toggle(LED1);
-    }
-}
-
     #elif (defined(MCU_CORE_TL751X))
 static volatile unsigned int iso_out_w   = 0;
 static volatile unsigned int num_iso_out = 0;

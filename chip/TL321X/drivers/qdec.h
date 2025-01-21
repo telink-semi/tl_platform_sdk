@@ -33,7 +33,12 @@
  */
 typedef enum
 {
-    QDEC_CHN_PA2,
+    /**
+      PA2 is not recommended
+      Because its use is limited, it is necessary to ensure that the PA2 input function is disabled before the sys_init /pm_sleep_wakeup/pm_set_dig_module_power_switch functions,
+      otherwise RF may not work properly.For details, refer to the comments of the functions mentioned above(BUT-53)
+    */
+    QDEC_CHN_PA2,//This pin is not recommended. Because when using PA2, baseband cannot be turned off during suspend sleep.
     QDEC_CHN_PA3,
     QDEC_CHN_PB6,
     QDEC_CHN_PB7,

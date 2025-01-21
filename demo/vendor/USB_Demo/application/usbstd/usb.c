@@ -81,6 +81,7 @@ unsigned char            g_usb_config_value     = 0;
 static unsigned short    usb_len_idx_0;
 static unsigned short    usb_len_idx_s;
 static unsigned short    usb_len_idx_h;
+static usb_device_status_e g_usb_device_status;
 
     #if (USB_SPEAKER_ENABLE || USB_MIC_ENABLE)
 unsigned char usb_alt_intf[USB_INTF_MAX];
@@ -881,6 +882,30 @@ void usb_handle_irq(void)
     } else {
         usb_has_suspend_irq = 0;
     }
+
+    if (g_usb_config != 0) {
+        usb_device_status_update();
+    }
+}
+
+void usb_device_status_update(void)
+{
+    if (usbhw_get_host_conn_status()) {
+        if ((usbhw_get_wkup_feature()) && (usbhw_get_irq_status(USB_IRQ_SUSPEND_STATUS))) {
+            g_usb_device_status = USB_DEVICE_SUSPEND;
+        }
+        else {
+            g_usb_device_status = USB_DEVICE_CONFIGURED;
+        }
+    }
+    else {
+        g_usb_device_status = USB_DEVICE_DISCONNECT;
+    }
+}
+
+usb_device_status_e usb_device_status_get(void)
+{
+    return g_usb_device_status;
 }
 
 void usb_init_interrupt(void)
@@ -905,6 +930,9 @@ void usb_init(void)
     usbhw_enable_hw_feature(FLD_USB_AUTO_HALT_CLR | FLD_USB_AUTO_HALT_STALL);
     #endif
     usbhw_enable_manual_interrupt(FLD_CTRL_EP_AUTO_STD | FLD_CTRL_EP_AUTO_DESC | FLD_CTRL_EP_AUTO_CFG);
+
+    /* Set reg_wakeup_en = 0, otherwise the chip will set the reg_wakeup_en register not to generate a wakeup level the first time it is used. */
+    usbhw_reset_wkup_en();
 
     #if defined(MCU_CORE_B91)
     usbhw_set_irq_mask(USB_IRQ_RESET_MASK | USB_IRQ_SUSPEND_MASK);
@@ -955,7 +983,7 @@ void usb_ctrl_ep_setinf_irq_handler(void)
         usbhw_clr_irq_status(USB_IRQ_EP_INTF_STATUS);
         set_intf_cnt++;
     }
-                #if (!MCU_CORE_TL721X)
+                #if (!defined(MCU_CORE_TL721X))
     if (usbhw_get_set_addr_irq_status()) {
         usbhw_clr_set_addr_irq_status();
         set_addr_cnt++;

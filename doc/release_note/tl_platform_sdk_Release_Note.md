@@ -1,3 +1,161 @@
+## V3.4.0(PR)
+
+### Version
+
+* SDK Version: tl_platform_sdk V3.4.0
+* Chip Version
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL721X(A2),TL321X(A1/A2)
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+* Toolchain Version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+
+* **adc**
+  * (TL321X)Only the M channel is reserved, the L/R channel is not open for public use.(merge_requests/@1509)
+* **ALL**
+  * (TL321X)Features are compatible on A1/A2, switch to A2 if you need to test performance.(merge_requests/@1517)
+  
+### Bug Fixes
+
+* **IR_Learn**
+  * (TL321x/TL721x)Fix the issue where the IR_Learn module's idle level is low during IR_Learn simulation reception, resulting in the first edge not being captured.(merge_requests/@1494)
+* **rf** 
+  * (tl321x)Fixed an issue that could cause RF to work abnormally when PA2 is used as an input function.(merge_requests/@1489)
+* **UART** 
+  * (TL721x/TL321x)Fixed bug where the uart_receive_dma interface rx done did not take effect.(merge_requests/@1507)
+* **ADC** 
+  * (TL321x)Disable dwa, because enabling dwa affects adc performance.(merge_requests/@1516)
+  * (TL321x)Add a comment reminding that in vbat mode 192k, the first code needs to be discarded.(merge_requests/@1516)
+  * (TL321x)Clear the fifo before starting adc sampling to prevent residual values in the fifo from affecting the sampling results.(merge_requests/@1516)
+  
+### Features
+
+* **USB audio demo**
+  * (TL321X/TL721x) Add USB audio microphone and speaker demo.(merge_requests/@1496)
+* **USB**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Add usb_hardware_remote_wakeup() and usb_software_remote_wakeup() interface to wakeup the host in sleep state.(merge_requests/@1502)
+* **USB mouse/keyboard demo**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Add remote wakeup function in mouse and keyboard demo.(merge_requests/@1502)
+* **calibration**
+  * (TL321X) Add interface user_check_ieee_addr() to check the legitimacy of ieee address, interface user_get_efuse_ieee_addr() to get the ieee address in efuse, and interface user_get_ieee_addr() to get the address in flash or efuse, calibration_func() add read ieee address in flash or efuse function.(merge_requests/@1505)
+* **efuse**
+  * (TL321x) Add the interface efuse_get_ieee_addr().(merge_requests/@1505)
+* **rf**
+  * (TL721X) Added rf_set_rx_dcoc_cali_by_sw interface to switch rx DCOC software calibration to optimise rf_mode_init execution time(This interface is only available in scenarios where only tx is used, not rx)(merge_requests/@1506)
+* **adc**
+  * (TL721X)PB0 works fine and is open. PD0 and PD1 are open for public use, but not recommended, with an error of 50-100mv, and are still being debugged internally.(merge_requests/@1509)
+
+### Refactoring
+
+* **flash**
+  * (B92) Change xx_MID1460c8 and xx_MID1560c8 to xx_MID1460C8 and xx_MID1560C8 to maintain consistency and be more standardized.(merge_requests/@1503)
+
+### BREAKING CHANGES
+
+* **rf**
+  * (TL321X)Update rf_power_Level_list to adapt to the latest RF configuration(merge_requests/@1495)
+  * (TL721X)The rf_mode_init() function has added an RF Rx DCOC software calibration scheme to solve the problem of poor Rx sensitivity 
+            performance in some chips with large DC-offset.The execution time of this function will be longer, you can check the function 
+            comment for the specific time.Due to the use of software DCOC's calibration scheme, it is not necessary and not allowed to use 
+            rf_get_dcoc_cal_val and rf_set_dcoc_cal_val for processing in the fast settle function,Therefore, the above two interfaces were 
+            deleted.(merge_requests/@1506)
+  * (TL721X/TL321X)In order to fix TX drift and bandedge issues; the preamble len for all modes has been updated, and the 
+                   'rf_tx_fast_settle_time_e' has been modified to update the settling time for each level of TX fastsettle. 
+                    (merge_requests/@1511)
+
+### Performance Improvements
+
+* **rf**
+  * (TL721X)rf_mode_init() function uses dcoc software calibration to minimize the DC-offset of the chip, in order to improve the chip's out-of-band immunity (interference including DC-offset). 
+            DC-offset will be larger chip sensitivity performance back to the normal range.(merge_requests/@1506)
+
+
+## V3.4.0(PR)
+
+### 版本
+
+* SDK 版本: tl_platform_sdk V3.4.0
+* 芯片版本
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL721X(A2),TL321X(A1/A2)
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+
+* **adc**
+  * (TL321X)仅保留M通道，L/R通道不对外开放。(merge_requests/@1509)
+* **ALL**
+  * (TL321X)功能可以在 A1/A2 上兼容，如果需要测试性能，请切换到 A2。(merge_requests/@1517)
+  
+### Bug Fixes
+
+* **IR_Learn**
+  * (TL321x/TL721x)修复IR_Learn模拟接收的时候，IR_Learn模块的空闲电平是低电平，导致第一个沿无法捕获的问题。(merge_requests/@1494)
+* **rf** 
+  * (tl321x)修复了PA2作为输入功能使用时，可能导致RF工作异常的问题。(merge_requests/@1489)
+* **UART** 
+  * (TL721x/TL321x)修复了 uart_receive_dma 接口 rx done 不生效的 bug。(merge_requests/@1507)
+* **ADC** 
+  * (TL321x)禁用dwa，因为启用dwa会影响adc性能。(merge_requests/@1516)
+  * (TL321x)添加注释提醒在vbat模式192k下，需要丢弃第一个code。(merge_requests/@1516)
+  * (TL321x)在启动adc采样之前清fifo，防止fifo中残留的值影响采样结果。(merge_requests/@1516)
+  
+### Features
+
+* **USB audio demo**
+  * (TL321X/TL721x) 添加USB audio microphone和speaker demo。(merge_requests/@1496)
+* **USB**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) 新增 usb_hardware_remote_wakeup() 和 usb_software_remote_wakeup()接口来唤醒睡眠中的主机。(merge_requests/@1502)
+* **USB mouse/keyboard demo**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) 在 mouse 和 keyboard demo中增加远程唤醒功能。(merge_requests/@1502)
+* **calibration**
+  * (TL321x) 添加检查ieee地址合法性接口user_check_ieee_addr()，获取efuse中的ieee地址接口user_get_efuse_ieee_addr()和获取flash或efuse地址的接口user_get_ieee_addr()，calibration_func()添加读flash或efuse中ieee地址功能。(merge_requests/@1505)
+* **efuse**
+  * (TL321x) 添加接口efuse_get_ieee_addr()。(merge_requests/@1505)
+* **rf**
+  * (TL721X) 添加了rf_set_rx_dcoc_cali_by_sw接口开关rx DCOC软件校准，以优化rf_mode_init执行时间（该接口在只用tx，不用rx的场景，才可以使用）(merge_requests/@1506)
+* **adc**
+  * (TL721X)PB0可以正常使用，已开放。PD0、PD1已对外开放，但不建议使用，误差在50-100mv，内部还在debug中。(merge_requests/@1509)
+  
+### Refactoring
+
+* **flash**
+  * (B92) 为了更规范且和其他芯片保持一致性，将xx_MID1460c8和xx_MID1560c8修改为xx_MID1460C8和xx_MID1560C8。(merge_requests/@1503)
+
+### BREAKING CHANGES
+
+* **rf**
+  * (TL321X)更新rf_power_Level_list以适配最新RF配置(merge_requests/@1495)
+  * (TL721X)rf_mode_init()函数中新增了rf rx dcoc软件校准方案来解决部分DC-offset较大的芯片 rx sensitivity性能差的问题，该函数执行时间会变长，具体时间可以查看函数注释。因为使用了软件dcoc的校准方案，
+           所以在fast settle功能中，不需要并且也不允许再用rf_get_dcoc_cal_val和rf_set_dcoc_cal_val进行处理，固删除了上述两个接口。(merge_requests/@1506)
+  * (TL721X/TL321X) 为了修复TX drift 以及bandedge问题，更新所有模式的preamble len;同时修改'rf_tx_fast_settle_time_e',更新TX fastsettle 各个档位的settle时间(merge_requests/@1511)
+
+### Performance Improvements
+
+* **rf**
+  * (TL721X)rf_mode_init()函数使用dcoc 软件校准来使芯片获得最小的DC-offset,以此来提高芯片的带外抗干扰能力（干扰包括DC-offset）。将DC-offset较大的芯片sensitivity性能恢复到正常范围。(merge_requests/@1506)
+
+
 ## V3.3.2
 
 ### Version
