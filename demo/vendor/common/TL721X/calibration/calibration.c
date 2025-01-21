@@ -24,13 +24,6 @@
 #include "calibration.h"
 
 /**
- * @brief      This function serves to read IEEE address from OTP.
- * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
- * @return     none
- */
-void otp_get_ieee_addr(unsigned char *buf);
-
-/**
  * @brief      This function serves to update rf frequency offset.
  * @param[in]  addr - the frequency offset value address of flash.
  * @return     1 - the frequency offset update, 0 - the frequency offset is not update.

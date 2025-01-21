@@ -29,7 +29,11 @@
 
 #define _attribute_text_sec_                __attribute__((section(".text"))) __attribute__((noinline)) //Inlining happens when __attribute__((noinline)) is not added.
 
-#define _attribute_flash_code_sec_noinline_ __attribute__((section(".flash_code"))) __attribute__((noinline))
+#ifndef STD_GCC //standard open source risc-V GCC
+#define _attribute_flash_code_sec_noinline_     __attribute__((section(".flash_code"))) __attribute__((optimize("O2"))) __attribute__((noinline)) __attribute__((no_execit))
+#else
+#define _attribute_flash_code_sec_noinline_     __attribute__((section(".flash_code"))) __attribute__((noinline))
+#endif
 
 #define _attribute_aes_data_sec_            __attribute__((section(".aes_data")))
 

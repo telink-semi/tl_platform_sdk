@@ -653,4 +653,50 @@ static inline void usbhw_disable_hw_feature(usb_hw_feature_e feature)
 {
     reg_usb_ctrl &= (~feature);
 }
+
+/**
+ * @brief     This function servers to get host connect status.
+ * @retval    non-zero - host connected.
+ * @retval    zero - host disconnected.
+ */
+static inline unsigned char usbhw_get_host_conn_status(void)
+{
+    return reg_usb_mdev & BIT(7); // Set Configuration will set BIT(7) to 1.
+}
+
+/**
+ * @brief     This function servers to get wakeup feature.
+ * @retval    non-zero - host is dormant.
+ * @retval    zero - host is not dormant.
+ */
+static inline unsigned char usbhw_get_wkup_feature(void)
+{
+    return reg_usb_mdev & FLD_USB_MDEV_WAKE_FEA;
+}
+
+/**
+ * @brief     This function servers to reset wakeup en.
+ * @return    none.
+ */
+static inline void usbhw_reset_wkup_en(void)
+{
+    reg_wakeup_en = 0;
+}
+
+/**
+ * @brief   This function serves to resume host by hardware.
+ * @note    When the host can send Set/Clear Feature, you can directly wake up the host by manipulating the register.
+ * @param   none.
+ * @return    none.
+ */
+void usb_hardware_remote_wakeup(void);
+
+/**
+ * @brief   This function serves to resume host by software.
+ * @note    When the host cannot send Set/Clear Feature, it needs to use IO simulation to wake up host remotely.
+ * @param   none.
+ * @return    none.
+ */
+void usb_software_remote_wakeup(void);
+
 #endif /* _USBHW_H_ */

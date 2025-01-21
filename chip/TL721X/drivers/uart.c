@@ -716,7 +716,7 @@ void uart_receive_dma(uart_num_e uart_num, unsigned char *addr, unsigned int rev
     dma_chn_dis(uart_dma_rx_chn[uart_num]);
     uart_dma_rev_size[uart_num] = rev_size;
     // uart_receive_dma interface dma must be invoked,nodma does not call,so put the uart_rxdone_sel interface in this interface.
-    uart_rxdone_sel(UART0, UART_DMA_MODE);
+    uart_rxdone_sel(uart_num, UART_DMA_MODE);
     uart_auto_clr_rx_fifo_ptr(uart_num, g_uart_auto_clr_rx_fifo_ptr_en);
     dma_set_address(uart_dma_rx_chn[uart_num], uart_base_addr(uart_num), (unsigned int)(addr));
     dma_set_size(uart_dma_rx_chn[uart_num], rev_size, DMA_WORD_WIDTH);

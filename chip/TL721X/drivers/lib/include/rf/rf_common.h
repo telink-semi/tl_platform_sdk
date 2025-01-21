@@ -77,7 +77,7 @@ typedef enum
      *  
      * @note  
      * 1. Related to frequency points. When enabling fast settle on both TX and RX ends,  
-     *    if 15us option is selected, both TX and RX ends must use the 15us option simultaneously.  
+     *    If the 15us option is selected on the RX side, the 23us option must also be used on the TX side.
      * 2. Refer to the table below to determine the range of frequency points used.  
      *    In addition to configuring the calibration values for the used frequency points,  
      *    corresponding channel values in the respective intervals need to be configured.  
@@ -126,7 +126,7 @@ typedef enum
      *  
      * @note  
      * 1. Related to frequency points. When enabling fast settle on both TX and RX ends,  
-     *    if the 15us option is selected, both TX and RX ends must use the 15us option simultaneously.  
+     *    If the 23us option is selected on the TX side, the 15us option must also be used on the RX side.
      * 2. Refer to the following table to determine the range of frequency points used.  
      *    Corresponding channel values in the respective intervals need to be configured.  
      *    For example, if using the 2426 frequency point, the channel should be configured as 24.  
@@ -137,21 +137,21 @@ typedef enum
      * | Channel Value   |     4     |    14     |    24     |    34     |    44     |    54     |    64     |    74     |  
      * @endtable  
      */
-    TX_SETTLE_TIME_15US = 0,
+    TX_SETTLE_TIME_23US = 0,
 
     /**  
      * @brief Reduce 61.5us of transmit settle time  
      *  
      * Related to frequency points. After frequency hopping, a normal calibration must be done.  
      */
-    TX_SETTLE_TIME_51US = 1,
+    TX_SETTLE_TIME_59US = 1,
 
     /**  
      * @brief Reduce 8.5us of transmit settle time  
      *  
      * Perform a normal calibration at the beginning.  
      */
-    TX_SETTLE_TIME_104US = 2,
+    TX_SETTLE_TIME_112US = 2,
 
     TX_FAST_SETTLE_NONE = 3
 
@@ -809,7 +809,7 @@ static inline void rf_set_tx_dma_fifo_size(unsigned short fifo_byte_size)
 /**
  * @brief   This function serves to set RF tx settle time.
  * @param[in]  tx_stl_us  tx settle time,the unit is us.The max value of this param is 0xfff;The default settling time value is 150us.
- *             The typical value is 113us (tx_settle time should not be less than this value).
+ *             The typical value is 121us (tx_settle time should not be less than this value).
  * @return  none.
  * @note       Attention:It is not necessary to call this function to adjust the settling time in the normal sending state.
  */
@@ -1003,8 +1003,28 @@ static inline unsigned char rf_get_rx_wptr(void)
 void rf_rx_performance_mode(rf_rx_performance_e rx_performance);
 
 /**
+ * @brief        This function is used to set whether or not to use the rx DCOC software calibration in rf_mode_init();
+ * @param[in]    en:This value is used to set whether or not rx DCOC software calibration is performed.
+ *                -#1:enable the DCOC software calibration;
+ *                -#0:disable the DCOC software calibration;
+ * @return         none.
+ * @note          Attention:
+ *                 1.Driver default enable to solve the problem of poor receiver sensitivity performance of some chips with large DC offset
+ *                 2.The following conditions should be noted when using this function:
+ *                   If you use the RX function, it must be enabled, otherwise it will result in a decrease in RX sensitivity.
+ *                   If you only use tx and not rx, and want to save code execution time for rf_mode_init(), you can disable it
+ */
+void rf_set_rx_dcoc_cali_by_sw(unsigned char en);
+
+/**
  * @brief      This function serves to initiate information of RF.
- * @return     none.
+ * @return       none.
+ * @return       none.
+ * @note          Attention:
+ *                 In order to solve the problem of poor receiver sensitivity performance of some chips with large DC offset:
+ *                 1.Added DCOC software calibration scheme to the rf_mode_init() interface to get the smallest DC-offset for the chip.
+ *                But there is thing to note:
+ *                (1)Using DCOC software calibration will increase the software execution time of rf_mode_init().
  */
 void rf_mode_init(void);
 
@@ -1249,9 +1269,9 @@ static _always_inline void rf_set_rx_maxlen(unsigned int byte_len)
  *     RX_SETTLE_TIME_37US: ldo trim; dcoc;
  *     RX_SETTLE_TIME_77US: ldo trim;
  *
- *     TX_SETTLE_TIME_15US: ldo trim; tx_fcal; hpmc;
- *     TX_SETTLE_TIME_51US: ldo trim; hpmc;
- *     TX_SETTLE_TIME_104US: ldo trim;
+ *     TX_SETTLE_TIME_23US: ldo trim; tx_fcal; hpmc;
+ *     TX_SETTLE_TIME_59US: ldo trim; hpmc;
+ *     TX_SETTLE_TIME_112US: ldo trim;
  *
  *********************************************************************************************************************/
 
@@ -1362,8 +1382,8 @@ _attribute_ram_code_sec_noinline_ void rf_reset_register_value(void);
 /**
  *  @brief      This function is used to set the tx fast_settle calibration value.
  *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
- *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_15US and TX_SETTLE_TIME_51US, other parameters are invalid.
- *                              (When tx_settle_us is 15us or 51us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_23US and TX_SETTLE_TIME_59US, other parameters are invalid.
+ *                              (When tx_settle_us is 23us or 59us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
  *  @return     none
 */
 void rf_tx_fast_settle_update_cal_val(rf_tx_fast_settle_time_e tx_settle_time, unsigned char chn);
@@ -1387,8 +1407,8 @@ void rf_set_power_level_singletone(rf_power_level_e level);
 /**
  *  @brief      This function is used to get the tx fast_settle calibration value.
  *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
- *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_15US and TX_SETTLE_TIME_51US, other parameters are invalid.
- *                              (When tx_settle_us is 15us or 51us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_23US and TX_SETTLE_TIME_59US, other parameters are invalid.
+ *                              (When tx_settle_us is 23us or 59us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
  *  @param[in]  fs_cv           Fast settle calibration value address pointer.
  *  @return     none
 */
@@ -1397,8 +1417,8 @@ void rf_tx_fast_settle_get_cal_val(rf_tx_fast_settle_time_e tx_settle_time, unsi
 /**
  *  @brief      This function is used to set the tx fast_settle calibration value.
  *  @param[in]  tx_settle_us    After adjusting the timing sequence, the time required for tx to settle.
- *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_15US and TX_SETTLE_TIME_51US, other parameters are invalid.
- *                              (When tx_settle_us is 15us or 51us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
+ *  @param[in]  chn             Calibrates the frequency (2400 + chn). Range: 0 to 80. Applies to TX_SETTLE_TIME_23US and TX_SETTLE_TIME_59US, other parameters are invalid.
+ *                              (When tx_settle_us is 23us or 59us, the modules to be calibrated are frequency-dependent, so all used frequency points need to be calibrated.)
  *  @param[in]  fs_cv           Fast settle calibration value address pointer.
  *  @return     none
 */

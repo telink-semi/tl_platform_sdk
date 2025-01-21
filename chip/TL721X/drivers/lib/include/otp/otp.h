@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    driver.h
+ * @file    otp.h
  *
  * @brief   This is the header file for TL721X
  *
@@ -21,45 +21,15 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#pragma once
+#ifndef OTP_H_
+#define OTP_H_
+
+/**
+ * @brief      This function serves to read IEEE address from OTP.
+ * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
+ * @return     none
+ */
+void otp_get_ieee_addr(unsigned char *buf);
 
 
-#include "lib/include/plic.h"
-#include "lib/include/pm/pm.h"
-#include "lib/include/rf/rf_common.h"
-#include "lib/include/sys.h"
-#include "lib/include/trng/trng_algorithm.h"
-#include "lib/include/pke/pke_algorithm.h"
-#include "lib/include/hash/hash_algorithm.h"
-#include "lib/include/ske/ske_algorithm.h"
-#include "lib/include/chacha20_poly1305/chacha20_poly1305_algorithm.h"
-
-#include "lib/include/emi.h"
-#include "audio.h"
-#include "lib/include/analog.h"
-#include "dma.h"
-#include "gpio.h"
-#include "i2c.h"
-#include "spi.h"
-#include "pwm.h"
-#include "timer.h"
-#include "flash.h"
-#include "usbhw.h"
-#include "watchdog.h"
-#include "lib/include/core.h"
-
-#include "uart.h"
-#include "lib/include/stimer.h"
-
-#include "lpc.h"
-#include "lib/include/clock.h"
-#include "lib/include/mspi.h"
-#include "adc.h"
-#include "qdec.h"
-#include "plic_sw.h"
-#include "plmt.h"
-#include "lib/include/otp/otp.h"
-#include "flash/flash_type.h"
-#include "flash/flash_common.h"
-#include "ir_learn.h"
-
+#endif /* OTP_H_ */

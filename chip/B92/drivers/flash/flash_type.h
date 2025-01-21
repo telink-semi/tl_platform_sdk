@@ -34,7 +34,7 @@
 #include "flash_mid1660c8.h" // GD25LQ32E/GD25LE32E
 /**
  * @brief       This function reads the status of flash.
- * @param[in]   cmd - the cmd of read status.
+ * @param[in]   cmd     - the cmd of read status.
  * @return      the value of status.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
  *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
@@ -69,7 +69,7 @@ void flash_write_status(flash_status_typedef_e type, unsigned short data);
  * @brief       This function serves to read data from the Security Registers of the flash.
  * @param[in]   addr    - the start address of the Security Registers.
  * @param[in]   len     - the length(in byte, must be above 0) of the content to be read.
- * @param[out]  buf     - the starting address of the content to be read.
+ * @param[out]  buf     - the starting address of the content to be read(ram address).
  * @return      none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
  *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
@@ -87,7 +87,7 @@ void flash_read_otp(unsigned long addr, unsigned long len, unsigned char *buf);
  * @brief       This function serves to write data to the Security Registers of the flash you choose.
  * @param[in]   addr    - the start address of the Security Registers.
  * @param[in]   len     - the length(in byte, must be above 0) of content to be written.
- * @param[in]   buf     - the starting address of the content to be written.
+ * @param[in]   buf     - the starting address of the content to be written(ram address).
  * @return      none.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
  *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
@@ -120,8 +120,8 @@ void flash_erase_otp(unsigned long addr);
 
 /**
  * @brief       This function is used to write the configure of the flash,P25Q16SU/P25Q32SU/P25Q128L uses this function.
- * @param[in]   cmd         - the write command.
- * @param[out]  data        - the start address of the data buffer.
+ * @param[in]   cmd     - the write command.
+ * @param[in]   data    - the start address of the data buffer.
  * @return      none.
  * @note        important:  "data" must not reside at flash, such as constant string.If that case, pls copy to memory first before write.
  *              Attention: Before calling the FLASH function, please check the power supply voltage of the chip.

@@ -60,6 +60,7 @@ typedef enum
 typedef enum
 {
     NOINPUTN           = 0,
+    ADC_GPIO_PB0N      = 0x01,
     ADC_GPIO_PB1N      = 0x02,
     ADC_GPIO_PB2N      = 0x03,
     ADC_GPIO_PB3N      = 0x04,
@@ -67,6 +68,8 @@ typedef enum
     ADC_GPIO_PB5N      = 0x06,
     ADC_GPIO_PB6N      = 0x07,
     ADC_GPIO_PB7N      = 0x08,
+    ADC_GPIO_PD0N      = 0x09,//PD0, PD1 not recommended, sampling bias at 50-100mv, still in debug.
+    ADC_GPIO_PD1N      = 0x0a,
     ADC_TEMPSENSORN_EE = 0x0e,
     GND                = 0x0f,
 } adc_input_nch_e;
@@ -74,6 +77,7 @@ typedef enum
 typedef enum
 {
     NOINPUTP           = 0,
+    ADC_GPIO_PB0P      = 0x01,
     ADC_GPIO_PB1P      = 0x02,
     ADC_GPIO_PB2P      = 0x03,
     ADC_GPIO_PB3P      = 0x04,
@@ -81,6 +85,8 @@ typedef enum
     ADC_GPIO_PB5P      = 0x06,
     ADC_GPIO_PB6P      = 0x07,
     ADC_GPIO_PB7P      = 0x08,
+    ADC_GPIO_PD0P      = 0x09,//PD0, PD1 not recommended, sampling bias at 50-100mv, still in debug.
+    ADC_GPIO_PD1P      = 0x0a,
     ADC_TEMPSENSORP_EE = 0x0e,
     ADC_VBAT           = 0x0f,
 } adc_input_pch_e;
@@ -94,6 +100,7 @@ typedef enum
  */
 typedef enum
 {
+    ADC_GPIO_PB0 = GPIO_PB0 | (0x1 << 12),
     ADC_GPIO_PB1 = GPIO_PB1 | (0x2 << 12),
     ADC_GPIO_PB2 = GPIO_PB2 | (0x3 << 12),
     ADC_GPIO_PB3 = GPIO_PB3 | (0x4 << 12),
@@ -101,6 +108,8 @@ typedef enum
     ADC_GPIO_PB5 = GPIO_PB5 | (0x6 << 12),
     ADC_GPIO_PB6 = GPIO_PB6 | (0x7 << 12),
     ADC_GPIO_PB7 = GPIO_PB7 | (0x8 << 12),
+    ADC_GPIO_PD0 = GPIO_PD0 | (0x9 << 12),//PD0, PD1 not recommended, sampling bias at 50-100mv, still in debug.
+    ADC_GPIO_PD1 = GPIO_PD1 | (0xa << 12),
 } adc_input_pin_def_e;
 
 typedef enum

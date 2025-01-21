@@ -124,7 +124,9 @@ void main_loop(void)
                 kb_data[3] = 0;    // number key: 2
                 kb_data[4] = 0;
                 kb_data[5] = 0;
-
+                if (usb_device_status_get() == USB_DEVICE_SUSPEND) {
+                    usb_hardware_remote_wakeup();
+                }
                 usbkb_hid_report_normal(0x00, kb_data);
             }
         }
@@ -140,7 +142,9 @@ void main_loop(void)
                         kb_data[i] = 0;
                     }
                 }
-
+                if (usb_device_status_get() == USB_DEVICE_SUSPEND) {
+                    usb_hardware_remote_wakeup();
+                }
                 usbkb_hid_report_normal(0, kb_data);
             }
         }

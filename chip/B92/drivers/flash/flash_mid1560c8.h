@@ -21,8 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#ifndef __MID1560c8_H__
-#define __MID1560c8_H__
+#ifndef __MID1560C8_H__
+#define __MID1560C8_H__
 
 /*
  * @brief     MID = 0x1560c8 Flash include GD25LQ16E.
@@ -37,43 +37,43 @@
 typedef enum
 {
     //--------- CMP bit = 0-----------------//
-    FLASH_LOCK_NONE_MID1560c8     = 0x0000, //000000h-000000h   //0x0020 0x407c...
-    FLASH_LOCK_UP_64K_MID1560c8   = 0x0004, //1F0000h-1FFFFFh
-    FLASH_LOCK_UP_128K_MID1560c8  = 0x0008, //1E0000h-1FFFFFh
-    FLASH_LOCK_UP_256K_MID1560c8  = 0x000c, //1C0000h-1FFFFFh
-    FLASH_LOCK_UP_512K_MID1560c8  = 0x0010, //180000h-1FFFFFh
-    FLASH_LOCK_UP_1M_MID1560c8    = 0x0014, //100000h-1FFFFFh  //0x4034
-    FLASH_LOCK_LOW_64K_MID1560c8  = 0x0024, //000000h-00FFFFh
-    FLASH_LOCK_LOW_128K_MID1560c8 = 0x0028, //000000h-01FFFFh
-    FLASH_LOCK_LOW_256K_MID1560c8 = 0x002c, //000000h-03FFFFh
-    FLASH_LOCK_LOW_512K_MID1560c8 = 0x0030, //000000h-07FFFFh
-    FLASH_LOCK_LOW_1M_MID1560c8   = 0x0034, //000000h-0FFFFFh  //0x4014
-    FLASH_LOCK_UP_4K_MID1560c8    = 0x0044, //1FF000h-1FFFFFh
-    FLASH_LOCK_UP_8K_MID1560c8    = 0x0048, //1FE000h-1FFFFFh
-    FLASH_LOCK_UP_16K_MID1560c8   = 0x004c, //1FC000h-1FFFFFh
-    FLASH_LOCK_UP_32K_MID1560c8   = 0x0050, //1F8000h-1FFFFFh   //0x0054
-    FLASH_LOCK_LOW_4K_MID1560c8   = 0x0064, //000000h-000FFFh
-    FLASH_LOCK_LOW_8K_MID1560c8   = 0x0068, //000000h-001FFFh
-    FLASH_LOCK_LOW_16K_MID1560c8  = 0x006c, //000000h-003FFFh
-    FLASH_LOCK_LOW_32K_MID1560c8  = 0x0070, //000000h-007FFFh   //0x0074
+    FLASH_LOCK_NONE_MID1560C8     = 0x0000, //000000h-000000h   //0x0020 0x407c...
+    FLASH_LOCK_UP_64K_MID1560C8   = 0x0004, //1F0000h-1FFFFFh
+    FLASH_LOCK_UP_128K_MID1560C8  = 0x0008, //1E0000h-1FFFFFh
+    FLASH_LOCK_UP_256K_MID1560C8  = 0x000c, //1C0000h-1FFFFFh
+    FLASH_LOCK_UP_512K_MID1560C8  = 0x0010, //180000h-1FFFFFh
+    FLASH_LOCK_UP_1M_MID1560C8    = 0x0014, //100000h-1FFFFFh  //0x4034
+    FLASH_LOCK_LOW_64K_MID1560C8  = 0x0024, //000000h-00FFFFh
+    FLASH_LOCK_LOW_128K_MID1560C8 = 0x0028, //000000h-01FFFFh
+    FLASH_LOCK_LOW_256K_MID1560C8 = 0x002c, //000000h-03FFFFh
+    FLASH_LOCK_LOW_512K_MID1560C8 = 0x0030, //000000h-07FFFFh
+    FLASH_LOCK_LOW_1M_MID1560C8   = 0x0034, //000000h-0FFFFFh  //0x4014
+    FLASH_LOCK_UP_4K_MID1560C8    = 0x0044, //1FF000h-1FFFFFh
+    FLASH_LOCK_UP_8K_MID1560C8    = 0x0048, //1FE000h-1FFFFFh
+    FLASH_LOCK_UP_16K_MID1560C8   = 0x004c, //1FC000h-1FFFFFh
+    FLASH_LOCK_UP_32K_MID1560C8   = 0x0050, //1F8000h-1FFFFFh   //0x0054
+    FLASH_LOCK_LOW_4K_MID1560C8   = 0x0064, //000000h-000FFFh
+    FLASH_LOCK_LOW_8K_MID1560C8   = 0x0068, //000000h-001FFFh
+    FLASH_LOCK_LOW_16K_MID1560C8  = 0x006c, //000000h-003FFFh
+    FLASH_LOCK_LOW_32K_MID1560C8  = 0x0070, //000000h-007FFFh   //0x0074
     //--------- CMP bit = 1---------------//
-    FLASH_LOCK_LOW_1984K_MID1560c8 = 0x4004, //000000h-1EFFFFh
-    FLASH_LOCK_LOW_1920K_MID1560c8 = 0x4008, //000000h-1DFFFFh
-    FLASH_LOCK_LOW_1792K_MID1560c8 = 0x400c, //000000h-1BFFFFh
-    FLASH_LOCK_LOW_1536K_MID1560c8 = 0x4010, //000000h-17FFFFh
-    FLASH_LOCK_UP_1984K_MID1560c8  = 0x4024, //010000h-1FFFFFh
-    FLASH_LOCK_UP_1920K_MID1560c8  = 0x4028, //020000h-1FFFFFh
-    FLASH_LOCK_UP_1792K_MID1560c8  = 0x402c, //040000h-1FFFFFh
-    FLASH_LOCK_UP_1536K_MID1560c8  = 0x4030, //080000h-1FFFFFh
-    FLASH_LOCK_LOW_2044K_MID1560c8 = 0x4044, //000000h-1FEFFFh
-    FLASH_LOCK_LOW_2040K_MID1560c8 = 0x4048, //000000h-1FDFFFh
-    FLASH_LOCK_LOW_2032K_MID1560c8 = 0x404c, //000000h-1FBFFFh
-    FLASH_LOCK_LOW_2016K_MID1560c8 = 0x4050, //000000h-1F7FFFh   //0x4054
-    FLASH_LOCK_UP_2044K_MID1560c8  = 0x4064, //001000h-1FFFFFh
-    FLASH_LOCK_UP_2040K_MID1560c8  = 0x4068, //002000h-1FFFFFh
-    FLASH_LOCK_UP_2032K_MID1560c8  = 0x406c, //004000h-1FFFFFh
-    FLASH_LOCK_UP_2016K_MID1560c8  = 0x4070, //008000h-1FFFFFh   //0x4074
-    FLASH_LOCK_ALL_2M_MID1560c8    = 0x007c, //000000h-1FFFFFh   //0x4000 0x4040 0x4020 0x4060...
+    FLASH_LOCK_LOW_1984K_MID1560C8 = 0x4004, //000000h-1EFFFFh
+    FLASH_LOCK_LOW_1920K_MID1560C8 = 0x4008, //000000h-1DFFFFh
+    FLASH_LOCK_LOW_1792K_MID1560C8 = 0x400c, //000000h-1BFFFFh
+    FLASH_LOCK_LOW_1536K_MID1560C8 = 0x4010, //000000h-17FFFFh
+    FLASH_LOCK_UP_1984K_MID1560C8  = 0x4024, //010000h-1FFFFFh
+    FLASH_LOCK_UP_1920K_MID1560C8  = 0x4028, //020000h-1FFFFFh
+    FLASH_LOCK_UP_1792K_MID1560C8  = 0x402c, //040000h-1FFFFFh
+    FLASH_LOCK_UP_1536K_MID1560C8  = 0x4030, //080000h-1FFFFFh
+    FLASH_LOCK_LOW_2044K_MID1560C8 = 0x4044, //000000h-1FEFFFh
+    FLASH_LOCK_LOW_2040K_MID1560C8 = 0x4048, //000000h-1FDFFFh
+    FLASH_LOCK_LOW_2032K_MID1560C8 = 0x404c, //000000h-1FBFFFh
+    FLASH_LOCK_LOW_2016K_MID1560C8 = 0x4050, //000000h-1F7FFFh   //0x4054
+    FLASH_LOCK_UP_2044K_MID1560C8  = 0x4064, //001000h-1FFFFFh
+    FLASH_LOCK_UP_2040K_MID1560C8  = 0x4068, //002000h-1FFFFFh
+    FLASH_LOCK_UP_2032K_MID1560C8  = 0x406c, //004000h-1FFFFFh
+    FLASH_LOCK_UP_2016K_MID1560C8  = 0x4070, //008000h-1FFFFFh   //0x4074
+    FLASH_LOCK_ALL_2M_MID1560C8    = 0x007c, //000000h-1FFFFFh   //0x4000 0x4040 0x4020 0x4060...
 } mid1560c8_lock_block_e;
 
 /**
@@ -82,8 +82,8 @@ typedef enum
  */
 typedef enum
 {
-    FLASH_QE_DISABLE_MID1560c8 = 0x0000,
-    FLASH_QE_ENABLE_MID1560c8  = 0x0200,
+    FLASH_QE_DISABLE_MID1560C8 = 0x0000,
+    FLASH_QE_ENABLE_MID1560C8  = 0x0200,
 } mid1560c8_qe_e;
 
 /**
@@ -91,9 +91,9 @@ typedef enum
  */
 typedef enum
 {
-    FLASH_OTP_0x001000_1024B_MID1560c8 = 0x001000, //001000h-0013FFh
-    FLASH_OTP_0x002000_1024B_MID1560c8 = 0x002000, //002000h-0023FFh
-    FLASH_OTP_0x003000_1024B_MID1560c8 = 0x003000, //003000h-0033FFh
+    FLASH_OTP_0x001000_1024B_MID1560C8 = 0x001000, //001000h-0013FFh
+    FLASH_OTP_0x002000_1024B_MID1560C8 = 0x002000, //002000h-0023FFh
+    FLASH_OTP_0x003000_1024B_MID1560C8 = 0x003000, //003000h-0033FFh
 } mid1560c8_otp_block_e;
 
 /**
@@ -101,9 +101,9 @@ typedef enum
  */
 typedef enum
 {
-    FLASH_LOCK_OTP_0x001000_1024B_MID1560c8 = 0x0800, //001000h-0013FFh
-    FLASH_LOCK_OTP_0x002000_1024B_MID1560c8 = 0x1000, //002000h-0023FFh
-    FLASH_LOCK_OTP_0x003000_1024B_MID1560c8 = 0x2000, //003000h-0033FFh
+    FLASH_LOCK_OTP_0x001000_1024B_MID1560C8 = 0x0800, //001000h-0013FFh
+    FLASH_LOCK_OTP_0x002000_1024B_MID1560C8 = 0x1000, //002000h-0023FFh
+    FLASH_LOCK_OTP_0x003000_1024B_MID1560C8 = 0x2000, //003000h-0033FFh
 } mid1560c8_lock_otp_e;
 
 /**
@@ -111,14 +111,14 @@ typedef enum
  */
 typedef enum
 {
-    FLASH_WRITE_STATUS_BP_MID1560c8  = 0x407c, //the values that can be set can refer to mid1560c8_lock_block_e
-    FLASH_WRITE_STATUS_QE_MID1560c8  = 0x0200, //the values that can be set can refer to mid1560c8_qe_e
-    FLASH_WRITE_STATUS_OTP_MID1560c8 = 0x3800, //the values that can be set can refer to mid1560c8_lock_otp_e
+    FLASH_WRITE_STATUS_BP_MID1560C8  = 0x407c, //the values that can be set can refer to mid1560c8_lock_block_e
+    FLASH_WRITE_STATUS_QE_MID1560C8  = 0x0200, //the values that can be set can refer to mid1560c8_qe_e
+    FLASH_WRITE_STATUS_OTP_MID1560C8 = 0x3800, //the values that can be set can refer to mid1560c8_lock_otp_e
 
     /*Related to flash hardware protection.When using this function, you need to pay attention.
      *If the #WP pin of the flash is grounded and the hardware protection is set at this time,
      *the status register of the flash will be locked and irreversible.*/
-    FLASH_WRITE_STATUS_SRP_MID1560c8 = 0x0180,
+    FLASH_WRITE_STATUS_SRP_MID1560C8 = 0x0180,
 } mid1560c8_write_status_mask_e;
 
 /**
@@ -135,10 +135,11 @@ typedef enum
  *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
  */
 unsigned short flash_read_status_mid1560c8(void);
+
 /**
  * @brief       This function write the status of flash.
  * @param[in]   data    - the status value of the flash after the mask.
- * @param[in]   mask        - mid1560c8_write_status_mask_e.
+ * @param[in]   mask    - mid1560c8_write_status_mask_e.
  * @return      1: success, 0: error, 2: parameter error.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
  *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.
@@ -280,5 +281,4 @@ void flash_erase_otp_mid1560c8(mid1560c8_otp_block_e addr);
  *              If an abnormality occurs, the firmware and user data may be rewritten, resulting in the final Product failure)
  */
 void flash_lock_otp_mid1560c8(mid1560c8_lock_otp_e data);
-
 #endif

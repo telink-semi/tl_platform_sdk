@@ -22,6 +22,7 @@
  *
  *******************************************************************************************************/
 #include "flash_common.h"
+
 /**
    # If add flash type, need pay attention to the read uid command and the bit number of status register.
 
@@ -29,7 +30,7 @@
     | Package Type | Flash Type | uid CMD |   MID    | Company |         tRES1                   |             Sector Erase Time        |  note |
     |              |            |         |          |         | (<25us, otherwise see note (1)) |                  (MAX)               |       |
     +--------------+------------+---------+----------+---------+---------------------------------+--------------------------------------+-------+
-    |  Internal    | P25Q80U    |   0x4b  | 0x146085 |   PUYA  |           8us                   |               20ms                   |  (2)  |
+    |   Internal   | P25Q80U    |   0x4b  | 0x146085 |   PUYA  |           8us                   |               20ms                   |  (2)  |
     |              | P25Q16SU   |   0x4b  | 0x156085 |   PUYA  |           8us                   |               30ms                   |       |
     |              | P25Q32SU   |   0x4b  | 0x166085 |   PUYA  |           8us                   |               30ms                   |       |
     |              | P25Q128L   |   0x4b  | 0x186085 |   PUYA  |           8us                   |               30ms                   |       |
@@ -48,17 +49,16 @@
 const flash_hal_handler_t flash_list[] = {
     //1M
     {0x146085, flash_get_lock_block_mid146085, flash_unlock_mid146085, flash_lock_mid146085, FLASH_LOCK_LOW_512K_MID146085, flash_write_status_mid146085, FLASH_WRITE_STATUS_QE_MID146085, FLASH_QE_ENABLE_MID146085, FLASH_QE_DISABLE_MID146085},
-    {0x1460c8, flash_get_lock_block_mid1460c8, flash_unlock_mid1460c8, flash_lock_mid1460c8, FLASH_LOCK_LOW_512K_MID1460c8, flash_write_status_mid1460c8, FLASH_WRITE_STATUS_QE_MID1460c8, FLASH_QE_ENABLE_MID1460c8, FLASH_QE_DISABLE_MID1460c8},
+    {0x1460c8, flash_get_lock_block_mid1460c8, flash_unlock_mid1460c8, flash_lock_mid1460c8, FLASH_LOCK_LOW_512K_MID1460C8, flash_write_status_mid1460c8, FLASH_WRITE_STATUS_QE_MID1460C8, FLASH_QE_ENABLE_MID1460C8, FLASH_QE_DISABLE_MID1460C8},
     //2M
     {0x156085, flash_get_lock_block_mid156085, flash_unlock_mid156085, flash_lock_mid156085, FLASH_LOCK_LOW_1M_MID156085,   flash_write_status_mid156085, FLASH_WRITE_STATUS_QE_MID156085, FLASH_QE_ENABLE_MID156085, FLASH_QE_DISABLE_MID156085},
-    {0x1560c8, flash_get_lock_block_mid1560c8, flash_unlock_mid1560c8, flash_lock_mid1560c8, FLASH_LOCK_LOW_1M_MID1560c8,   flash_write_status_mid1560c8, FLASH_WRITE_STATUS_QE_MID1560c8, FLASH_QE_ENABLE_MID1560c8, FLASH_QE_DISABLE_MID1560c8},
+    {0x1560c8, flash_get_lock_block_mid1560c8, flash_unlock_mid1560c8, flash_lock_mid1560c8, FLASH_LOCK_LOW_1M_MID1560C8,   flash_write_status_mid1560c8, FLASH_WRITE_STATUS_QE_MID1560C8, FLASH_QE_ENABLE_MID1560C8, FLASH_QE_DISABLE_MID1560C8},
     //4M
     {0x166085, flash_get_lock_block_mid166085, flash_unlock_mid166085, flash_lock_mid166085, FLASH_LOCK_LOW_2M_MID166085,   flash_write_status_mid166085, FLASH_WRITE_STATUS_QE_MID166085, FLASH_QE_ENABLE_MID166085, FLASH_QE_DISABLE_MID166085},
     {0x1660c8, flash_get_lock_block_mid1660c8, flash_unlock_mid1660c8, flash_lock_mid1660c8, FLASH_LOCK_LOW_2M_MID1660C8,   flash_write_status_mid1660c8, FLASH_WRITE_STATUS_QE_MID1660C8, FLASH_QE_ENABLE_MID1660C8, FLASH_QE_DISABLE_MID1660C8},
     //16M
     {0x186085, flash_get_lock_block_mid186085, flash_unlock_mid186085, flash_lock_mid186085, FLASH_LOCK_LOW_8M_MID186085,   flash_write_status_mid186085, FLASH_WRITE_STATUS_QE_MID186085, FLASH_QE_ENABLE_MID186085, FLASH_QE_DISABLE_MID186085}
 };
-
 const unsigned int FLASH_CNT = sizeof(flash_list) / sizeof(flash_hal_handler_t);
 
 /**

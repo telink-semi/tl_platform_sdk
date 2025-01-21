@@ -98,16 +98,16 @@ void main_loop(void)
         #if 0
     rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
         #else
-    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
-    rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+    rf_fast_settle_get_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+    rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         #endif
-    if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US)) {
+    if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US)) {
         //Incorrect configuration.
         gpio_toggle(LED2);
     }
     rf_tx_fast_settle_en();
     rf_rx_fast_settle_en();
-    rf_set_tx_settle_time(15);
+    rf_set_tx_settle_time(23);
     rf_set_rx_settle_time(15);
 
     rf_set_chn(RF_FREQ);

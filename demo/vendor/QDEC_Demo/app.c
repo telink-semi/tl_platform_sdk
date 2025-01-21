@@ -52,7 +52,7 @@ void user_init(void)
 
     qdec_clk_en();
     qdec_set_mode(DOUBLE_ACCURACY_MODE);
-    qdec_set_pin(QDEC_CHN_PA2, QDEC_CHN_PA3);
+    qdec_set_pin(QDEC_CHN_PB6, QDEC_CHN_PB7);
 
     qdec_set_debouncing(1); //set debouncing
 }

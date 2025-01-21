@@ -143,8 +143,10 @@ typedef enum
 {
     NDMA_M_CHN    = 1 | (0 << 4),
     DMA_M_CHN     = 1 | (1 << 4),
+#if INTERNAL_TEST_FUNC_EN
     DMA_M_L_CHN   = 2 | (1 << 4),
     DMA_M_L_R_CHN = 3 | (1 << 4),
+#endif
 } adc_chn_cnt_e;
 
 /**
@@ -200,7 +202,7 @@ typedef enum
     ADC_SAMPLE_FREQ_23K  = (0 << 24) | (1023 << 8) | (ADC_SAMPLE_CYC_48 << 4) | 15,
     ADC_SAMPLE_FREQ_48K  = (1 << 24) | (490 << 8) | (ADC_SAMPLE_CYC_48 << 4) | 10,
     ADC_SAMPLE_FREQ_96K  = (2 << 24) | (240 << 8) | (ADC_SAMPLE_CYC_27 << 4) | 10,
-    ADC_SAMPLE_FREQ_192K = (3 << 24) | (115 << 8) | (ADC_SAMPLE_CYC_6 << 4) | 10,
+    ADC_SAMPLE_FREQ_192K = (3 << 24) | (115 << 8) | (ADC_SAMPLE_CYC_6 << 4) | 10,//When you select ADC_SAMPLE_FREQ_192K, the first code of the vbat sample mode is an exception and needs to be discarded.
 } adc_sample_freq_e;
 
 typedef enum

@@ -310,13 +310,18 @@ void pm_set_suspend_power_cfg(pm_pd_module_e value, unsigned char on_off);
                                       The range of tick that can be set is approximately: 64~0xffffffff,
                                       and the corresponding sleep time is approximately: 2ms~37hours.
                                       When it exceeds this range, it cannot sleep properly.
- * @note        There are two things to note when using LPC wake up:
- *              1.After the LPC is configured, you need to wait 100 seconds before you can go to sleep.
- *                After the LPC is opened, 1-2 32k tick is needed to calculate the result.
- *                Before this, the data in the result register is random. If you enter the sleep function at this time,
- *                you may not be able to sleep normally because the data in the result register is abnormal.
- *              2.When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
- *                otherwise can not enter sleep normally, crash occurs.
+ * @note        -# There are two things to note when using LPC wake up:
+ *                 1.After the LPC is configured, you need to wait 100 seconds before you can go to sleep.
+ *                   After the LPC is opened, 1-2 32k tick is needed to calculate the result.
+ *                   Before this, the data in the result register is random. If you enter the sleep function at this time,
+ *                   you may not be able to sleep normally because the data in the result register is abnormal.
+ *                 2.When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
+ *                   otherwise can not enter sleep normally, crash occurs.
+ *              -# Before calling this function, the input function of PA2 must be enabled.
+ *                 If there is a scenario where the input function of PA2 must be enabled before calling this function, the processing in this function is as follows:
+ *                 The FLD_PD_ZB_EN configuration of the function pm_set_suspend_power_cfg will not take effect and it will be handled in accordance with keeping the user FLD_PD_ZB_EN configuration.
+ *                 If the user is power on FLD_PD_ZB_EN, the power consumption of suspend will be about 6uA larger in this usage scenario.
+ *                 After suspend wakes up, it restores the user's FLD_PD_ZB_EN configuration((BUT-53))
  * @return      indicate whether the cpu is wake up successful.
  * @attention   Must ensure that all GPIOs cannot be floating status before going to sleep to prevent power leakage.
  */
@@ -328,14 +333,6 @@ _attribute_text_sec_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode, pm_sleep_wa
  * @note        -# the interface pm_update_status_info() must be called before this interface can be invoked;
  */
 pm_sw_reboot_reason_e pm_get_sw_reboot_event(void);
-
-/**
- * @brief       This function serves to switch digital module power.
- * @param[in]   module - digital module.
- * @param[in]   power_sel - power up or power down.
- * @return      none.
- */
-_attribute_ram_code_sec_noinline_ void pm_set_dig_module_power_switch(pm_pd_module_e module, pm_power_sel_e power_sel);
 
 /**
  * @brief       This function serves to test different voltages from pd3.
@@ -384,3 +381,12 @@ _attribute_ram_code_sec_noinline_ void pm_set_power_mode(power_mode_e power_mode
  * @return      none.
  */
 _attribute_ram_code_sec_noinline_ void pm_sys_reboot_with_reason(pm_sw_reboot_reason_e reboot_reason, unsigned char all_ramcode_en);
+
+/**
+ * @brief       This function serves to switch digital module power.
+ * @param[in]   module - digital module.
+ * @param[in]   power_sel - power up or power down.
+ * @return      none.
+ * @note        Before calling this interface to open base band, you need to make sure that the input function of PA2 is turned off.(BUT-53)
+ */
+_attribute_ram_code_sec_noinline_ void pm_set_dig_module_power_switch(pm_pd_module_e module, pm_power_sel_e power_sel);

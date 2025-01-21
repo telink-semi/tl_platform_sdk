@@ -84,6 +84,11 @@ typedef enum
 
     GPIO_PA0  = GPIO_GROUPA | BIT(0),
     GPIO_PA1  = GPIO_GROUPA | BIT(1),
+    /**
+      PA2 is not recommended
+      Because its use is limited, it is necessary to ensure that the PA2 input function is disabled before the sys_init /pm_sleep_wakeup/pm_set_dig_module_power_switch functions,
+      otherwise RF may not work properly.For details, refer to the comments of the functions mentioned above(BUT-53)
+    */
     GPIO_PA2  = GPIO_GROUPA | BIT(2),
     GPIO_PA3  = GPIO_GROUPA | BIT(3),
     GPIO_PA4  = GPIO_GROUPA | BIT(4),
@@ -156,6 +161,11 @@ typedef enum
 
     GPIO_FC_PA0 = GPIO_PA0,
     GPIO_FC_PA1 = GPIO_PA1,
+    /**
+      PA2 is not recommended
+      Because its use is limited, it is necessary to ensure that the PA2 input function is disabled before the sys_init /pm_sleep_wakeup/pm_set_dig_module_power_switch functions,
+      otherwise RF may not work properly.For details, refer to the comments of the functions mentioned above(BUT-53)
+    */
     GPIO_FC_PA2 = GPIO_PA2,
     GPIO_FC_PA3 = GPIO_PA3,
     GPIO_FC_PA4 = GPIO_PA4,
@@ -478,7 +488,7 @@ static inline void gpio_function_dis(gpio_pin_e pin)
  * @param[in] pin - the pin needs to set its output level.
  * @return    none.
  */
-static inline void gpio_set_high_level(gpio_pin_e pin)
+static _always_inline void gpio_set_high_level(gpio_pin_e pin)
 {
     unsigned char bit     = pin & 0xff;
     reg_gpio_out_set(pin) = bit;
@@ -489,7 +499,7 @@ static inline void gpio_set_high_level(gpio_pin_e pin)
  * @param[in] pin - the pin needs to set its output level.
  * @return    none.
  */
-static inline void gpio_set_low_level(gpio_pin_e pin)
+static _always_inline void gpio_set_low_level(gpio_pin_e pin)
 {
     unsigned char bit       = pin & 0xff;
     reg_gpio_out_clear(pin) = bit;
@@ -501,7 +511,7 @@ static inline void gpio_set_low_level(gpio_pin_e pin)
  * @param[in] value - value of the output level(1: high 0: low)
  * @return    none
  */
-static inline void gpio_set_level(gpio_pin_e pin, unsigned char value)
+static _always_inline void gpio_set_level(gpio_pin_e pin, unsigned char value)
 {
     if (value) {
         gpio_set_high_level(pin);
@@ -543,7 +553,7 @@ static inline void gpio_get_level_all(unsigned char *p)
  * @param[in] pin - the pin needs to toggle.
  * @return    none.
  */
-static inline void gpio_toggle(gpio_pin_e pin)
+static _always_inline void gpio_toggle(gpio_pin_e pin)
 {
     unsigned char bit        = pin & 0xff;
     reg_gpio_out_toggle(pin) = bit;

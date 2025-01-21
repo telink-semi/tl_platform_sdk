@@ -85,6 +85,40 @@ unsigned short usbhw_read_ctrl_ep_u16(void)
 }
 
 /**
+ * @brief   This function serves to resume host by hardware.
+ * @note    When the host can send Set/Clear Feature, you can directly wake up the host by manipulating the register.
+ * @param   none.
+ * @return    none.
+ */
+void usb_hardware_remote_wakeup(void)
+{
+    reg_wakeup_en = FLD_USB_RESUME;
+    reg_wakeup_en = FLD_USB_PWDN_I;
+}
+
+/**
+ * @brief   This function serves to resume host by software.
+ * @note    When the host cannot send Set/Clear Feature, it needs to use IO simulation to wake up host remotely.
+ * @param   none.
+ * @return    none.
+ */
+void usb_software_remote_wakeup(void)
+{
+    gpio_function_en(GPIO_DP);
+    gpio_input_dis(GPIO_DP);
+    gpio_output_en(GPIO_DP);
+    gpio_function_en(GPIO_DM);
+    gpio_input_dis(GPIO_DM);
+    gpio_output_en(GPIO_DM);
+
+    gpio_set_low_level(GPIO_DP);
+    gpio_set_high_level(GPIO_DM);
+    delay_ms(22); /* If 22ms cannot wake up normally, you can extend this time appropriately. */
+
+    usb_set_pin_en();
+}
+
+/**
  * @brief      This function serves to set dp_through_swire function.
  * @param[in]  dp_through_swire - 1: swire_usb_en 0: swire_usb_dis
  * @return     none.

@@ -132,7 +132,10 @@
     #endif
 #endif
 
-#define ID_VERSION 0x0100
+#define ID_VERSION              0x0100
+
+#define TO_STRING(x)            #x
+#define EXPAND_AND_TO_STRING(x) TO_STRING(x)
 
 #if (USB_CDC_ENABLE)
     /**
@@ -163,10 +166,22 @@
     #define STRING_SERIAL  "KM demo"
 #endif
 
-#if (USB_MIC_ENABLE || USB_SPEAKER_ENABLE)
+#if (USB_MIC_ENABLE) && (!USB_SPEAKER_ENABLE)
     #define STRING_VENDOR  "Telink Semi-conductor Ltd, Co"
-    #define STRING_PRODUCT "Telink Audio16"
-    #define STRING_SERIAL  "Audio16"
+    #define STRING_PRODUCT "Telink MIC_" EXPAND_AND_TO_STRING(MIC_SAMPLE_RATE) "-" EXPAND_AND_TO_STRING(MIC_CHANNEL_COUNT)
+    #define STRING_SERIAL  "MIC demo"
+#endif
+
+#if (!USB_MIC_ENABLE) && (USB_SPEAKER_ENABLE)
+    #define STRING_VENDOR  "Telink Semi-conductor Ltd, Co"
+    #define STRING_PRODUCT "Telink SPK_" EXPAND_AND_TO_STRING(SPEAKER_SAMPLE_RATE) "-" EXPAND_AND_TO_STRING(SPK_CHANNEL_COUNT)
+    #define STRING_SERIAL  "SPK demo"
+#endif
+
+#if (USB_MIC_ENABLE && USB_SPEAKER_ENABLE)
+    #define STRING_VENDOR  "Telink Semi-conductor Ltd, Co"
+    #define STRING_PRODUCT "Telink_MIC_SPK_" EXPAND_AND_TO_STRING(MIC_SAMPLE_RATE) "-" EXPAND_AND_TO_STRING(MIC_CHANNEL_COUNT) "_" EXPAND_AND_TO_STRING(SPEAKER_SAMPLE_RATE) "-" EXPAND_AND_TO_STRING(SPK_CHANNEL_COUNT)
+    #define STRING_SERIAL  "MIC_SPK demo"
 #endif
 
 #if (USB_MASS_STORAGE_ENABLE)

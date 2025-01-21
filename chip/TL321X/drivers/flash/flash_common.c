@@ -34,6 +34,8 @@
     |              | P25Q40SU   |   0x4b  | 0x136085 |  PUYA   |           8us                   |                   30ms               |
     |              | P25Q16SU   |   0x4b  | 0x156085 |  PUYA   |           8us                   |                   30ms               |
     |              | P25Q32SU   |   0x4b  | 0x166085 |  PUYA   |           8us                   |                   30ms               |
+    |              | GD25LQ16E  |   0x4b  | 0x1560c8 |    GD   |           20us                  | 300ms/500ms(85 Celsius/125 Celsius)  |
+    |              | GD25LQ80E  |   0x4b  | 0x1460c8 |    GD   |           20us                  | 600ms/1000ms(85 Celsius/125 Celsius) |
     +--------------+------------+---------+----------+---------+---------------------------------+--------------------------------------+
 
     Note:
@@ -45,8 +47,10 @@ const flash_hal_handler_t flash_list[] = {
     {0x136085, flash_get_lock_block_mid136085, flash_unlock_mid136085, flash_lock_mid136085, FLASH_LOCK_LOW_256K_MID136085, flash_write_status_mid136085, FLASH_WRITE_STATUS_QE_MID136085, FLASH_QE_ENABLE_MID136085, FLASH_QE_DISABLE_MID136085},
     //1M
     {0x146085, flash_get_lock_block_mid146085, flash_unlock_mid146085, flash_lock_mid146085, FLASH_LOCK_LOW_512K_MID146085, flash_write_status_mid146085, FLASH_WRITE_STATUS_QE_MID146085, FLASH_QE_ENABLE_MID146085, FLASH_QE_DISABLE_MID146085},
+    {0x1460c8, flash_get_lock_block_mid1460c8, flash_unlock_mid1460c8, flash_lock_mid1460c8, FLASH_LOCK_LOW_512K_MID1460C8, flash_write_status_mid1460c8, FLASH_WRITE_STATUS_QE_MID1460C8, FLASH_QE_ENABLE_MID1460C8, FLASH_QE_DISABLE_MID1460C8},
     //2M
     {0x156085, flash_get_lock_block_mid156085, flash_unlock_mid156085, flash_lock_mid156085, FLASH_LOCK_LOW_1M_MID156085,   flash_write_status_mid156085, FLASH_WRITE_STATUS_QE_MID156085, FLASH_QE_ENABLE_MID156085, FLASH_QE_DISABLE_MID156085},
+    {0x1560c8, flash_get_lock_block_mid1560c8, flash_unlock_mid1560c8, flash_lock_mid1560c8, FLASH_LOCK_LOW_1M_MID1560C8,   flash_write_status_mid1560c8, FLASH_WRITE_STATUS_QE_MID1560C8, FLASH_QE_ENABLE_MID1560C8, FLASH_QE_DISABLE_MID1560C8},
     //4M
     {0x166085, flash_get_lock_block_mid166085, flash_unlock_mid166085, flash_lock_mid166085, FLASH_LOCK_LOW_2M_MID166085,   flash_write_status_mid166085, FLASH_WRITE_STATUS_QE_MID166085, FLASH_QE_ENABLE_MID166085, FLASH_QE_DISABLE_MID166085},
 };
