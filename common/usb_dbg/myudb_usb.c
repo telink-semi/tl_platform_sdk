@@ -559,7 +559,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
                 }
             } else {
     //              flash_erase_chip ();
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
                 unsigned int flash_mid = flash_read_mid();
     #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
                 unsigned int flash_mid = flash_read_mid_with_device_num(0);

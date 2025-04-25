@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #if (SPI_DISPLAY_SELECT == SPI_RAMLESS_LCD)
 

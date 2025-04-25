@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #define ADC_DMA_CHN                DMA7
 #define ADC_SAMPLE_PIN             ADC_GPIO_PD1

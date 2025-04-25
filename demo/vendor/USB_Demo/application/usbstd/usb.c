@@ -21,9 +21,10 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
-#include "../../usb_default.h"
 #include "driver.h"
+
+#include "../../usb_default.h"
+#include "../../app_config.h"
 
 #define MODULE_USB_ENABLE 1
 

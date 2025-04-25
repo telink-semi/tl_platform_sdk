@@ -22,8 +22,7 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "common.h"
-#include "../pke_test/app_test.h"
+#include "../app_config.h"
 
 #define ECDH_SIGN_VERIFY_ROUND1 (2)
 

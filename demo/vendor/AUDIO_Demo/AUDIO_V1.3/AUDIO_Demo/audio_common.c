@@ -1,12 +1,13 @@
 /********************************************************************************************************
  * @file    audio_common.c
  *
- * @brief   This is the source file for Telink RISC-V MCU
+ * @brief   This is the header file for TL721X/TL321X
  *
  * @author  Driver Group
  * @date    2024
  *
  * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -21,7 +22,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 extern unsigned int audio_sample_rate_value[AUDIO_ASCL_RATE_SIZE];
 

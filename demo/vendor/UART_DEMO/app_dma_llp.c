@@ -36,7 +36,7 @@
  */
 
 
-#include "common.h"
+#include "app_config.h"
 //only the slave can support llp mode, the master cannot.
 #if (UART_MODE == UART_DMA_LLP)
 

@@ -6,6 +6,7 @@
  * @author  Driver Group
  * @date    2024
  *
+ *
  * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
@@ -309,7 +310,7 @@ void i2s_set_pin(i2s_pin_config_t *config)
     }
 
     if (config->adc_dat_pin != GPIO_NONE_PIN) {
-        gpio_input_en((gpio_pin_e)config->adc_dat_pin);
+        gpio_input_en((gpio_pin_e)config->dac_dat_pin);
         gpio_set_mux_function(config->adc_dat_pin, I2S_DAT0_IO);
         gpio_function_dis((gpio_pin_e)config->adc_dat_pin);
     }
@@ -1077,9 +1078,6 @@ void audio_i2s_config_init(audio_i2s_config_t *i2s_config)
     i2s_set_pin(i2s_config->pin_config);
     if (i2s_config->master_slave_mode == I2S_AS_MASTER_EN) {
         audio_set_i2s_clock(i2s_config->i2s_select, i2s_config->sample_rate);
-    } else {
-        /* * When using i2s slave mode, just i2s src clk should be enabled. * add by jiawei.shi, confirmed by yi.shi 20250311 */
-        audio_set_i2s_src_clk_en();
     }
     audio_i2s_config(i2s_config->i2s_select, i2s_config->i2s_mode, i2s_config->data_width, i2s_config->master_slave_mode, &audio_i2s_invert_config[0x00]);
 }

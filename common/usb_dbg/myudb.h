@@ -33,7 +33,7 @@
  * @note
  *        - This version only TL7518 support USB1.
  */
-#if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
     #define USB_CNT 1
 #else
     #define USB_CNT 0

@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #if ((defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)) && (RF_MODE == RF_PRI_GENERIC_1M || RF_MODE == RF_PRI_GENERIC_2M || RF_MODE == RF_PRI_GENERIC_250K || RF_MODE == RF_PRI_GENERIC_500K))
 
@@ -215,11 +215,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_ZB_RT);
     rf_set_irq_mask(FLD_RF_IRQ_RX);
     rf_set_rxmode();
-                #if (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
-                #else
     delay_us(85); //Wait for calibration to stabilize
-                #endif
 
             #endif
         #endif
@@ -274,11 +270,7 @@ void main_loop(void)
             #if (!RF_RX_IRQ_EN)
 
     rf_set_rxmode();
-                #if (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
-                #else
     delay_us(85); //Wait for calibration to stabilize
-                #endif
     while (1) {
         if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
             if (!rf_get_crc_err()) {

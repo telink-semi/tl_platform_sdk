@@ -57,9 +57,6 @@ void calibration_func(void)
     unsigned int  ieee_flash_pos = 0, cap_value_addr = 0;
     unsigned char ieee_addr[8];
 
-    /******get adc calibration value from OTP********/
-    otp_calib_adc_vref();
-
     /******check for flash mid********/
     flash_mid_sure = flash_read_mid_uid_with_check_with_device_num(0, (unsigned int *)flash_mid, flash_uid);
 

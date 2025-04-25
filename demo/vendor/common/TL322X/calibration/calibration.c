@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.c
  *
- * @brief   This is the source file for tl322x
+ * @brief   This is the source file for TL322X
  *
  * @author  Driver Group
  * @date    2024

@@ -393,18 +393,12 @@ void adc_get_code_dma(unsigned short *sample_buffer, unsigned short sample_num)
  *      If you want to get the sampling results twice in succession,
  *       Must ensure that the sampling interval is more than 2 times the sampling period.
  * @return  adc_code    - the adc sample code.
- *                      - This interface can only get the adc_code >= 0, if adc code < 0, the adc code return value is 0.
- *                      - The Bit[0:12] of the adc code return value is valid data, the valid range is 0~0x1FFF.
  */
 unsigned short adc_get_code(void)
 {
     unsigned short adc_code;
     /******Lock ADC code in analog register ********/
     analog_write_reg8(areg_adc_data_sample_control, analog_read_reg8(areg_adc_data_sample_control) | FLD_NOT_SAMPLE_ADC_DATA);
-    /**
-     *Bit[13:15] of the adc code read from areg_adc_misc_l are sign bits,if the adc code is positive, bits [13:15] are all 1's,
-     *if the adc code is negative, bits [13:15] are all 0's and valid data bits are Bit[0:12].
-     */
     adc_code = analog_read_reg16(areg_adc_misc_l);
     analog_write_reg8(areg_adc_data_sample_control, analog_read_reg8(areg_adc_data_sample_control) & (~FLD_NOT_SAMPLE_ADC_DATA));
 
@@ -418,25 +412,20 @@ unsigned short adc_get_code(void)
 
 /**
  * @brief This function serves to calculate voltage from adc sample code.
- * @param[in]   adc_code    - the adc sample code(should be positive value.)
- * @return      adc_vol_mv  - the average value of adc voltage value.(adc voltage value >= 0).
+ * @param[in]   adc_code    - the adc sample code.
+ * @return      adc_vol_mv  - the average value of adc voltage value.
  */
 unsigned short adc_calculate_voltage(unsigned short adc_code)
 {
-    /**
-     *  adc sample code convert to voltage(mv):
-     *  (adc code BIT<12~0> is valid data)
-     *  adc_voltage  =  (adc_code * Vref * adc_pre_scale / 0x2000) + offset
-     *               =  (adc_code * Vref * adc_pre_scale >>13) + offset
-     */
-    unsigned short adc_voltage = (((adc_code * g_adc_vbat_divider * g_adc_pre_scale * g_adc_vref) >> 13) + g_adc_vref_offset);
-
-    if(adc_voltage & BIT(15))
-    {
-        return 0;//When the adc_voltage < 0, the returned voltage value should be 0.
-    }else
-    {
-        return adc_voltage;
+    //When the code value is 0, the returned voltage value should be 0.
+    if (adc_code == 0) {
+        return 0;
+    } else {
+        //////////////// adc sample data convert to voltage(mv) ////////////////
+        //                          (Vref, adc_pre_scale)   (BIT<12~0> valid data)
+        //           =  (adc_code * Vref * adc_pre_scale / 0x2000) + offset
+        //           =  (adc_code * Vref * adc_pre_scale >>13) + offset
+        return (((adc_code * g_adc_vbat_divider * g_adc_pre_scale * g_adc_vref) >> 13) + g_adc_vref_offset);
     }
 }
 #if INTERNAL_TEST_FUNC_EN

@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    ed25519_test.c
+ * @file    x25519_test.c
  *
  * @brief   This is the source file for Telink RISC-V MCU
  *

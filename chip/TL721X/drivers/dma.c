@@ -57,15 +57,15 @@ void dma_write_reg(dma_chn_e chn, const dma_chain_config_t *chain, unsigned char
         while (!(reg_ana_buf_cnt & FLD_ANA_TX_BUFCNT))
             ;
         reg_ana_ctrl    = FLD_ANA_RW;
-        reg_ana_dma_ctl = (reg_ana_dma_ctl&FLD_ANA_DIV_MOD)|FLD_ANA_CYC1 | FLD_ANA_DMA_EN | FLD_ANA_AUTO_RXCLR_EN;
+        reg_ana_dma_ctl = FLD_ANA_CYC1 | FLD_ANA_DMA_EN | FLD_ANA_AUTO_RXCLR_EN;
     }
 }
 
 void dma_write_reg_is_complete(void)
 {
-    while (reg_ana_ctrl & FLD_ANA_BUSY) {
+    while (reg_ana_irq_sta & FLD_ANA_BUSY) {
     }
-    reg_ana_dma_ctl = (reg_ana_dma_ctl&FLD_ANA_DIV_MOD)|FLD_ANA_NDMA_RXDONE_EN | FLD_ANA_AUTO_RXCLR_EN; //ndma_en=0
+    reg_ana_dma_ctl = FLD_ANA_NDMA_RXDONE_EN | FLD_ANA_AUTO_RXCLR_EN; //ndma_en=0
 }
 
 #define DMA_IRQ_STATUS_MAX_CLR_TIMES 3

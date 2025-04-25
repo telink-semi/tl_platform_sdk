@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if RF_MODE == RF_BLE_STX2RX
 
 
@@ -78,6 +78,7 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
         tx_state = 1;
         gpio_toggle(LED1);
         rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+        delay_us(11); //Currently, the TL751x chip also requires a seq delay of at least 11us after the end of the TX and RX EN states.
     }
     #else
     if (rf_get_irq_status(FLD_RF_IRQ_TX)) {
@@ -93,6 +94,8 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
         rf_clr_irq_status(FLD_RF_IRQ_RX);
     #if defined(MCU_CORE_TL7518)
         delay_us(5); //Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+    #elif defined(MCU_CORE_TL751X)
+        delay_us(11); //Currently, the TL751x chip also requires a seq delay of at least 11us after the end of the TX and RX EN states.
     #endif
         rf_set_vant1p05_power_trim_vol_up();
     }

@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #include "coremark/core_portme.h"
 
 extern void user_init(void);
@@ -56,7 +56,7 @@ int main(void)
     #endif
 #elif defined(MCU_CORE_TL751X)
     #if !defined(MCU_CORE_TL751X_N22)
-    cpu_mhz = sys_clk.cclk_d25f_dsp;
+    cpu_mhz = sys_clk.cclk;
     #else
     cpu_mhz = sys_clk.n22_clk;
     #endif

@@ -55,9 +55,7 @@ flash_user_defined_list_t flash_init_list[] = {
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     //4M
-    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
-    //8M
-    {0x176085, FLASH_LOCK_LOW_4M_MID176085},
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085}
 #elif defined(MCU_CORE_TL721X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
@@ -81,8 +79,6 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     //2M
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
-    //4M
-    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
 #elif defined(MCU_CORE_W92)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
@@ -98,7 +94,7 @@ flash_user_defined_list_t flash_init_list[] = {
 #endif
 
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
 
 flash_hal_user_handler_t flash_handler = {
     .list      = list_fp,
@@ -144,10 +140,6 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_W92)
 void platform_init(vbat_type_e vbat_v, unsigned char flash_protect_en)
-#elif defined(MCU_CORE_TL322X)
-void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
-#elif defined(MCU_CORE_TL323X)
-void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #else
 void platform_init(unsigned char flash_protect_en)
 #endif
@@ -171,31 +163,19 @@ void platform_init(unsigned char flash_protect_en)
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_W92)
     sys_init(vbat_v);
-#elif defined(MCU_CORE_TL322X)
-    sys_init(power_mode, vbat_v, cap);
-#elif defined(MCU_CORE_TL323X)
-    sys_init(power_mode, vbat_v, cap);
 #else
     sys_init();
 #endif
 
-
+/**
+    ===============================================================================
+                 ##### shut down all GPIOs except SWS and MSPI #####
+    ===============================================================================
+    To prevent leakage, all GPIOs are set to high resistance except the MSPI pins and SWS.
+    ===============================================================================
+*/
 #if (!defined(DUT_TEST))
-   #if defined(MCU_CORE_TL751X)
-    /**
-        ===============================================================================
-        To prevent leakage, all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS.
-        ===============================================================================
-    */
-    gpio_init(1);
-   #else
-    /**
-        ===============================================================================
-        To prevent leakage, all GPIOs are set to High-impedance except the MSPI pins and SWS.
-        ===============================================================================
-    */
     gpio_shutdown(GPIO_ALL);
-   #endif
 #endif
 
 /**
@@ -278,27 +258,6 @@ void platform_init(unsigned char flash_protect_en)
     //  pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V725);//DVDD1 voltage select(LDO) 000:0.725V,design value:0.8V
     //#endif
 
-//The A1 Chip consistency is poor, one is that some chips do not meet the DVDD2>=DVDD1>=0.8 this requirement,
-//two is that some chips AVDD1/AVDD2 does not meet the theoretical design value (ldo power supply mode reference value: 1.04v/1.8v):
-//When the performance test, the actual measurement of the default voltage, whether to adjust the corresponding voltage block to meet the above conditions.
-#if defined(MCU_CORE_TL751X)
-    if(g_chip_version==CHIP_VERSION_A1){
-        if (power_mode == LDO_AVDD_LDO_DVDD)
-        {
-            pm_set_avdd1(PM_AVDD1_VOLTAGE_1V075);                           //target 1.04
-            pm_set_avdd2(PM_AVDD2_REF_0V740, PM_AVDD2_VOLTAGE_1V890);       //target 1.8-1.98
-            pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V825);                           //target 0.8
-            pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V850);                           //target 0.8
-        }
-        else
-        {
-            pm_set_bk1(PM_BK1_TRIM_VOLTAGE_1V949, PM_BK1_ADJ_VOLTAGE_1V850);//target 1.8-1.98
-            pm_set_bk2(PM_BK2_3_4_VOLTAGE_1V04);                            //target 1.04
-            pm_set_bk3(PM_BK2_3_4_VOLTAGE_0V93);                            //target 0.8
-        }
-    }
-#endif
-
     /*
     * For the current A0 version, it is important to focus on whether the following voltage outputs meet expectations before testing, 
     * especially before conducting performance or stability tests.
@@ -308,7 +267,7 @@ void platform_init(unsigned char flash_protect_en)
     // pm_set_dig_ldo_voltage(DIG_LDO_TRIM_0P850V);
 #endif
 
-#if (defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL751X_N22) && DCDC_WORKAROUND_MODE)
+#if (defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL751X_N22))
     if (pm_get_dcdc_power() != 0x00) {
         lpc_set_input_chn(LPC_INPUT_PF6);
         lpc_set_input_ref(LPC_NORMAL, LPC_REF_820MV);
@@ -337,9 +296,9 @@ void platform_init(unsigned char flash_protect_en)
 #if !defined(INTERNAL_SIMULATION_DEBUG)
     #if (!defined(DUT_TEST) && defined(MCU_STARTUP_FLASH))
     if (flash_protect_en) {
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
         unsigned char flash_init_flag = hal_flash_init(&flash_handler);
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) //||defined(MCU_CORE_B931)
         unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t *)flash_handler);
         #else
         unsigned char flash_init_flag = 0;
@@ -351,7 +310,7 @@ void platform_init(unsigned char flash_protect_en)
         }
 
 
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
         unsigned char lock_flag = hal_flash_lock();
         #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
@@ -370,7 +329,7 @@ void platform_init(unsigned char flash_protect_en)
 #endif //#if defined(INTERNAL_SIMULATION_DEBUG)
 }
 
-#if (defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL751X_N22) && DCDC_WORKAROUND_MODE)
+#if (defined(MCU_CORE_TL751X) && !defined(MCU_CORE_TL751X_N22))
 _attribute_ram_code_sec_noinline_ void pm_irq_handler(void)
 {
     if (pm_get_wakeup_src() & (WAKEUP_STATUS_COMPARATOR)) {

@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X)
     #if RF_MODE == RF_BLE_1M_HYPER_LENGTH
 

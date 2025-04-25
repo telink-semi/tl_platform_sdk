@@ -84,7 +84,7 @@
  */
 
 
-#include "common.h"
+#include "app_config.h"
 
 volatile unsigned int s7816_irq_cnt = 0;
 

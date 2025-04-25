@@ -21,8 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
-#include "chacha20_play1305/app_test.h"
+#include "app_config.h"
 
 extern void user_init(void);
 extern void main_loop(void);

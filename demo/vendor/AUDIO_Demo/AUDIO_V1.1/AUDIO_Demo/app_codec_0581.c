@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if defined(MCU_CORE_B92) && (AUDIO_MODE == I2S_TO_CODEC_0581)
 
     #include "driver.h"

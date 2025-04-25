@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 unsigned char dat[5]        = {0};
 unsigned char mdec_test_cnt = 0;

@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 /********* pke version:1.1 *********/
-#include "common.h"
+#include "app_config.h"
 
 #if (PKE_TEST_MODE == PKE_ECDH)
     #define ECDH_SIGN_VERIFY_ROUND1 (2)

@@ -67,7 +67,7 @@ void get_uart_port(uart_tx_pin_e *bqb_uart_tx_port, uart_rx_pin_e *bqb_uart_rx_p
     *bqb_uart_tx_port = get_pin(usr_config.uart_tx);
     *bqb_uart_rx_port = get_pin(usr_config.uart_rx);
 }
-        #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+        #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
 void get_uart_port(gpio_func_pin_e *bqb_uart_tx_port, gpio_func_pin_e *bqb_uart_rx_port)
 {
     if (usr_config.uart_tx == usr_config.uart_rx) {
@@ -137,7 +137,7 @@ uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin, gpio_func_pin_e rx_pin, unsi
 
     return uart_num;
 }
-    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
 uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin, gpio_func_pin_e rx_pin, unsigned int baudrate, unsigned int pclk, uart_parity_e parity, uart_stop_bit_e stop_bit)
 {
     unsigned short   div      = 0;
@@ -212,7 +212,7 @@ void user_init(void)
     #elif defined(MCU_CORE_B92)
     gpio_func_pin_e bqb_uart_tx_port = BQB_UART_TX_PORT;
     gpio_func_pin_e bqb_uart_rx_port = BQB_UART_RX_PORT;
-    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     gpio_func_pin_e bqb_uart_tx_port = BQB_UART_TX_PORT;
     gpio_func_pin_e bqb_uart_rx_port = BQB_UART_RX_PORT;
     #endif

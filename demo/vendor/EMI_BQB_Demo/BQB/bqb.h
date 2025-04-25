@@ -24,7 +24,7 @@
 #ifndef BQB_H_
 #define BQB_H_
 
-#include "common.h"
+#include "../app_config.h"
 
 #if (TEST_DEMO == BQB_DEMO)
 
@@ -34,18 +34,10 @@
     /* set power of Tx */
     #if defined(MCU_CORE_B91)
         #define BQB_TX_POWER RF_POWER_P6p98dBm
-    #elif defined(MCU_CORE_B92)
-        #define BQB_TX_POWER RF_POWER_P7p72dBm
     #elif defined(MCU_CORE_TL321X)
         #define BQB_TX_POWER RF_POWER_P7p19dBm
-    #elif defined(MCU_CORE_TL721X)
-        #define BQB_TX_POWER RF_POWER_P7p52dBm
-    #elif defined(MCU_CORE_TL751X)
-        #define BQB_TX_POWER RF_POWER_P10p00dBm
-    #elif defined(MCU_CORE_TL322X)
-        #define BQB_TX_POWER RF_POWER_P7p11dBm
     #else
-        #define BQB_TX_POWER RF_POWER_P7p52dBm
+        #define BQB_TX_POWER RF_POWER_P7p00dBm
     #endif
 
     #define ACCESS_CODE 0x29417671
@@ -72,6 +64,22 @@
         #define SWITCH_INTERNAL_CAP 1       // 0: external cap, 1: internal cap
         #define CAP_SET_FLASH_ADDR  0xfe000 // 512K Flash: 0x7e000, 1M FLASH: 0xfe000, 2M FLASH: 0x1fe000
     #endif
+
+    /* set uart port */
+    #if defined(MCU_CORE_B91)
+        #define BQB_UART_TX_PORT UART0_TX_PB2
+        #define BQB_UART_RX_PORT UART0_RX_PB3
+    #elif defined(MCU_CORE_B92)
+        #define BQB_UART_TX_PORT GPIO_FC_PB1
+        #define BQB_UART_RX_PORT GPIO_FC_PB2
+    #elif defined(MCU_CORE_TL721X)
+        #define BQB_UART_TX_PORT GPIO_FC_PF5
+        #define BQB_UART_RX_PORT GPIO_FC_PF6
+    #elif defined(MCU_CORE_TL321X)
+        #define BQB_UART_TX_PORT GPIO_FC_PC4
+        #define BQB_UART_RX_PORT GPIO_FC_PC5
+    #endif
+    #define BQB_UART_BAUD 115200
 
     /* set pa port */
     #if !SUPPORT_CONFIGURATION

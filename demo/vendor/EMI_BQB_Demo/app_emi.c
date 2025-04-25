@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if (TEST_DEMO == EMI_DEMO)
     #include "calibration.h"
     #include "PA/pa.h"
@@ -47,10 +47,6 @@
         #define SRAM_BASE_ADDR 0x00040000
     #elif defined(MCU_CORE_TL321X)
         #define SRAM_BASE_ADDR 0x00068000
-    #elif defined(MCU_CORE_TL751X)
-        #define SRAM_BASE_ADDR 0x00020000
-    #elif defined(MCU_CORE_TL322X)
-        #define SRAM_BASE_ADDR 0x00000000
     #else
         #define SRAM_BASE_ADDR 0xc0000000
     #endif
@@ -169,7 +165,7 @@ void emi_con_tx55(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn);
 void emi_con_tx0f(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn);
 void emitxaa(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn);
 void emitxf0(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn);
-    #if defined(MCU_CORE_B92)
+    #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X)
 void rf_emi_tx_current_test(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn);
 void rf_emi_rx_current_test(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn);
     #endif
@@ -342,7 +338,7 @@ void emicarrieronly(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
     }
     rf_emi_stop();
     rf_set_tx_rx_off();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else
@@ -382,7 +378,7 @@ void emi_con_prbs9(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
     rf_emi_stop();
 
     rf_set_tx_rx_off();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else
@@ -616,7 +612,7 @@ void emi_con_tx55(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
         }
     }
     rf_emi_stop();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else
@@ -654,7 +650,7 @@ void emi_con_tx0f(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
         }
     }
     rf_emi_stop();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else

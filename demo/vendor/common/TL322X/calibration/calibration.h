@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.h
  *
- * @brief   This is the header file for tl322x
+ * @brief   This is the header file for TL322X
  *
  * @author  Driver Group
  * @date    2024

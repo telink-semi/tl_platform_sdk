@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if defined(MCU_CORE_B91)
     #if ((USB_DEMO_TYPE == USB_MASS_STORAGE))
         #include "usb_default.h"

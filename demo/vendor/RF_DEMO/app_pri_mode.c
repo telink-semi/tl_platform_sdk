@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if ((!defined(MCU_CORE_TL7518) && (RF_MODE == RF_PRIVATE_500K || RF_MODE == RF_PRIVATE_250K)) || RF_MODE == RF_PRIVATE_1M || RF_MODE == RF_PRIVATE_2M)
 
 
@@ -93,11 +93,7 @@ _attribute_ram_code_sec_ void rf_irq_handler(void)
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
 }
-        #if defined(MCU_CORE_TL751X_N22)
-CLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
-        #else
 PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
-        #endif
     #endif
 
     #if (RF_AUTO_MODE == AUTO)
@@ -119,12 +115,7 @@ void user_init(void)
     rf_set_rx_dma(rx_packet, RX_FIFO_NUM - 1, RX_FIFO_DEP);
             #if (RF_RX_IRQ_EN)
     core_interrupt_enable();
-               #if defined(MCU_CORE_TL751X_N22)
-                    clic_init();
-                    clic_interrupt_enable(IRQ_ZB_RT);
-               #else
-                    plic_interrupt_enable(IRQ_ZB_RT);
-               #endif
+    plic_interrupt_enable(IRQ_ZB_RT);
     rf_set_irq_mask(FLD_RF_IRQ_RX);
     rf_start_srx(rf_stimer_get_tick());
             #endif
@@ -172,17 +163,9 @@ void main_loop(void)
             #endif
     while (1) {
         delay_ms(1);
-        #if (defined(MCU_CORE_TL7518))
-          while (!(rf_get_irq_status(FLD_RF_IRQ_MDM_TX_END)));
-          rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
-          delay_us(5); //Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
-        #elif (defined(MCU_CORE_TL751X))
-          while (!(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE)));
-          rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
-        #else
-          while (!(rf_get_irq_status(FLD_RF_IRQ_TX)));
-          rf_clr_irq_status(FLD_RF_IRQ_TX);
-        #endif
+        while (!(rf_get_irq_status(FLD_RF_IRQ_TX)))
+            ;
+        rf_clr_irq_status(FLD_RF_IRQ_TX);
         rf_set_vant1p05_power_trim_vol_down();
         delay_us(20);
         rf_set_vant1p05_power_trim_vol_up();
@@ -215,9 +198,6 @@ void main_loop(void)
                 //              delay_ms(10);
             }
             rf_clr_irq_status(FLD_RF_IRQ_RX);
-            #if defined(MCU_CORE_TL7518)
-                delay_us(5); //Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
-            #endif
             rf_start_srx(rf_stimer_get_tick());
         }
     }
@@ -249,23 +229,11 @@ void user_init(void)
 
             #if (RF_RX_IRQ_EN)
     core_interrupt_enable();
-               #if defined(MCU_CORE_TL751X_N22)
-                  clic_init();
-                  clic_interrupt_enable(IRQ_ZB_RT);
-               #else
-                  plic_interrupt_enable(IRQ_ZB_RT);
-               #endif
+    plic_interrupt_enable(IRQ_ZB_RT);
     rf_set_irq_mask(FLD_RF_IRQ_RX);
     rf_set_rxmode();
-                #if (defined(MCU_CORE_TL7518))
-    delay_us(43); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL751X))
-    delay_us(45); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
-                #else
     delay_us(85); //Wait for calibration to stabilize
-                #endif
+
             #endif
         #endif
 
@@ -330,15 +298,7 @@ void main_loop(void)
 
 
     rf_set_rxmode();
-                #if (defined(MCU_CORE_TL7518))
-    delay_us(43); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL751X))
-    delay_us(45); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
-                #else
     delay_us(85); //Wait for calibration to stabilize
-                #endif
     while (1) {
         if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
                 #if (PRI_MODE == TPLL_MODE && (RF_MODE == RF_PRIVATE_1M || RF_MODE == RF_PRIVATE_2M))

@@ -7,6 +7,7 @@
  * @date    2024
  *
  * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -21,7 +22,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #define BUFF_DATA_LEN 12
 #if ((IR_LEARN_MODE == IR_DIGITAL_RX_MODE) || (IR_LEARN_MODE == IR_ANALOG_RX_MODE))

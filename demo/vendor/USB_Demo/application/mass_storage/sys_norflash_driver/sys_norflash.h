@@ -24,7 +24,7 @@
 #ifndef __SYS_NORFLASH_H__
 #define __SYS_NORFLASH_H__
 
-#include "common.h"
+#include "../../../app_config.h"
 #include <stdio.h>
 #define SYS_NORFLASH_DISK_ADDRESS 0x80000
 #define SYS_NORFLASH_DISK_SIZE    400 * 1024 //400k  Must be greater than or equal to 32K

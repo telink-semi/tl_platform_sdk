@@ -31,7 +31,7 @@
    slave:  burn the slave bin of the b85m or Telink RISC-V MCU;
    @endverbatim
  */
-#include "common.h"
+#include "app_config.h"
 //For the i2c1_m module, there is only the master function.
 #if (I2C_MASTER_WRITE_READ_MODE == I2C1_M_MASTER_WRITE_READ_NO_DMA)
 

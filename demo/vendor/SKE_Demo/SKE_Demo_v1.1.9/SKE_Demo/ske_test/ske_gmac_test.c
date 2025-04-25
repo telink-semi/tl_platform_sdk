@@ -21,9 +21,10 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#include "../app_config.h"
+
+
 #include <stdio.h>
-#include "common.h"
-#include "app_test.h"
 
 
 //#define GMAC_SPEED_TEST_BY_TIMER

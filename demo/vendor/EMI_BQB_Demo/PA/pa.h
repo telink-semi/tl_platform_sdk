@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #ifndef PA_H_
 #define PA_H_
-#include "common.h"
+#include "../app_config.h"
 
 /**
  * @brief       Enumeration type of PA state.

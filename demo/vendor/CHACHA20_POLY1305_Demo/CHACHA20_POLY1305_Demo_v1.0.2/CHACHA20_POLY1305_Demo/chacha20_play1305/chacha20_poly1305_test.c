@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
-#include "common.h"
+#include "../app_config.h"
 
 
 #define TEST_PAYLOAD_MAX_BYTE (1000) //attention stack size enough

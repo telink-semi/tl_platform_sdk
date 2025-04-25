@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #define DUTCMD_FIRMWARE_ENCRYPT 0x68
 #define TL_TEST_RESP_OK         1

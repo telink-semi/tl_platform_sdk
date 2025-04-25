@@ -29,6 +29,13 @@
  *                                         Analog  registers are as follows                                           *
  **********************************************************************************************************************/
 
+#define areg_adc_clk_setting 0x87
+
+enum
+{
+    FLD_CLK_24M_TO_SAR_EN = BIT(0),
+};
+
 #define areg_adc_res_m 0xec
 
 enum

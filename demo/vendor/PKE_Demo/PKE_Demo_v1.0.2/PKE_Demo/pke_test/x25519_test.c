@@ -22,8 +22,7 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "common.h"
-#include "../pke_test/app_test.h"
+#include "../app_config.h"
 
 
 #ifdef SUPPORT_C25519

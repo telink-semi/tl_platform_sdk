@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #define DSP_FW_DOWNLOAD_FLASH_ADDR 0x20040000
 #define N22_FW_DOWNLOAD_FLASH_ADDR 0x20080000
@@ -36,7 +36,7 @@ volatile unsigned int cur_32k_tick_track_err;
 volatile unsigned int stimer_cnt = 0;
 
 
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
     #define CAPT_DMA_CNT 200
 volatile unsigned int curr_capt_val                                                   = 0;
 volatile unsigned int last_capt_val                                                   = 0;
@@ -91,16 +91,12 @@ void stimer_set_pwm0(gpio_func_pin_e pin)
 void user_init(void)
 {
     gpio_function_en(LED1);
-    gpio_input_dis(LED1);
     gpio_output_en(LED1);
     gpio_function_en(LED2);
-    gpio_input_dis(LED2);
     gpio_output_en(LED2);
     gpio_function_en(LED3);
-    gpio_input_dis(LED3);
     gpio_output_en(LED3);
     gpio_function_en(LED4);
-    gpio_input_dis(LED4);
     gpio_output_en(LED4);
 
 #if N22_TEST
@@ -112,7 +108,7 @@ void user_init(void)
     sys_dsp_start();
 #endif
 
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
     gpio_function_en(INPUT_CAPT_PIN);
     gpio_input_en(INPUT_CAPT_PIN);
     gpio_output_dis(INPUT_CAPT_PIN);
@@ -121,7 +117,7 @@ void user_init(void)
 #if (!(defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X))) && (STIMER_MODE == STIMER_IRQ)
     stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
 
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK);                         //irq enable
     #else
     stimer_set_irq_mask(FLD_SYSTEM_IRQ);
@@ -139,7 +135,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_SYSTIMER);
     core_interrupt_enable();
 
-#elif ((defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
+#elif ((defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
     stimer_set_irq_capture_n22(stimer_get_tick() + (500 * SYSTEM_TIMER_TICK_1MS));
     #if defined(MCU_CORE_TL322X)
@@ -158,25 +154,25 @@ void user_init(void)
 
 #elif (STIMER_MODE == STIMER_SET_32K_TICK)
     clock_set_32k_tick(clock_get_32k_tick() + 32000); //1s
-    #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL322X)
-    pm_clr_irq_status(WAKEUP_STATUS_ALL);
-    #else
+    #if defined(MCU_CORE_TL721X)
     pm_clr_irq_status(FLD_WAKEUP_STATUS_ALL);
+    #else
+    pm_clr_irq_status(WAKEUP_STATUS_ALL);
     #endif
     #if defined(MCU_CORE_B91)
     plic_interrupt_enable(IRQ_PM_TM);
-    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)
+    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
     plic_interrupt_enable(IRQ_PM_IRQ);
     #endif
     core_interrupt_enable();
 
-#elif (!defined(MCU_CORE_B91)) && (STIMER_MODE == STIMER_SET_32K_TICK_LVL)
+#elif (STIMER_MODE == STIMER_SET_32K_TICK_LVL)
     clock_set_32k_tick(clock_get_32k_tick() + 32000); //1s
     pm_set_wakeup_src(PM_WAKEUP_TIMER);
-    #if defined(MCU_CORE_B92)||defined(MCU_CORE_TL322X)
-    pm_clr_irq_status(WAKEUP_STATUS_ALL);
-    #else
+    #if defined(MCU_CORE_TL721X)
     pm_clr_irq_status(FLD_WAKEUP_STATUS_ALL);
+    #else
+    pm_clr_irq_status(WAKEUP_STATUS_ALL);
     #endif
     plic_interrupt_enable(IRQ_PM_LVL);
     core_interrupt_enable();
@@ -187,7 +183,7 @@ void user_init(void)
     stimer_set_32k_track_cnt(STIMER_TRACK_32KCNT_16);
     stimer_track_32k_value = SYSTEM_TIMER_TICK_1MS / 32 * g_track_32kcnt;
     delay_ms(1000);
-    #if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL721X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_32K_CAL_MASK);
     #elif defined(MCU_CORE_TL322X)
     stimer_set_irq_mask_d25f(FLD_SYSTEM_IRQ_32K_CAL_MASK);
@@ -198,7 +194,7 @@ void user_init(void)
     core_interrupt_enable();
 
 
-#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE)
+#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE)
     stimer_set_input_capt_pin(INPUT_CAPT_PIN, CAPT_RISING_EDGE);
     #if defined(MCU_CORE_TL322X)
     stimer_set_irq_mask_d25f(FLD_SYSTEM_CAPT_IRQ_MASK | FLD_SYSTEM_OVERFLOW_IRQ_MASK);
@@ -218,7 +214,7 @@ void user_init(void)
     stimer_set_pwm0(PWM0_PIN);
     #endif
 
-#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA)
+#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA)
     /**
      * It is recommended to enable DMA before enabling capture.
      * Otherwise, the signal may be captured but not read by DMA, which could result in a data overflow.
@@ -240,7 +236,7 @@ void user_init(void)
     #endif
 
 
-#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA_LLP_MODE)
+#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA_LLP_MODE)
     /**
      * It is recommended to enable DMA before enabling capture.
      * Otherwise, the signal may be captured but not read by DMA, which could result in a data overflow.
@@ -272,14 +268,11 @@ void main_loop(void)
 #if (STIMER_MODE == STIMER_DELAY)
     delay_ms(500);
     gpio_toggle(LED1);
-    gpio_toggle(LED2);
-    gpio_toggle(LED3);
-    gpio_toggle(LED4);
 
 #elif ((defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
     delay_ms(20);
     #if defined(MCU_CORE_TL322X)
-    if (stimer_get_irq_status_n22())
+    if (stimer_get_irq_status_n22(FLD_SYSTEM_IRQ_N22))
     #else
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_N22))
     #endif
@@ -292,7 +285,7 @@ void main_loop(void)
     #endif
         stimer_set_irq_capture_n22(stimer_get_tick() + (500 * SYSTEM_TIMER_TICK_1MS));
     }
-    #if !(defined(MCU_CORE_TL322X))
+    #if !defined(MCU_CORE_TL322X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_DSP)) {
         gpio_toggle(LED4);
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_DSP);
@@ -369,7 +362,7 @@ _attribute_ram_code_sec_ void pm_irq_handler(void)
     #if defined(MCU_CORE_B91)
 PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_TM)
 
-    #elif !defined(MCU_CORE_B91)
+    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
 PLIC_ISR_REGISTER(pm_irq_handler, IRQ_PM_IRQ)
     #endif
 
@@ -413,7 +406,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
 PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
 
 
-#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE)
+#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE)
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
     gpio_toggle(LED1);
@@ -429,7 +422,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     #else
             stimer_clr_irq_status(FLD_SYSTEM_IRQ_CAPT);
     #endif
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL721X)
             gpio_clr_irq_status(FLD_GPIO_IRQ_GPIO2RISC0_CLR);
     #else
             gpio_clr_irq_status(GPIO_IRQ_IRQ1);
@@ -442,7 +435,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     #else
             stimer_clr_irq_status(FLD_SYSTEM_IRQ_CAPT);
     #endif
-    #if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL721X)
             gpio_clr_irq_status(FLD_GPIO_IRQ_GPIO2RISC0_CLR);
     #else
             gpio_clr_irq_status(GPIO_IRQ_IRQ1);
@@ -467,7 +460,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
             stimer_clr_irq_status(FLD_SYSTEM_IRQ_CAPT);
             stimer_clr_irq_status(FLD_SYSTEM_IRQ_OVERFLOW);
     #endif
-    #if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL721X)
             gpio_clr_irq_status(FLD_GPIO_IRQ_GPIO2RISC0_CLR);
     #else
             gpio_clr_irq_status(GPIO_IRQ_IRQ1);
@@ -481,7 +474,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
 }
 PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
 
-#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA)
+#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA)
 void dma_irq_handler(void)
 {
     if (dma_get_tc_irq_status(CAPT_DMA_STATUS)) {
@@ -495,7 +488,7 @@ void dma_irq_handler(void)
 }
 PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
 
-#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA_LLP_MODE)
+#elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE_DMA_LLP_MODE)
 void dma_irq_handler(void)
 {
     if (dma_get_tc_irq_status(CAPT_DMA_STATUS)) {

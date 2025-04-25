@@ -21,8 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
-#if (RF_MODE == RF_BLE_1M || RF_MODE == RF_BLE_2M || RF_MODE == RF_LR_S2_500K || RF_MODE == RF_LR_S8_125K || RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN )
+#include "app_config.h"
+#if (RF_MODE == RF_BLE_1M || RF_MODE == RF_BLE_2M || RF_MODE == RF_LR_S2_500K || RF_MODE == RF_LR_S8_125K || RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN || (defined(MCU_CORE_TL721X) && (RF_MODE == RF_LR_S2_500K_NEW || RF_MODE == RF_LR_S8_125K_NEW || RF_MODE == RF_LOWRATE_20K || RF_MODE == RF_LOWRATE_25K || RF_MODE == RF_LOWRATE_100K)))
 
 
 unsigned char rx_packet[128 * 4] __attribute__((aligned(4)));
@@ -152,6 +152,7 @@ void main_loop(void)
         while (!(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE)))
             ;
         rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
+        delay_us(11); //Currently, the TL751x chip also requires a seq delay of at least 20us after the end of the TX and RX EN states.
             #else
         while (!(rf_get_irq_status(FLD_RF_IRQ_TX)))
             ;
@@ -182,6 +183,8 @@ void main_loop(void)
             rf_clr_irq_status(FLD_RF_IRQ_RX);
                 #if defined(MCU_CORE_TL7518)
             delay_us(5); //Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
+                #elif defined(MCU_CORE_TL751X)
+            delay_us(11); //Currently, the TL7518 chip also requires a seq delay of at least 5us after the end of the TX and RX EN states.
                 #endif
             rf_start_srx(rf_stimer_get_tick());
         }
@@ -223,9 +226,7 @@ void user_init(void)
                 #if (defined(MCU_CORE_TL7518))
     delay_us(43); //Wait for calibration to stabilize
                 #elif (defined(MCU_CORE_TL751X))
-    delay_us(45); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
+    delay_us(54); //Wait for calibration to stabilize
                 #else
     delay_us(85); //Wait for calibration to stabilize
                 #endif
@@ -270,7 +271,7 @@ void main_loop(void)
             ;
         rf_clr_irq_status(FLD_RF_IRQ_MDM_TX_END);
                 #elif defined(MCU_CORE_TL751X)
-        delay_us(45); //Wait for calibration to stabilize
+        delay_us(49); //Wait for calibration to stabilize
         rf_tx_pkt(ble_tx_packet);
         while (!(rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE)))
             ;
@@ -304,7 +305,7 @@ void main_loop(void)
                 #if (defined(MCU_CORE_TL7518))
     delay_us(43); //Wait for calibration to stabilize
                 #elif (defined(MCU_CORE_TL7518))
-    delay_us(45); //Wait for calibration to stabilize
+    delay_us(54); //Wait for calibration to stabilize
                 #else
     delay_us(85); //Wait for calibration to stabilize
                 #endif

@@ -9,7 +9,8 @@
 
 #include "diskio.h"     /* Declarations of disk functions */
 
-#include "../../demo/vendor/common/common/common.h"
+#include "../../demo/vendor/USB_Demo/app_config.h"
+#include "driver.h"
 
 #include "ff.h"         /* Obtains integer types */
 #include "../../demo/vendor/USB_Demo/application/mass_storage/spi_sdnand_driver/sdcard.h"

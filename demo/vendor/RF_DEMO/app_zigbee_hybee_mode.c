@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if ((!defined(MCU_CORE_TL7518) && (RF_MODE == RF_HYBEE_1M || RF_MODE == RF_HYBEE_2M || RF_MODE == RF_HYBEE_500K)) || RF_MODE == RF_ZIGBEE_250K)
 
 
@@ -175,13 +175,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_ZB_RT);
     rf_set_irq_mask(FLD_RF_IRQ_RX);
     rf_set_rxmode();
-                #if (defined(MCU_CORE_TL751X))
-    delay_us(45); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
-                #else
     delay_us(85); //Wait for calibration to stabilize
-                #endif
             #endif
         #endif
 
@@ -230,13 +224,7 @@ void main_loop(void)
 
 
     rf_set_rxmode();
-                #if (defined(MCU_CORE_TL751X))
-    delay_us(45); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL321X))
-    delay_us(93); //Wait for calibration to stabilize
-                #else
     delay_us(85); //Wait for calibration to stabilize
-                #endif
     while (1) {
         if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
             if (rf_zigbee_packet_crc_ok(rx_packet)) {

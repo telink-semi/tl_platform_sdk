@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if (SPI_MODE == SPI_XIP_MODE)
 /************************* Note **************************************************
  * before this test must down load led bin(LED boot_from_ilm) to sram by BDT.*/

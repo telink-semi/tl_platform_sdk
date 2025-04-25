@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    ext_codec_wm.h
  *
- * @brief   This is the header file for Telink RISC-V MCU
+ * @brief   This is the header file for TL721X/TL321X
  *
  * @author  Driver Group
  * @date    2024
@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "../app_config.h"
+#include "driver.h"
 /**
  * @brief     This function serves to config external codec for WM8731
  * @return    none

@@ -21,11 +21,9 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 
 #if !defined(MCU_CORE_TL321X) || (DEMO_MODE == MANUAL_TEST_MODE)
-
-extern float Dhrystone_DMIPS_Per_MHz;
 
 void user_init(void)
 {

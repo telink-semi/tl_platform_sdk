@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    ext_codec_wm.c
  *
- * @brief   This is the source file for Telink RISC-V MCU
+ * @brief   This is the source file for TL721X/TL321X
  *
  * @author  Driver Group
  * @date    2024

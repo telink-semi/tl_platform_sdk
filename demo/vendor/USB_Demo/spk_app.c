@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "common.h"
+#include "app_config.h"
 #if (USB_DEMO_TYPE == USB_SPEAKER)
     #include "usb_default.h"
     #include "application/usbstd/usb.h"
