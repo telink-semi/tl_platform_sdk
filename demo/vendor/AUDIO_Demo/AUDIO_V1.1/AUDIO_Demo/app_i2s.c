@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if ((AUDIO_MODE > DMA_IRQ_Test) && (AUDIO_MODE <= I2S_TO_EXT_CODEC_WM))
     #include "ext_codec_wm/ext_codec_wm.h"
     #include "app_sin_data.h"

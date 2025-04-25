@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
+#include "hash_hmac_test/app_test.h"
 
 unsigned int hash_app_test(void)
 {

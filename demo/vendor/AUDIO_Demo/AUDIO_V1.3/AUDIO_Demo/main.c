@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    main.c
  *
- * @brief   This is the source file for TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 
 extern void user_init(void);

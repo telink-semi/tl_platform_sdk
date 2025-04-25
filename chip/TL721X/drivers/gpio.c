@@ -481,7 +481,10 @@ void gpio_set_probe_clk_function(gpio_func_pin_e pin, probe_clk_sel_e sel_clk)
  * @return     none.
  * @note       This function called by .S file to shutdown all the GPIO input which can decrease the current early.
  *             If this C function is called in the S file, it needs to be called after setting sp.
- */
+ *             In order to be compatible with flash_boot_ramcode.link, added a new code segment named flash_code.
+ *             If this function compiled to the text segment, then it cannot be found.
+ *             If this function compiled to the vectors segment, then it will at the starting address of vectors segment which can not be accepted.
+*/
 _attribute_flash_code_sec_noinline_ void gpio_shutdown_flashcode_for_asm(void)
 {
     //disable input

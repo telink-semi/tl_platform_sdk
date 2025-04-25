@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
+#include "pke_test/app_test.h"
 
 unsigned int pke_app_test(void)
 {

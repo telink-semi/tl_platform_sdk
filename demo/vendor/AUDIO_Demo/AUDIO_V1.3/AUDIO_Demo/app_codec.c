@@ -1,13 +1,12 @@
 /********************************************************************************************************
  * @file    app_codec.c
  *
- * @brief   This is the source file for TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
  *
  * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if (AUDIO_MODE <= DMA_IRQ_TEST)
     #include "audio_common.h"
     #define AUDIO_BUFF_SIZE 4096 * 2 /* In order to support codec data fade-in process, define enough buff */

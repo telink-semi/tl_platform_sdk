@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 /********* pke version:1.1 *********/
-#include "app_config.h"
+#include "common.h"
 
 
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518)

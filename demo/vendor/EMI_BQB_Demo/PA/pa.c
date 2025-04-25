@@ -21,6 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#include "common.h"
 #include "pa.h"
 #include "gpio.h"
 #include "flash.h"

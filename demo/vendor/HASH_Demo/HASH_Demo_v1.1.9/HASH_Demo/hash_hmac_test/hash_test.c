@@ -22,8 +22,7 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "../app_config.h"
-
+#include "common.h"
 #include "lib/include/hash/hash.h"
 #include "lib/include/crypto_common/utility.h"
 #include "lib/include/trng/trng.h"
@@ -727,7 +726,7 @@ unsigned int hash_dma_speed_test_internal(HASH_ALG hash_alg, unsigned int round,
         "SHA3_512",
     };
     unsigned int  i, block_byte_len;
-    unsigned int *msg    = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int *msg    = (unsigned int *)(DMA_RAM_BASE);
     unsigned int *digest = msg + 512;
     unsigned int  ret;
     HASH_DMA_CTX  ctx[1];
@@ -911,7 +910,7 @@ unsigned int hash_dma_test(HASH_ALG hash_alg, unsigned char *std_digest1, unsign
 
     unsigned int  block_word_len, block_byte_len, output_word_len, digest_byte_len, iterator_word_len;
     char         *name[] = {"SM3", "MD5", "SHA_256", "SHA_384", "SHA_512", "SHA_1", "SHA_224", "SHA_512_224", "SHA_512_256"};
-    unsigned int *msg    = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int *msg    = (unsigned int *)(DMA_RAM_BASE);
     unsigned int *digest = msg + 512;
 
     unsigned int msg_bytes;

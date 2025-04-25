@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if (USB_DEMO_TYPE == USB_MICROPHONE)
     #include "usb_default.h"
     #include "application/usbstd/usb.h"
@@ -902,7 +902,7 @@ void user_init(void)
     clock_pll_audio_init(PLL_AUDIO_CLK_36P864M);
     audio_init(PLL_AUDIO_CLK_36P864M);                               /* must configured first. */
 
-    audio_codec0_power_on(AUDIO_CODEC0_ADC_ONLY, AUDIO_CODEC0_3P3V); /* power on adc and dac. */
+    audio_codec0_power_on(AUDIO_CODEC0_ADC_ONLY, AUDIO_CODEC0_1P8V); /* power on adc and dac. */
 
     /*********************** input config ****************************/
     audio_codec0_input_config_t codec0_input_config = {

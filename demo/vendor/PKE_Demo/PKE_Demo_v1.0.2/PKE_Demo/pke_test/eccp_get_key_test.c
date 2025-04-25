@@ -22,7 +22,8 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "../app_config.h"
+#include "common.h"
+#include "../pke_test/app_test.h"
 
 unsigned char eccp_get_key_test_internal(eccp_curve_t *curve, char *curve_name, unsigned char *prikey, unsigned char *pubkey, unsigned char ret_value, char *info)
 {
