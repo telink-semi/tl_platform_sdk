@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
+#include "ske_test/app_test.h"
 
 unsigned int ske_app_test(void)
 {

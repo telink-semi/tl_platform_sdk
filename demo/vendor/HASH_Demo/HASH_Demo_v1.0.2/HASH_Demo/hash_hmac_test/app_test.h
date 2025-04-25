@@ -28,7 +28,6 @@
 extern "C"
 {
 #endif
-#include "driver.h"
 #include "common.h"
 
     unsigned int HASH_all_test(void);

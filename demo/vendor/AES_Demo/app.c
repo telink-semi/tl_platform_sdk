@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 #define BLOCKING_MODE  0 //get encrypt/decrypt result by blocking
 #define INTERRUPT_MODE 1 //get encrypt/decrypt result by interrupt

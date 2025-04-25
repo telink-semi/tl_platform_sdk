@@ -7,7 +7,6 @@
  * @date    2022
  *
  * @par     Copyright (c) 2022, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if !defined(MCU_CORE_B92)
     #if (SPI_MODE == SPI_DMA_LLP_MODE)
         /**********************************************************************************************************************
@@ -260,7 +259,7 @@ unsigned char          spi_rx_buff1[DATA_BYTE_LEN + 4] __attribute__((aligned(4)
             #if (DATA_MODE == NORMAL_MODE)
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
     .spi_io_mode   = SPI_SINGLE_MODE, /*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
-    .spi_dummy_cnt = 32,              //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+    .spi_dummy_cnt = 32,              //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
                 #if defined(MCU_CORE_TL322X)
     .spi_dummy_hold = 0,
                 #endif
@@ -273,7 +272,7 @@ spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
             #elif (DATA_MODE == ONLY_DATA_SLAVE_SEND_MODE || DATA_MODE == ONLY_DATA_SLAVE_REVEICE_MODE)
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
     .spi_io_mode   = SPI_SINGLE_MODE, /*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
-    .spi_dummy_cnt = 0,               //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+    .spi_dummy_cnt = 0,               //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
                 #if defined(MCU_CORE_TL322X)
     .spi_dummy_hold = 0,
                 #endif
@@ -529,7 +528,7 @@ void user_init(void)
             #else
     spi_slave_init(SPI_MODULE_SEL, SPI_MODE0);
             #endif
-            //TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+            //TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
             #if (DATA_MODE == NORMAL_MODE)
     spi_set_dummy_cnt(SPI_MODULE_SEL, 32);
             #endif

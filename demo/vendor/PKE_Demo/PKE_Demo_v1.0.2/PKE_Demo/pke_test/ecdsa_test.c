@@ -22,7 +22,8 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "../app_config.h"
+#include "common.h"
+#include "../pke_test/app_test.h"
 
 #define ECDSA_SIGN_VERIFY_ROUND1 (2)
 

@@ -1,3 +1,211 @@
+## V3.5.0
+
+### Version
+
+* SDK Version: tl_platform_sdk V3.5.0
+* Chip Version
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2),TL321X(A1/A2)
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20 
+  * TL721X: C1T315A20 
+  * TL321X: C1T335A20 
+* Hardware AIOT_DK1 Version
+  * C1TXA104
+* Demo Platform Requirements 
+ 
+  | Demo Name       | Main Board | Sub-Board            |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+  
+* Toolchain Version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+
+
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+
+### Bug Fixes
+* **ema**
+  * (TL721x)Fix the possibility of analog register read/write conflicts caused by incorrect judgment methods for completing DMA transmission in EMA.(merge_requests/@1524)
+* **adc**
+  * (TL721x) Modify the perscale and divider configurations in the VBAT sampling mode to address ADC sampling anomalies in extreme environments.(merge_requests/@1499)
+  * (TL721x) Delete the multi-channel sampling function.(merge_requests/@1499)
+  * (TL721x) Fixed issue with verf voltage dropping over time.(merge_requests/@1499)
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) Fixed trap INTERRUPT_MTIME_DEMO compile.(merge_requests/@1633)
+  * (B91/B92/TL721x/TL321x)Fix adc_calculate_voltage() interface to prevent abnormal output voltage values when sampling voltage is close to 0V.(merge_requests/@1606)
+* **rf**
+  * (TL321x)Modify rf_set_zigbee_250K_mode, rf_set_hybee_1M_mode, rf_set_hybee_2M_mode, rf_set_hybee_500K_mode related configuration to fix the problem of non-returning of per to 0 in zigbee and hybee modes with large energy.(merge_requests/@1548)
+  * (B91/B92)Fixed the issue with the incorrect value of RF_CHANNEL_ALL in the rf_channel_e enumeration.(merge_requests/@1545)
+  * (TL321x) Fix abnormal RF TX delta f2. (merge_requests/@1577)
+* **audio**
+  * (TL721x)Fixed i2s can not receive data in slave mode.(merge_requests/@1574)
+  * (TL321x)Fixed i2s can not receive data in slave mode.(merge_requests/@1585)
+* **emi**
+  * (B91/B92/TL721X/TL321X)Fixed potential waveform transmission anomalies in the rf_emi_tx_continue_update_data TX interface.(merge_requests/@1642)
+* **clock**
+  * (TL721X):When powered by 1.8v low voltage, there are read and write errors in the analog register. Fix this problem.
+* **EMI_BQB_DEMO**
+  * (TL721x/TL321x)Fixed compilation errors caused by macro configuration errors.(merge_requests/@1616)
+### Features
+* **PM**
+  * (TL721x/TL321x)Supports USB and 32K XTAL to wake-up MCU.(merge_requests/@1552,merge_requests/@1598)
+* **adc**
+  * (TL721x)Call the otp_calib_adc_vref() interface in calibration_func() to calibrate adc gpio mode and vbat mode.(merge_requests/@1659)
+  * (TL321x)Call the efuse_calib_adc_vref() interface in calibration_func() to calibrate adc gpio mode and vbat mode.(merge_requests/@1700)
+* **Codec_Demo**
+  * (TL721x/TL321x)Add Codec_Demo and users can develop external or internal codec according to their own needs.(merge_requests/@1705)
+* **Sensor_Lcd_Demo**
+  * (TL721x/TL321x)Add Sensor_Lcd_Demo and users can develop sensors and LCD according to their own needs.(merge_requests/@1705)
+* **Camera_Demo**
+  * (TL721x)Add Camera_Demo and display camera image on LCD.(merge_requests/@1705)
+### Refactoring
+* **adc**
+  * (TL721x) According to ATE big data, ADC_GPIO_VREF_DEFAULT_VALUE is changed from 1220 to 1260, ADC_GPIO_VREF_OFFSET_DEFAULT_VALUE is changed from 8 to 0, ADC_VBAT_VREF_DEFAULT_VALUE is changed from 1220 to 1260. ADC_VBAT_VREF_OFFSET_DEFAULT_VALUE was changed from 15 to 0 to be more consistent with most chips.(merge_requests/@1499)
+  * (TL721x/TL321x) Some optimization adjustments were made to the adc driver without affecting the functionality: 1.The interface adc_ana_clk_dis was deleted;2.the adc_clk_dis interface was newly added; 3. adc_clk_en was optimized;(merge_requests/@1688)
+  * (TL321x)Updating vref/offset defaults for gpio and vbat based on ATE's latest big data.(merge_requests/@1700)
+* **license**
+  * (B91/B92/TL321X/TL721x)clean up some licenses in the project.(merge_requests/@1531)
+* **audio**
+  * (TL721x)Fix comment error in declaration of audio_set_i2s_clock function, fix inconsistency in name of formal parameter in declaration and definition of audio_rx_dma_add_list_element function.(merge_requests/@1543)
+* **cpu**
+  * (TL721x)switch the compilation toolchain for coremark and dhrystone demo from gcc7.4 to gcc12.2.(merge_requests/@1568)
+* **sys**
+  * (TL321X)Solves the problem that the 1.25V voltage is too high when the VBAT is supplied with low-voltage power in DCDC mode.(merge_requests/@1623)
+* ​**rf**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL321x/TL721X) Optimize fast settle setting logic to reduce memory usage and time consumption. 
+    Related structure modified: rf_fast_settle_t; 
+    New interface added: rf_cali_linear_fit(only for TL721X/TL321X); 
+    Related interfaces modified: rf_fast_settle_setup/rf_fast_settle_get_val/rf_fast_settle_set_val 
+    (merge_requests/@1577)
+* **RF_Demo**
+  * (TL721x/TL321x)Remove macro definitions and associated code for non-ready RF modes.(merge_requests/@1617)
+### BREAKING CHANGES
+* **adc**
+  * (TL721x/TL321X):Rename adc_get_code() to adc_get_raw_code().
+* **pm**
+  * (TL721X):The usage of pm_set_dvdd must ensure that the voltage is restored to 0.8V before entering deep/deep ret sleep mode.(merge_requests/@1628)
+* ​**rf**
+  * (TL321x) Correct the comment for rf_set_rx_settle_time: the rx_stl_us parameter must be greater than or equal to 93 µs. (merge_requests/@1577)
+
+### Performance Improvements
+* **rf**
+  * (TL321x)Modify rf_set_zigbee_250K_mode, rf_set_hybee_1M_mode, rf_set_hybee_2M_mode, rf_set_hybee_500K_mode related configuration to improve rx sensitivity performance.(merge_requests/@1609)
+  * (TL721x)Modify the configuration related to rf_set_zigbee_250K_mode to enhance the ability of Zigbee mode to resist interference from similar data packets.(merge_requests/@1617)
+* **gpio**
+  * (all) To prevent leakage, all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS in gpio_init(1),additionally, the app_config.h files in all demo folders have been relocated to the demo\vendor\common\common\app_config directory and renamed accordingly.(merge_requests/@1665)
+## V3.5.0
+
+### 版本
+
+* SDK 版本: tl_platform_sdk V3.5.0
+* 芯片版本
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2),TL321X(A1/A2)
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20 
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+
+* 硬件AIOT_DK1版本
+  * C1TXA104
+* Demo平台要求
+ 
+  | 示例名称        | 主板       | 子板                 |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5 GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+
+### Bug Fixes
+* **ema**
+  * (TL721x)修复ema使用dma传输完成的判断方法有误可能导致的模拟寄存器读写冲突。(merge_requests/@1524)
+* **adc**
+  * (TL721x) 修改VBAT采样模式中的perscale和divider配置，以解决在极端环境下ADC采样异常的问题。(merge_requests/@1499)
+  * (TL721x) 删除多通道采样功能。(merge_requests/@1499)
+  * (TL721x) 修复了随时间推移verf电压下降的问题。(merge_requests/@1499)
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL721x/TL321x) 修复了trap INTERRUPT_MTIME_DEMO的编译问题.(merge_requests/@1633)
+  * (B91/B92/TL721x/TL321x)修复了adc_calculate_voltage()接口，防止采样电压接近0V时，输出电压值异常。(merge_requests/@1606)
+* **rf**
+  * (TL321x)修改 rf_set_zigbee_250K_mode、rf_set_hybee_1M_mode、rf_set_hybee_2M_mode、rf_set_hybee_500K_mode 相关配置，以修复 zigbee 和 hybee 模式大能量下per不归0问题。(merge_requests/@1548)
+  * (B91/B92)修复了 rf_channel_e枚举中 RF_CHANNEL_ALL值错误的问题(merge_requests/@1545)
+* **audio**
+  * (TL721x)修复了i2s在slave模式下无法接收数据的问题。(merge_requests/@1574)
+  * (TL321x)修复了i2s在slave模式下无法接收数据的问题。(merge_requests/@1585)
+* **emi**
+  * (B91/B92/TL721X/TL321X)修复了rf_emi_tx_continue_update_data tx接口中可能存在的波形传输异常的问题(merge_requests/@1642)
+* **rf**
+  * (TL321x) 修复 RF TX delta f2 异常。(merge_requests/@1577)
+* **clock**
+  * (TL721X)当1.8v低压供电，存在模拟寄存器读写错误，修复该问题。
+* **EMI_BQB_DEMO**
+  * (TL721x/TL321x)修复了由于宏配置错误导致的编译报错。(merge_requests/@1616)
+### Features
+* **PM**
+  * (TL721x/TL321x)支持通过USB和外部32K晶振唤醒MCU。(merge_requests/@1552,merge_requests/@1598)
+* **adc**
+  * (TL721x)在calibration_func()中调用otp_calib_adc_vref()接口校准adc gpio模式和vbat模式。(merge_requests/@1659)
+  * (TL321x)在calibration_func()中调用efuse_calib_adc_vref()接口校准adc gpio模式和vbat模式。(merge_requests/@1700)
+* **Codec_Demo**
+  * (TL721x/TL321x)新增Codec_Demo，用户可以根据需要开发外置或内置codec模块。(merge_requests/@1705)
+* **Sensor_Lcd_Demo**
+  * (TL721x/TL321x)新增Sensor_Lcd_Demo，用户可以根据需要开发各类sensor和屏幕。(merge_requests/@1705)
+* **Camera_Demo**
+  * (TL721x)新增Camera_Demo，可以在屏幕上显示摄像头图像数据。(merge_requests/@1705)
+### Refactoring
+* **adc**
+  * (TL721x) 根据ATE大数据，ADC_GPIO_VREF_DEFAULT_VALUE从1220更改为1260，ADC_GPIO_VREF_OFFSET_DEFAULT_VALUE从8更改为0，ADC_VBAT_VREF_DEFAULT_VALUE从1220更改为1260。ADC_VBAT_VREF_OFFSET_DEFAULT_VALUE从15更改为0，以更符合大多数芯片。(merge_requests/@1499)
+  * (TL321x/TL721x):对adc驱动做了一些优化调整，对功能没有影响:1.删除了接口 adc_ana_clk_dis;2.新增了 adc_clk_dis 接口;3,优化了 adc_clk_en。（merge_requests/@1688)
+  * (TL321x)根据ATE最新的大数据，更新gpio和vbat的vref/offset默认值。(merge_requests/@1700)
+* **license**
+  * (B91/B92/TL321X/TL721x)清理工程里的部分license.(merge_requests/@1531)
+* **audio**
+  * (TL721x)修正audio_set_i2s_clock函数声明中的注释错误，修正audio_rx_dma_add_list_element函数在声明和定义中形参名称不一致的问题。(merge_requests/@1543)
+* **cpu**
+  * (TL721x)将coremark和dhrystone demo的编译工具链从gcc7.4切换到gcc12.2。(merge_requests/@1568)
+* **sys**
+  * (TL321X)解决了DCDC模式下，VBAT低压供电时，1.25V电压偏高的问题。(merge_requests/@1623)
+* **rf**
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x/TL321x/TL721X)优化fast settle设置逻辑，减少内存占用及时间消耗。相关结构体修改：rf_fast_settle_t，新增接口rf_cali_linear_fit(仅TL321x/TL721X)，相关接口修改：rf_fast_settle_setup/rf_fast_settle_get_val/rf_fast_settle_set_val(merge_requests/@1577)
+* **RF_Demo**
+  * (TL721x/TL321x)删除未ready的rf 模式的宏定义及相关代码(merge_requests/@1617)
+### BREAKING CHANGES
+* **adc**
+  * (TL721x/TL321X):adc_get_code() 改名为 adc_get_raw_code().
+* **pm**
+  * (TL721x):进入deep/deep ret睡眠之前必须调用pm_set_dvdd将电压恢复到0.8V。(merge_requests/@1628)
+* **rf**
+  * (TL321x) 修正rf_set_rx_settle_time注释，rx_stl_us参数必须大于等于93us。(merge_requests/@1577)
+
+### Performance Improvements
+* **rf**
+  * (TL321x)修改 rf_set_zigbee_250K_mode、rf_set_hybee_1M_mode、rf_set_hybee_2M_mode、rf_set_hybee_500K_mode 相关配置，以提高接收灵敏度性能。(merge_requests/@1609)
+  * (TL721x)修改rf_set_zigbee_250K_mode相关配置，以增强Zigbee模式抵抗同类数据包干扰的能力。(merge_requests/@1617)
+* **gpio**
+* (all)为防止漏电流在gpio_init函数中除​​MSPI引脚​​和​​SWS​​外，所有GPIO均设置为​高阻态​​并启用​​下拉电阻，同时所有demo文件夹中app_config.h已经存放到demo\vendor\common\common\app_config目录下并进行重命名处理​。(merge_requests/@1665)
+---
+
 ## V3.4.1(PR)
 
 ### Version
@@ -19,7 +227,6 @@
 <hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
 
 ### Note
-
  * N/A
 
 ### Bug Fixes
@@ -30,7 +237,7 @@
 ### BREAKING CHANGES
 
 * N/A
-
+  
 ### Features
 
 * N/A
@@ -271,7 +478,7 @@
 ### BREAKING CHANGES
 
 * N/A
-
+  
 ### Features
 
 * N/A

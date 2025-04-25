@@ -40,7 +40,7 @@
              the slave receives data from the master and then writes the received data back to the master.
    @endverbatim
  */
-#include "app_config.h"
+#include "common.h"
 
 #if (I2C_MASTER_WRITE_READ_MODE == I2C_MASTER_WRITE_READ_DMA)
     #define I2C_TX_DMA_CHN DMA1

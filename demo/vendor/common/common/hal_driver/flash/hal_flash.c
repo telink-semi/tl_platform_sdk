@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "hal_flash.h"
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
 
 
 extern const flash_hal_handler_t flash_list[];

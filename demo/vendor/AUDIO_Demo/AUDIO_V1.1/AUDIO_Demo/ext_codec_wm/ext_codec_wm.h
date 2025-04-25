@@ -21,8 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "../app_config.h"
-#include "driver.h"
+#include "common.h"
+//#include "driver.h"
 /**
  * @brief     This function serves to config external codec for WM8731
  * @return    none

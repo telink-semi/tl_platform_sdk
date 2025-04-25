@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #include "app_sin_data.h"
 
 unsigned int dma_rx_irq_cnt = 0;

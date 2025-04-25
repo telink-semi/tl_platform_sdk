@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
+#include "hash_hmac_test/app_test.h"
 
 extern void user_init(void);
 extern void main_loop(void);

@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 #if (RF_MODE == RF_BLE_SDK_TEST)
 
@@ -282,7 +282,7 @@ void ble_manual_tx_test(void)
     #if (defined(MCU_CORE_TL7518))
     delay_us(43);
     #elif (defined(MCU_CORE_TL751X))
-    delay_us(49);
+    delay_us(45);
     #else
     delay_us(113);
     #endif
@@ -472,7 +472,6 @@ _attribute_ram_code_sec_noinline_ void rf_irq_handler(void)
     #elif (defined(MCU_CORE_TL751X))
     if (rf_get_irq_status(FLD_RF_IRQ_TX_EN_DONE)) {
         rf_clr_irq_status(FLD_RF_IRQ_TX_EN_DONE);
-        delay_us(11); //Currently, the TL751X chip also requires a seq delay of at least 11us after the end of the TX and RX EN states.
     }
     #else
     if (rf_get_irq_status(FLD_RF_IRQ_TX)) {
@@ -501,13 +500,15 @@ _attribute_ram_code_sec_noinline_ void ble_manual_rx_test(void)
     rf_clr_irq_status(FLD_RF_IRQ_RX);
 
     rf_set_rxmode();
-    #if (defined(MCU_CORE_TL7518))
-    delay_us(43);
-    #elif (defined(MCU_CORE_TL751X))
-    delay_us(54);
-    #else
-    delay_us(85);
-    #endif
+                #if (defined(MCU_CORE_TL7518))
+    delay_us(43); //Wait for calibration to stabilize
+                #elif (defined(MCU_CORE_TL751X))
+    delay_us(45); //Wait for calibration to stabilize
+                #elif (defined(MCU_CORE_TL321X))
+    delay_us(93); //Wait for calibration to stabilize
+                #else
+    delay_us(85); //Wait for calibration to stabilize
+                #endif
     core_interrupt_enable();
     #if defined(MCU_CORE_TL751X_N22)
     clic_init();

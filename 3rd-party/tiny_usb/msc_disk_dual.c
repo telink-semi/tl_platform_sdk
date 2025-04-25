@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  *
  */
-#include "../../demo/vendor/USB_Demo/app_config.h"
+#include "../../demo/vendor/common/common/common.h"
 #include "../../demo/vendor/USB_Demo/application/mass_storage/spi_sdnand_driver/sdcard.h"
 #include "../../demo/vendor/USB_Demo/application/mass_storage/sys_norflash_driver/sys_norflash.h"
 #include "tusb.h"

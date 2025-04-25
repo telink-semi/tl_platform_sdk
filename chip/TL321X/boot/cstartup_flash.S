@@ -149,7 +149,7 @@ _START:
 #endif
 
 #if 1
-    /* gpio shutdown to decrease current. for power on or deep this function was in flash code segment. */
+    // Call gpio shutdown to decrease current as soon as possible when power on or wake up from deep sleep.
     la     t0, gpio_shutdown_flashcode_for_asm
     jalr   t0
 #endif

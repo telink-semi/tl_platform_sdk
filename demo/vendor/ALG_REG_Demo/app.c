@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 /*
  *                            User configuration
  * AUTO_TEST_EN define as 0: Demo mode,  define as 1: internal auto test mode.

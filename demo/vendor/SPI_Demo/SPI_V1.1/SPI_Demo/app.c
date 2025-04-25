@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 #if (SPI_MODE == SPI_NDMA_MODE)
     /**********************************************************************************************************************
@@ -295,7 +295,7 @@ volatile unsigned char spi_b91m_slave_io_mode;
             #if (DATA_MODE == NORMAL_MODE)
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
     .spi_io_mode   = SPI_SINGLE_MODE, /*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
-    .spi_dummy_cnt = 32,              //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+    .spi_dummy_cnt = 32,              //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
                 #if defined(MCU_CORE_TL322X)
     .spi_dummy_hold = 0,
                 #endif
@@ -308,7 +308,7 @@ spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
             #elif (DATA_MODE == ONLY_DATA_MODE)
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
     .spi_io_mode   = SPI_SINGLE_MODE, /*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
-    .spi_dummy_cnt = 0,               //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+    .spi_dummy_cnt = 0,               //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
                 #if defined(MCU_CORE_TL322X)
     .spi_dummy_hold = 0,
                 #endif
@@ -577,7 +577,7 @@ void user_init(void)
             #elif (DATA_MODE == ONLY_DATA_MODE)
     spi_set_irq_mask(SPI_MODULE_SEL, SPI_RXFIFO_INT_EN | SPI_END_INT_EN); //endint_en txfifoint_en rxfifoint_en
             #endif
-            //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,TL322X supports up to 256 clk cycle dummy.
+            //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
             //When B92 and B91 communicate with SPI, B91 as slave supports up to 8 clk cycle dummy. When B91 is master, invalid data can be added before tx_buff to act as dummy.
             #if (DATA_MODE == NORMAL_MODE)
     spi_set_dummy_cnt(SPI_MODULE_SEL, 32);

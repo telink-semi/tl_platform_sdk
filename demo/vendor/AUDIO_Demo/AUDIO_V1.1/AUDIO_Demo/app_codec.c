@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if (AUDIO_MODE <= DMA_IRQ_Test)
     #include "app_sin_data.h"
     #define AUDIO_BUFF_SIZE 4096

@@ -61,3 +61,4 @@
 #include "flash/flash_type.h"
 #include "flash/flash_common.h"
 #include "ir_learn.h"
+#include "cache.h"

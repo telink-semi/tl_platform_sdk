@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #include "calibration.h"
 #include <FreeRTOS.h>
 #include <task.h>

@@ -22,10 +22,9 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "driver.h"
 #include "dhry.h"
 #include <string.h>
-#include "../app_config.h"
+#include "common.h"
 
 
 /* Global Variables: */
@@ -130,7 +129,7 @@ _attribute_ram_code_ void dhry_main(void)
     #endif
 #elif defined(MCU_CORE_TL751X)
     #if !defined(MCU_CORE_TL751X_N22)
-    cpu_mhz = sys_clk.cclk;
+    cpu_mhz = sys_clk.cclk_d25f_dsp;
     #else
     cpu_mhz = sys_clk.n22_clk;
     #endif

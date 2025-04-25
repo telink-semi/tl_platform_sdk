@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if (SPI_DISPLAY_SELECT == SPI_LCD)
     #include "lcd_st7796h2_data/lcd_st7796h2_pic.h"
 
