@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if defined(MCU_CORE_B92)
     #if RF_MODE == RF_USER_DEFINE_PKT
 /**

@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
+#include "chacha20_play1305/app_test.h"
 
 unsigned int chacha20_poly1305_app_test(void)
 {

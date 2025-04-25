@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app.c
  *
- * @brief   This is the source file for TL7518/TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
@@ -21,11 +21,11 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
-
+#include "common.h"
+#if (DEMO_MODE == NORMAL_MODE)
 adc_gpio_cfg_t adc_gpio_cfg_m =
     {
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
         .v_ref = ADC_VREF_GPIO_1P2V,
 #else
         .v_ref = ADC_VREF_1P2V,
@@ -36,7 +36,7 @@ adc_gpio_cfg_t adc_gpio_cfg_m =
 };
 adc_gpio_cfg_t adc_gpio_cfg_l =
     {
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
         .v_ref = ADC_VREF_GPIO_1P2V,
 #else
         .v_ref = ADC_VREF_1P2V,
@@ -47,7 +47,7 @@ adc_gpio_cfg_t adc_gpio_cfg_l =
 };
 adc_gpio_cfg_t adc_gpio_cfg_r =
     {
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
         .v_ref = ADC_VREF_GPIO_1P2V,
 #else
         .v_ref = ADC_VREF_1P2V,
@@ -70,7 +70,9 @@ volatile unsigned short adc_l_chn_val;
 volatile unsigned short adc_r_chn_val;
 volatile unsigned short adc_temp_val;
 volatile unsigned int   adc_irq_cnt = 0;
-
+#if defined(MCU_CORE_TL751X)
+volatile unsigned int adc_data = 0;
+#endif
 unsigned short adc_sample_buffer[ADC_SAMPLE_GROUP_CNT * ADC_SAMPLE_CHN_CNT] __attribute__((aligned(4))) = {0};
 unsigned short channel_buffers[3][ADC_SAMPLE_GROUP_CNT] __attribute__((aligned(4)))                     = {0};
 
@@ -105,7 +107,7 @@ void user_init(void)
     adc_gpio_sample_init(ADC_M_CHANNEL, adc_gpio_cfg_m);
         #elif (ADC_M_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_M_CHANNEL);
-        #elif (ADC_M_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+        #elif (ADC_M_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT && INTERNAL_TEST_FUNC_EN)
     adc_gpio_sample_vbat_init(ADC_M_CHANNEL, adc_gpio_cfg_m);
         #endif
 
@@ -117,7 +119,7 @@ void user_init(void)
     adc_gpio_sample_init(ADC_L_CHANNEL, adc_gpio_cfg_l);
         #elif (ADC_L_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_L_CHANNEL);
-        #elif (ADC_L_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+        #elif (ADC_L_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT && INTERNAL_TEST_FUNC_EN)
     adc_gpio_sample_vbat_init(ADC_L_CHANNEL, adc_gpio_cfg_l);
         #endif
 
@@ -129,7 +131,7 @@ void user_init(void)
     adc_gpio_sample_init(ADC_R_CHANNEL, adc_gpio_cfg_r);
         #elif (ADC_R_CHN_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_R_CHANNEL);
-        #elif (ADC_R_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+        #elif (ADC_R_CHN_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT && INTERNAL_TEST_FUNC_EN)
     adc_gpio_sample_vbat_init(ADC_R_CHANNEL, adc_gpio_cfg_r);
         #endif
 
@@ -144,7 +146,7 @@ void user_init(void)
     adc_gpio_sample_init(ADC_M_CHANNEL, adc_gpio_cfg_m);
     #elif (ADC_SAMPLE_MODE == ADC_VBAT_SAMPLE)
     adc_vbat_sample_init(ADC_M_CHANNEL);
-    #elif (ADC_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT)
+    #elif (ADC_SAMPLE_MODE == ADC_GPIO_SAMPLE_VBAT && INTERNAL_TEST_FUNC_EN)
     adc_gpio_sample_vbat_init(ADC_M_CHANNEL, adc_gpio_cfg_m);
     #elif (INTERNAL_TEST_FUNC_EN && (ADC_SAMPLE_MODE == ADC_TEMP_SENSOR_SAMPLE))
     adc_temp_init(ADC_M_CHANNEL);
@@ -152,7 +154,17 @@ void user_init(void)
 
 #endif
     adc_power_on();
-    delay_us(100); //Wait >100us after adc_power_on() for ADC to be stable.
+#if defined(MCU_CORE_TL721X)
+    /* When gpio samples, the user needs to wait >200us after adc_power_on () for the ADC to stabilize.
+     * When vbat samples, the user needs to wait >300us after adc_power_on () for the ADC to stabilize.
+     * The demo's maximum waiting time is 300us.
+     */
+    delay_us(300); //After adc_power_on () waits for >300us, ADC samples are stable.
+#elif defined(MCU_CORE_TL751X)
+    delay_us(200); //After adc_power_on () waits for >200us, ADC samples are stable.
+#elif defined(MCU_CORE_TL321X)
+    delay_us(100); //After adc_power_on () waits for >100us, ADC samples are stable.
+#endif
 }
 
 void main_loop(void)
@@ -255,13 +267,25 @@ unsigned short adc_get_result(adc_transfer_mode_e transfer_mode, adc_sample_chn_
         while (cnt < ADC_SAMPLE_GROUP_CNT) {
             int sample_cnt = adc_get_rxfifo_cnt();
             if (sample_cnt > 0) {
-                channel_buffers[chn][cnt] = adc_get_code();
+
+#if defined(MCU_CORE_TL751X)
+                adc_data =  adc_get_raw_code();
+                channel_buffers[chn][cnt]= adc_data & 0xffff;
+                channel_buffers[chn][cnt+1]= (adc_data & 0xffff0000) >> 16;
+#else
+                channel_buffers[chn][cnt] = adc_get_raw_code();
+#endif
+
                 if (channel_buffers[chn][cnt] & BIT(11)) { //12 bit resolution, BIT(11) is sign bit, 1 means negative voltage in differential_mode
                     channel_buffers[chn][cnt] = 0;
                 } else {
                     channel_buffers[chn][cnt] &= 0x7FF;    //BIT(10..0) is valid adc code
                 }
+#if defined(MCU_CORE_TL751X)
+                cnt +=2;
+#else
                 cnt++;
+#endif
             }
         }
     }
@@ -300,4 +324,5 @@ void adc_code_split_dma(unsigned short *sample_buffer, unsigned int sample_num, 
         }
     }
 }
+#endif
 #endif

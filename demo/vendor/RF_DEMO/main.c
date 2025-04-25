@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 extern void user_init(void);
 extern void main_loop(void);
@@ -110,38 +110,18 @@ int main(void)
     #elif (RF_MODE == RF_PRI_GENERIC_500K)
     rf_set_pri_generic_500K_mode();
     //TODO:TL321X The above mode has been verified currently.
-    #elif (RF_MODE == RF_LR_S2_500K_NEW) //BLE S2 new data path
-    rf_set_ble_500K_new_mode();
-    #elif (RF_MODE == RF_LR_S8_125K_NEW) //BLE S8 new data path
-    rf_set_ble_125K_new_mode();
-    #elif (RF_MODE == RF_HYBEE_1M_OLD)
-    rf_set_hybee_1M_old_mode();
-    #elif (RF_MODE == RF_HYBEE_2M_OLD)
-    rf_set_hybee_2M_old_mode();
-    #elif (RF_MODE == RF_HYBEE_500K_NEW)
-    rf_set_hybee_500K_new_mode();
-    #elif (RF_MODE == RF_HYBEE_1M_NEW)
-    rf_set_hybee_1M_new_mode();
-    #elif (RF_MODE == RF_HYBEE_2M_NEW)
-    rf_set_hybee_2M_new_mode();
-    #elif (RF_MODE == RF_HYBEE_500K_2BYTE_SFD)
-    rf_set_hybee_500K_2byte_sfd_mode();
-    #elif (RF_MODE == RF_HYBEE_1M_2BYTE_SFD)
-    rf_set_hybee_1M_2byte_sfd_mode();
-    #elif (RF_MODE == RF_HYBEE_2M_2BYTE_SFD)
-    rf_set_hybee_2M_2byte_sfd_mode();
-    #elif (RF_MODE == RF_HYBEE_2M_2BYTE_SFD_NEW)
-    rf_set_hybee_2M_2byte_sfd_new_mode();
-    #elif (RF_MODE == RF_HR_2M)
-    rf_set_zigbee_hr_2m_mode();
-    #elif (RF_MODE == RF_LOWRATE_20K)
-    rf_set_lowrate_20K_mode();
-    #elif (RF_MODE == RF_LOWRATE_25K)
-    rf_set_lowrate_25K_mode();
-    #elif (RF_MODE == RF_LOWRATE_100K)
-    rf_set_lowrate_100K_mode();
-    #elif (RF_MODE == RF_PRI_1M_PTX_PRX_TEST)
-    rf_set_pri_1M_mode();
+    #endif
+#endif
+
+#if defined(MCU_CORE_TL322X)
+    #if (RF_MODE == RF_BLE_4M)
+    rf_set_ble_4M_mode();
+    #elif (RF_MODE == RF_BLE_6M)
+    rf_set_ble_6M_mode();
+    #elif (RF_MODE == RF_BLE_4M_NO_PN)
+    rf_set_ble_4M_NO_PN_mode();
+    #elif (RF_MODE == RF_BLE_4M_NO_PN)
+    rf_set_ble_6M_NO_PN_mode();
     #endif
 #endif
 

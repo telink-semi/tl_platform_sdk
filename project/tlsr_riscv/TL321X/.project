@@ -25,6 +25,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>aiot_dk1</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>boot</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/chip/TL321X/boot</locationURI>
@@ -53,6 +58,16 @@
 			<name>vendor</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>aiot_dk1/Codec_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/aiot_dk1/Codec_Demo</locationURI>
+		</link>
+		<link>
+			<name>aiot_dk1/Sensor_Lcd_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/aiot_dk1/Sensor_Lcd_Demo</locationURI>
 		</link>
 		<link>
 			<name>config/secure_boot_tool_cfg.ini</name>

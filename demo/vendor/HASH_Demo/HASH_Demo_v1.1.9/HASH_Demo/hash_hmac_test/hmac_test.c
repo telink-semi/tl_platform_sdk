@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-
+#include "common.h"
 #include "lib/include/hash/hmac.h"
 #include "lib/include/crypto_common/utility.h"
 
@@ -39,7 +39,6 @@ extern unsigned int hash_get_rand_number(unsigned int max_number);
 
 extern void hash_call_manage(void);
 
-extern unsigned int get_rand(unsigned char *rand, unsigned int byteLen);
 
 unsigned int hmac_test(HASH_ALG hash_alg, unsigned char *std_mac1, unsigned char *std_mac2, unsigned char *std_mac3, unsigned char *std_mac4, unsigned char *std_mac5, unsigned char *std_mac6)
 {
@@ -716,7 +715,7 @@ unsigned int hmac_dma_speed_test_internal(HASH_ALG hash_alg, unsigned int round,
     unsigned short key_id = 0;
     unsigned char  key[16];
     unsigned int   i, block_byte_len;
-    unsigned int  *msg = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int  *msg = (unsigned int *)(DMA_RAM_BASE);
     unsigned int  *mac = msg + 512;
     unsigned int   ret;
     HMAC_DMA_CTX   ctx[1];
@@ -876,7 +875,7 @@ unsigned int hmac_dma_test(HASH_ALG hash_alg, unsigned char *std_mac1, unsigned 
     unsigned char  message[512];
     unsigned char  tmp_buf[500];
 
-    unsigned int *msg    = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int *msg    = (unsigned int *)(DMA_RAM_BASE);
     unsigned int *mac    = msg + 512;
     char         *name[] = {"HMAC_SM3", "HMAC_MD5", "HMAC_SHA256", "HMAC_SHA384", "HMAC_SHA512", "HMAC_SHA1", "HMAC_SHA224", "HMAC_SHA512_224", "HMAC_SHA512_256"};
     unsigned int  block_byte_len, digest_word_len, digest_byte_len;

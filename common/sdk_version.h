@@ -32,7 +32,7 @@
  * the replace rules is: "$$$tl_platform_sdk_"#sdk_version_num"$$$", The "#sdk_version_num"
  * will replace with this macro value.
  */
-    #define B91_SDK_VERSION_NUM V3 .4.0
+    #define B91_SDK_VERSION_NUM V3 .5.0
     #define SDK_VERSION_NUM     B91_SDK_VERSION_NUM
 
 #elif defined(MCU_CORE_B92)
@@ -41,7 +41,7 @@
  * the replace rules is: "$$$tl_platform_sdk_"#sdk_version_num"$$$", The "#sdk_version_num"
  * will replace with this macro value.
  */
-    #define B92_SDK_VERSION_NUM V3 .4.0
+    #define B92_SDK_VERSION_NUM V3 .5.0
     #define SDK_VERSION_NUM     B92_SDK_VERSION_NUM
 
 #elif defined(MCU_CORE_TL7518)
@@ -50,8 +50,17 @@
  * the replace rules is: "$$$tl_platform_sdk_"#sdk_version_num"$$$", The "#sdk_version_num"
  * will replace with this macro value.
  */
-    #define TL7518_SDK_VERSION_NUM V3 .4.0
+    #define TL7518_SDK_VERSION_NUM V3 .5.0
     #define SDK_VERSION_NUM        TL7518_SDK_VERSION_NUM
+#elif defined(MCU_CORE_TL751X)
+    /*
+ * Release Tool need to change this macro to match the release version,
+ * the replace rules is: "$$$tl_platform_sdk_"#sdk_version_num"$$$", The "#sdk_version_num"
+ * will replace with this macro value.
+ */
+    #define TL751X_SDK_VERSION_NUM V3 .5.0
+    #define SDK_VERSION_NUM        TL751X_SDK_VERSION_NUM
+
 
 #elif defined(MCU_CORE_TL721X)
     /*
@@ -59,7 +68,7 @@
  * the replace rules is: "$$$tl_platform_sdk_"#sdk_version_num"$$$", The "#sdk_version_num"
  * will replace with this macro value.
  */
-    #define TL721X_SDK_VERSION_NUM V3 .4.0
+    #define TL721X_SDK_VERSION_NUM V3 .5.0
     #define SDK_VERSION_NUM        TL721X_SDK_VERSION_NUM
 
 #elif defined(MCU_CORE_TL321X)
@@ -68,7 +77,7 @@
  * the replace rules is: "$$$tl_platform_sdk_"#sdk_version_num"$$$", The "#sdk_version_num"
  * will replace with this macro value.
  */
-    #define TL321X_SDK_VERSION_NUM V3 .4.0
+    #define TL321X_SDK_VERSION_NUM V3 .5.0
     #define SDK_VERSION_NUM        TL321X_SDK_VERSION_NUM
 #endif
 

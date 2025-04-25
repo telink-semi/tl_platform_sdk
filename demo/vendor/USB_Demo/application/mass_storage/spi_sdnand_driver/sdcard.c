@@ -21,8 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#include "common.h"
 #include "../../mass_storage/spi_sdnand_driver/sdcard.h"
-#include "../../../app_config.h"
 #include "driver.h"
 #if defined(MCU_CORE_B91) && defined(SD_NAND_FLASH_SUPPORT)
     #define SD_SPI_DMA 1

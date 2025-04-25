@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #include "calibration.h"
 #if (TEST_DEMO == BQB_DEMO)
     #include "BQB/bqb.h"
@@ -65,7 +65,14 @@ extern void rd_usr_definition(unsigned char _s);
 #elif defined(MCU_CORE_TL321X)
     #define PLATFORM_INIT_LDO      platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
     #define PLATFORM_INIT_DCDC_LDO platform_init(DCDC_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
+#elif defined(MCU_CORE_TL751X)
+    #define PLATFORM_INIT_DCDC     platform_init(DCDC_AVDD_DCDC_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6,0)
+    #define PLATFORM_INIT_LDO      platform_init(LDO_AVDD_LDO_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6,0)
+#elif defined(MCU_CORE_TL322X)
+    #define PLATFORM_INIT_DCDC     platform_init(LDO_1P25_LDO_1P8,VBAT_MAX_VALUE_GREATER_THAN_3V6,INTERNAL_CAP_XTAL24M,0)
+    #define PLATFORM_INIT_LDO      platform_init(LDO_1P25_LDO_1P8,VBAT_MAX_VALUE_GREATER_THAN_3V6,INTERNAL_CAP_XTAL24M,0)
 #endif
+
 
 /**
  * @brief       This is main function
@@ -126,6 +133,15 @@ int main(void)
 #endif
 
     CLOCK_INIT;
+
+#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X))
+    //TL751X and tl322x chip rf module power-up method and digital module power-up method need to call the following interface realization
+    sys_n22_init(0x20080000);
+    rf_n22_dig_init();
+    rf_clr_irq_mask(FLD_RF_IRQ_ALL);
+    rf_mode_init();
+#endif
+
     user_init();
     while (1) {
         main_loop();

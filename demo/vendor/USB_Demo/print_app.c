@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if (USB_DEMO_TYPE == USB_PRINT)
     #include "application/usbstd/usb.h"
 

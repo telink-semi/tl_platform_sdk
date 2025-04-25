@@ -1,13 +1,12 @@
 /********************************************************************************************************
  * @file    app_i2s.c
  *
- * @brief   This is the source file for TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
  *
  * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
- *          All rights reserved.
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -22,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if ((AUDIO_MODE >= I2S_TO_EXT_CODEC_WM) && (AUDIO_MODE < DMIC_INPUT_TO_BUF_TO_I2S))
     #include "audio_common.h"
     #include "ext_codec_wm/ext_codec_wm.h"

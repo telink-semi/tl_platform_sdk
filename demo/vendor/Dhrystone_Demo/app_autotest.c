@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if defined(MCU_CORE_TL321X) && (DEMO_MODE == TEST_MODE)
 // set parament cmd
 
@@ -79,19 +79,10 @@ void dhrystone_set_parameter(void)
             /* code */
             PLL_192M_CCLK_48M_HCLK_48M_PCLK_24M_MSPI_48M;
             break;
-        case CCLK_96M_HCLK_48M_PCLK_24M /* constant-expression */:
-            /* code */
-            PLL_192M_CCLK_96M_HCLK_48M_PCLK_24M_MSPI_48M;
-            break;
         case CCLK_48M_HCLK_48M_PCLK_48M /* constant-expression */:
             /* code */
             PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M;
             break;
-        case CCLK_96M_HCLK_48M_PCLK_48M /* constant-expression */:
-            /* code */
-            PLL_192M_CCLK_96M_HCLK_48M_PCLK_48M_MSPI_48M;
-            break;
-
         default:
             break;
         }

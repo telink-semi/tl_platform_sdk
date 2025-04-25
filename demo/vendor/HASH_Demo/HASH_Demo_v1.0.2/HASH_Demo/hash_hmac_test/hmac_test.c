@@ -22,7 +22,8 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-#include "../app_config.h"
+#include "common.h"
+#include "../hash_hmac_test/app_test.h"
 
 
 //#define HMAC_SPEED_TEST_BY_TIMER

@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include <stdio.h>
-
+#include "common.h"
 #include "lib/include/hash/hmac_sha256.h"
 #include "lib/include/crypto_common/utility.h"
 
@@ -190,7 +190,7 @@ unsigned int sample_test_hmac_sha256(void)
     #endif
 
     #ifdef HASH_DMA_FUNCTION
-    unsigned int       *msg_buf         = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int       *msg_buf         = (unsigned int *)(DMA_RAM_BASE);
     unsigned int       *mac_buf         = msg_buf + 512;
     unsigned int        blocks_bytes    = msg_byte_len - (msg_byte_len % block_byte_len);
     unsigned int        remainder_bytes = msg_byte_len - blocks_bytes;

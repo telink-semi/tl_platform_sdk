@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 #if (!defined(MCU_CORE_TL7518) && (RF_MODE == RF_FAST_SETTLE_TEST))
 
@@ -60,7 +60,6 @@ void user_init(void)
 
     #elif (RF_TRX_MODE == RX)
     rf_set_rx_dma(rx_packet, RX_FIFO_NUM - 1, RX_FIFO_DEP);
-
     #endif
 
     gpio_function_en(LED1);
@@ -98,10 +97,10 @@ void main_loop(void)
         #if 0
     rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
         #else
-    rf_fast_settle_get_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
-    rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+    rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         #endif
-    if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US)) {
+    if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US)) {
         //Incorrect configuration.
         gpio_toggle(LED2);
     }
@@ -111,6 +110,21 @@ void main_loop(void)
     rf_set_rx_settle_time(15);
 
     rf_set_chn(RF_FREQ);
+    #elif defined(MCU_CORE_TL322X)
+        #if 0
+        rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
+        #else
+        rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+        rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+        #endif
+        rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US);
+
+        rf_tx_fast_settle_en();
+        rf_rx_fast_settle_en();
+        rf_set_tx_settle_time(15);
+        rf_set_rx_settle_time(15);
+
+        rf_set_chn(RF_FREQ);
     #endif
 
     #if (RF_TRX_MODE == TX)
@@ -125,8 +139,7 @@ void main_loop(void)
     rf_start_stx(ble_tx_packet, rf_stimer_get_tick());
     while (1) {
         delay_ms(1);
-        while (!(rf_get_irq_status(FLD_RF_IRQ_TX)))
-            ;
+        while (!(rf_get_irq_status(FLD_RF_IRQ_TX)));
         delay_us(60); //At present, the tx path delay of ONCA is at least 55us(TX IRQ flag position 1 to tx transmitter sends packet takes at least 55us)
                       //It will be adjusted in the next version.changed by chenxi,confirmed by xuqiang.
         rf_clr_irq_status(FLD_RF_IRQ_TX);
@@ -162,46 +175,66 @@ void main_loop(void)
 void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us)
 {
     //tx
-    rf_set_tx_rx_off_auto_mode();      //STOP_RF_STATE_MACHINE;
-    rf_clr_irq_status(FLD_RF_IRQ_ALL); //CLEAR_ALL_RFIRQ_STATUS;
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    rf_set_tx_settle_time(113);        //adjust TX settle time
 
-    rf_set_tx_settle_time(115);        //adjust TX settle time
-    rf_set_tx_dma(2, 128);
+    for (unsigned char f_chn = 0; f_chn <= 80; f_chn++) {
+        rf_set_chn(f_chn);
+        rf_set_txmode();
+        delay_us(113); //Wait for calibration to stabilize
+        rf_tx_fast_settle_update_cal_val(tx_settle_us, f_chn);
 
-    for (unsigned char chn = 0; chn <= 80; chn++) {
-        rf_set_chn(chn);
-        rf_start_stx(ble_tx_packet, rf_stimer_get_tick());
-        delay_us(115); //Wait for the tx packetization action to complete, ensuring that the settle time on each channel
-
-        rf_tx_fast_settle_update_cal_val(tx_settle_us, chn);
-
-        rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
+#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    rf_set_tx_settle_time(113);        //adjust TX settle time
 
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn+=10) {
+        rf_set_chn(f_chn);
+        rf_set_txmode();
+        delay_us(113); //Wait for calibration to stabilize
+        rf_tx_fast_settle_update_cal_val(tx_settle_us, f_chn);
+
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+#endif
     //rx
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
     rf_set_rx_settle_time(85); //adjust RX settle time
-    rf_start_srx(rf_stimer_get_tick());
-    delay_us(85);              //Wait for the rx packetization action to complete
-
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
+    rf_set_rxmode();
+    delay_us(85); //Wait for the rx packetization action to complete
     rf_rx_fast_settle_update_cal_val(rx_settle_us, 0);
-    rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
-    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
-    rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
-    rf_clr_irq_status(FLD_RF_IRQ_ALL);
-    for (unsigned char chn = 4; chn <= 80; chn += 10) {
-        rf_set_chn(chn);
-        rf_start_srx(rf_stimer_get_tick());
+#elif defined(MCU_CORE_TL721X)
+    rf_set_rx_settle_time(85); //adjust RX settle time
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_set_chn(f_chn);
+        rf_set_rxmode();
         delay_us(85); //Wait for the rx packetization action to complete
+        rf_rx_fast_settle_update_cal_val(rx_settle_us, f_chn);
 
-        rf_rx_fast_settle_update_cal_val(rx_settle_us, chn);
-
-        rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-    #endif
+#elif defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL322X)
+    rf_set_rx_settle_time(93); //adjust RX settle time
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_set_chn(f_chn);
+        rf_set_rxmode();
+        delay_us(93); //Wait for the rx packetization action to complete
+        rf_rx_fast_settle_update_cal_val(rx_settle_us, f_chn);
+
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+#endif
 }
 
 /**
@@ -214,51 +247,67 @@ void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_sett
 void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t *fs_cv)
 {
     //tx
-    rf_set_tx_rx_off_auto_mode();      //STOP_RF_STATE_MACHINE;
-    rf_clr_irq_status(FLD_RF_IRQ_ALL); //CLEAR_ALL_RFIRQ_STATUS;
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    rf_set_tx_settle_time(113);        //adjust TX settle time
 
-    rf_set_tx_settle_time(115);        //adjust TX settle time
-    rf_set_tx_dma(2, 128);
+    for (unsigned char f_chn = 0; f_chn <= 80; f_chn++) {
+        rf_set_chn(f_chn);
+        rf_set_txmode();
+        delay_us(113); //Wait for calibration to stabilize
+        rf_tx_fast_settle_get_cal_val(tx_settle_us, f_chn, fs_cv);
 
-    for (unsigned char chn = 0; chn <= 80; chn++) {
-        rf_set_chn(chn);
-        rf_start_stx(ble_tx_packet, rf_stimer_get_tick());
-
-        while (!(rf_get_irq_status(FLD_RF_IRQ_TX)))
-            ;
-        rf_clr_irq_status(FLD_RF_IRQ_TX);
-        rf_tx_fast_settle_get_cal_val(tx_settle_us, chn, fs_cv);
-
-        rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
+#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    rf_set_tx_settle_time(113);        //adjust TX settle time
+
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn+=10) {
+        rf_set_chn(f_chn);
+        rf_set_txmode();
+        delay_us(113); //Wait for calibration to stabilize
+        rf_tx_fast_settle_get_cal_val(tx_settle_us, f_chn, fs_cv);
+
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+#endif
 
     //rx
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
     rf_set_rx_settle_time(85); //adjust RX settle time
-
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
-    rf_start_srx(rf_stimer_get_tick());
+    rf_set_rxmode();
     delay_us(85); //Wait for the rx packetization action to complete
     rf_rx_fast_settle_get_cal_val(rx_settle_us, 0, fs_cv);
-    while (rf_receiving_flag())
-        ;
-    rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
-    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
-    rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
-    rf_clr_irq_status(FLD_RF_IRQ_ALL);
-    for (unsigned char chn = 4; chn <= 80; chn += 10) {
-        rf_set_chn(chn);
-        rf_start_srx(rf_stimer_get_tick());
+#elif defined(MCU_CORE_TL721X)
+    rf_set_rx_settle_time(85); //adjust RX settle time
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_set_chn(f_chn);
+        rf_set_rxmode();
         delay_us(85); //Wait for the rx packetization action to complete
+        rf_rx_fast_settle_get_cal_val(rx_settle_us, f_chn, fs_cv);
 
-        rf_rx_fast_settle_get_cal_val(rx_settle_us, chn, fs_cv);
-        while (rf_receiving_flag())
-            ;
-        rf_set_tx_rx_off_auto_mode(); //STOP_RF_STATE_MACHINE;
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-    #endif
+#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+    rf_set_rx_settle_time(93); //adjust RX settle time
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_set_chn(f_chn);
+        rf_set_rxmode();
+        delay_us(93); //Wait for the rx packetization action to complete
+        rf_rx_fast_settle_get_cal_val(rx_settle_us, f_chn, fs_cv);
+
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+#endif
 }
 
 /**
@@ -271,17 +320,27 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
 void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t *fs_cv)
 {
     g_fast_settle_cal_val_ptr = fs_cv;
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
-    for (unsigned char chn = 4; chn <= 80; chn += 10) {
-        rf_tx_fast_settle_set_cal_val(tx_settle_us, chn, fs_cv);
-    }
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
+    rf_tx_fast_settle_set_cal_val(tx_settle_us, 0, fs_cv);
     rf_rx_fast_settle_set_cal_val(rx_settle_us, 0, fs_cv);
-    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
-    for (unsigned char chn = 4; chn <= 80; chn += 10) {
-        rf_tx_fast_settle_set_cal_val(tx_settle_us, chn, fs_cv);
-        rf_rx_fast_settle_set_cal_val(rx_settle_us, chn, fs_cv);
+#elif defined(MCU_CORE_TL721X)
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
+        rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
     }
-    #endif
+    rf_cali_linear_fit(fs_cv);
+#elif defined(MCU_CORE_TL321X)
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
+        rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
+    }
+#elif defined(MCU_CORE_TL322X)
+    for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
+        rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
+        rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
+    }
+    rf_cali_linear_fit(fs_cv);
+#endif
 }
 
 #endif

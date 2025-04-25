@@ -21,10 +21,10 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
-#define QDEC_CHA GPIO_PA2
-#define QDEC_CHB GPIO_PA3
+#define QDEC_CHA GPIO_PB6
+#define QDEC_CHB GPIO_PB7
 
 volatile signed int   total_count;
 volatile signed char  qdec_count = 0;
@@ -60,11 +60,7 @@ void user_init(void)
 void main_loop(void)
 {
     qdec_count = qdec_get_count_value();
-    if ((qdec_count >> 7) == 0x01) {
-        total_count -= (pol - qdec_count);
-    } else {
-        total_count += qdec_count;
-    }
+    total_count += qdec_count;
     printf("  \n"); // caution: The first byte will be error
     printf("total_count: %d \t", total_count);
     printf("qdec_count: %d \n", qdec_count);

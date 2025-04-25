@@ -28,7 +28,6 @@
 extern "C"
 {
 #endif
-#include "driver.h"
 #include "common.h"
 
     unsigned int  SKE_LP_CCM_all_Test(void);

@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 #if (!defined(MCU_CORE_TL7518) && (RF_MODE == RF_ANT))
 
 
@@ -208,7 +208,7 @@ void main_loop(void)
     ant_tx_packet[0]            = rf_tx_dma_len & 0xff;
 
     rf_set_txmode();
-    delay_us(85); //Wait for calibration to stabilize
+    delay_us(113); //Wait for calibration to stabilize
 
     while (1) {
         rf_tx_pkt(ant_tx_packet);
@@ -224,7 +224,13 @@ void main_loop(void)
             #if (!RF_RX_IRQ_EN)
 
     rf_set_rxmode();
+                #if (defined(MCU_CORE_TL751X))
+    delay_us(45); //Wait for calibration to stabilize
+                #elif (defined(MCU_CORE_TL321X))
+    delay_us(93); //Wait for calibration to stabilize
+                #else
     delay_us(85); //Wait for calibration to stabilize
+                #endif
     while (1) {
         if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
             if (rf_ant_packet_crc_ok(rx_packet)) {

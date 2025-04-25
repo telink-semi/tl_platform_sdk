@@ -21,14 +21,14 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "app_config.h"
+#include "common.h"
 
 #if (SET_PWM_MODE == PWM_COUNT)
 
     #if defined(MCU_CORE_B91)
         #define PWM_PIN (PWM_PWM0_PB4)
         #define PWM_ID  (get_pwmid(PWM_PIN))
-    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB4
         #define PWM_FUNC PWM0
@@ -40,7 +40,7 @@
 
     #elif defined(MCU_CORE_TL751X)
         #define PWM_ID   PWM0_ID
-        #define PWM_PIN  GPIO_FC_PA1
+        #define PWM_PIN  GPIO_FC_PB5
         #define PWM_FUNC PWM0
     #endif
     /*
