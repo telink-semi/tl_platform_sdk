@@ -31,7 +31,7 @@
 /********************************************************************************************************
  *                                          internal
  *******************************************************************************************************/
-//#define INTERNAL_SIMULATION_DEBUG
+
 /********************************************************************************************************
  *              This is currently included in the H file for compatibility with other SDKs.
  *******************************************************************************************************/
@@ -253,80 +253,80 @@ _always_inline void sys_reset_all(void)
  * @param[in]   voltage - avdd1 setting gear.
  * @return      none.
  */
-static inline void pm_set_avdd1(pm_avdd1_voltage_e voltage)
+static _always_inline void pm_set_avdd1(pm_avdd1_voltage_e voltage)
 {
     analog_write_reg8(0x04, (analog_read_reg8(0x04) & 0xf8) | voltage);
 }
 
 /**
- * @brief       This function serves to set AVDD2.
+ * @brief       This function serves to set AVDD2 voltage.
  * @param[in]   voltage - avdd2 setting gear.
  * @return      none.
  */
-static inline void pm_set_avdd2(pm_avdd2_ref_e ref, pm_avdd2_voltage_e voltage)
+static _always_inline void pm_set_avdd2(pm_avdd2_ref_e ref, pm_avdd2_voltage_e voltage)
 {
     analog_write_reg8(0x04, (analog_read_reg8(0x04) & 0x0f) | (ref << 4));
     analog_write_reg8(0x22, (analog_read_reg8(0x22) & 0xf8) | voltage);
 }
 
 /**
- * @brief       This function serves to set DVDD1.
+ * @brief       This function serves to set DVDD1 voltage.
  * @param[in]   voltage - dvdd1 setting gear.
  * @return      none.
  */
-static inline void pm_set_dvdd1(pm_dvdd1_voltage_e voltage)
+static _always_inline void pm_set_dvdd1(pm_dvdd1_voltage_e voltage)
 {
     analog_write_reg8(0x22, (analog_read_reg8(0x22) & 0x8f) | (voltage << 4));
 }
 
 /**
- * @brief       This function serves to set DVDD2.
+ * @brief       This function serves to set DVDD2 voltage.
  * @param[in]   voltage - dvdd2 setting gear.
  * @return      none.
  */
-static inline void pm_set_dvdd2(pm_dvdd2_voltage_e voltage)
+static _always_inline void pm_set_dvdd2(pm_dvdd2_voltage_e voltage)
 {
     analog_write_reg8(0x21, (analog_read_reg8(0x21) & 0xf8) | voltage);
 }
 
 /**
- * @brief       This function serves to set BK1.
+ * @brief       This function serves to set BK1 voltage.
  * @param[in]   v_trim - bk1 trim gear.
  * @param[in]   v_adj  - bk1 adj gear.
  * @return      none.
  */
-static inline void pm_set_bk1(pm_bk1_trim_voltage_e v_trim, pm_bk1_adj_voltage_e v_adj)
+static _always_inline void pm_set_bk1(pm_bk1_trim_voltage_e v_trim, pm_bk1_adj_voltage_e v_adj)
 {
     analog_write_reg8(0xb6, (analog_read_reg8(0xb6) & 0x8f) | v_trim);//aon_regb6<6:4>-trim_bk1_vddh<2:0>
     analog_write_reg8(0xb0, (analog_read_reg8(0xb0) & 0xf8) | v_adj);//aon_regb0<2:0>-adjust_bk1_vddh<2:0>
 }
 
 /**
- * @brief       This function serves to set BK2.
+ * @brief       This function serves to set BK2 voltage.
  * @param[in]   voltage - bk2 setting gear.
  * @return      none.
  */
-static inline void pm_set_bk2(pm_bk2_3_4_voltage_e voltage)
+static _always_inline void pm_set_bk2(pm_bk2_3_4_voltage_e voltage)
 {
     analog_write_reg8(0xb1, (analog_read_reg8(0xb1) & 0xc0) | voltage);
 }
 
 /**
- * @brief       This function serves to set BK3.
+ * @brief       This function serves to set BK3 voltage.
  * @param[in]   voltage - bk3 setting gear.
  * @return      none.
  */
-static inline void pm_set_bk3(pm_bk2_3_4_voltage_e voltage)
+static _always_inline void pm_set_bk3(pm_bk2_3_4_voltage_e voltage)
 {
     analog_write_reg8(0xb2, (analog_read_reg8(0xb2) & 0xc0) | voltage);
 }
 
 /**
- * @brief       This function serves to set BK4.
+ * @brief       This function serves to set BK4 voltage.
  * @param[in]   voltage - bk4 setting gear.
  * @return      none.
  */
-static inline void pm_set_bk4(pm_bk2_3_4_voltage_e voltage)
+static _always_inline void pm_set_bk4(pm_bk2_3_4_voltage_e voltage)
 {
     analog_write_reg8(0xb3, (analog_read_reg8(0xb3) & 0xc0) | voltage);
 }
@@ -350,8 +350,8 @@ static _always_inline void pm_set_ret_ldo_voltage(pm_ret_ldo_trim_e ret_ldo_trim
 static _always_inline void pm_set_delay_cycle(unsigned char xtal_delay, unsigned char r_delay)
 {
     //(n):  if timer wake up : (n*2) 32k cycle; else pad wake up: (n*2-1) ~ (n*2)32k cycle
-    analog_write_reg8(0x3d, xtal_delay);
-    analog_write_reg8(0x3e, r_delay);
+    analog_write_reg8(areg_aon_0x3d, xtal_delay);
+    analog_write_reg8(areg_aon_0x3e, r_delay);
 }
 
 /**
@@ -414,13 +414,13 @@ static _always_inline void pm_24mrc_power_down_if_unused(void)
 }
 
 /**
- * @brief       This function servers to powen on bbpll to audio clock lock.
+ * @brief       This function servers to power up BBPLL.
  * @return      none.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_bbpll_power_up(void);
 
 /**
- * @brief       This function servers to powen down bbpll to audio clock lock.
+ * @brief       This function servers to power down BBPLL.
  * @return      none.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_bbpll_power_down(void);
@@ -430,12 +430,6 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_bbpll_power_down(void);
  * @return      none.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_wait_bbpll_done(void);
-
-/**
- * @brief       This function servers to wait bbpll to audio clock lock.
- * @return      none.
- */
-_attribute_ram_code_sec_optimize_o2_noinline_ void pm_wait_audio_pll_done(void);
 
 /**
  * @brief       This function servers to powen on bbpll to audio clock lock.
@@ -448,6 +442,12 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_audio_pll_power_up(void);
  * @return      none.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_audio_pll_power_down(void);
+
+/**
+ * @brief       This function servers to wait bbpll to audio clock lock.
+ * @return      none.
+ */
+_attribute_ram_code_sec_optimize_o2_noinline_ void pm_wait_audio_pll_done(void);
 
 /**
  * @brief       This function is used to determine the stability of the crystal oscillator.
@@ -476,13 +476,11 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_wait_xtal_ready(unsigned c
 //  */
 // _attribute_ram_code_sec_optimize_o2_noinline_ void pm_power_supply_config(pm_power_cfg_e power_cfg);
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief       this function serves to clear all irq status.
  * @return      Indicates whether clearing irq status was successful.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ unsigned char pm_clr_all_irq_status(void);
-#endif
 
 /**
  * @brief       This function serves to recover system timer.

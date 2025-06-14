@@ -24,7 +24,11 @@
 #include "usbd_hid.h"
 
 #ifndef USBD_HID_INTERFACE_NUM
-    #define USBD_HID_INTERFACE_NUM 1 /* default 1 hid interface */
+    #define USBD_HID_INTERFACE_NUM 2 /* default 2 hid interface */
+#endif
+
+#ifndef USB_HID_REQUEST_MAX_SIZE
+    #define USB_HID_REQUEST_MAX_SIZE 64 /* default 64 bytes */
 #endif
 
 typedef struct usbd_hid
@@ -32,7 +36,7 @@ typedef struct usbd_hid
     unsigned char idle_rate;
     unsigned char protocol_mode;
     unsigned char report;
-    unsigned char reg_data[8];
+    unsigned char req_data[USB_HID_REQUEST_MAX_SIZE];
 } usbd_hid_interface_t;
 
 static usbd_hid_interface_t usbd_hid[USBD_HID_INTERFACE_NUM];
@@ -181,9 +185,9 @@ unsigned char usbd_hid_interface_request_handler(unsigned char bus, usb_control_
         {
             if (setup_stage) {
                 /* setup stage. */
-                usbd_ep_read(bus, 0, usbd_hid[hid_itf].reg_data, setup->wLength);
+                usbd_ep_read(bus, 0, usbd_hid[hid_itf].req_data, setup->wLength);
             } else {
-                usbd_hid_set_report(bus, hid_itf, U16_LOW_BYTE(setup->wValue), U16_HIGH_BYTE(setup->wValue), usbd_hid[hid_itf].reg_data, setup->wLength);
+                usbd_hid_set_report(bus, hid_itf, U16_LOW_BYTE(setup->wValue), U16_HIGH_BYTE(setup->wValue), usbd_hid[hid_itf].req_data, setup->wLength);
             }
             break;
         }

@@ -144,8 +144,7 @@ typedef enum
 
 /**
  * @brief   Power type for different application
- * @note    Chip version A0 don't support DCDC_1P25_LDO_1P8 mode, only A1 can use.
- *          Chip version A0/A1 don't support DCDC_1P25_DCDC_1P8 mode, only A2 can use.
+ * @note    Chip version A0 don't support DCDC_1P25_LDO_1P8 mode.
  */
 typedef enum
 {

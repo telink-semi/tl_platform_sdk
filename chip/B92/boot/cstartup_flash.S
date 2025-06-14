@@ -87,7 +87,7 @@
     .equ __DRAM_1_EN,   1
     .equ __DRAM_2_EN,   1
     .equ __DRAM_DIS,    0
-#else
+#elif (SRAM_SIZE == SRAM_128K)
     .equ __IRAM_2_EN,   0
     .equ __DRAM_1_EN,   0
     .equ __DRAM_2_EN,   0
@@ -429,6 +429,12 @@ _ISTART:
     la     gp, __global_pointer$
     .option pop
 
+#if DP_THROUGH_SWIRE_DIS
+    lui     t0, 0x80100
+    addi    t0 , t0 , 0x700
+    li      t1, 0x00
+    sb      t1, 0x501(t0)  //0x80100c01 -> 0x00  <7>: 0 swire_usb_dis 
+#endif
     /* Initialize stack pointer */
     la     t0, _STACK_TOP
     mv     sp, t0

@@ -138,12 +138,14 @@ static void adc_set_tsample_cycle(adc_sample_chn_e chn, adc_sample_cycle_e sampl
     case ADC_M_CHANNEL:
         reg_adc_tsamp = ((reg_adc_tsamp & (~FLD_M_TSAMP)) | sample_cycle);
         break;
+#if(COMPATIBLE_WITH_TL321X_AND_TL323X == 0)
     case ADC_L_CHANNEL:
         reg_adc_tsamp = ((reg_adc_tsamp & (~FLD_L_TSAMP)) | (sample_cycle << 4));
         break;
     case ADC_R_CHANNEL:
         reg_adc_r_tsamp = ((reg_adc_r_tsamp & (~FLD_R_TSAMP)) | sample_cycle);
         break;
+#endif
     default:
         break;
     }
@@ -315,11 +317,14 @@ static void adc_set_ref_voltage(adc_sample_chn_e chn, adc_ref_vol_e v_ref)
         //Vref buffer bias current trimming:        150%
         //Comparator preamp bias current trimming:  100%
         analog_write_reg8(areg_ain_scale, (analog_read_reg8(areg_ain_scale) & (0xC0)) | 0x3d);
-    } else if (v_ref == ADC_VREF_0P9V) {
+    }
+#if(COMPATIBLE_WITH_TL321X_AND_TL323X == 0)
+    else if (v_ref == ADC_VREF_0P9V) {
         //Vref buffer bias current trimming:        100%
         //Comparator preamp bias current trimming:  100%
         analog_write_reg8(areg_ain_scale, (analog_read_reg8(areg_ain_scale) & (0xC0)) | 0x15);
     }
+#endif
 }
 
 /**
@@ -450,7 +455,7 @@ void adc_gpio_sample_init(adc_sample_chn_e chn, adc_gpio_cfg_t cfg)
     g_adc_vref[chn]        = g_adc_gpio_calib_vref;        //set gpio sample calib vref
     g_adc_vref_offset[chn] = g_adc_gpio_calib_vref_offset; //set adc_vref_offset as adc_gpio_calib_vref_offset
 }
-
+#if(COMPATIBLE_WITH_TL321X_AND_TL323X == 0)
 /**
  * @brief This function is used to initialize the ADC for vbat sampling.
  * @param[in]  chn -structure for configuring ADC channel.
@@ -479,7 +484,7 @@ void adc_vbat_sample_init(adc_sample_chn_e chn)
     g_adc_vref[chn]        = g_adc_vbat_calib_vref;        //set vbat sample calib vref
     g_adc_vref_offset[chn] = g_adc_vbat_calib_vref_offset; //set g_adc_vref_offset as g_adc_vbat_calib_vref_offset
 }
-
+#endif
 /**
  * @brief  This function is used to initialize the ADC for gpio sampling to indirectly sample the vbat voltage.
  * @param[in]  chn -the channel to be configured.
@@ -739,4 +744,14 @@ void adc_stop_sample_nodma(void)
 {
     adc_all_chn_data_to_fifo_dis();
     adc_clr_rx_fifo_cnt();
+}
+
+/**
+ * @brief     This function serves to get adc DMA sample status.
+ * @return      0: the sample is in progress.
+ *              !0: the sample is finished.
+ */
+unsigned char adc_get_sample_status_dma(void)
+{
+    return (dma_get_tc_irq_status(1 << adc_dma_chn));
 }

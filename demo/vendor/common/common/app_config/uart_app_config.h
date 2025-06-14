@@ -112,6 +112,39 @@ extern "C"
     #define UART3_RX_PIN  GPIO_FC_PC5
     #define UART3_CTS_PIN GPIO_FC_PC6
     #define UART3_RTS_PIN GPIO_FC_PC7
+#elif defined(MCU_CORE_TL753X)
+/*
+ * To prevent leakage,in gpio_init(), all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS:
+ * before using the corresponding io, need to cancel the pull-down or redefine the function as required based on the application scenario.
+ */
+#define PULL_WAKEUP_SRC_PC4 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PC5 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PC6 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PC7 GPIO_PIN_UP_DOWN_FLOAT
+
+    #define UART0_RTX_PIN GPIO_FC_PC5
+    #define UART0_TX_PIN  GPIO_FC_PC4
+    #define UART0_RX_PIN  GPIO_FC_PC5
+    #define UART0_CTS_PIN GPIO_FC_PC6
+    #define UART0_RTS_PIN GPIO_FC_PC7
+
+    #define UART1_RTX_PIN GPIO_FC_PC5
+    #define UART1_TX_PIN  GPIO_FC_PC4
+    #define UART1_RX_PIN  GPIO_FC_PC5
+    #define UART1_CTS_PIN GPIO_FC_PC6
+    #define UART1_RTS_PIN GPIO_FC_PC7
+
+    #define UART2_RTX_PIN GPIO_FC_PC5
+    #define UART2_TX_PIN  GPIO_FC_PC4
+    #define UART2_RX_PIN  GPIO_FC_PC5
+    #define UART2_CTS_PIN GPIO_FC_PC6
+    #define UART2_RTS_PIN GPIO_FC_PC7
+
+    #define UART3_RTX_PIN GPIO_FC_PC5
+    #define UART3_TX_PIN  GPIO_FC_PC4
+    #define UART3_RX_PIN  GPIO_FC_PC5
+    #define UART3_CTS_PIN GPIO_FC_PC6
+    #define UART3_RTS_PIN GPIO_FC_PC7
 #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
     #define UART0_RTX_PIN GPIO_FC_PC5
     #define UART0_TX_PIN  GPIO_FC_PC4
@@ -166,7 +199,7 @@ extern "C"
 #include "driver.h"
 #define UART_DMA  1 //uart use dma
 #define UART_NDMA 2 //uart not use dma
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     #define UART_DMA_LLP 3
 #endif
 #define UART_MODE       UART_NDMA

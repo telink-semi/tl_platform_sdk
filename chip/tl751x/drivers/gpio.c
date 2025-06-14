@@ -126,11 +126,11 @@ void gpio_shutdown(gpio_pin_e pin)
         reg_gpio_pa_oen |= bit;            // disable output
         reg_gpio_pa_gpio |= (bit & 0x7f);
         reg_gpio_pa_ie &= ((~bit) | 0x80); //disable input
-        // set 100K pull down
+        // set 100K pull down(except SWS)
         //A<3:0>
         analog_write_reg8(0x080, 0xaa);
         //A<7:4>
-        analog_write_reg8(0x081, 0xaa);
+        analog_write_reg8(0x081, 0x6a);//SWS set 1M pull up
         break;
     case GPIO_GROUPB:
         reg_gpio_pb_oen |= bit;
@@ -247,9 +247,9 @@ void gpio_shutdown(gpio_pin_e pin)
         analog_write_reg8(areg_gpio_pana_setting, (analog_read_reg8(areg_gpio_pana_setting) & 0xf0) | 0x0c);
         analog_write_reg8(areg_gpio_pana_out_clear, 0x03);
        
-        // set 100K pull down
+        // set 100K pull down(except SWS)
         //A<3:0>
-        analog_write_reg8(0x080, 0xaa);
+        analog_write_reg8(0x080, 0x6a);//SWS set 1M pull up
         //A<7:4>
         analog_write_reg8(0x081, 0xaa);
         //B<3:0>

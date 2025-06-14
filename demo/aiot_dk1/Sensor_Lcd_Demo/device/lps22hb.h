@@ -29,7 +29,7 @@ extern "C"
 {
 #endif
 
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 #define LPS22HB_I2C_ADDR     0xB8
 #define LPS22HB_WHO_AM_I     0x0F

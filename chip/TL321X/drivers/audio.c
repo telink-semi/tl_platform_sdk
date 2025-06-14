@@ -21,6 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#include "chip_config.h"
+#if(COMPATIBLE_WITH_TL321X_AND_TL323X == 0)
 #include "audio.h"
 #include "lib/include/clock.h"
 #include "pwm.h"
@@ -1354,3 +1356,4 @@ void audio_codec_clr_input_pop(unsigned char t_ms)
     delay_ms(t_ms);
     audio_mic_mute_dis();
 }
+#endif

@@ -1,0 +1,2809 @@
+/********************************************************************************************************
+ * @file    ske_xts_test.c
+ *
+ * @brief   This is the source file for Telink RISC-V MCU
+ *
+ * @author  Driver Group
+ * @date    2019
+ *
+ * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
+ *
+ *******************************************************************************************************/
+#include <stdio.h>
+#include "common.h"
+#include "../ske_test/app_test.h"
+
+//#include <stdio.h>
+//#include "../../crypto_include/utility.h"
+//#include "../../crypto_include/ske/ske_xts.h"
+//#include "../crypto_include/trng.h"
+
+
+//#define XTS_SPEED_TEST_BY_TIMER
+
+#ifdef XTS_SPEED_TEST_BY_TIMER
+extern unsigned int startP();
+extern unsigned int endP(unsigned char mode, unsigned int once_bytes, unsigned int round);
+#endif
+//extern unsigned int speed_get_round_by_alg(SKE_ALG alg);
+
+
+static void get_rand_(unsigned char *rand, unsigned int bytes)
+{
+#if 0
+    memset_(rand, 0x43, bytes);
+#else
+    get_rand(rand, bytes);
+#endif
+}
+
+//get random value in [1,max_number-1]
+static unsigned int ske_get_rand_number(unsigned int max_number)
+{
+    unsigned int i;
+
+    get_rand_((unsigned char *)&i, 4);
+
+    i = i % max_number;
+    if (0 == i) {
+        i = 1;
+    }
+
+    return i;
+}
+
+//XTS mode is only available for AES and SM4(block length is 128bits)
+
+#ifdef SUPPORT_SKE_MODE_XTS
+
+//extern void ske_call_manage(void);
+
+
+unsigned int ske_xts_test(SKE_ALG alg, unsigned char wordAlign, unsigned char *std_plain, unsigned int byteLen, unsigned char *key, unsigned short sp_key_idx, unsigned char *iv, unsigned char *std_cipher)
+{
+    unsigned char  key_buf[64 + 4];
+    unsigned char  iv_buf[64 + 4];
+    unsigned char  std_plain_buf[256 + 4];
+    unsigned char  std_cipher_buf[256 + 4];
+    unsigned char  cipher_buf[256 + 4];
+    unsigned char  replain_buf[256 + 4];
+    unsigned char *cipher_, *replain_, *std_plain_, *std_cipher_, *key_, *iv_;
+    unsigned int   i, j;
+    unsigned int   blocks_byteLen, remainder_byteLen;
+    unsigned int   block_byteLen, key_byteLen;
+    unsigned int   ret;
+
+    char *name[] = {"", "", "", "", "", "AES_128", "AES_192", "AES_256", "SM4"};
+
+    SKE_XTS_CTX ctx[1];
+
+    key_byteLen   = ske_lp_get_key_byte_len(alg) * 2;
+    block_byteLen = ske_lp_get_block_byte_len(alg); //16;
+
+    if (byteLen < block_byteLen) {
+        return 1;
+    }
+
+    if (byteLen & 0x0F) {
+        blocks_byteLen    = byteLen - 16 - (byteLen & 0x0F);
+        remainder_byteLen = 16 + (byteLen & 0x0F);
+    } else {
+        blocks_byteLen    = byteLen;
+        remainder_byteLen = 0;
+    }
+
+    printf("\r\n %s XTS test(wordAlign is %u, P/C=%u bytes)", name[alg], wordAlign, byteLen);
+
+    if (wordAlign) {
+        cipher_     = cipher_buf;
+        replain_    = replain_buf;
+        std_plain_  = std_plain_buf;
+        std_cipher_ = std_cipher_buf;
+        if (key) {
+            key_ = key_buf;
+        } else {
+            key_ = NULL;
+        }
+        iv_ = iv_buf;
+    } else {
+        cipher_     = cipher_buf + 1;
+        replain_    = replain_buf + 1;
+        std_plain_  = std_plain_buf + 1;
+        std_cipher_ = std_cipher_buf + 1;
+        if (key) {
+            key_ = key_buf + 1;
+        } else {
+            key_ = NULL;
+        }
+        iv_ = iv_buf + 1;
+    }
+    memcpy_(std_plain_, std_plain, byteLen);
+    memcpy_(std_cipher_, std_cipher, byteLen);
+    if (key) {
+        memcpy_(key_, key, key_byteLen);
+    }
+    memcpy_(iv_, iv, block_byteLen);
+
+    /**************** test 1: one-time style ******************/
+    #if 1
+    //ENCRYPT
+    ret = ske_lp_xts_init(ctx, alg, SKE_CRYPTO_ENCRYPT, key_, 0, iv_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts init 0 error, ret=%u", ret);
+        return 1;
+    }
+
+    ret = ske_lp_xts_update_blocks(ctx, std_plain_, cipher_, blocks_byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts encrypt 0 error, ret=%u", ret);
+        print_buf_U8(std_plain_, byteLen, "std_plain");
+        print_buf_U8(cipher_, byteLen, "cipher");
+        return 1;
+    }
+
+    if (remainder_byteLen) {
+        ret = ske_lp_xts_update_including_last_2_blocks(ctx, std_plain_ + blocks_byteLen, cipher_ + blocks_byteLen, remainder_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts encrypt remainder 0 error");
+            return 1;
+        }
+    }
+
+    ret = ske_lp_xts_final(ctx);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts final 0 error");
+        return 1;
+    }
+
+    //DECRYPT
+    ret = ske_lp_xts_init(ctx, alg, SKE_CRYPTO_DECRYPT, key_, 0, iv_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts init 1 error, ret=%u", ret);
+        return 1;
+    }
+
+    ret = ske_lp_xts_update_blocks(ctx, cipher_, replain_, blocks_byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts decrypt 1 error, ret=%u", ret);
+        print_buf_U8(std_plain_, byteLen, "std_plain");
+        print_buf_U8(cipher_, byteLen, "cipher");
+        print_buf_U8(replain_, byteLen, "replain");
+        return 1;
+    }
+
+    if (remainder_byteLen) {
+        ret = ske_lp_xts_update_including_last_2_blocks(ctx, std_cipher_ + blocks_byteLen, replain_ + blocks_byteLen, remainder_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts decrypt remainder 1 error");
+            return 1;
+        }
+    }
+
+    ret = ske_lp_xts_final(ctx);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske final 1 error");
+        return 1;
+    }
+
+    #else
+
+    //ENCRYPT
+    ret = ske_lp_xts_crypto(alg, SKE_CRYPTO_ENCRYPT, key_, sp_key_idx, iv_, std_plain_, cipher_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n encrypt 1 error, ret=%u", ret);
+        return 1;
+    }
+
+    //DECRYPT
+    ret = ske_lp_xts_crypto(alg, SKE_CRYPTO_DECRYPT, key_, sp_key_idx, iv_, cipher_, replain_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n decrypt 1 error, ret=%u", ret);
+        return 1;
+    }
+    #endif
+
+    if (memcmp_(cipher_, std_cipher_, byteLen) || memcmp_(replain_, std_plain_, byteLen)) {
+        printf("\r\n one time input test failure!!");
+        print_buf_U8(std_plain_, byteLen, "std_plain");
+        print_buf_U8(std_cipher_, byteLen, "std_cipher");
+        print_buf_U8(key_, key_byteLen, "key");
+        print_buf_U8(iv_, block_byteLen, "i");
+        print_buf_U8(cipher_, byteLen, "cipher");
+        print_buf_U8(replain_, byteLen, "replain");
+        return 1;
+    } else {
+        printf("\r\n one time input test success!!");
+    } //fflush(stdout);
+
+
+    /**************** test 2: multiple style(one block every time) ******************/
+    memset_(cipher_, 0, byteLen);
+    memset_(replain_, 0, byteLen);
+
+    //ENCRYPT
+    ret = ske_lp_xts_init(ctx, alg, SKE_CRYPTO_ENCRYPT, key_, sp_key_idx, iv_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts init 2 error");
+        return 1;
+    }
+
+    for (i = 0; i < blocks_byteLen; i += block_byteLen) {
+        ret = ske_lp_xts_update_blocks(ctx, std_plain_ + i, cipher_ + i, block_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts encrypt 2 error");
+            return 1;
+        }
+    }
+
+    if (remainder_byteLen) {
+        ret = ske_lp_xts_update_including_last_2_blocks(ctx, std_plain_ + i, cipher_ + i, remainder_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts encrypt remainder 2 error");
+            return 1;
+        }
+    }
+
+    ret = ske_lp_xts_final(ctx);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts final 2 error");
+        return 1;
+    }
+
+    //DECRYPT
+    ret = ske_lp_xts_init(ctx, alg, SKE_CRYPTO_DECRYPT, key_, sp_key_idx, iv_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts init 3 error, ret=%u", ret);
+        return 1;
+    }
+
+    for (i = 0; i < blocks_byteLen; i += block_byteLen) {
+        ret = ske_lp_xts_update_blocks(ctx, std_cipher_ + i, replain_ + i, GET_MIN_LEN(block_byteLen, byteLen - i));
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts decrypt 3 error");
+            return 1;
+        }
+    }
+
+    if (remainder_byteLen) {
+        ret = ske_lp_xts_update_including_last_2_blocks(ctx, std_cipher_ + i, replain_ + i, remainder_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts decrypt remainder 3 error");
+            return 1;
+        }
+    }
+
+    ret = ske_lp_xts_final(ctx);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske final 3 error");
+        return 1;
+    }
+
+    if (memcmp_(cipher_, std_cipher_, byteLen) || memcmp_(replain_, std_plain_, byteLen)) {
+        printf("\r\n multiple input test failure(one block every time)!!");
+        print_buf_U8(std_plain_, byteLen, "std_plain");
+        print_buf_U8(std_cipher_, byteLen, "std_cipher");
+        print_buf_U8(cipher_, byteLen, "cipher");
+        print_buf_U8(replain_, byteLen, "replain");
+        return 1;
+    } else {
+        printf("\r\n multiple input test success(one block every time)!!");
+    }
+
+
+    /**************** test 3: multiple style(random blocks every time) ******************/
+    memset_(cipher_, 0, byteLen);
+    memset_(replain_, 0, byteLen);
+
+    //ENCRYPT
+    ret = ske_lp_xts_init(ctx, alg, SKE_CRYPTO_ENCRYPT, key_, sp_key_idx, iv_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts init 5 error");
+        return 1;
+    }
+
+    i = 0;
+    while (i < blocks_byteLen) {
+        j = ske_get_rand_number(blocks_byteLen / block_byteLen);
+        j = j * block_byteLen;
+        j = GET_MIN_LEN(j, blocks_byteLen - i);
+
+        ret = ske_lp_xts_update_blocks(ctx, std_plain_ + i, cipher_ + i, j);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts encrypt 5 error");
+            return 1;
+        }
+        i += j;
+    }
+
+    if (remainder_byteLen) {
+        ret = ske_lp_xts_update_including_last_2_blocks(ctx, std_plain_ + i, cipher_ + i, remainder_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts encrypt remainder 5 error");
+            return 1;
+        }
+    }
+
+    ret = ske_lp_xts_final(ctx);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts final 5 error");
+        return 1;
+    }
+
+    //DECRYPT
+    ret = ske_lp_xts_init(ctx, alg, SKE_CRYPTO_DECRYPT, key_, sp_key_idx, iv_, byteLen);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts init 6 error");
+        return 1;
+    }
+
+    i = 0;
+    while (i < blocks_byteLen) {
+        j = ske_get_rand_number(blocks_byteLen / block_byteLen);
+        j = j * block_byteLen;
+        j = GET_MIN_LEN(j, blocks_byteLen - i);
+
+        ret = ske_lp_xts_update_blocks(ctx, cipher_ + i, replain_ + i, j);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts encrypt 6 error");
+            return 1;
+        }
+        i += j;
+    }
+
+    if (remainder_byteLen) {
+        ret = ske_lp_xts_update_including_last_2_blocks(ctx, cipher_ + i, replain_ + i, remainder_byteLen);
+        if (SKE_SUCCESS != ret) {
+            printf("\r\n ske xts decrypt remainder 6 error");
+            return 1;
+        }
+    }
+
+    ret = ske_lp_xts_final(ctx);
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n ske xts final 6 error");
+        return 1;
+    }
+
+    if (memcmp_(cipher_, std_cipher_, byteLen) || memcmp_(replain_, std_plain_, byteLen)) {
+        printf("\r\n multiple input test failure(random blocks every time)!!");
+        print_buf_U8(std_plain_, byteLen, "std_plain");
+        print_buf_U8(std_cipher_, byteLen, "std_cipher");
+        print_buf_U8(cipher_, byteLen, "cipher");
+        print_buf_U8(replain_, byteLen, "replain");
+        return 1;
+    } else {
+        printf("\r\n multiple input test success(random blocks every time)!!");
+    }
+    //*/
+    fflush(stdout);
+
+    return 0;
+}
+
+typedef struct
+{
+    SKE_ALG        alg;
+    unsigned char *std_plain;
+    unsigned int   c_bytes; //byte length of plaintext or ciphertext
+    unsigned char *key;
+    unsigned short keyid;
+    unsigned char *i;
+    unsigned char *std_cipher;
+} SKE_XTS_TEST_VECTOR;
+
+unsigned int ske_xts_test_internal(SKE_XTS_TEST_VECTOR *vector, unsigned int num)
+{
+    char        *name[] = {"", "", "", "", "", "AES_128", "AES_192", "AES_256", "SM4"};
+    unsigned int i, ret;
+    printf("\r\n\r\n  =================== %s XTS test ==================== ", name[vector[0].alg]);
+
+    for (i = 0; i < num; i++) {
+        ret = ske_xts_test(vector[i].alg, 1, (unsigned char *)vector[i].std_plain, vector[i].c_bytes, (unsigned char *)vector[i].key, vector[i].keyid, (unsigned char *)vector[i].i, (unsigned char *)vector[i].std_cipher);
+        if (ret) {
+            return 1;
+        }
+
+        ret = ske_xts_test(vector[i].alg, 0, (unsigned char *)vector[i].std_plain, vector[i].c_bytes, (unsigned char *)vector[i].key, vector[i].keyid, (unsigned char *)vector[i].i, (unsigned char *)vector[i].std_cipher);
+        if (ret) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+unsigned char std_xts_plain[] = {
+    0x81,
+    0x70,
+    0x99,
+    0x44,
+    0xE0,
+    0xCB,
+    0x2E,
+    0x1D,
+    0xB5,
+    0xB0,
+    0xA4,
+    0x77,
+    0xD1,
+    0xA8,
+    0x53,
+    0x9B,
+    0x0A,
+    0x87,
+    0x86,
+    0xE3,
+    0x4E,
+    0xAA,
+    0xED,
+    0x99,
+    0x30,
+    0x3E,
+    0xA6,
+    0x97,
+    0x55,
+    0x95,
+    0xB2,
+    0x45,
+    0x4D,
+    0x5D,
+    0x7F,
+    0x91,
+    0xEB,
+    0xBD,
+    0x4A,
+    0xCD,
+    0x72,
+    0x6C,
+    0x0E,
+    0x0E,
+    0x5E,
+    0x3E,
+    0xB5,
+    0x5E,
+    0xF6,
+    0xB1,
+    0x5A,
+    0x13,
+    0x8E,
+    0x22,
+    0x6E,
+    0xCD,
+    0x1B,
+    0x23,
+    0x5A,
+    0xB5,
+    0xBB,
+    0x52,
+    0x51,
+    0xC1,
+    0x33,
+    0x76,
+    0xB2,
+    0x64,
+    0x48,
+    0xA9,
+    0xAC,
+    0x1D,
+    0xE8,
+    0xBD,
+    0x52,
+    0x64,
+    0x8C,
+    0x0B,
+    0x5F,
+    0xFA,
+    0x94,
+    0x44,
+    0x86,
+    0x82,
+    0xE3,
+    0xCB,
+    0x4D,
+    0xE9,
+    0xCB,
+    0x8A,
+    0xE7,
+    0xF4,
+    0xBD,
+    0x41,
+    0x0E,
+    0xD5,
+    0x02,
+    0xB1,
+    0x25,
+    0x3A,
+    0xD0,
+    0x8B,
+    0xB2,
+    0x79,
+    0x69,
+    0xB5,
+    0xF0,
+    0x2B,
+    0x10,
+    0x02,
+    0x9D,
+    0x67,
+    0xD0,
+    0x7E,
+    0x18,
+    0x64,
+    0xD9,
+    0x4D,
+    0x4F,
+    0xCA,
+    0x20,
+    0x81,
+    0x51,
+    0xE2,
+    0x6F,
+    0x5F,
+    0xEE,
+    0x26, //
+    0x7B,
+    0xC6,
+    0x74,
+    0x21,
+    0x86,
+    0xC4,
+    0x2E,
+    0x28,
+    0x3A,
+    0xA5,
+    0xBA,
+    0xD5,
+    0x4A,
+    0x18,
+    0xEC,
+    0x14,
+    0x3B,
+    0xAF,
+    0x1E,
+    0x6C,
+    0x85,
+    0x7F,
+    0x32,
+    0xEC,
+    0x5D,
+    0x92,
+    0xB1,
+    0x96,
+    0xCF,
+    0x7E,
+    0x31,
+    0x13,
+    0x71,
+    0xBD,
+    0xA2,
+    0xEA,
+    0xE8,
+    0xDF,
+    0xD0,
+    0x82,
+    0xCF,
+    0xEB,
+    0x58,
+    0x3A,
+    0x41,
+    0xCF,
+    0xCE,
+    0xAA,
+    0x78,
+    0x0F,
+    0xD1,
+    0x7F,
+    0xBA,
+    0xE9,
+    0x31,
+    0xDE,
+    0xF7,
+    0x17,
+    0xB4,
+    0x5B,
+    0xB8,
+    0x6F,
+    0x15,
+    0xD6,
+    0x01,
+    0xF5,
+    0x44,
+    0xFB,
+    0xCC,
+    0xB2,
+    0x43,
+    0x5F,
+    0x80,
+    0xE8,
+    0x9D,
+    0x6F,
+    0x21,
+    0x87,
+    0x06,
+    0x37,
+    0x86,
+    0x01,
+    0xEA,
+    0x99,
+    0x15,
+    0x6E,
+    0x8A,
+    0x88,
+    0xAA,
+    0xED,
+    0x8C,
+    0xE6,
+    0x14,
+    0x2F,
+    0xB6,
+    0x65,
+    0xB6,
+    0xEE,
+    0xEB,
+    0x6F,
+    0x06,
+    0xEA,
+    0x9D,
+    0x45,
+    0xB0,
+    0x14,
+    0x04,
+    0x00,
+    0x59,
+    0xB4,
+    0x26,
+    0x77,
+    0x32,
+    0xD7,
+    0x33,
+    0xB2,
+    0xF0,
+    0x92,
+    0xE8,
+    0x5E,
+    0x40,
+    0xF2,
+    0x21,
+    0x04,
+    0xC4,
+    0xF0,
+    0x9C,
+    0x80,
+};
+unsigned char std_xts_key[64] = {
+    0xE0,
+    0x70,
+    0x99,
+    0xF1,
+    0xBF,
+    0xAF,
+    0xFD,
+    0x7F,
+    0x24,
+    0x0C,
+    0xD7,
+    0x90,
+    0xCA,
+    0x4F,
+    0xE1,
+    0x34,
+    0xB4,
+    0x42,
+    0x60,
+    0xE1,
+    0x56,
+    0x8D,
+    0x9E,
+    0x85,
+    0x0A,
+    0x0C,
+    0x95,
+    0x37,
+    0x44,
+    0x02,
+    0xDE,
+    0x28,
+    0xF0,
+    0x79,
+    0xA5,
+    0x85,
+    0xEC,
+    0x84,
+    0x36,
+    0x90,
+    0xC8,
+    0x15,
+    0x0A,
+    0x31,
+    0x47,
+    0x24,
+    0xE4,
+    0x88,
+    0x5F,
+    0xD0,
+    0x3B,
+    0x37,
+    0x9D,
+    0xF7,
+    0x0C,
+    0x8E,
+    0x4C,
+    0x4F,
+    0x77,
+    0x26,
+    0x17,
+    0x4F,
+    0x75,
+    0xF7,
+};
+unsigned char std_xts_i[] = {
+    0xC7,
+    0x2B,
+    0x65,
+    0x91,
+    0xA0,
+    0xD7,
+    0xDE,
+    0x8F,
+    0x6B,
+    0x40,
+    0x72,
+    0x33,
+    0xAD,
+    0x35,
+    0x81,
+    0xD6};
+
+
+    #ifdef SUPPORT_SKE_AES_128
+unsigned char std_aes128_xts_256_cipher[256] = {
+    0x15,
+    0xB9,
+    0x63,
+    0x88,
+    0x26,
+    0x0B,
+    0x79,
+    0x7A,
+    0xEE,
+    0xBD,
+    0xD8,
+    0xDC,
+    0x30,
+    0xA3,
+    0x9B,
+    0x49,
+    0xCC,
+    0xA5,
+    0xF7,
+    0x21,
+    0x2D,
+    0x33,
+    0x70,
+    0xA1,
+    0x92,
+    0xD2,
+    0x5C,
+    0x62,
+    0x36,
+    0x51,
+    0xD9,
+    0xB5,
+    0x52,
+    0x49,
+    0xD7,
+    0x36,
+    0x6C,
+    0x18,
+    0x62,
+    0x1C,
+    0x3D,
+    0x76,
+    0x1A,
+    0x85,
+    0x2E,
+    0xA3,
+    0x5D,
+    0x73,
+    0xF3,
+    0xF5,
+    0x98,
+    0xF2,
+    0xD9,
+    0xBC,
+    0x48,
+    0x0C,
+    0x1C,
+    0x64,
+    0xD8,
+    0x8C,
+    0x30,
+    0xAA,
+    0x06,
+    0xFF,
+    0x01,
+    0xB6,
+    0xF4,
+    0xA2,
+    0x03,
+    0x38,
+    0xF3,
+    0xCE,
+    0xDB,
+    0xF8,
+    0x90,
+    0x41,
+    0x1C,
+    0x7B,
+    0xEA,
+    0xC8,
+    0x22,
+    0x87,
+    0x2D,
+    0x15,
+    0x40,
+    0x59,
+    0xFE,
+    0x2C,
+    0x39,
+    0x4E,
+    0x99,
+    0x78,
+    0x3C,
+    0x8B,
+    0x17,
+    0x52,
+    0x1F,
+    0xE7,
+    0x2E,
+    0x17,
+    0xF4,
+    0xD8,
+    0xC1,
+    0x5F,
+    0x97,
+    0x2E,
+    0x66,
+    0x7B,
+    0xAE,
+    0xEF,
+    0xCB,
+    0x97,
+    0xCF,
+    0xBC,
+    0xF6,
+    0xE8,
+    0xC0,
+    0x96,
+    0xD8,
+    0x5C,
+    0x08,
+    0xA4,
+    0x40,
+    0xF7,
+    0xC2,
+    0x8C,
+    0x28,
+    0xAB,
+    0x0A,
+    0x18,
+    0x24,
+    0x15,
+    0x38,
+    0xCC,
+    0xA1,
+    0xFC,
+    0x34,
+    0xA9,
+    0xCE,
+    0x55,
+    0x51,
+    0xD6,
+    0x15,
+    0x12,
+    0x80,
+    0x4E,
+    0x8D,
+    0x09,
+    0x1C,
+    0x35,
+    0x65,
+    0xEB,
+    0x60,
+    0xFF,
+    0xE2,
+    0xA8,
+    0x29,
+    0x68,
+    0x9C,
+    0x6B,
+    0xFD,
+    0xAA,
+    0x78,
+    0x21,
+    0xE0,
+    0xCB,
+    0xAF,
+    0x2B,
+    0x6D,
+    0x68,
+    0x31,
+    0x07,
+    0xD7,
+    0x0B,
+    0xC3,
+    0x46,
+    0x11,
+    0xA4,
+    0x5A,
+    0x6E,
+    0x0C,
+    0x44,
+    0xB3,
+    0x88,
+    0xC9,
+    0x93,
+    0x64,
+    0xF3,
+    0x18,
+    0x55,
+    0x7B,
+    0x2B,
+    0x81,
+    0x27,
+    0x3D,
+    0x2D,
+    0x46,
+    0x5C,
+    0x88,
+    0x8D,
+    0x46,
+    0x5C,
+    0xD4,
+    0xA8,
+    0xEF,
+    0x67,
+    0x3C,
+    0xDB,
+    0xA6,
+    0x9E,
+    0x1D,
+    0x20,
+    0x30,
+    0xAF,
+    0xD1,
+    0x17,
+    0x7E,
+    0xD2,
+    0x0A,
+    0xF6,
+    0xE0,
+    0x1B,
+    0x13,
+    0xCC,
+    0x73,
+    0xA8,
+    0x6A,
+    0x5C,
+    0x98,
+    0x3F,
+    0x0E,
+    0x6B,
+    0x01,
+    0xD9,
+    0x42,
+    0x75,
+    0xB2,
+    0xE5,
+    0xF7,
+    0x7C,
+    0xCB,
+    0x15,
+    0x25,
+    0x02,
+    0x44,
+    0xCD,
+    0x8A,
+    0x87,
+    0x36,
+    0xC0,
+    0x81,
+    0xA3,
+    0xC4,
+    0x5A,
+    0xB4,
+    0xA7,
+};
+
+unsigned char std_aes128_xts_120_cipher[120] = {
+    0x15,
+    0xB9,
+    0x63,
+    0x88,
+    0x26,
+    0x0B,
+    0x79,
+    0x7A,
+    0xEE,
+    0xBD,
+    0xD8,
+    0xDC,
+    0x30,
+    0xA3,
+    0x9B,
+    0x49,
+    0xCC,
+    0xA5,
+    0xF7,
+    0x21,
+    0x2D,
+    0x33,
+    0x70,
+    0xA1,
+    0x92,
+    0xD2,
+    0x5C,
+    0x62,
+    0x36,
+    0x51,
+    0xD9,
+    0xB5,
+    0x52,
+    0x49,
+    0xD7,
+    0x36,
+    0x6C,
+    0x18,
+    0x62,
+    0x1C,
+    0x3D,
+    0x76,
+    0x1A,
+    0x85,
+    0x2E,
+    0xA3,
+    0x5D,
+    0x73,
+    0xF3,
+    0xF5,
+    0x98,
+    0xF2,
+    0xD9,
+    0xBC,
+    0x48,
+    0x0C,
+    0x1C,
+    0x64,
+    0xD8,
+    0x8C,
+    0x30,
+    0xAA,
+    0x06,
+    0xFF,
+    0x01,
+    0xB6,
+    0xF4,
+    0xA2,
+    0x03,
+    0x38,
+    0xF3,
+    0xCE,
+    0xDB,
+    0xF8,
+    0x90,
+    0x41,
+    0x1C,
+    0x7B,
+    0xEA,
+    0xC8,
+    0x22,
+    0x87,
+    0x2D,
+    0x15,
+    0x40,
+    0x59,
+    0xFE,
+    0x2C,
+    0x39,
+    0x4E,
+    0x99,
+    0x78,
+    0x3C,
+    0x8B,
+    0x17,
+    0x52,
+    0x78,
+    0x94,
+    0x58,
+    0xC2,
+    0x15,
+    0x65,
+    0xD1,
+    0xFC,
+    0x47,
+    0xB9,
+    0xA9,
+    0x6A,
+    0x27,
+    0x29,
+    0xB9,
+    0x45,
+    0x1F,
+    0xE7,
+    0x2E,
+    0x17,
+    0xF4,
+    0xD8,
+    0xC1,
+    0x5F,
+};
+
+unsigned char std_aes128_xts_65_cipher[65] = {
+    0x15,
+    0xB9,
+    0x63,
+    0x88,
+    0x26,
+    0x0B,
+    0x79,
+    0x7A,
+    0xEE,
+    0xBD,
+    0xD8,
+    0xDC,
+    0x30,
+    0xA3,
+    0x9B,
+    0x49,
+    0xCC,
+    0xA5,
+    0xF7,
+    0x21,
+    0x2D,
+    0x33,
+    0x70,
+    0xA1,
+    0x92,
+    0xD2,
+    0x5C,
+    0x62,
+    0x36,
+    0x51,
+    0xD9,
+    0xB5,
+    0x52,
+    0x49,
+    0xD7,
+    0x36,
+    0x6C,
+    0x18,
+    0x62,
+    0x1C,
+    0x3D,
+    0x76,
+    0x1A,
+    0x85,
+    0x2E,
+    0xA3,
+    0x5D,
+    0x73,
+    0xB5,
+    0xB2,
+    0x93,
+    0x0C,
+    0x00,
+    0xD9,
+    0xCF,
+    0xC8,
+    0x29,
+    0x39,
+    0xF7,
+    0xC1,
+    0x79,
+    0xD1,
+    0x18,
+    0xD6,
+    0xF3,
+};
+
+unsigned char std_aes128_xts_17_cipher[17] = {
+    0x8E,
+    0x9B,
+    0x62,
+    0xF1,
+    0xB7,
+    0x0E,
+    0x17,
+    0xFE,
+    0x7F,
+    0xE1,
+    0x76,
+    0x53,
+    0x23,
+    0x85,
+    0x0C,
+    0xB8,
+    0x15,
+};
+
+unsigned int aes_128_xts_test(void)
+{
+    SKE_XTS_TEST_VECTOR vector[5] = {
+        {SKE_ALG_AES_128, std_xts_plain, 256, std_xts_key, 0, std_xts_i, std_aes128_xts_256_cipher},
+        {SKE_ALG_AES_128, std_xts_plain, 120, std_xts_key, 0, std_xts_i, std_aes128_xts_120_cipher},
+        {SKE_ALG_AES_128, std_xts_plain, 65,  std_xts_key, 0, std_xts_i, std_aes128_xts_65_cipher },
+        {SKE_ALG_AES_128, std_xts_plain, 17,  std_xts_key, 0, std_xts_i, std_aes128_xts_17_cipher },
+        {SKE_ALG_AES_128, std_xts_plain, 16,  std_xts_key, 0, std_xts_i, std_aes128_xts_256_cipher},
+    };
+
+    return ske_xts_test_internal(vector, 5);
+}
+    #endif
+
+
+    #ifdef SUPPORT_SKE_AES_192
+unsigned char std_aes192_xts_256_cipher[256] = {
+    0xEA,
+    0xCC,
+    0x76,
+    0xA5,
+    0x82,
+    0xDF,
+    0x86,
+    0x99,
+    0x27,
+    0xE1,
+    0x1C,
+    0x48,
+    0x6B,
+    0x7C,
+    0xA1,
+    0xFB,
+    0x40,
+    0x5E,
+    0x76,
+    0x75,
+    0xBA,
+    0x40,
+    0xC3,
+    0xF4,
+    0x59,
+    0xEC,
+    0x45,
+    0xD4,
+    0x13,
+    0x10,
+    0x2B,
+    0xE0,
+    0xB8,
+    0x63,
+    0x39,
+    0x45,
+    0xC8,
+    0xD3,
+    0x80,
+    0x7D,
+    0x9D,
+    0x06,
+    0xEC,
+    0xC6,
+    0xEA,
+    0xDF,
+    0x6F,
+    0xCC,
+    0x2A,
+    0xEC,
+    0xB3,
+    0xCB,
+    0x6B,
+    0x54,
+    0xC3,
+    0x37,
+    0x50,
+    0x25,
+    0xF9,
+    0xBD,
+    0xD1,
+    0x61,
+    0x9B,
+    0xFF,
+    0x57,
+    0x74,
+    0x7E,
+    0x1D,
+    0x0A,
+    0x60,
+    0x5F,
+    0x5B,
+    0xE0,
+    0x4D,
+    0x64,
+    0x88,
+    0xD4,
+    0x81,
+    0x0E,
+    0x7A,
+    0xBF,
+    0x4B,
+    0x9C,
+    0x69,
+    0x0B,
+    0x7E,
+    0x80,
+    0xA2,
+    0x2E,
+    0xEB,
+    0x19,
+    0x81,
+    0x68,
+    0xCC,
+    0xF6,
+    0x28,
+    0x7C,
+    0xCA,
+    0x09,
+    0x33,
+    0xFD,
+    0xEC,
+    0x69,
+    0x95,
+    0x7F,
+    0x6D,
+    0x7A,
+    0x49,
+    0x0F,
+    0x2E,
+    0x56,
+    0x1D,
+    0x19,
+    0xBC,
+    0x98,
+    0x0B,
+    0x37,
+    0xA7,
+    0x75,
+    0xDB,
+    0x43,
+    0xCE,
+    0x01,
+    0x02,
+    0x1D,
+    0x38,
+    0xE3,
+    0x24,
+    0x87,
+    0x1C,
+    0x76,
+    0x89,
+    0x7D,
+    0x6E,
+    0xCA,
+    0xA5,
+    0xA0,
+    0xFE,
+    0xF8,
+    0x83,
+    0x84,
+    0x9B,
+    0xC9,
+    0xD2,
+    0x01,
+    0x4B,
+    0x62,
+    0xFD,
+    0x18,
+    0x63,
+    0x39,
+    0x46,
+    0x21,
+    0x1B,
+    0xC2,
+    0xC0,
+    0x10,
+    0xC7,
+    0x57,
+    0x39,
+    0x93,
+    0x29,
+    0x33,
+    0x45,
+    0xB7,
+    0xE5,
+    0xE9,
+    0x0D,
+    0xDC,
+    0x91,
+    0xFD,
+    0xFD,
+    0x14,
+    0x25,
+    0x7D,
+    0xB4,
+    0xAB,
+    0x34,
+    0xD1,
+    0x34,
+    0x50,
+    0xD8,
+    0x96,
+    0xCD,
+    0xA8,
+    0x86,
+    0xBB,
+    0x66,
+    0x8C,
+    0xD9,
+    0xE3,
+    0xF7,
+    0x37,
+    0xFA,
+    0xD3,
+    0x98,
+    0x9C,
+    0x1B,
+    0xBC,
+    0x32,
+    0xD0,
+    0xB5,
+    0xF2,
+    0xEE,
+    0xD2,
+    0x8C,
+    0x18,
+    0x82,
+    0xFE,
+    0x8A,
+    0xA0,
+    0x4B,
+    0xAF,
+    0x71,
+    0xC0,
+    0x05,
+    0x36,
+    0x88,
+    0xF5,
+    0x9E,
+    0x66,
+    0xA4,
+    0x1B,
+    0xA2,
+    0xC4,
+    0x9C,
+    0x68,
+    0xB6,
+    0x81,
+    0x37,
+    0x08,
+    0xD7,
+    0x38,
+    0x0F,
+    0x67,
+    0xBE,
+    0x75,
+    0x77,
+    0x1A,
+    0xAF,
+    0xCB,
+    0x50,
+    0x50,
+    0x45,
+    0xA3,
+    0xEA,
+    0x10,
+    0x79,
+    0xBB,
+    0xFA,
+    0x77,
+    0x39,
+    0x6D,
+    0x79,
+    0x71,
+    0x8E,
+};
+
+unsigned char std_aes192_xts_120_cipher[120] = {
+    0xEA,
+    0xCC,
+    0x76,
+    0xA5,
+    0x82,
+    0xDF,
+    0x86,
+    0x99,
+    0x27,
+    0xE1,
+    0x1C,
+    0x48,
+    0x6B,
+    0x7C,
+    0xA1,
+    0xFB,
+    0x40,
+    0x5E,
+    0x76,
+    0x75,
+    0xBA,
+    0x40,
+    0xC3,
+    0xF4,
+    0x59,
+    0xEC,
+    0x45,
+    0xD4,
+    0x13,
+    0x10,
+    0x2B,
+    0xE0,
+    0xB8,
+    0x63,
+    0x39,
+    0x45,
+    0xC8,
+    0xD3,
+    0x80,
+    0x7D,
+    0x9D,
+    0x06,
+    0xEC,
+    0xC6,
+    0xEA,
+    0xDF,
+    0x6F,
+    0xCC,
+    0x2A,
+    0xEC,
+    0xB3,
+    0xCB,
+    0x6B,
+    0x54,
+    0xC3,
+    0x37,
+    0x50,
+    0x25,
+    0xF9,
+    0xBD,
+    0xD1,
+    0x61,
+    0x9B,
+    0xFF,
+    0x57,
+    0x74,
+    0x7E,
+    0x1D,
+    0x0A,
+    0x60,
+    0x5F,
+    0x5B,
+    0xE0,
+    0x4D,
+    0x64,
+    0x88,
+    0xD4,
+    0x81,
+    0x0E,
+    0x7A,
+    0xBF,
+    0x4B,
+    0x9C,
+    0x69,
+    0x0B,
+    0x7E,
+    0x80,
+    0xA2,
+    0x2E,
+    0xEB,
+    0x19,
+    0x81,
+    0x68,
+    0xCC,
+    0xF6,
+    0x28,
+    0x9F,
+    0x19,
+    0x4D,
+    0x4D,
+    0xC1,
+    0xFF,
+    0xEF,
+    0x40,
+    0x6E,
+    0xB4,
+    0xAE,
+    0xFF,
+    0x74,
+    0x5D,
+    0x16,
+    0x21,
+    0x7C,
+    0xCA,
+    0x09,
+    0x33,
+    0xFD,
+    0xEC,
+    0x69,
+    0x95,
+};
+
+unsigned char std_aes192_xts_65_cipher[65] = {
+    0xEA,
+    0xCC,
+    0x76,
+    0xA5,
+    0x82,
+    0xDF,
+    0x86,
+    0x99,
+    0x27,
+    0xE1,
+    0x1C,
+    0x48,
+    0x6B,
+    0x7C,
+    0xA1,
+    0xFB,
+    0x40,
+    0x5E,
+    0x76,
+    0x75,
+    0xBA,
+    0x40,
+    0xC3,
+    0xF4,
+    0x59,
+    0xEC,
+    0x45,
+    0xD4,
+    0x13,
+    0x10,
+    0x2B,
+    0xE0,
+    0xB8,
+    0x63,
+    0x39,
+    0x45,
+    0xC8,
+    0xD3,
+    0x80,
+    0x7D,
+    0x9D,
+    0x06,
+    0xEC,
+    0xC6,
+    0xEA,
+    0xDF,
+    0x6F,
+    0xCC,
+    0x00,
+    0x6C,
+    0xB9,
+    0xCC,
+    0x10,
+    0xF4,
+    0xB1,
+    0x2D,
+    0x39,
+    0x78,
+    0x54,
+    0xB2,
+    0xFF,
+    0xE1,
+    0x8B,
+    0xCC,
+    0x2A,
+};
+
+unsigned char std_aes192_xts_17_cipher[17] = {
+    0xDE,
+    0x9B,
+    0xE6,
+    0xCA,
+    0xC1,
+    0xC9,
+    0xBC,
+    0xBB,
+    0x5D,
+    0x0A,
+    0x37,
+    0x81,
+    0x6C,
+    0x43,
+    0xAC,
+    0x0C,
+    0xEA,
+};
+
+unsigned int aes_192_xts_test(void)
+{
+    SKE_XTS_TEST_VECTOR vector[5] = {
+        {SKE_ALG_AES_192, std_xts_plain, 256, std_xts_key, 0, std_xts_i, std_aes192_xts_256_cipher},
+        {SKE_ALG_AES_192, std_xts_plain, 120, std_xts_key, 0, std_xts_i, std_aes192_xts_120_cipher},
+        {SKE_ALG_AES_192, std_xts_plain, 65,  std_xts_key, 0, std_xts_i, std_aes192_xts_65_cipher },
+        {SKE_ALG_AES_192, std_xts_plain, 17,  std_xts_key, 0, std_xts_i, std_aes192_xts_17_cipher },
+        {SKE_ALG_AES_192, std_xts_plain, 16,  std_xts_key, 0, std_xts_i, std_aes192_xts_256_cipher},
+    };
+
+    return ske_xts_test_internal(vector, 5);
+}
+    #endif
+
+
+    #ifdef SUPPORT_SKE_AES_256
+unsigned char std_aes256_xts_256_cipher[256] = {
+    0x4E,
+    0x2B,
+    0xA3,
+    0xAD,
+    0xA1,
+    0xBC,
+    0x79,
+    0xAF,
+    0x26,
+    0x04,
+    0xFC,
+    0x2B,
+    0x7D,
+    0x71,
+    0xC8,
+    0xCB,
+    0x71,
+    0xFB,
+    0x82,
+    0x3E,
+    0x0A,
+    0x6B,
+    0x34,
+    0x31,
+    0x77,
+    0x37,
+    0x05,
+    0xD9,
+    0xAD,
+    0x86,
+    0x0F,
+    0x29,
+    0xFE,
+    0x7A,
+    0x65,
+    0x5A,
+    0xCD,
+    0x43,
+    0x14,
+    0xDD,
+    0x46,
+    0x74,
+    0x6C,
+    0xEF,
+    0x79,
+    0xFA,
+    0xAE,
+    0x71,
+    0x38,
+    0x8C,
+    0x42,
+    0x5F,
+    0xEF,
+    0xEF,
+    0x23,
+    0x61,
+    0x33,
+    0x79,
+    0x78,
+    0xB4,
+    0x68,
+    0xC8,
+    0x54,
+    0x99,
+    0x5A,
+    0x04,
+    0xE1,
+    0x99,
+    0x02,
+    0x3C,
+    0x15,
+    0x56,
+    0x86,
+    0x42,
+    0x2E,
+    0x92,
+    0x66,
+    0x1E,
+    0xB9,
+    0x90,
+    0x5C,
+    0xBF,
+    0x21,
+    0x4B,
+    0x56,
+    0x8D,
+    0x34,
+    0x71,
+    0x5C,
+    0x9E,
+    0x16,
+    0xDE,
+    0xE2,
+    0x99,
+    0x52,
+    0xC9,
+    0x52,
+    0xEA,
+    0xF7,
+    0x5B,
+    0x90,
+    0x6D,
+    0x20,
+    0xD8,
+    0x29,
+    0xD6,
+    0x1D,
+    0x28,
+    0xB8,
+    0x1D,
+    0xBB,
+    0x76,
+    0x93,
+    0x1D,
+    0x2C,
+    0xA7,
+    0x4C,
+    0xD0,
+    0x71,
+    0xB6,
+    0x8F,
+    0x7D,
+    0xBB,
+    0xE5,
+    0x48,
+    0xFC,
+    0x96,
+    0x6A,
+    0x91,
+    0x8D,
+    0x0B,
+    0x95,
+    0xCB,
+    0x94,
+    0xA0,
+    0x4E,
+    0xD2,
+    0x79,
+    0x5F,
+    0xA5,
+    0x3A,
+    0x98,
+    0x81,
+    0x24,
+    0xF4,
+    0x39,
+    0x43,
+    0x3B,
+    0x51,
+    0x50,
+    0xC5,
+    0x30,
+    0x1D,
+    0x95,
+    0xA4,
+    0x4F,
+    0x96,
+    0xD8,
+    0x88,
+    0xBB,
+    0x1B,
+    0x31,
+    0x7A,
+    0x3F,
+    0x7C,
+    0xE4,
+    0x16,
+    0xAC,
+    0x53,
+    0x34,
+    0xDE,
+    0x7E,
+    0xC2,
+    0xE9,
+    0x27,
+    0x1C,
+    0xAC,
+    0x50,
+    0x37,
+    0x07,
+    0xA7,
+    0x36,
+    0xAF,
+    0x6A,
+    0xB5,
+    0xFB,
+    0x88,
+    0x78,
+    0xB2,
+    0x63,
+    0xC3,
+    0xD0,
+    0x98,
+    0x3D,
+    0x17,
+    0x07,
+    0x5F,
+    0xD3,
+    0x83,
+    0x5A,
+    0xCD,
+    0x66,
+    0xA3,
+    0x5F,
+    0x02,
+    0x05,
+    0xCB,
+    0x2C,
+    0x57,
+    0x43,
+    0xD5,
+    0x21,
+    0x4F,
+    0xCC,
+    0x00,
+    0x13,
+    0x77,
+    0x17,
+    0xC9,
+    0xFE,
+    0x21,
+    0xE7,
+    0x7F,
+    0xB8,
+    0x29,
+    0x34,
+    0xDA,
+    0xE2,
+    0x8A,
+    0xE4,
+    0xA2,
+    0x4D,
+    0x84,
+    0x43,
+    0x95,
+    0x7C,
+    0x8C,
+    0x89,
+    0x59,
+    0xEC,
+    0xA0,
+    0xA2,
+    0x2A,
+    0x0E,
+    0x10,
+    0x54,
+    0xF6,
+    0x1C,
+    0xF1,
+    0x47,
+    0x75,
+    0x1E,
+    0xE1,
+    0x0C,
+    0x1C,
+    0xB7,
+};
+
+unsigned char std_aes256_xts_120_cipher[120] = {
+    0x4E,
+    0x2B,
+    0xA3,
+    0xAD,
+    0xA1,
+    0xBC,
+    0x79,
+    0xAF,
+    0x26,
+    0x04,
+    0xFC,
+    0x2B,
+    0x7D,
+    0x71,
+    0xC8,
+    0xCB,
+    0x71,
+    0xFB,
+    0x82,
+    0x3E,
+    0x0A,
+    0x6B,
+    0x34,
+    0x31,
+    0x77,
+    0x37,
+    0x05,
+    0xD9,
+    0xAD,
+    0x86,
+    0x0F,
+    0x29,
+    0xFE,
+    0x7A,
+    0x65,
+    0x5A,
+    0xCD,
+    0x43,
+    0x14,
+    0xDD,
+    0x46,
+    0x74,
+    0x6C,
+    0xEF,
+    0x79,
+    0xFA,
+    0xAE,
+    0x71,
+    0x38,
+    0x8C,
+    0x42,
+    0x5F,
+    0xEF,
+    0xEF,
+    0x23,
+    0x61,
+    0x33,
+    0x79,
+    0x78,
+    0xB4,
+    0x68,
+    0xC8,
+    0x54,
+    0x99,
+    0x5A,
+    0x04,
+    0xE1,
+    0x99,
+    0x02,
+    0x3C,
+    0x15,
+    0x56,
+    0x86,
+    0x42,
+    0x2E,
+    0x92,
+    0x66,
+    0x1E,
+    0xB9,
+    0x90,
+    0x5C,
+    0xBF,
+    0x21,
+    0x4B,
+    0x56,
+    0x8D,
+    0x34,
+    0x71,
+    0x5C,
+    0x9E,
+    0x16,
+    0xDE,
+    0xE2,
+    0x99,
+    0x52,
+    0xC9,
+    0xED,
+    0x1F,
+    0x54,
+    0xA9,
+    0x5C,
+    0xE5,
+    0x99,
+    0x41,
+    0x80,
+    0x14,
+    0x47,
+    0x02,
+    0x4F,
+    0x68,
+    0xB4,
+    0x97,
+    0x52,
+    0xEA,
+    0xF7,
+    0x5B,
+    0x90,
+    0x6D,
+    0x20,
+    0xD8,
+};
+
+unsigned char std_aes256_xts_65_cipher[65] = {
+    0x4E,
+    0x2B,
+    0xA3,
+    0xAD,
+    0xA1,
+    0xBC,
+    0x79,
+    0xAF,
+    0x26,
+    0x04,
+    0xFC,
+    0x2B,
+    0x7D,
+    0x71,
+    0xC8,
+    0xCB,
+    0x71,
+    0xFB,
+    0x82,
+    0x3E,
+    0x0A,
+    0x6B,
+    0x34,
+    0x31,
+    0x77,
+    0x37,
+    0x05,
+    0xD9,
+    0xAD,
+    0x86,
+    0x0F,
+    0x29,
+    0xFE,
+    0x7A,
+    0x65,
+    0x5A,
+    0xCD,
+    0x43,
+    0x14,
+    0xDD,
+    0x46,
+    0x74,
+    0x6C,
+    0xEF,
+    0x79,
+    0xFA,
+    0xAE,
+    0x71,
+    0x96,
+    0xB0,
+    0xA7,
+    0x62,
+    0xB8,
+    0x87,
+    0x0D,
+    0x12,
+    0x13,
+    0xCE,
+    0x29,
+    0xA3,
+    0x85,
+    0xC3,
+    0x6D,
+    0xEC,
+    0x38,
+};
+
+unsigned char std_aes256_xts_17_cipher[17] = {
+    0x3D,
+    0xAD,
+    0x26,
+    0x30,
+    0xF4,
+    0x29,
+    0x49,
+    0xF6,
+    0x64,
+    0x61,
+    0x1E,
+    0x8A,
+    0xAD,
+    0xB2,
+    0xB0,
+    0xF3,
+    0x4E,
+};
+
+unsigned int aes_256_xts_test(void)
+{
+    SKE_XTS_TEST_VECTOR vector[5] = {
+        {SKE_ALG_AES_256, std_xts_plain, 256, std_xts_key, 0, std_xts_i, std_aes256_xts_256_cipher},
+        {SKE_ALG_AES_256, std_xts_plain, 120, std_xts_key, 0, std_xts_i, std_aes256_xts_120_cipher},
+        {SKE_ALG_AES_256, std_xts_plain, 65,  std_xts_key, 0, std_xts_i, std_aes256_xts_65_cipher },
+        {SKE_ALG_AES_256, std_xts_plain, 17,  std_xts_key, 0, std_xts_i, std_aes256_xts_17_cipher },
+        {SKE_ALG_AES_256, std_xts_plain, 16,  std_xts_key, 0, std_xts_i, std_aes256_xts_256_cipher},
+    };
+
+    return ske_xts_test_internal(vector, 5);
+}
+    #endif
+
+
+    #ifdef SUPPORT_SKE_SM4
+unsigned char std_sm4_xts_256_cipher[256] = {
+    0x94,
+    0x83,
+    0xE9,
+    0x1F,
+    0x12,
+    0xEE,
+    0x81,
+    0x81,
+    0x1A,
+    0x3C,
+    0x4C,
+    0xAB,
+    0xAC,
+    0xF4,
+    0x01,
+    0xA3,
+    0x9D,
+    0xBC,
+    0x35,
+    0xC2,
+    0xE5,
+    0x37,
+    0x4D,
+    0x69,
+    0x73,
+    0xDB,
+    0x4D,
+    0x79,
+    0x32,
+    0x10,
+    0xC4,
+    0x27,
+    0x2A,
+    0x54,
+    0x17,
+    0xE0,
+    0x6D,
+    0x86,
+    0xCD,
+    0xED,
+    0xF6,
+    0xEC,
+    0x86,
+    0x8E,
+    0xDA,
+    0x93,
+    0xFE,
+    0x67,
+    0xBC,
+    0xA7,
+    0x5B,
+    0x94,
+    0xB0,
+    0x7F,
+    0x46,
+    0x82,
+    0xF6,
+    0x80,
+    0x91,
+    0x48,
+    0x09,
+    0x25,
+    0xF6,
+    0xE3,
+    0x74,
+    0x7D,
+    0x11,
+    0xC3,
+    0xFA,
+    0x3B,
+    0xBC,
+    0x46,
+    0x40,
+    0xCA,
+    0xDB,
+    0x1A,
+    0xD5,
+    0xA7,
+    0xAF,
+    0xC6,
+    0x6A,
+    0x9F,
+    0xD1,
+    0xDD,
+    0x0E,
+    0xE9,
+    0x08,
+    0xD4,
+    0xBA,
+    0x10,
+    0x5D,
+    0xCE,
+    0x43,
+    0x2D,
+    0x1B,
+    0x92,
+    0x21,
+    0xAC,
+    0x0C,
+    0x86,
+    0x30,
+    0x7D,
+    0x8D,
+    0x47,
+    0xB1,
+    0xA5,
+    0x1C,
+    0xB9,
+    0xB7,
+    0xF2,
+    0xC9,
+    0xFF,
+    0x46,
+    0x82,
+    0x29,
+    0x4F,
+    0x2F,
+    0x04,
+    0xE2,
+    0xA5,
+    0x4D,
+    0x55,
+    0x64,
+    0x58,
+    0xD5,
+    0x49,
+    0x85,
+    0x30,
+    0x96,
+    0xF6,
+    0xD2,
+    0xFA,
+    0x14,
+    0xFE,
+    0x52,
+    0x91,
+    0xC9,
+    0xA3,
+    0x3C,
+    0xBC,
+    0xE7,
+    0x73,
+    0x99,
+    0x22,
+    0xFA,
+    0x8F,
+    0xF0,
+    0x55,
+    0xBE,
+    0x3B,
+    0x49,
+    0xD2,
+    0x09,
+    0xD5,
+    0x6F,
+    0xBF,
+    0x13,
+    0x46,
+    0xC4,
+    0xA5,
+    0xD7,
+    0xB7,
+    0x4F,
+    0x96,
+    0x3B,
+    0x87,
+    0x0C,
+    0x28,
+    0xA1,
+    0xBF,
+    0x9C,
+    0x6B,
+    0xEE,
+    0x9E,
+    0x42,
+    0x15,
+    0x70,
+    0x24,
+    0xB4,
+    0x61,
+    0x8D,
+    0x34,
+    0xA5,
+    0x87,
+    0xED,
+    0x81,
+    0x29,
+    0x85,
+    0x8C,
+    0x04,
+    0xB3,
+    0xE6,
+    0x94,
+    0xD3,
+    0xD1,
+    0x86,
+    0x02,
+    0x06,
+    0x23,
+    0x2A,
+    0x78,
+    0x08,
+    0x5C,
+    0x87,
+    0x80,
+    0x6E,
+    0xE4,
+    0x9B,
+    0xEC,
+    0x52,
+    0x08,
+    0xE6,
+    0x14,
+    0x5F,
+    0xAF,
+    0x9C,
+    0x33,
+    0x3E,
+    0x34,
+    0x27,
+    0x31,
+    0x37,
+    0x64,
+    0xB7,
+    0x16,
+    0x0D,
+    0xB2,
+    0x14,
+    0x27,
+    0x25,
+    0x27,
+    0xA0,
+    0xEC,
+    0xCE,
+    0x05,
+    0xF6,
+    0x7A,
+    0xCD,
+    0x56,
+    0x54,
+    0x6E,
+    0x24,
+    0xA5,
+    0xB7,
+    0x67,
+    0x84,
+    0x95,
+    0x45,
+    0x28,
+    0x77,
+    0x25,
+    0xD2,
+    0xCF,
+    0x91,
+    0x11,
+    0x1B,
+};
+
+unsigned char std_sm4_xts_120_cipher[120] = {
+    0x94,
+    0x83,
+    0xE9,
+    0x1F,
+    0x12,
+    0xEE,
+    0x81,
+    0x81,
+    0x1A,
+    0x3C,
+    0x4C,
+    0xAB,
+    0xAC,
+    0xF4,
+    0x01,
+    0xA3,
+    0x9D,
+    0xBC,
+    0x35,
+    0xC2,
+    0xE5,
+    0x37,
+    0x4D,
+    0x69,
+    0x73,
+    0xDB,
+    0x4D,
+    0x79,
+    0x32,
+    0x10,
+    0xC4,
+    0x27,
+    0x2A,
+    0x54,
+    0x17,
+    0xE0,
+    0x6D,
+    0x86,
+    0xCD,
+    0xED,
+    0xF6,
+    0xEC,
+    0x86,
+    0x8E,
+    0xDA,
+    0x93,
+    0xFE,
+    0x67,
+    0xBC,
+    0xA7,
+    0x5B,
+    0x94,
+    0xB0,
+    0x7F,
+    0x46,
+    0x82,
+    0xF6,
+    0x80,
+    0x91,
+    0x48,
+    0x09,
+    0x25,
+    0xF6,
+    0xE3,
+    0x74,
+    0x7D,
+    0x11,
+    0xC3,
+    0xFA,
+    0x3B,
+    0xBC,
+    0x46,
+    0x40,
+    0xCA,
+    0xDB,
+    0x1A,
+    0xD5,
+    0xA7,
+    0xAF,
+    0xC6,
+    0x6A,
+    0x9F,
+    0xD1,
+    0xDD,
+    0x0E,
+    0xE9,
+    0x08,
+    0xD4,
+    0xBA,
+    0x10,
+    0x5D,
+    0xCE,
+    0x43,
+    0x2D,
+    0x1B,
+    0x92,
+    0x69,
+    0xB7,
+    0xA3,
+    0x54,
+    0x1D,
+    0x7A,
+    0x66,
+    0x01,
+    0x9E,
+    0x18,
+    0x40,
+    0xD7,
+    0x54,
+    0x76,
+    0x27,
+    0x5A,
+    0x21,
+    0xAC,
+    0x0C,
+    0x86,
+    0x30,
+    0x7D,
+    0x8D,
+    0x47,
+};
+
+unsigned char std_sm4_xts_65_cipher[65] = {
+    0x94,
+    0x83,
+    0xE9,
+    0x1F,
+    0x12,
+    0xEE,
+    0x81,
+    0x81,
+    0x1A,
+    0x3C,
+    0x4C,
+    0xAB,
+    0xAC,
+    0xF4,
+    0x01,
+    0xA3,
+    0x9D,
+    0xBC,
+    0x35,
+    0xC2,
+    0xE5,
+    0x37,
+    0x4D,
+    0x69,
+    0x73,
+    0xDB,
+    0x4D,
+    0x79,
+    0x32,
+    0x10,
+    0xC4,
+    0x27,
+    0x2A,
+    0x54,
+    0x17,
+    0xE0,
+    0x6D,
+    0x86,
+    0xCD,
+    0xED,
+    0xF6,
+    0xEC,
+    0x86,
+    0x8E,
+    0xDA,
+    0x93,
+    0xFE,
+    0x67,
+    0x0F,
+    0x53,
+    0xC0,
+    0x9E,
+    0x12,
+    0x37,
+    0xE9,
+    0xBA,
+    0x10,
+    0x02,
+    0xFB,
+    0x3D,
+    0x0E,
+    0x7B,
+    0x0A,
+    0xA4,
+    0xBC,
+};
+
+unsigned char std_sm4_xts_17_cipher[17] = {
+    0x83,
+    0x29,
+    0xD4,
+    0xDF,
+    0x72,
+    0x77,
+    0x63,
+    0xDC,
+    0xF8,
+    0xA5,
+    0xB3,
+    0x4D,
+    0x86,
+    0x03,
+    0x31,
+    0x1B,
+    0x94,
+};
+
+unsigned int sm4_xts_test(void)
+{
+    SKE_XTS_TEST_VECTOR vector[5] = {
+        {SKE_ALG_SM4, std_xts_plain, 256, std_xts_key, 0, std_xts_i, std_sm4_xts_256_cipher},
+        {SKE_ALG_SM4, std_xts_plain, 120, std_xts_key, 0, std_xts_i, std_sm4_xts_120_cipher},
+        {SKE_ALG_SM4, std_xts_plain, 65,  std_xts_key, 0, std_xts_i, std_sm4_xts_65_cipher },
+        {SKE_ALG_SM4, std_xts_plain, 17,  std_xts_key, 0, std_xts_i, std_sm4_xts_17_cipher },
+        {SKE_ALG_SM4, std_xts_plain, 16,  std_xts_key, 0, std_xts_i, std_sm4_xts_256_cipher},
+    };
+
+    return ske_xts_test_internal(vector, 5);
+}
+    #endif
+
+
+unsigned int ske_xts_speed_test_internal(SKE_ALG alg, char *info)
+{
+    unsigned char in[4096];
+    unsigned char out[4096];
+    unsigned char key[64];
+    unsigned char iv[16];
+    unsigned int  i;
+    unsigned int  round    = 20;
+    unsigned int  in_bytes = 4096;
+    unsigned int  ret      = 0;
+
+    uint32_sleep(0xFFFF, 1);
+
+    #ifndef XTS_SPEED_TEST_BY_TIMER
+    round *= 100;
+    #endif
+
+    printf("\r\n %s begin", info);
+    fflush(stdout);
+
+    #ifdef XTS_SPEED_TEST_BY_TIMER
+    startP();
+    #endif
+
+    for (i = 0; i < round; i++) {
+        ret |= ske_lp_xts_crypto(alg, SKE_CRYPTO_ENCRYPT, key, 0, iv, in, out, in_bytes);
+    }
+
+    if (SKE_SUCCESS != ret) {
+        printf("\r\n error ret=%u", ret);
+        fflush(stdout);
+        return 1;
+    }
+
+    #ifdef XTS_SPEED_TEST_BY_TIMER
+    endP(0, in_bytes, round);
+    #else
+    printf("\r\n finished");
+    fflush(stdout);
+    #endif
+
+    return 0;
+}
+
+unsigned int ske_xts_speed_test(void)
+{
+    ske_xts_speed_test_internal(SKE_ALG_AES_128, "SKE_ALG_AES_128 XTS");
+    ske_xts_speed_test_internal(SKE_ALG_AES_192, "SKE_ALG_AES_192 XTS");
+    ske_xts_speed_test_internal(SKE_ALG_AES_256, "SKE_ALG_AES_256 XTS");
+    ske_xts_speed_test_internal(SKE_ALG_SM4, "SKE_ALG_SM4 XTS");
+
+    return 0;
+}
+
+unsigned int SKE_LP_XTS_all_Test(void)
+{
+    unsigned int ret;
+
+    #if 0
+    if(SKE_SUCCESS != ske_xts_speed_test())
+        return 1;
+    #endif
+
+    #ifdef SUPPORT_SKE_AES_128
+    ret = aes_128_xts_test();
+    if (ret) {
+        return 1;
+    }
+    #endif
+
+    #ifdef SUPPORT_SKE_AES_192
+    ret = aes_192_xts_test();
+    if (ret) {
+        return 1;
+    }
+    #endif
+
+    #ifdef SUPPORT_SKE_AES_256
+    ret = aes_256_xts_test();
+    if (ret) {
+        return 1;
+    }
+    #endif
+
+    #ifdef SUPPORT_SKE_SM4
+    ret = sm4_xts_test();
+    if (ret) {
+        return 1;
+    }
+    #endif
+
+    return 0;
+}
+
+
+#endif

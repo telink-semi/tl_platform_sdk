@@ -173,26 +173,29 @@ void user_init(void)
     wd_clear();
     wd_start();
 
-#elif (TIMER_MODE == TIMER_32K_WATCHDOG_MODE)
-    #if !defined(MCU_CORE_B91)
+#elif (!defined(MCU_CORE_B91)&&(TIMER_MODE == TIMER_32K_WATCHDOG_MODE))
     delay_ms(500);
     //Remove the stop 32k watchdog operation in main, otherwise this state cannot be read.
     if (wd_32k_get_status()) {
         gpio_set_high_level(LED1);
         wd_32k_clear_status();
     }
-    wd_32k_stop();
-        #if (WATCHDOG_MODE == WATCHDOG_32K_RC_MODE)
+
+    #if (WATCHDOG_MODE == WATCHDOG_32K_RC_MODE)
     clock_32k_init(CLK_32K_RC);
     clock_cal_32k_rc(); //6.68ms
-        #elif (WATCHDOG_MODE == WATCHDOG_32K_XTAL_MODE) //The TL7518 A0 version not support 32k xtal.
+    #elif (WATCHDOG_MODE == WATCHDOG_32K_XTAL_MODE) //The TL7518 A0 version not support 32k xtal.
     clock_32k_init(CLK_32K_XTAL);
     clock_kick_32k_xtal(10);
-        #endif
+    #endif
+
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
+    wd_32k_set_interval_ms(1000);
+    #else
+    wd_32k_stop();
     wd_32k_set_interval_ms(1000);
     wd_32k_start();
     #endif
-
 #endif
 }
 
@@ -217,26 +220,30 @@ void main_loop(void)
 #endif
 
 #if (TIMER_MODE == TIMER_WATCHDOG_MODE)
-    //990ms<1000ms, watchdog does not overflow and the program continues to run.
-    delay_ms(990);
+    //900ms<1000ms, watchdog does not overflow and the program continues to run.
+    delay_ms(900);
     wd_clear();
     gpio_set_high_level(LED2);
     //1100ms>1000ms, watchdog overflows, program restarts.
     delay_ms(1100);
     gpio_set_high_level(LED3);
 
-#elif (TIMER_MODE == TIMER_32K_WATCHDOG_MODE)
-    #if !defined(MCU_CORE_B91)
-    //990ms<1000ms, watchdog does not overflow and the program continues to run.
-    delay_ms(990);
+#elif (!defined(MCU_CORE_B91)&&(TIMER_MODE == TIMER_32K_WATCHDOG_MODE))
+    //900ms<1000ms, watchdog does not overflow and the program continues to run.
+    delay_ms(900);
+
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
+    wd_32k_feed();
+    #else
     wd_32k_stop();
-    gpio_set_high_level(LED2);
     wd_32k_set_interval_ms(1000);
     wd_32k_start();
+    #endif
+
+    gpio_set_high_level(LED2);
     //1100ms>1000ms, watchdog overflows, program restarts.
     delay_ms(1100);
     gpio_set_high_level(LED3);
-    #endif
 #else
 
     delay_ms(500);

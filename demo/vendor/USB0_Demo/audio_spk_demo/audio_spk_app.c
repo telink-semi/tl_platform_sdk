@@ -27,15 +27,14 @@
     #include "tl_usb/class/audio/usbd_audio.h"
     #include "audio_spk_descriptor.h"
 
-unsigned char data[64 * 2];
-
 static usbd_driver_t usbd_spk_driver;
 
     #define AUDIO_FREQ       16000
     #define IN_CHANNEL_NUM   2
     #define AUDIO_OUT_PACKET ((uint32_t)((AUDIO_FREQ * 2 * IN_CHANNEL_NUM) / 1000))
 
-__attribute__((aligned(8))) unsigned char read_buffer[AUDIO_OUT_PACKET];
+__attribute__((aligned(8))) unsigned char audio_buffer[AUDIO_OUT_PACKET];
+static void led_toggle(void);
 
 void usbd_audio_open(unsigned char bus, unsigned char intf)
 {
@@ -43,7 +42,7 @@ void usbd_audio_open(unsigned char bus, unsigned char intf)
     (void)intf;
 
     /* receive first cdc out data. */
-    usbd_ep_read(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, read_buffer, sizeof(read_buffer));
+    usbd_ep_read(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, audio_buffer, sizeof(audio_buffer));
 }
 
 void usbd_audio_close(unsigned char bus, unsigned char intf)
@@ -59,7 +58,7 @@ void usbd_audio_epout_callback(unsigned char bus, unsigned char ep_addr, unsigne
     (void)len;
 
     /* receive cdc out data. */
-    usbd_ep_read(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, read_buffer, sizeof(read_buffer));
+    usbd_ep_read(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, audio_buffer, sizeof(audio_buffer));
 }
 
 unsigned char  mute;
@@ -130,7 +129,15 @@ void user_init(void)
     usbd_driver_register(0, &usbd_spk_driver, 1, AUDIO_SPK_OUT_ENDPOINT_ADDRESS);
     usbd_endpoint_register(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, usbd_audio_epout_callback);
 
+    /* USB0 digital voltage must be 1.1V and HCLK min's 48M. */
+    pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
+    PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_48M;
+
+#if USB_HIGH_SPEED_EN
     usb0hw_init(USB0_SPEED_HIGH);
+#else
+    usb0hw_init(USB0_SPEED_FULL);
+#endif
     usb0hw_set_grxfsiz(0x100);
     usb0hw_set_epin_size(USB0_EP0, 0x100, 64);
 
@@ -140,8 +147,19 @@ void user_init(void)
 
 void main_loop(void)
 {
+    led_toggle();
+}
+
+static void led_toggle(void)
+{
+    static unsigned int start_time = 0;
+
+    if (stimer_get_tick() - start_time < 500 * SYSTEM_TIMER_TICK_1MS) {
+        return;
+    }
+
+    start_time += 500 * SYSTEM_TIMER_TICK_1MS;
     gpio_toggle(LED1);
-    delay_ms(500);
 }
 
 #endif

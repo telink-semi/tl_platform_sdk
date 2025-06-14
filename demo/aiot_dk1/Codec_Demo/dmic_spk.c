@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "dk1_codec_app_config.h"
+#include "common.h"
 
 #if defined(MCU_CORE_TL721X)
 #if (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT)

@@ -1495,14 +1495,14 @@ _attribute_ram_code_sec_ static inline void gpio_init(int anaRes_init_en)
                                 ((PH4_DATA_OUT) ? BIT(4): BIT(12))|((PH5_DATA_OUT) ? BIT(5): BIT(13))|((PH6_DATA_OUT) ? BIT(6): BIT(14))|((PH7_DATA_OUT) ? BIT(7): BIT(15));
     reg_gpio_ph_setting1 =
         (PH0_INPUT_ENABLE << 8) | (PH1_INPUT_ENABLE << 9) | (PH2_INPUT_ENABLE << 10) | (PH3_INPUT_ENABLE << 11) |
-        (PH4_INPUT_ENABLE << 12) | (PH5_INPUT_ENABLE << 13) | (PH6_INPUT_ENABLE << 14) |
+        (PH4_INPUT_ENABLE << 12) | (PH5_INPUT_ENABLE << 13) | (PH6_INPUT_ENABLE << 14) | (PH7_INPUT_ENABLE << 14) |
         ((PH0_OUTPUT_ENABLE ? 0 : 1) << 16) | ((PH1_OUTPUT_ENABLE ? 0 : 1) << 17) | ((PH2_OUTPUT_ENABLE ? 0 : 1) << 18) | ((PH3_OUTPUT_ENABLE ? 0 : 1) << 19) |
-        ((PH4_OUTPUT_ENABLE ? 0 : 1) << 20) | ((PH5_OUTPUT_ENABLE ? 0 : 1) << 21) | ((PH6_OUTPUT_ENABLE ? 0 : 1) << 22);
+        ((PH4_OUTPUT_ENABLE ? 0 : 1) << 20) | ((PH5_OUTPUT_ENABLE ? 0 : 1) << 21) | ((PH6_OUTPUT_ENABLE ? 0 : 1) << 22) | ((PH7_OUTPUT_ENABLE ? 0 : 1) << 23);
     reg_gpio_ph_setting2 =
         (PH0_DATA_STRENGTH << 8) | (PH1_DATA_STRENGTH << 9) | (PH2_DATA_STRENGTH << 10) | (PH3_DATA_STRENGTH << 11) |
-        (PH4_DATA_STRENGTH << 12) | (PH5_DATA_STRENGTH << 13) | (PH6_DATA_STRENGTH << 14) |
+        (PH4_DATA_STRENGTH << 12) | (PH5_DATA_STRENGTH << 13) | (PH6_DATA_STRENGTH << 14) | (PH7_DATA_STRENGTH << 15) |
         (PH0_FUNC == AS_GPIO ? BIT(16) : 0) | (PH1_FUNC == AS_GPIO ? BIT(17) : 0) | (PH2_FUNC == AS_GPIO ? BIT(18) : 0) | (PH3_FUNC == AS_GPIO ? BIT(19) : 0) |
-        (PH4_FUNC == AS_GPIO ? BIT(20) : 0) | (PH5_FUNC == AS_GPIO ? BIT(21) : 0) | (PH6_FUNC == AS_GPIO ? BIT(22) : 0);
+        (PH4_FUNC == AS_GPIO ? BIT(20) : 0) | (PH5_FUNC == AS_GPIO ? BIT(21) : 0) | (PH6_FUNC == AS_GPIO ? BIT(22) : 0) | (PH7_FUNC == AS_GPIO ? BIT(23) : 0);
 
     //PI group
     reg_gpio_pi_out_set_clear = ((PI0_DATA_OUT) ? BIT(0): BIT(8)) |((PI1_DATA_OUT) ? BIT(1): BIT(9)) |((PI2_DATA_OUT) ? BIT(2): BIT(10))|((PI3_DATA_OUT) ? BIT(3): BIT(11))|

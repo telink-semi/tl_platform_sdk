@@ -29,12 +29,13 @@ extern "C" {
 
 #include "driver.h"
 
-#define USB_MOUSE      1
-#define USB_KEYBOARD   2
-#define USB_MICROPHONE 3
-#define USB_SPEAKER    4
-#define USB_CDC        5
-#define USB_DEMO_TYPE  USB_KEYBOARD
+#define USB_MOUSE          1
+#define USB_KEYBOARD       2
+#define USB_MICROPHONE     3
+#define USB_SPEAKER        4
+#define USB_CDC            5
+#define USB_MOUSE_KEYBOARD 6
+#define USB_DEMO_TYPE      USB_MOUSE
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

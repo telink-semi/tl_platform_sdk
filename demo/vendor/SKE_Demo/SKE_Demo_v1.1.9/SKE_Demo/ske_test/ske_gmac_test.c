@@ -876,8 +876,12 @@ unsigned int ske_gmac_speed_test_internal(SKE_ALG alg, char *info)
 unsigned int ske_gmac_speed_test(void)
 {
     ske_gmac_speed_test_internal(SKE_ALG_AES_128, "SKE_ALG_AES_128 GMAC");
+#if defined(SUPPORT_SKE_AES_192)
     ske_gmac_speed_test_internal(SKE_ALG_AES_192, "SKE_ALG_AES_192 GMAC");
+#endif
+#if defined(SUPPORT_SKE_AES_256)
     ske_gmac_speed_test_internal(SKE_ALG_AES_256, "SKE_ALG_AES_256 GMAC");
+#endif
     #if defined(MCU_CORE_TL721X)
     ske_gmac_speed_test_internal(SKE_ALG_SM4, "SKE_ALG_SM4 GMAC");
     #endif

@@ -271,39 +271,6 @@ static inline unsigned char uart_get_txfifo_num(uart_num_e uart_num)
 }
 
 /**
- * @brief     uart finite state machine reset(the configuration register is still there and does not need to be reconfigured),
- *            For compatibility define uart_reset uart_hw_fms_reset, uart_hw_fms_reset is used when the driver is invoked (no matter at the driver layer or demo layer),
- *            before using UART, it is needed to call uart_hw_fsm_reset() to avoid affecting the use of UART.
- * @param[in] uart_num  - UART0/UART1/UART2/UART3.
- * @return    none
- * @note
- *            this function will clear rx and tx status and fifo.
- */
-static inline void uart_hw_fsm_reset(uart_num_e uart_num)
-{
-    switch (uart_num) {
-    case UART0:
-        BM_CLR(reg_rst0, FLD_RST0_UART0);
-        BM_SET(reg_rst0, FLD_RST0_UART0);
-        break;
-    case UART1:
-        BM_CLR(reg_rst0, FLD_RST0_UART1);
-        BM_SET(reg_rst0, FLD_RST0_UART1);
-        break;
-    case UART2:
-        BM_CLR(reg_rst5, FLD_RST5_UART2);
-        BM_SET(reg_rst5, FLD_RST5_UART2);
-        break;
-    case UART3:
-        BM_CLR(reg_rst5, FLD_RST5_UART3);
-        BM_SET(reg_rst5, FLD_RST5_UART3);
-        break;
-    default:
-        break;
-    }
-}
-
-/**
  * @brief     This function enable the clock of UART module.
  * @param[in] uart_num  - UART0/UART1/UART2/UART3.
  * @return    none
@@ -438,6 +405,42 @@ static inline void uart_clr_rx_index(uart_num_e uart_num)
 static inline void uart_clr_tx_index(uart_num_e uart_num)
 {
     uart_tx_byte_index[uart_num] = 0;
+}
+
+/**
+ * @brief     uart finite state machine reset(the configuration register is still there and does not need to be reconfigured),
+ *            For compatibility define uart_reset uart_hw_fms_reset, uart_hw_fms_reset is used when the driver is invoked (no matter at the driver layer or demo layer),
+ *            before using UART, it is needed to call uart_hw_fsm_reset() to avoid affecting the use of UART.
+ * @param[in] uart_num  - UART0/UART1/UART2/UART3.
+ * @return    none
+ * @note
+ *            this function will clear rx and tx status and fifo.
+ */
+static inline void uart_hw_fsm_reset(uart_num_e uart_num)
+{
+    switch (uart_num) {
+    case UART0:
+        BM_CLR(reg_rst0, FLD_RST0_UART0);
+        BM_SET(reg_rst0, FLD_RST0_UART0);
+        break;
+    case UART1:
+        BM_CLR(reg_rst0, FLD_RST0_UART1);
+        BM_SET(reg_rst0, FLD_RST0_UART1);
+        break;
+    case UART2:
+        BM_CLR(reg_rst5, FLD_RST5_UART2);
+        BM_SET(reg_rst5, FLD_RST5_UART2);
+        break;
+    case UART3:
+        BM_CLR(reg_rst5, FLD_RST5_UART3);
+        BM_SET(reg_rst5, FLD_RST5_UART3);
+        break;
+    default:
+        break;
+    }
+
+    uart_clr_rx_index(uart_num);
+    uart_clr_tx_index(uart_num);
 }
 
 /**

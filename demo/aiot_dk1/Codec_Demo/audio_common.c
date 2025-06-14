@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "dk1_codec_app_config.h"
+#include "common.h"
 
 extern unsigned int audio_sample_rate_value[AUDIO_ASCL_RATE_SIZE];
 

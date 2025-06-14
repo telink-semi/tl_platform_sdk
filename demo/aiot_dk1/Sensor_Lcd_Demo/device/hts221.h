@@ -28,7 +28,7 @@
 extern "C"
 {
 #endif
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 #define HTS221_I2C_ADDR       0xBE
 #define HTS221_WHO_AM_I       0x0F

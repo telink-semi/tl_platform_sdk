@@ -399,7 +399,7 @@ unsigned int SHA256_SHA512_cross_test(void)
     HASH_CTX sha512_ctx[1];
 
     #ifdef HASH_DMA_FUNCTION
-    unsigned int *msg_buf     = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int *msg_buf     = (unsigned int *)(DMA_RAM_BASE);
     unsigned int *digest1_buf = msg_buf + 500;
     unsigned int *digest2_buf = msg_buf + 600;
 

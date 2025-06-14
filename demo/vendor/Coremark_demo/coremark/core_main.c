@@ -101,8 +101,17 @@ char *mem_name[3] = {"Static", "Heap", "Stack"};
 #if MAIN_HAS_NOARGC
 
 float                  coremark_result;
-extern unsigned char   cpu_mhz;
+extern unsigned int   cpu_mhz;
 extern volatile ee_s32 seed4_volatile;
+
+#pragma GCC push_options
+#pragma GCC optimize("O0")
+
+void test_num_func(void)
+{
+    seed4_volatile = 1000 * ((cpu_mhz / 12) + 1); /* Note: When the main frequency of the chip is less than 24mhz, set the number of tests to 1000.*/
+}
+#pragma GCC pop_options
 
 MAIN_RETURN_TYPE main_coremark(void)
 {
@@ -117,7 +126,8 @@ MAIN_RETURN_TYPE main(int argc, char *argv[])
     ee_u16       seedcrc = 0;
     CORE_TICKS   total_time;
     core_results results[MULTITHREAD];
-    seed4_volatile = 1000 * ((cpu_mhz / 24) + 1); /* Note: When the main frequency of the chip is less than 24mhz, set the number of tests to 1000.*/
+
+    test_num_func();
 #if (MEM_METHOD == MEM_STACK)
     ee_u8 stack_memblock[TOTAL_DATA_SIZE * MULTITHREAD];
 #endif

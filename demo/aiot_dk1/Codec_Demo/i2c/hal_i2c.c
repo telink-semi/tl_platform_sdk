@@ -21,7 +21,9 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "../dk1_codec_app_config.h"
+#include "common.h"
+#include "../../../common/usb_dbg/debug_vcd.h"
+#include "hal_i2c.h"
 
 void hal_i2c_init(void)
 {
@@ -32,6 +34,7 @@ void hal_i2c_init(void)
     i2c_set_master_clk((unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED)));
 }
 
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_es8389)
 __attribute__((section(".ram_code"))) void hal_i2c_write(uint8_t addr, uint8_t reg, uint8_t value)
 {
     uint8_t write_buf[4];
@@ -76,3 +79,53 @@ void hal_i2c_update_bits(uint8_t addr, uint8_t reg, uint8_t mask, uint8_t value)
     ref = (clock_time() - 2) | 1;
     while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 }
+#endif
+
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+__attribute__((section(".ram_code"))) void hal_i2c_nau8821_write(uint8_t addr, uint16_t reg, uint16_t value)
+{
+    unsigned char write_buf[4];
+    int           ref = 0;
+
+    write_buf[0] = (reg & 0xff00) >> 8;
+    write_buf[1] = (reg & 0x00ff);
+    write_buf[2] = (value & 0xff00) >> 8;
+    write_buf[3] = (value & 0x00ff);
+
+    i2c_master_write_dma(addr, (unsigned char *)write_buf, 4);
+    ref = (stimer_get_tick() - 2) | 1;
+    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+}
+
+__attribute__((section(".ram_code"))) uint8_t hal_i2c_nau8821_read(uint8_t addr, uint16_t reg, uint16_t *data)
+{
+    unsigned char write_buf[4];
+    int           ref = 0;
+
+    write_buf[0] = (reg & 0xff00) >> 8;
+    write_buf[1] = (reg & 0x00ff);
+
+    i2c_master_write_dma(addr, write_buf, 2);
+    ref = (stimer_get_tick() - 2) | 1;
+    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+
+    i2c_master_read_dma(addr, (unsigned char *)data, 2);
+    ref = (stimer_get_tick() - 2) | 1;
+    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+
+    return 0;
+}
+
+uint8_t hal_i2c_nau8821_update_bits(uint8_t addr, uint16_t reg, uint16_t mask, uint16_t value)
+{
+    uint16_t old_val;
+
+    hal_i2c_nau8821_read(addr, reg, &old_val);
+
+    old_val &= ~mask;
+    old_val |= value;
+
+    hal_i2c_nau8821_write(addr, reg, old_val);
+    return 0;
+}
+#endif

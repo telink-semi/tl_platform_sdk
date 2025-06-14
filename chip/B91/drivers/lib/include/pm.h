@@ -355,7 +355,7 @@ _attribute_ram_code_sec_optimize_o2_ void pm_wait_xtal_ready(unsigned char all_r
  * @brief       this function servers to wait bbpll clock lock.
  * @return      none.
  */
-_attribute_ram_code_sec_noinline_ void pm_wait_bbpll_done(void);
+_attribute_ram_code_sec_optimize_o2_ void pm_wait_bbpll_done(void);
 
 /**
  * @brief       This function serves to recover system timer.

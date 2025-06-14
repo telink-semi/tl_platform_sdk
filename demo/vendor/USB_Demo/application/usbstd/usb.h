@@ -56,9 +56,9 @@ extern "C"
         USB_DEVICE_DISCONNECT,
     } usb_device_status_e;
 
-    extern unsigned char g_usb_config;
+    extern volatile unsigned char g_usb_config;
 #if (USB_MIC_ENABLE)
-    extern unsigned char usb_alt_intf[USB_INTF_MAX];
+    extern volatile unsigned char usb_alt_intf[USB_INTF_MAX];
 
     static inline int usb_mic_is_enable(void)
     {
@@ -66,9 +66,9 @@ extern "C"
     }
 #endif
 
-    extern unsigned char usb_just_wakeup_from_suspend;
-    extern unsigned char usb_has_suspend_irq;
-    extern unsigned char edp_toggle[8];
+    extern volatile unsigned char usb_just_wakeup_from_suspend;
+    extern volatile unsigned char usb_has_suspend_irq;
+    extern volatile unsigned char edp_toggle[8];
 
     /**
  * @brief   This function servers to enable USB manual interrupt(in auto interrupt mode, USB device would be USB printer device).

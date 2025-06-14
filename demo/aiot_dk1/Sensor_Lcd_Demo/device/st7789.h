@@ -28,7 +28,7 @@
 extern "C"
 {
 #endif
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 #define WHITE      0xFFFF
 #define BLACK      0x0000
@@ -85,7 +85,7 @@ extern "C"
 
 #define HORIZONTAL        0
 #define VERTICAL          1
-#define LCD_ST7789_HEIGHT 320
+#define LCD_ST7789_HEIGHT 240
 #define LCD_ST7789_WIDTH  240
 
     typedef struct

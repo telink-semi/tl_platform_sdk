@@ -446,3 +446,9 @@ _attribute_ram_code_sec_optimize_o2_ unsigned char pm_clr_all_irq_status(void);
  * @return      none.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_sys_reboot_with_reason(pm_sw_reboot_reason_e reboot_reason, unsigned char all_ramcode_en);
+
+/**
+ * @brief  This function serves to probe the vdd_dcore voltage.
+ * @return none.
+ */
+void pm_set_probe_dcore_vol_to_pd7(void);

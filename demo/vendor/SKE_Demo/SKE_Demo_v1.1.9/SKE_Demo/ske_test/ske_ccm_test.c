@@ -4220,10 +4220,14 @@ unsigned int ske_ccm_speed_test(void)
 {
     ske_ccm_speed_test_internal(SKE_ALG_AES_128, SKE_CRYPTO_ENCRYPT, "SKE_ALG_AES_128 CCM ENC");
     ske_ccm_speed_test_internal(SKE_ALG_AES_128, SKE_CRYPTO_DECRYPT, "SKE_ALG_AES_128 CCM DEC");
+#if defined(SUPPORT_SKE_AES_192)
     ske_ccm_speed_test_internal(SKE_ALG_AES_192, SKE_CRYPTO_ENCRYPT, "SKE_ALG_AES_192 CCM ENC");
     ske_ccm_speed_test_internal(SKE_ALG_AES_192, SKE_CRYPTO_DECRYPT, "SKE_ALG_AES_192 CCM DEC");
+#endif
+#if defined(SUPPORT_SKE_AES_256)
     ske_ccm_speed_test_internal(SKE_ALG_AES_256, SKE_CRYPTO_ENCRYPT, "SKE_ALG_AES_256 CCM ENC");
     ske_ccm_speed_test_internal(SKE_ALG_AES_256, SKE_CRYPTO_DECRYPT, "SKE_ALG_AES_256 CCM DEC");
+#endif
     #if defined(MCU_CORE_TL721X)
     ske_ccm_speed_test_internal(SKE_ALG_SM4, SKE_CRYPTO_ENCRYPT, "SKE_ALG_SM4 CCM ENC");
     ske_ccm_speed_test_internal(SKE_ALG_SM4, SKE_CRYPTO_DECRYPT, "SKE_ALG_SM4 CCM DEC");
@@ -4284,10 +4288,14 @@ unsigned int ske_dma_ccm_speed_test(void)
 {
     ske_dma_ccm_speed_test_internal(SKE_ALG_AES_128, SKE_CRYPTO_ENCRYPT, "SKE_ALG_AES_128 CCM ENC DMA");
     ske_dma_ccm_speed_test_internal(SKE_ALG_AES_128, SKE_CRYPTO_DECRYPT, "SKE_ALG_AES_128 CCM DEC DMA");
+#if defined(SUPPORT_SKE_AES_192)
     ske_dma_ccm_speed_test_internal(SKE_ALG_AES_192, SKE_CRYPTO_ENCRYPT, "SKE_ALG_AES_192 CCM ENC DMA");
     ske_dma_ccm_speed_test_internal(SKE_ALG_AES_192, SKE_CRYPTO_DECRYPT, "SKE_ALG_AES_192 CCM DEC DMA");
+#endif
+#if defined(SUPPORT_SKE_AES_256)
     ske_dma_ccm_speed_test_internal(SKE_ALG_AES_256, SKE_CRYPTO_ENCRYPT, "SKE_ALG_AES_256 CCM ENC DMA");
     ske_dma_ccm_speed_test_internal(SKE_ALG_AES_256, SKE_CRYPTO_DECRYPT, "SKE_ALG_AES_256 CCM DEC DMA");
+#endif
         #if defined(MCU_CORE_TL721X)
     ske_dma_ccm_speed_test_internal(SKE_ALG_SM4, SKE_CRYPTO_ENCRYPT, "SKE_ALG_SM4 CCM ENC DMA");
     ske_dma_ccm_speed_test_internal(SKE_ALG_SM4, SKE_CRYPTO_DECRYPT, "SKE_ALG_SM4 CCM DEC DMA");

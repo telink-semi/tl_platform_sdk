@@ -120,7 +120,7 @@ extern unsigned int g_track_32kcnt;
  *********************************************************************************************************************/
 
 /**
- * @brief This function servers to set stimer irq mask.
+ * @brief       This function servers to set system timer irq mask.
  * @param[in]   mask - the irq mask.
  * @return      none.
  * @note        When three cores write to the interrupt mask register or other shared registers simultaneously, there is a risk of errors, 
@@ -132,7 +132,7 @@ static _always_inline void stimer_set_irq_mask(stimer_irq_e mask)
 }
 
 /**
- * @brief This function servers to clear stimer irq mask.
+ * @brief       This function servers to clear system timer irq mask.
  * @param[in]   mask - the irq mask.
  * @return      none.
  * @note        When three cores write to the interrupt mask register or other shared registers simultaneously, there is a risk of errors, 
@@ -144,7 +144,7 @@ static _always_inline void stimer_clr_irq_mask(stimer_irq_e mask)
 }
 
 /**
- * @brief This function servers to clear stimer irq status.
+ * @brief       This function servers to clear system timer irq status.
  * @param[in]   status - the irq status.
  * @return      none.
  */
@@ -154,10 +154,10 @@ static _always_inline void stimer_clr_irq_status(stimer_irq_e status)
 }
 
 /**
- * @brief This function servers to get stimer irq status.
- * @param[in]   status    - the irq status.
- * @retval      non-zero      - the interrupt occurred.
- * @retval      zero  - the interrupt did not occur.
+ * @brief       This function servers to get system timer irq status.
+ * @param[in]   status - the irq status.
+ * @retval      non-zero -  the interrupt occurred.
+ * @retval      zero  -  the interrupt did not occur.
  */
 static _always_inline unsigned char stimer_get_irq_status(stimer_irq_e status)
 {
@@ -165,9 +165,9 @@ static _always_inline unsigned char stimer_get_irq_status(stimer_irq_e status)
 }
 
 /**
- * @brief This function servers to set tick of d25f irq capture.
- * @param[in] tick - the value of irq tick.
- * @return    none.
+ * @brief       This function servers to set tick of d25f irq capture.
+ * @param[in]   tick - the value of irq tick.
+ * @return      none.
  */
 static _always_inline void stimer_set_irq_capture_d25f(unsigned int tick)
 {
@@ -175,9 +175,9 @@ static _always_inline void stimer_set_irq_capture_d25f(unsigned int tick)
 }
 
 /**
- * @brief This function servers to set tick of n22 irq capture.
- * @param[in] tick - the value of irq tick.
- * @return    none.
+ * @brief       This function servers to set tick of n22 irq capture.
+ * @param[in]   tick - the value of irq tick.
+ * @return      none.
  */
 static _always_inline void stimer_set_irq_capture_n22(unsigned int tick)
 {
@@ -185,9 +185,9 @@ static _always_inline void stimer_set_irq_capture_n22(unsigned int tick)
 }
 
 /**
- * @brief This function servers to set tick of dsp irq capture.
- * @param[in] tick - the value of irq tick.
- * @return    none.
+ * @brief       This function servers to set tick of dsp irq capture.
+ * @param[in]   tick - the value of irq tick.
+ * @return      none.
  */
 static _always_inline void stimer_set_irq_capture_dsp(unsigned int tick)
 {
@@ -195,9 +195,9 @@ static _always_inline void stimer_set_irq_capture_dsp(unsigned int tick)
 }
 
 /**
- * @brief This function servers to set stimer tick.
- * @param[in] tick - the value of tick.
- * @return    none.
+ * @brief       This function is used to set the tick value of the system timer.
+ * @param[in]   tick - the value of system timer tick.
+ * @return      none.
  */
 static _always_inline void stimer_set_tick(unsigned int tick)
 {

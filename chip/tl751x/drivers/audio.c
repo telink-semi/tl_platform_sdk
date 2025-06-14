@@ -22,7 +22,8 @@
  *
  *******************************************************************************************************/
 #include "audio.h"
-
+#include "lib/include/pm/pm.h"
+#include "lib/include/stimer.h"
 /**
  * @brief Audio rx fifo channel.
  * 
@@ -1531,16 +1532,16 @@ void audio_codec0_input_init(audio_codec0_input_config_t *input_config)
         audio_codec0_set_micbias(input_config->input_src, 1);                              /* enable bias output. */
         audio_codec0_set_adc_capacitor_mode(input_config->input_src, AUDIO_CODEC0_ADC_CAPACITOR_COUPLED);
         audio_codec0_set_adc_mode(input_config->input_src, AUDIO_CODEC0_ADC_DIFFERENTIAL); /* adc differential input. */
+        audio_codec0_set_input_snr_opt(input_config->input_src,1);                         /* Avoid difference in ADC Sampling Data When a BDT active/reset occurs. */
     } else if (input_config->input_src & BIT(4))                                           /* line_in set differential input. */
     {
         input_type = 0;                                                                    /* analog data. */
         audio_codec0_set_adc_capacitor_mode(input_config->input_src, AUDIO_CODEC0_ADC_CAPACITOR_COUPLED);
         audio_codec0_set_adc_mode(input_config->input_src, AUDIO_CODEC0_ADC_DIFFERENTIAL); /* adc differential input. */
-        audio_codec0_set_input_snr_opt(input_config->input_src,1);
+        audio_codec0_set_input_snr_opt(input_config->input_src,1);                         /* Avoid difference in ADC Sampling Data When a BDT active/reset occurs. */
     } else {
         input_type = 1;                                                                    /* digital data. */
         audio_codec0_dmic_clk_en(input_config->input_src, 1);                              /* enable dmic clock. */
-        audio_codec0_set_input_snr_opt(input_config->input_src,1);
     }
 
     switch (channel) {
@@ -2657,6 +2658,7 @@ void audio_matrix_set_dac_route(audio_codec0_output_select_e dac_chn, audio_matr
         reg_audio_matrix_dac_sel = (reg_audio_matrix_dac_sel & (~FLD_MATRIX_DAC_L_SEL)) | route_from;
         break;
     case AUDIO_DAC_A2:
+        /* DAC_L_SEL should also be set and set the same value with DAC_R_SEL even only using DAC_A2 */
     case AUDIO_DAC_A1_A2:
         reg_audio_matrix_dac_sel = MASK_VAL(FLD_MATRIX_DAC_L_SEL, route_from, FLD_MATRIX_DAC_R_SEL, route_from);
         break;

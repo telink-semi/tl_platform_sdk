@@ -38,11 +38,19 @@
     #define DSP_BOOTLOADER_MODE   DSP_BOOTLOADER_BY_MCU
 
     #if (DSP_BOOTLOADER_MODE == DSP_BOOTLOADER_BY_DMA)
+    #if defined(MCU_CORE_TL753X)
+        #define DSP_DLM_BIN_SIZE   0x80000        /* Note:  Can be adjusted according to the actual amount of DRAM space used by the dsp. */
+        #define DSP_ILM_BIN_SIZE   0x40000        /* Note:  Can be adjusted according to the actual amount of IRAM space used by the dsp. */
+        #define DSP_DLM_LMA_START  0x02000000     /* Note:  This address is the starting address of the dsp's DRAM space and cannot be modified */
+        #define DSP_ILM_LMA_START  0x02200000     /* Note:  This address is the starting address of the dsp's IRAM space and cannot be modified */
+        #define DSP_ILM_START_ADDR 0x02200660     /* Note:  This address is the startup address of the IRAM of the dsp which can be changed by modifying the LSP file. */
+    #else
         #define DSP_DLM_BIN_SIZE   0x40000        /* Note:  Can be adjusted according to the actual amount of DRAM space used by the dsp. */
         #define DSP_ILM_BIN_SIZE   0x40000        /* Note:  Can be adjusted according to the actual amount of IRAM space used by the dsp. */
         #define DSP_DLM_LMA_START  0x02000000     /* Note:  This address is the starting address of the dsp's DRAM space and cannot be modified */
         #define DSP_ILM_LMA_START  0x02100000     /* Note:  This address is the starting address of the dsp's IRAM space and cannot be modified */
         #define DSP_ILM_START_ADDR 0x02100660     /* Note:  This address is the startup address of the IRAM of the dsp which can be changed by modifying the LSP file. */
+    #endif
     #endif
 
     #define DSP_FW_DOWNLOAD_FLASH_ADDR 0x20040000 /* Note:  If modified, please make sure this value is within the address range of Flash. */
@@ -75,7 +83,7 @@ volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
         #if defined(MCU_CORE_TL7518)
             #define N22_IRAM_STARTUP_ADDR 0x50068000 /* Note:  If modified, please make sure this value is within the IRAM address range of N22.
                                                             The corresponding link file need to modify in the same time. */
-        #elif defined(MCU_CORE_TL322X)
+        #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
             #define N22_IRAM_STARTUP_ADDR 0x50000000 /* Note:  If modified, please make sure this value is within the IRAM address range of N22.
                                                             The corresponding link file need to modify in the same time. */
         #elif defined(MCU_CORE_TL751X)
@@ -160,7 +168,7 @@ void user_init(void)
 
     n22_ilm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x08);
     n22_dlm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x0c);
-    n22_dlm_lma_start = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x10);
+    n22_dlm_lma_start = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x10) + N22_FW_DOWNLOAD_FLASH_ADDR;
     dma_config(DMA2, &flash_sram_dma_config);
     dma_config(DMA3, &flash_sram_dma_config);
 

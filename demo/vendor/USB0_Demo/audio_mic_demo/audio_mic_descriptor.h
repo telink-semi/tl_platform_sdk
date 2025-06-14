@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-#define USB_HIGH_SPEED_EN 0
+#define USB_HIGH_SPEED_EN 1
 
 #define ID_VENDOR  0x248a
 #define ID_PRODUCT 0x8006
@@ -40,6 +40,7 @@ extern "C" {
 #define STRING_SERIAL  "MIC demo"
 
 #define AUDIO_MIC_IN_ENDPOINT_ADDRESS 0x87
+#define AUDIO_MIC_IN_ENDPOIRT_SIZE    0x0040
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

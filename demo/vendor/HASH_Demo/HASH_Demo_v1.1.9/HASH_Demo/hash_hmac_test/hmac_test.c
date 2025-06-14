@@ -412,7 +412,7 @@ unsigned int HMAC_SHA256_SHA512_cross_test(void)
     #endif
 
     #ifdef HASH_DMA_FUNCTION
-    unsigned int *msg_buf   = (unsigned int *)(HASH_DMA_RAM_BASE);
+    unsigned int *msg_buf   = (unsigned int *)(DMA_RAM_BASE);
     unsigned int *hmac1_buf = msg_buf + 500;
     unsigned int *hmac2_buf = msg_buf + 600;
 

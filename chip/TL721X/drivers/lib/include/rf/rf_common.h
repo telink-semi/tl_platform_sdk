@@ -191,7 +191,7 @@ typedef struct
 
 typedef struct
 {
-    unsigned short cal_tbl[8];
+    unsigned short cal_tbl[81];
     rf_ldo_trim_t  ldo_trim;
     rf_dcoc_cal_t  dcoc_cal;
     rf_rccal_cal_t rccal_cal;

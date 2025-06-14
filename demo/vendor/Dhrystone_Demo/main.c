@@ -34,7 +34,7 @@ extern void main_loop(void);
 
 int main(void)
 {
-#if !(defined(MCU_CORE_TL7518_N22) || defined(MCU_CORE_TL751X_N22))
+#if !(defined(MCU_CORE_TL7518_N22) || defined(MCU_CORE_TL751X_N22)|| defined(MCU_CORE_TL322X_N22))
     PLATFORM_INIT;
 #endif
 

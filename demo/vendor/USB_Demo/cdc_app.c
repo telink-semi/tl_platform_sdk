@@ -99,6 +99,22 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_250US_OR_SOF);
     #endif
 
+#if defined(MCU_CORE_TL721X) && (USB_CDC_ENABLE)
+    core_interrupt_enable();
+
+    plic_interrupt_enable(IRQ_USB_CTRL_EP_SETUP);
+    plic_interrupt_enable(IRQ_USB_CTRL_EP_DATA);
+    plic_interrupt_enable(IRQ_USB_CTRL_EP_STATUS);
+    plic_interrupt_enable(IRQ_USB_RESET);
+    plic_interrupt_enable(IRQ_USB_PWDN);
+    plic_interrupt_enable(IRQ_USB_ENDPOINT);
+
+    usbhw_set_irq_mask(USB_IRQ_SETUP_MASK | USB_IRQ_DATA_MASK | USB_IRQ_STATUS_MASK | USB_IRQ_RESET_MASK |
+                    USB_IRQ_SUSPEND_MASK); /* Note that once the usb enters suspend mode, the suspend interrupt will always be triggered, \n
+                                              if you want it to be triggered only once, you can turn off this mask in the corresponding ISR. */
+    usbhw_set_eps_irq_mask(BIT(USB_PHYSICAL_EDP_CDC_IN) | BIT(USB_PHYSICAL_EDP_CDC_OUT));
+#endif
+
     // enable USB DP pull up 1.5k
     usb_set_pin(1);
 }
@@ -128,7 +144,11 @@ void main_loop(void)
     }
     #endif
 
+#if defined(MCU_CORE_TL721X) && (USB_CDC_ENABLE)
+    /* attention tl721x usb enum in interrupt */
+#else
     usb_handle_irq();
+#endif
 
     if (usb_cdc_data_len != 0) {
     #if (DEVICE_SEND_DATA_MODE == DEVICE_SEND_DATA_BLOCK)

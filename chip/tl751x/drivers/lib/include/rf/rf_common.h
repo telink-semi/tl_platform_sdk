@@ -715,6 +715,12 @@ void rf_set_power_level_index(rf_power_level_index_e idx);
 void rf_update_internal_cap(unsigned char value);
 
 /**
+ * @brief       This function serves to close internal cap;
+ * @return      none.
+ */
+void rf_turn_off_internal_cap(void);
+
+/**
  * @brief   This function serve to change the length of preamble.
  * @param[in]   len     -The value of preamble length.Set the register bit<0>~bit<4>.
  * @return      none

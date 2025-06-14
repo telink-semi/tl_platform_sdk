@@ -49,7 +49,7 @@ _RESET_ENTRY:
      .org 0x0c
      .word (_DLM_SIZE)//0x2008000c
      .org 0x10
-     .word (_DATA_LMA_START)//20080010
+     .word (_DATA_LMA_START_OFFSET)//20080010
      .org 0x18
      .word (BIN_SIZE)
      .org 0x20

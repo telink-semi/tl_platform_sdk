@@ -24,18 +24,18 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include "dk1_codec_app_config.h"
+#include "common.h"
 /*
  * Assert parameter validation
  */
-#define ASSERT_EN 1
+#define ASSERT_EN 0
 /*
  * Serial debug use PE0 Baudrate is 1Mbps 8/N/1
  * NOTE: serial debug will DISABLE INTERRUPT !!
  */
-#define SERIAL_DBG_EN 1
+#define SERIAL_DBG_EN 0
 
-#define UART0_TX_PIN  GPIO_FC_PD6
+#define UART0_TX_PIN  GPIO_FC_PD1
 #define UART0_RX_PIN  GPIO_FC_PC4
 
 int trace(const char *format, ...);

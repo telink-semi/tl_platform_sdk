@@ -21,11 +21,20 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "../dk1_codec_app_config.h"
-
+#include "common.h"
+#include "../i2c/hal_i2c.h"
+#include "../i2c/hal_es8389.h"
+#include "../i2c/hal_nau8821.h"
+#include "hal_i2s.h"
 #if defined(MCU_CORE_TL721X)
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+#define MCLK_PIN_NUM GPIO_FC_PE7
+#endif
 unsigned short audio_i2s_48k_config[5] = {8, 625, 0, 64, 64};
 #elif defined(MCU_CORE_TL321X)
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+#define MCLK_PIN_NUM GPIO_FC_PA0
+#endif
 unsigned short audio_i2s_48k_config[5] = {2, 125, 0, 64, 64};
 #endif
 
@@ -86,6 +95,13 @@ void hal_i2s_init(unsigned int *mic_buff, unsigned int *spk_buff, unsigned int m
 
     /***initialize the audio module***/
     audio_init();
+    hal_i2c_init();
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_es8389)
+    hal_es8389_init();
+#endif
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+    nau8821_i2c_probe();
+#endif
     /***Initialize i2s configuration***/
     audio_i2s_config_init(&hal_i2s_config);
     /***initialize the configuration of the input path of the i2s***/
@@ -93,6 +109,14 @@ void hal_i2s_init(unsigned int *mic_buff, unsigned int *spk_buff, unsigned int m
     /***initialize the configuration of the output path of the i2s***/
     audio_i2s_output_init(&hal_i2s_output);
 
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+    delay_ms(1);
+#if defined(MCU_CORE_TL721X)
+    audio_set_i2s_clk_as_mclk(I2S0, MCLK_PIN_NUM, 32, 640);
+#elif defined(MCU_CORE_TL321X)
+    audio_set_sdm_clk_as_mclk(MCLK_PIN_NUM, 8, 125);
+#endif
+#endif
     /***configuring external codec-related registers via i2c***/
     /***initialize audio's rx dma channel***/
     audio_rx_dma_chain_init(hal_i2s_input.fifo_chn, hal_i2s_input.dma_num, (unsigned short *)hal_i2s_input.data_buf, hal_i2s_input.data_buf_size);

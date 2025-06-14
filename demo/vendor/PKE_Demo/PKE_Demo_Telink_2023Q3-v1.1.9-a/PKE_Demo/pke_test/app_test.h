@@ -34,10 +34,16 @@ extern "C"
     unsigned int ECCp_get_key_all_test(void);
     unsigned int ECDH_all_test(void);
     unsigned int ECDSA_all_test(void);
+#if defined(SUPPORT_RSA)
     unsigned int RSA_all_test(void);
+#endif
+#if defined(SUPPORT_C25519)
     unsigned int X25519_all_test(void);
     unsigned int Ed25519_all_test(void);
+#endif
+#if defined(SUPPORT_DH)
     unsigned int DH_all_test(void);
+#endif
     unsigned int ECCp_get_curve_paras_test(void);
     unsigned int ECIES_all_test(void);
 

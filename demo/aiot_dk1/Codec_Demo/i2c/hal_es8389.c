@@ -23,6 +23,7 @@
  *******************************************************************************************************/
 #include "hal_es8389.h" //2.0.0.3.0511
 
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_es8389)
 struct _coeff_div
 {
     uint16_t Ratio;
@@ -395,3 +396,4 @@ void hal_es8389_init(void)
     Everest_set_dai_sysclk(ES8389_RATIO_MCLK_LRCK, ES8389_FreqMCLK);
     Everest_set_bias_on();
 }
+#endif

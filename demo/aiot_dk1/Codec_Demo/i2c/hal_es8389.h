@@ -23,6 +23,8 @@
  *******************************************************************************************************/
 #ifndef ES8389_H
 #define ES8389_H
+#include "hal_i2c.h"
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_es8389)
 
 #include "hal_alsa.h" //LINUS-ALSA
 
@@ -128,4 +130,5 @@ extern const Alsa_Device *ES8389;
 void hal_es8389_init(void);
 void Everest_mute(uint8_t mute);
 
+#endif
 #endif

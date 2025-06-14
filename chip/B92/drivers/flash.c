@@ -561,7 +561,7 @@ _attribute_text_sec_ void flash_set_xip_config(flash_command_e config)
 }
 
 /**
- * @brief       This function is used to write the configure of the flash,P25Q16SU/P25Q32SU/P25Q128L uses this function.
+ * @brief       This function is used to write the configure of the flash,P25Q16SU/P25Q32SU uses this function.
  * @param[in]   cmd         - the write command.
  * @param[out]  data        - the start address of the data buffer.
  * @return      none.
@@ -584,7 +584,7 @@ _attribute_text_sec_ void flash_write_config(flash_command_e cmd, unsigned char 
 }
 
 /**
- * @brief       This function is used to read the configure of the flash,P25Q16SU/P25Q32SU/P25Q128L uses this function.
+ * @brief       This function is used to read the configure of the flash,P25Q16SU/P25Q32SU uses this function.
  * @return      the value of configure.
  * @note        Attention: Before calling the FLASH function, please check the power supply voltage of the chip.
  *              Only if the detected voltage is greater than the safe voltage value, the FLASH function can be called.

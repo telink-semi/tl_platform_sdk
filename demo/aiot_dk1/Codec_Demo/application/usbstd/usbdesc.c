@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "../../dk1_codec_app_config.h"
+#include "common.h"
 #include "usbdesc.h"
 
 #include "driver.h"

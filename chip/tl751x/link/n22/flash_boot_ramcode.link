@@ -21,52 +21,83 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+/*
+ * The alignment of VMA and LMA is as follows: 
+ * VMA: 
+ * 1. Linker auto-alignment
+ * .data:
+ * 2. specified by user
+ * There are the following two ways:
+ * . = ALIGN(n);  
+ * .data  : 
+ *  If the address(. = align(n)) satisfies the alignment of the data segment, the VMA address of the data segment is . = align(n).  
+ *  If the address(. = align(n)) does not satisfy the alignment of the data segment, the VMA address of the data segment is then aligned by the linker in accordance with the alignment on this basis . 
+ *  Note that: if this is the case, n is the size of the segment's alignment rule, otherwise . =align(n) does not work.
+ * . = ALIGN(n);  
+ * .data .  :  
+ * The way that . = ALIGN(n) specifies how much is how much.
+ *
+ * LMA:
+ * 
+ * 1. Linker auto-alignment
+ * AT(ALIGN(LOADADDR (.data) + SIZEOF (.data), ALIGNOF(.data)) 
+ * 2. user-specified
+ * AT(ALIGN(LOADADDR (.data) + SIZEOF (.data), n) 
+ *   
+ * If the alignment rules of LMA and VMA are the same, the following combination is generally used:
+ *.data : AT(ALIGN(LOADADDR (.data) + SIZEOF (.data), ALIGNOF(.data)) 
+ * {
+ * .....
+ * }
+ * Be careful of the following points when moving data or code from LMA to VMA: 
+ * - When moving only one data segment at a time, simply make sure that the first addresses of the LMA and VMA for that data segment are aligned in the same way.
+ * - When moving multiple data segments at the same time, the following operations must be performed: 
+ * 1. The first addresses of the LMA and VMA are aligned according to the maximum alignment of all data segments;
+ * 2. LMA and VMA are aligned in the same way in each data segment;
+ * Refer to the examples: 
+ * Example 1
+ * . = ALIGN(MAX(ALIGNOF(.rf_certification_cfg), ALIGNOF(.data)). 
+ * .rf_certification_cfg . : AT(ALIGN(LOADDR(.ram_code) + SIZEOF(.ram_code)), MAX(ALIGNOF(.rf_certification_cfg), ALIGNOF(.data )))))). * .data : AT(ALIGN(LOADDR(.ram_code) + SIZEOF(.data)). 
+ * .data : AT(ALIGN(LOADADDR (.rf_certification_cfg) + SIZEOF (.rf_certification_cfg), ALIGNOF(.data)))
+ */
+ 
 ENTRY(_RESET_ENTRY)
 SECTIONS
 {
+    NDS_SAG_LMA_FLASH = 0x20080000 ;
     . = 0x20080000;
     PROVIDE (BIN_BEGIN = .);
     .vectors        : { KEEP(*(.vectors )) }
 
     . = 0x50020000;
-    .start : AT( ALIGN(LOADADDR (.vectors) + SIZEOF (.vectors),4))  { KEEP(*(.start )) }
+    .start : AT( ALIGN(LOADADDR (.vectors) + SIZEOF (.vectors),ALIGNOF(.start)))  { KEEP(*(.start )) }
     PROVIDE (_START_VMA_START = ADDR(.start));
     PROVIDE (_START_LMA_START = LOADADDR(.start));
     PROVIDE (_START_LMA_VMA_END = .); 
-    . = ALIGN(4);
-    .aes_data (NOLOAD) : AT( ALIGN(LOADADDR (.start) + SIZEOF (.start),4))  { KEEP(*(.aes_data )) }
-    . = ALIGN(4);
-    .retention_data : AT( ALIGN(LOADADDR (.aes_data) + SIZEOF (.aes_data),4))   { KEEP(*(.retention_data )) }
+
+    .retention_data : AT( ALIGN(LOADADDR (.start) + SIZEOF (.start),ALIGNOF(.retention_data)))   { KEEP(*(.retention_data )) }
     PROVIDE (_RETENTION_DATA_VMA_START = ADDR(.retention_data));
     PROVIDE (_RETENTION_DATA_LMA_START = LOADADDR(.retention_data));
     PROVIDE (_RETENTION_DATA_VMA_END = .); 
-    . = ALIGN(4);
-    .ram_code       : AT( ALIGN(LOADADDR (.retention_data) + SIZEOF (.retention_data),4)) 
-        { KEEP(*(.ram_code )) }
+/*
+ *  The reason for wrapping these segments together: 
+ *  The previous practice existed to carry multiple segments at once, the starting addresses of all LMAs and VMAs existed that were not aligned 
+ *  according to the maximum alignment of all segments, and inconsistencies existed in the difference between the LMAs and VMAs of multiple segments. 
+*/
+    .ram_code   : AT( ALIGN(LOADADDR (.retention_data) + SIZEOF (.retention_data),ALIGNOF(.ram_code))) 
+        { 
+          *(.ram_code)
+          *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning )
+          KEEP(*(.eh_frame ))
+          *(.eh_frame_hdr ) 
+          KEEP(*(.exec.itable))       
+          
+         }
     PROVIDE (_RAMCODE_VMA_END = .);
     PROVIDE (_RAMCODE_VMA_START = ADDR(.ram_code));
     PROVIDE (_RAMCODE_LMA_START = LOADADDR(.ram_code));
-    . = ALIGN(4);
-    PROVIDE (_ILM_VMA_START = .);
-    .text           : AT( ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code),4))
-        { *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning )  }
-    . = ALIGN(4);
-    .rodata         : AT( ALIGN(LOADADDR (.text) + SIZEOF (.text),4))
-        { *(.rodata .rodata.* .gnu.linkonce.r.* )}
-    . = ALIGN(4);
-    .eh_frame_hdr   : AT( ALIGN(LOADADDR (.rodata) + SIZEOF (.rodata),4))
-        { KEEP(*(.eh_frame_hdr)) }
-    . = ALIGN(4);
-    .eh_frame       : AT( ALIGN(LOADADDR (.eh_frame_hdr) + SIZEOF (.eh_frame_hdr),4))
-        { KEEP(*(.eh_frame)) }
-    . = ALIGN(4);
-    .exec.itable    : AT( ALIGN(LOADADDR (.eh_frame) + SIZEOF (.eh_frame),4))
-        { KEEP(*(.exec.itable)) }
-    PROVIDE (_ILM_VMA_END = .);     
-    PROVIDE (_ILM_LMA_START = LOADADDR(.text));
-    . = ALIGN(4);
-
-    .bootloader : AT( ALIGN(LOADADDR (.exec.itable) + SIZEOF (.exec.itable),4)) { KEEP(*(.bootloader )) }
+  
+    .bootloader : AT( ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code),ALIGNOF(.bootloader))) { KEEP(*(.bootloader )) }
     PROVIDE (_BOOTLOADER_VMA_START = ADDR(.bootloader));
     PROVIDE (_BOOTLOADER_LMA_START = LOADADDR(.bootloader));
     PROVIDE (_BOOTLOADER_VMA_END = .);
@@ -76,13 +107,13 @@ SECTIONS
     PROVIDE( __global_pointer$ = . + (4K / 2) );
     .data   : AT(ALIGN(LOADADDR (.bootloader) + SIZEOF (.bootloader),  ALIGNOF(.data)))
         { *(.data .data.* .gnu.linkonce.d.* ) KEEP(*(.gnu.linkonce.d.*personality* )) SORT(CONSTRUCTORS) 
+          *(.rodata .rodata.* .gnu.linkonce.r.* )
           *(.srodata.cst16 ) *(.srodata.cst8 ) *(.srodata.cst4 ) *(.srodata.cst2 ) *(.srodata .srodata.* ) *(.sdata .sdata.* .gnu.linkonce.s.* ) *(.sdata2 .sdata2.* .gnu.linkonce.s.* )
         }
     PROVIDE (_DATA_VMA_END = .);    
     PROVIDE (_DATA_VMA_START = ADDR(.data));
     PROVIDE (_DATA_LMA_START = LOADADDR(.data));
-    PROVIDE (BIN_SIZE = LOADADDR(.data) + SIZEOF(.data) - BIN_BEGIN);
-    
+
     . = ALIGN(4);
     PROVIDE (_BSS_VMA_START = .);
     .sbss   (NOLOAD)    : { *(.dynsbss ) *(.sbss .sbss.* .gnu.linkonce.sb.* ) *(.scommon .scommon.* ) }
@@ -92,11 +123,12 @@ SECTIONS
      * resulting in a store access fault.
      */
     PROVIDE (_BSS_VMA_END = ((. + 3) / 4)*4);
-    
+
     .sdk_version    : AT(LOADADDR (.data) + SIZEOF (.data))
         { KEEP(*(.sdk_version )) }
 
     PROVIDE (BIN_SIZE = LOADADDR(.sdk_version) + SIZEOF(.sdk_version) - BIN_BEGIN);
+
     . = ALIGN(4);
     /* end is the starting address of the heap, the heap grows upward */
     

@@ -25,7 +25,7 @@
 #define LCD_2IN_DRIVER_H
 
 #define LCD_2IN_WIDTH  240 //LCD width
-#define LCD_2IN_HEIGHT 320 //LCD height
+#define LCD_2IN_HEIGHT 240 //LCD height
 
 #define LCD_2IN_CS_0   DEV_Digital_Write(DEV_CS_PIN, 0)
 #define LCD_2IN_CS_1   DEV_Digital_Write(DEV_CS_PIN, 1)

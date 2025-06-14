@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-#define USB_HIGH_SPEED_EN 0
+#define USB_HIGH_SPEED_EN 1
 
 #define ID_VENDOR  0x248a
 #define ID_PRODUCT 0x8006

@@ -21,7 +21,13 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "dk1_codec_app_config.h"
+#include "common.h"
+#include "i2c/hal_i2c.h"
+#include "i2c/hal_es8389.h"
+#include "i2c/hal_nau8821.h"
+#include "i2s/hal_i2s.h"
+#include "log.h"
+#include "../common/usb_dbg/debug_vcd.h"
 
 #if (AUDIO_MODE == I2S_TO_EXT_CODEC_USB || AUDIO_MODE == I2S_TO_EXT_CODEC_MIC_SPK)
 #include "usb_default.h"
@@ -92,10 +98,11 @@ void user_init(void)
     gpio_function_en(LEDTEST2);
     gpio_output_en(LEDTEST2);
 
+#if SERIAL_DBG_EN
+    uart0_init();
+#endif
     /****audio init start****/
 
-    hal_i2c_init();
-    hal_es8389_init();
 
 #if (AUDIO_MODE == I2S_TO_EXT_CODEC_USB)
     /* enable USB manual interrupt(in auto interrupt mode,USB device would be USB printer device) */
@@ -118,10 +125,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_USB_ENDPOINT);
     /* enable USB DP pull up 1.5k */
     usb_set_pin(1);
-#endif
 
-#if SERIAL_DBG_EN
-    uart0_init();
 #endif
 
     hal_i2s_init(codec_buf_mic, codec_play_buf_spk, sizeof(codec_buf_mic), sizeof(codec_play_buf_spk));

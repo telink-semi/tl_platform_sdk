@@ -46,12 +46,17 @@ flash_user_defined_list_t flash_init_list[] = {
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
     {0x1660c8, FLASH_LOCK_LOW_2M_MID1660C8},
-    //16M
-    {0x186085, FLASH_LOCK_LOW_8M_MID186085},
 #elif defined(MCU_CORE_TL7518)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
 #elif defined(MCU_CORE_TL751X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    //8M
+    {0x176085, FLASH_LOCK_LOW_4M_MID176085},
+#elif defined(MCU_CORE_TL753X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     //4M
@@ -79,8 +84,10 @@ flash_user_defined_list_t flash_init_list[] = {
 #elif defined(MCU_CORE_TL322X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    {0x1460c8, FLASH_LOCK_LOW_512K_MID1460C8},
     //2M
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
 #elif defined(MCU_CORE_W92)
@@ -104,7 +111,7 @@ flash_hal_user_handler_t flash_handler = {
     .list      = list_fp,
     .flash_cnt = (sizeof(flash_init_list) / sizeof(flash_user_defined_list_t)),
 };
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
 flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
     {
      .list       = list_fp,
@@ -148,6 +155,8 @@ void platform_init(vbat_type_e vbat_v, unsigned char flash_protect_en)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL323X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL753X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
 #else
 void platform_init(unsigned char flash_protect_en)
 #endif
@@ -175,13 +184,15 @@ void platform_init(unsigned char flash_protect_en)
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_TL323X)
     sys_init(power_mode, vbat_v, cap);
+#elif defined(MCU_CORE_TL753X)
+    sys_init(power_mode, vbat_v);
 #else
     sys_init();
 #endif
 
 
 #if (!defined(DUT_TEST))
-   #if defined(MCU_CORE_TL751X)
+   #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
     /**
         ===============================================================================
         To prevent leakage, all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS.
@@ -206,7 +217,7 @@ void platform_init(unsigned char flash_protect_en)
     Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
     ===============================================================================
 */
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
     pm_update_status_info(1);
 #endif
 
@@ -353,7 +364,7 @@ void platform_init(unsigned char flash_protect_en)
 
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
         unsigned char lock_flag = hal_flash_lock();
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
         #endif
         if (!(lock_flag == 1)) {

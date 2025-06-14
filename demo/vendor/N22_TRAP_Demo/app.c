@@ -55,6 +55,8 @@ void user_init(void)
     stimer_set_irq_mask_n22(FLD_SYSTEM_IRQ_MASK_N22);
     #elif defined(MCU_CORE_TL751X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_N22);
+    #elif defined(MCU_CORE_TL753X)
+    stimer_set_irq_mask(FLD_SYSTEM_IRQ_N22);
     #endif
 
     /* 32K initialized and calibrated . If 32k is already at d25, there is no need to call it here.*/
@@ -78,6 +80,9 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     if (stimer_get_irq_status_n22()) {
         stimer_clr_irq_status_n22();
     #elif defined(MCU_CORE_TL751X)
+    if (stimer_get_irq_status(FLD_SYSTEM_IRQ_N22)) {
+        stimer_clr_irq_status(FLD_SYSTEM_IRQ_N22);
+    #elif defined(MCU_CORE_TL753X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_N22)) {
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_N22);
     #endif

@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "gpio_default.h"
-#include "dk1_camera_app_config.h"
+#include "common.h"
 
 
 extern void user_init(void);

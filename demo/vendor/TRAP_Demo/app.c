@@ -52,13 +52,13 @@ void user_init(void)
 
     /******** stimer init********/
     plic_interrupt_enable(IRQ_SYSTIMER);
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL322X)
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); //1ms
     #else
     stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); //1ms
     #endif
 
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_D25F); //irq enable
     #elif defined(MCU_CORE_TL322X)
     stimer_set_irq_mask_d25f(FLD_SYSTEM_IRQ_MASK_D25F);
@@ -99,7 +99,7 @@ void main_loop(void)
 
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
     #elif defined(MCU_CORE_TL322X)
     if (stimer_get_irq_status_d25f(FLD_SYSTEM_IRQ_D25F))
@@ -108,7 +108,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     #endif
     {
         gpio_set_high_level(LED2);
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); //clr irq
         stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS);
     #elif defined(MCU_CORE_TL322X)
@@ -294,7 +294,7 @@ void user_init(void)
 
     /* 6: stimer init */
     plic_interrupt_enable(IRQ_SYSTIMER);
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS); /* 1ms */
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_D25F);                               /* irq enable */
     #elif defined(MCU_CORE_TL322X)
@@ -334,7 +334,7 @@ _attribute_ram_code_sec_ void mswi_irq_handler(void)
 
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F))
     #elif defined(MCU_CORE_TL322X)
     if (stimer_get_irq_status_d25f(FLD_SYSTEM_IRQ_D25F))
@@ -343,7 +343,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     #endif
     {
         gpio_set_high_level(LED4);
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
         stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1MS);
     #elif defined(MCU_CORE_TL322X)
@@ -559,7 +559,7 @@ void user_init(void)
     #endif
 
     /* init stimer */
-    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_D25F);
     #elif defined(MCU_CORE_TL322X)
@@ -621,7 +621,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
     printf("\r\ncurrent_pc=0x%4x\r\n", current_pc);
     printf("\r\nleave wfi mode from stimer interrupt service routine \r\n");
 
-        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F)) {
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
         stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
@@ -675,7 +675,7 @@ void main_loop(void)
 
     #if (WFI_AWOKEN_MODE == WFI_MODE_INTR_DIS_ONLY_STIMER_WAKEUP)
 
-        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F)) {
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
         stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
@@ -712,7 +712,7 @@ void main_loop(void)
     printf(" current claim %d\r\n", cur_claim);
     switch (cur_claim) {
     case IRQ_SYSTIMER:
-        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
         if (stimer_get_irq_status(FLD_SYSTEM_IRQ_D25F)) {
             stimer_clr_irq_status(FLD_SYSTEM_IRQ_D25F); /* clr irq */
         #elif defined(MCU_CORE_TL322X)
@@ -755,7 +755,7 @@ void main_loop(void)
              * Re-set the stimer capture so that stimer interrupts come sooner. \n
              * The purpose of this is to allow the stimer and timer0 to wake up the WFI alternately, in practice it is not necessary to set the capture value alternately.
              */
-        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+        #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL322X)
             stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S - SYSTEM_TIMER_TICK_1MS * 100);
         #else
             stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S - SYSTEM_TIMER_TICK_1MS * 100);

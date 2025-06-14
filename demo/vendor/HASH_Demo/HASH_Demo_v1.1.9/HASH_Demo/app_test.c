@@ -26,6 +26,7 @@
 
 unsigned int hash_app_test(void)
 {
+    trng_dig_en();
     hash_dig_en();
 #ifdef HASH_DMA_FUNCTION
     hash_set_tx_dma_config(DMA0);

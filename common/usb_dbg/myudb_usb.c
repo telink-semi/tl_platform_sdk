@@ -466,8 +466,8 @@ _attribute_ram_code_sec_noinline_ int myudb_usb_get_packet(unsigned char *p)
         // read data
         int n = usb1hw_get_ep_ptr(MYUDB_EDP_OUT_HCI);
         usb1hw_reset_ep_ptr(MYUDB_EDP_OUT_HCI);
-        usb1hw_read_ep_data(MYUDB_EDP_IN_HCI, p, n);
-        usb1hw_data_ep_ack(MYUDB_EDP_IN_HCI);
+        usb1hw_read_ep_data(MYUDB_EDP_OUT_HCI, p, n);
+        usb1hw_data_ep_ack(MYUDB_EDP_OUT_HCI);
 
         if (n < 64) {
             n   = len;
@@ -561,7 +561,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
     //              flash_erase_chip ();
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
                 unsigned int flash_mid = flash_read_mid();
-    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
                 unsigned int flash_mid = flash_read_mid_with_device_num(0);
     #endif
                 flash_mid >>= 16;

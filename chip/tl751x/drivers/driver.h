@@ -62,6 +62,7 @@
 #include "usbhw.h"
 #include "usb1hw.h"
 #include "watchdog.h"
+#include "wt.h"
 #include "s7816.h"
 #include "lib/include/core.h"
 #include "mdec.h"
@@ -79,4 +80,5 @@
 #include "plic_sw.h"
 #include "plmt.h"
 #include "lib/include/otp.h"
+#include "flash/flash_common.h"
 #include "flash/flash_type.h"

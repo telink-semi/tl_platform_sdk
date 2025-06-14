@@ -48,7 +48,46 @@
 
 .extern gpio_shutdown_ramcode_for_asm
 .extern adc_anti_aging_mode_ramcode_for_asm
-.section .ram_boot, "ax"
+
+//The default driver configuration is 128K to ensure that the default driver configuration can work properly on all models.
+//In actual use, please configure the sram size according to your own model, otherwise the efficiency will be affected.
+//the most efficient use is:
+//IRAM is used to store code, DRAM is used to store data, if the data-related segments are stored in IRAM, the efficiency will be affected.
+//(add by weihua.zhang, confirmed by kaixin.chen and shujuan.chu 20230725)
+#define SRAM_128K      1    //128KSRAM, 128KB-IRAM(128KB-Retention)/0KB-DRAM
+#define SRAM_256K      2    //256KSRAM, 256KB-IRAM(256KB-Retention)/0KB-DRAM
+#define SRAM_384K      3    //384KSRAM, 256KB-IRAM(256KB-Retention)/128KB-DRAM
+#define SRAM_512K      4    //512KSRAM, 256KB-IRAM(256KB-Retention)/256KB-DRAM
+#define SRAM_SIZE      SRAM_128K
+
+#if (SRAM_SIZE == SRAM_256K)
+    .equ __IRAM_2_EN,   1
+    .equ __DRAM_1_EN,   0
+    .equ __DRAM_2_EN,   0
+    .equ __DRAM_DIS,    1
+#elif (SRAM_SIZE == SRAM_384K)
+    .equ __IRAM_2_EN,   1
+    .equ __DRAM_1_EN,   1
+    .equ __DRAM_2_EN,   0
+    .equ __DRAM_DIS,    0
+#elif (SRAM_SIZE == SRAM_512K)
+    .equ __IRAM_2_EN,   1
+    .equ __DRAM_1_EN,   1
+    .equ __DRAM_2_EN,   1
+    .equ __DRAM_DIS,    0
+#elif (SRAM_SIZE == SRAM_128K)
+    .equ __IRAM_2_EN,   0
+    .equ __DRAM_1_EN,   0
+    .equ __DRAM_2_EN,   0
+    .equ __DRAM_DIS,    1
+#endif
+
+    .section .ram_boot, "ax"
+    .global     __IRAM_2_EN
+    .global     __DRAM_1_EN
+    .global     __DRAM_2_EN
+    .global     __DRAM_DIS
+
     .option push
     .option norelax
     .global _RAM_RESET_ENTRY

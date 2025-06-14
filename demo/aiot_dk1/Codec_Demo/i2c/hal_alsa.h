@@ -23,7 +23,8 @@
  *******************************************************************************************************/
 #ifndef _ALSA_HAL_H_
 #define _ALSA_HAL_H_
-#include "../dk1_codec_app_config.h"
+#include "common.h"
+#include "hal_i2c.h"
 
 typedef struct _ALSA_DEVICE
 {
@@ -356,11 +357,18 @@ typedef struct _ALSA_DEVICE
 #define SNDRV_PCM_FORMAT_S24_LE    2
 #define SNDRV_PCM_FORMAT_S32_LE    3
 
-
-#define regmap_write               hal_i2c_write
-#define regmap_read                hal_i2c_read
-#define regmap_update_bits         hal_i2c_update_bits
 #define ussleep(ms)                delay_ms(ms)
 
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_es8389)
+#define regmap_write       hal_i2c_write
+#define regmap_read        hal_i2c_read
+#define regmap_update_bits hal_i2c_update_bits
+#endif
+
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+#define regmap_write_nau8821       hal_i2c_nau8821_write
+#define regmap_read_nau8821        hal_i2c_nau8821_read
+#define regmap_update_bits_nau8821 hal_i2c_nau8821_update_bits
+#endif
 
 #endif

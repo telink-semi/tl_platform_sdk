@@ -89,7 +89,7 @@
  *                                        SPI  pin  define                                                        *
  *********************************************************************************************************************/
         #if (SPI_MODULE_SEL == GSPI_MODULE)
-            #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+            #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
 gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = GPIO_FC_PA0,
     .spi_clk_pin      = GPIO_FC_PA1,
@@ -99,6 +99,16 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
 };
             #endif
+#if defined(MCU_CORE_TL322X)
+gspi_pin_config_t gspi_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PF2,
+    .spi_clk_pin      = GPIO_FC_PF3,
+    .spi_mosi_io0_pin = GPIO_FC_PF4,
+    .spi_miso_io1_pin = GPIO_FC_PF5, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = GPIO_FC_PF6, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PF7, //quad  mode is required, otherwise it is NONE_PIN.
+};
+#endif
 
             #if defined(MCU_CORE_TL751X)
 gspi_pin_config_t gspi_pin_config = {
@@ -136,42 +146,42 @@ gspi_pin_config_t gspi_pin_config = {
         #if defined(MCU_CORE_TL322X)
             #if (SPI_MODULE_SEL == GSPI1_MODULE)
 gspi_pin_config_t gspi1_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PA0,
-    .spi_clk_pin      = GPIO_FC_PA1,
-    .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = GPIO_FC_PA3, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = GPIO_FC_PF2,
+    .spi_clk_pin      = GPIO_FC_PF4,
+    .spi_mosi_io0_pin = GPIO_FC_PG0,
+    .spi_miso_io1_pin = GPIO_FC_PF7, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = GPIO_FC_PF6, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PF5, //quad  mode is required, otherwise it is NONE_PIN.
 };
             #endif
             #if (SPI_MODULE_SEL == GSPI2_MODULE)
 gspi_pin_config_t gspi2_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PA0,
-    .spi_clk_pin      = GPIO_FC_PA1,
-    .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = GPIO_FC_PA3, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = GPIO_FC_PF2,
+    .spi_clk_pin      = GPIO_FC_PG1,
+    .spi_mosi_io0_pin = GPIO_FC_PG5,
+    .spi_miso_io1_pin = GPIO_FC_PG4, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = GPIO_FC_PG3, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PG2, //quad  mode is required, otherwise it is NONE_PIN.
 };
             #endif
             #if (SPI_MODULE_SEL == GSPI3_MODULE)
 gspi_pin_config_t gspi3_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PA0,
-    .spi_clk_pin      = GPIO_FC_PA1,
-    .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = GPIO_FC_PA3, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = GPIO_FC_PF2,
+    .spi_clk_pin      = GPIO_FC_PG6,
+    .spi_mosi_io0_pin = GPIO_FC_PH2,
+    .spi_miso_io1_pin = GPIO_FC_PH1, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = GPIO_FC_PH0, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PG7, //quad  mode is required, otherwise it is NONE_PIN.
 };
             #endif
             #if (SPI_MODULE_SEL == GSPI4_MODULE)
 gspi_pin_config_t gspi4_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PA0,
-    .spi_clk_pin      = GPIO_FC_PA1,
-    .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = GPIO_FC_PA3, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = GPIO_FC_PF2,
+    .spi_clk_pin      = GPIO_FC_PH3,
+    .spi_mosi_io0_pin = GPIO_FC_PH7,
+    .spi_miso_io1_pin = GPIO_FC_PH6, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = GPIO_FC_PH5, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PH4, //quad  mode is required, otherwise it is NONE_PIN.
 };
             #endif
         #endif
@@ -190,12 +200,12 @@ lspi_pin_config_t lspi_pin_config = {
 
                 #if defined(MCU_CORE_TL322X)
 lspi_pin_config_t lspi_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PA0,
-    .spi_clk_pin      = GPIO_FC_PA1,
-    .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = GPIO_FC_PA3, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = GPIO_FC_PF2,
+    .spi_clk_pin      = GPIO_FC_PA0,
+    .spi_mosi_io0_pin = GPIO_FC_PB2,
+    .spi_miso_io1_pin = GPIO_FC_PB1, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = GPIO_FC_PA2, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PA1, //quad  mode is required, otherwise it is NONE_PIN.
 };
                 #endif
 
@@ -542,7 +552,7 @@ void user_init(void)
                 #endif
     spi_set_io_mode(SPI_MODULE_SEL, SPI_SINGLE_MODE);
     spi_set_dummy_cnt(SPI_MODULE_SEL, 0);
-    spi_set_transmode(SPI_MODULE_SEL, SPI_MODE_WRITE_ONLY);
+    spi_set_slave_transmode(SPI_MODULE_SEL, SPI_MODE_WRITE_ONLY);
     spi_clr_irq_status(SPI_MODULE_SEL, SPI_END_INT);
     spi_set_irq_mask(SPI_MODULE_SEL, SPI_END_INT_EN); //endint_en txfifoint_en rxfifoint_en
             #elif (DATA_MODE == ONLY_DATA_SLAVE_REVEICE_MODE)
@@ -553,7 +563,7 @@ void user_init(void)
                 #endif
     spi_set_io_mode(SPI_MODULE_SEL, SPI_SINGLE_MODE);
     spi_set_dummy_cnt(SPI_MODULE_SEL, 0);
-    spi_set_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);
+    spi_set_slave_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);
     dma_set_irq_mask(SPI_RX_DMA_CHN, TC_MASK);
     dma_set_llp_irq_mode(SPI_RX_DMA_CHN, DMA_INTERRUPT_MODE);
     plic_interrupt_enable(IRQ_DMA);
