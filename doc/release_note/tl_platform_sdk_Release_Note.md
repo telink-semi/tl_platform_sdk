@@ -85,6 +85,8 @@
  * (b91/b92/tl321x/tl721x/tl751x): 1.flash_boot.link, in order to save the space of dram, put the srodata segment in the data segment in the rodata segment; 2. ram_boot.link, put the rodata segment in the .data uniformly; 3. Os need the specific segment .exec.italic, put the ramcode segment uniformly in the ramcode segment;(merge_requests/@1776) 
  * (tl751x): all link files to solve the problem when you want to move multiple segments together, to avoid inconsistency between LMA and VMA alignment, resulting in the handling of data or code does not correspond to the problem;(merge_requests/@1776)
 
+### Performance Improvements
+
 ## 3.6.0
 
 ### 版本
@@ -171,6 +173,8 @@
 * **link**
  * (b91/b92/tl321x/tl721x/tl751x): 1.flash_boot.link,为了节省dram空间，将data段中的srodata段放在rodata段中; 2. ram_boot.link,将rodata段统一放在.data中; 3.Os需要的特定的段.exec.itable，统一放在ramcode段中;(merge_requests/@1776)
  * (tl751x):所有link文件解决当想要一起搬移多个段，避免LMA和VMA对齐方式不一致，导致搬运的数据或者代码不对应的问题；(merge_requests/@1776)
+
+### Performance Improvements
 
 ---
 
