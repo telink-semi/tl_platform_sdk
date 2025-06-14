@@ -113,24 +113,12 @@ _RAMCODE_INIT:
     la     t2, _RAMCODE_VMA_START
     la     t3, _RAMCODE_VMA_END
 _RAMCODE_INIT_BEGIN:
-    bleu    t3, t2, _ILM_INIT
+    bleu    t3, t2, _DLM_INIT
     lw     t0, 0(t1)
     sw     t0, 0(t2)
     addi   t1, t1, 4
     addi   t2, t2, 4
     j      _RAMCODE_INIT_BEGIN
-
-_ILM_INIT:
-    la  t1, _ILM_LMA_START
-    la  t2, _ILM_VMA_START
-    la  t3, _ILM_VMA_END
-                                                                                                                                                                                                                                                                                                        _ILM_INIT_BEGIN:
-                                                                                                                                                                                                                                                                                                            bleu    t3, t2, _DLM_INIT
-    lw  t0, 0(t1)
-    sw  t0, 0(t2)
-    addi    t1, t1, 4
-    addi    t2, t2, 4
-    j   _ILM_INIT_BEGIN
 
 _DLM_INIT:
     la  t1, _DATA_LMA_START

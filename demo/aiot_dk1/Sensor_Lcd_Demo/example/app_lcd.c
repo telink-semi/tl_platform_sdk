@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "../device/st7789.h"
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 #if (EXAMPLE_SELECT == EXAMPLE_LCD)
 

@@ -40,10 +40,10 @@ extern "C"
 #if !defined(MCU_CORE_TL7518)
     #define RF_PRIVATE_250K 8
     #define RF_PRIVATE_500K 9
-    #define RF_ANT          12 //TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
-    #define RF_HYBEE_1M     13
-    #define RF_HYBEE_2M     14
-    #define RF_HYBEE_500K   15
+    #define RF_ANT          12 //TODO:TL721X Currently only validated in FPGA, not in chip; available after subsequent validation
+    #define RF_HYBEE_1M     13 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
+    #define RF_HYBEE_2M     14 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
+    #define RF_HYBEE_500K   15 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
 #endif
 #define RF_PRIVATE_1M   10 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define RF_PRIVATE_2M   11 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
@@ -59,6 +59,7 @@ extern "C"
 #endif
 
 #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #define RF_PRI_GENERIC_1M   22
     #define RF_PRI_GENERIC_2M   23
     #define RF_PRI_GENERIC_250K 24
@@ -66,9 +67,9 @@ extern "C"
 #endif
 
 #if defined(MCU_CORE_TL322X)
-    #define RF_BLE_4M   26
+    #define RF_BLE_4M   26//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #define RF_BLE_6M   27
-    #define RF_BLE_4M_NO_PN 28
+    #define RF_BLE_4M_NO_PN 28//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #define RF_BLE_6M_NO_PN 29
 #endif
 
@@ -136,7 +137,7 @@ extern "C"
 #elif defined(MCU_CORE_TL323X)
     #define RF_POWER RF_POWER_P4p47dBm
 #elif defined(MCU_CORE_TL322X)
-    #define RF_POWER RF_POWER_P4p47dBm
+    #define RF_POWER RF_POWER_P4p50dBm
 #elif defined(MCU_CORE_TL751X)
     #define RF_POWER RF_POWER_P10p00dBm
 #endif

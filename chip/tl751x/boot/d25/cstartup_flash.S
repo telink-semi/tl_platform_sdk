@@ -52,7 +52,29 @@
 #define EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM        320 //25us
 #define FLASH_LOOP_NUM_TEST                         0
 
+//Internal testing concerns only:
+//Code segments are placed in IRAM, data segments can be placed in IRAM, or they can be placed in DRAM.
+//The chip can choose to be all IRAM, or it can choose to have IRAM or DRAM. Two options are provided below for all chips.
+//the most efficient use is: IRAM is used to store code, DRAM is used to store data,
+//if the data-related segments are stored in IRAM, the efficiency will be affected.
+//Comparison of these two ways to dut_test demo test, for example, the bin size difference of 336 bytes,
+//other demo difference in the value of fluctuations, but not too large.
+//(add by weihua 20250328)
+#define SRAM_ALL_IRAM       1
+#define SRAM_IRAM_DRAM      2
+#define SRAM_MODE           SRAM_IRAM_DRAM
+
+#if (SRAM_MODE == SRAM_IRAM_DRAM)
+    .equ __DRAM_EN,   1
+
+#else
+    .equ __DRAM_EN,   0
+
+#endif
+
     .section .vectors, "ax"
+    .global     __DRAM_EN
+
 
     //.org  and linker's relaxation (-flto) cannot be used at the same time
     //Pop corresponds to push. Before using .option norelax, use push to save the current .option configuration
@@ -68,7 +90,7 @@
 _RESET_ENTRY:
     j        _START
     //free the 6th ~ 7th byte to store the crc type of the bin file
-        /* This configuration is specifically for RF_Certification and does not need to be enabled for other scenarios */
+    /* This configuration is specifically for RF_Certification and does not need to be enabled for other scenarios */
 #ifdef RF_CERTIFICATION_CGF_EN
     .org 0x10
     .word(_RF_CERTIFICATION_CFG_ADDR_OFFSET)
@@ -312,6 +334,12 @@ _ISTART:
     la     gp, __global_pointer$
     .option pop
 
+#if DP_THROUGH_SWIRE_DIS
+    lui     t0, 0x80100
+    addi    t0 , t0 , 0x700
+    li      t1, 0x00
+    sb      t1, 0x501(t0)  //0x80100c01 -> 0x00  <7>: 0 swire_usb_dis 
+#endif
     /* Initialize stack pointer */
     la     t0, _STACK_TOP
     mv     sp, t0
@@ -475,22 +503,10 @@ _IZERO_BSS:
     la     t2, _BSS_VMA_START
     la     t3, _BSS_VMA_END
 _IZERO_BSS_BEGIN:
-    bleu   t3, t2, _IZERO_AES
-    sw     t0, 0(t2)
-    addi   t2, t2, 4
-    j      _IZERO_BSS_BEGIN
-
-    /* Zero .aes section in sram */
-_IZERO_AES:
-    lui    t0, 0
-    la     t2, _AES_VMA_START
-    la     t3, _AES_VMA_END
-_IZERO_AES_BEGIN:
     bleu   t3, t2, _IFILL_STK
     sw     t0, 0(t2)
     addi   t2, t2, 4
-    j      _IZERO_AES_BEGIN
-
+    j      _IZERO_BSS_BEGIN
 
     /* Fill the remaining section in sram */
 _IFILL_STK:

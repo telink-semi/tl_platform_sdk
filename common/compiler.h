@@ -40,8 +40,6 @@
 
 #define _attribute_data_retention_sec_      __attribute__((section(".retention_data")))
 
-#define _attribute_rram_sec_                __attribute__((section(".rram"))) __attribute__((noinline))
-
 #define _attribute_aligned_(s)              __attribute__((aligned(s)))
 
 /**

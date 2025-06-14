@@ -81,7 +81,19 @@ enum
 
 enum
 {
+    FLD_ENABLE_AUTO_BYPASS_AVDD3 = BIT(0),
+    FLD_ENABLE_AUTO_BYPASS_AVDD2 = BIT(1),
     FLD_MSCN_PULLUP_RES_ENB = BIT(4), //mscn 1M pullup enb signal.
+};
+
+#define areg_aon_0x24 0x24
+
+enum
+{
+    FLD_BBPLL_ATB              = BIT(0),          //connect bbpll_atb_o to GPIO for test
+    FLD_AVDD0P8_TRIM3P3V       = BIT_RNG(1, 3),   //trim bandgap's internal 0.8V voltage
+    FLD_BG_TRIM_3V             = BIT_RNG(4, 6),   //trim bandgap's 1.2V voltage REFERENCE
+    FLD_EN_BYPASS_AVDD2_3V     = BIT_RNG(7, 9),   //bypass avdd2(short to vbat)
 };
 
 #define areg_aon_0x2a 0x2a
@@ -176,6 +188,12 @@ typedef enum
     WAIT_TIMEOUT             = 0x03,
 } pm_sw_reboot_reason_e;
 
+#define areg_aon_0x3d 0x3d
+
+#define areg_aon_0x3e 0x3e
+
+#define areg_aon_0x4b 0x4b
+
 #define areg_aon_0x4e 0x4e
 
 enum
@@ -196,6 +214,7 @@ enum
 
 #define areg_aon_0x51 0x51
 #define areg_aon_0x52 0x52
+#define areg_aon_0x54 0x54
 
 #define areg_aon_0x60 0x60
 
@@ -230,6 +249,8 @@ enum
                                         */
 };
 
+#define areg_aon_0x78 0x78
+
 #define areg_aon_0x7d 0x7d
 
 typedef enum
@@ -243,6 +264,8 @@ typedef enum
     //RSVD
     FLD_PG_CLK_EN = BIT(7), //1:enable change power sequence clk
 } pm_pd_module_e;
+
+#define areg_aon_0x7e 0x7e
 
 #define areg_aon_0x7f 0x7f
 

@@ -47,7 +47,30 @@
 #define mcache_ctl 0x7CA
 #endif
 
-.section .ram_boot, "ax"
+
+//Code segments are placed in IRAM, data segments can be placed in IRAM, or they can be placed in DRAM.
+//The chip can choose to be all IRAM, or it can choose to have IRAM or DRAM. Two options are provided below for all chips.
+//When writing the pure ram bin of coremark demo, if you choose to have IRAM and DRAM at this time,
+//the bin file will be large, and you can choose the full IRAM option.
+//the most efficient use is: IRAM is used to store code, DRAM is used to store data,
+//if the data-related segments are stored in IRAM, the efficiency will be affected.
+//(add by weihua.zhang, confirmed by kaixin.chen and shujuan.chu 20250328)
+#define SRAM_ALL_IRAM       1
+#define SRAM_IRAM_DRAM      2
+#define SRAM_MODE           SRAM_ALL_IRAM
+
+#if (SRAM_MODE == SRAM_IRAM_DRAM)
+    .equ __DRAM_EN,   1
+
+#else
+    .equ __DRAM_EN,   0
+
+#endif
+
+    .section .ram_boot, "ax"
+    .global     __DRAM_EN
+
+
     .option push
     .option norelax
     .global _RAM_RESET_ENTRY
@@ -117,28 +140,31 @@ _RAM_START:
     csrw   mcache_ctl,  t0
     fence.i
 
+#if (SRAM_MODE == SRAM_IRAM_DRAM)
+    /* Move Data from iram to sram */
+_DATA_INIT:
+    la     t1, _DATA_LMA_START
+    la     t2, _DATA_VMA_START
+    la     t3, _DATA_VMA_END
+_DATA_INIT_BEGIN:
+    bleu   t3, t2, _RAM_ZERO_BSS
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _DATA_INIT_BEGIN
+#endif
+
     /* Zero .bss section in sram */
 _RAM_ZERO_BSS:
     lui    t0, 0
     la     t2, _BSS_VMA_START
     la     t3, _BSS_VMA_END
 _RAM_ZERO_BSS_BEGIN:
-    bleu   t3, t2, _RAM_ZERO_AES
-    sw     t0, 0(t2)
-    addi   t2, t2, 4
-    j      _RAM_ZERO_BSS_BEGIN
-
-    /* Zero .aes section in sram */
-_RAM_ZERO_AES:
-    lui    t0, 0
-    la     t2, _AES_VMA_START
-    la     t3, _AES_VMA_END
-_RAM_ZERO_AES_BEGIN:
     bleu   t3, t2, _RAM_FILL_STK
     sw     t0, 0(t2)
     addi   t2, t2, 4
-    j      _RAM_ZERO_AES_BEGIN
-
+    j      _RAM_ZERO_BSS_BEGIN
 
     /* Fill the remaining section in sram */
 _RAM_FILL_STK:

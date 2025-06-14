@@ -26,7 +26,7 @@
     #include "../usbstd/usb.h"
 
 unsigned char  usb_cdc_data[CDC_TXRX_EPSIZE];
-unsigned short usb_cdc_data_len;
+volatile unsigned short usb_cdc_data_len;
 unsigned int   usb_cdc_tx_cnt;
 unsigned char  LineCoding[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08};
 

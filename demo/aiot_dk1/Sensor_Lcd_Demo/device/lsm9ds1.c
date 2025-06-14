@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "lsm9ds1.h"
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 static uint8_t lsm9ds1_ag_iic_read(uint8_t reg_addr, uint8_t *pData, uint32_t Size)
 {
@@ -95,7 +95,7 @@ lsm9ds1_data_st lsm9ds1_iic_get_data(void)
     if (lsm9ds1_data.temperature > 0x7FFF) {
         lsm9ds1_data.temperature -= 0x10000;
     }
-        lsm9ds1_data.temperature = (lsm9ds1_data.temperature / 16) + 25;
+    lsm9ds1_data.temperature = (lsm9ds1_data.temperature / 16) + 25;
 
     lsm9ds1_ag_iic_read(LSM9DS1_OUT_X_G, data_buff, 6);
     lsm9ds1_data.pitch_x = (int16_t)((data_buff[1] << 8) | data_buff[0]);

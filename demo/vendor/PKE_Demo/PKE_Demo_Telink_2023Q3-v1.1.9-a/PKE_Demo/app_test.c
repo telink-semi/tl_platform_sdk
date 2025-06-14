@@ -26,16 +26,18 @@
 
 unsigned int pke_app_test(void)
 {
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_W92)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) ||defined(MCU_CORE_W92)
     pke_dig_en();
 #endif
 
+#if defined(SUPPORT_DH)
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
     if (DH_all_test()) {
         return 1;
     }
+#endif
 #endif
 
 #if 1
@@ -75,6 +77,7 @@ unsigned int pke_app_test(void)
     }
 #endif
 
+#if defined(SUPPORT_C25519)
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
@@ -82,7 +85,9 @@ unsigned int pke_app_test(void)
         return 1;
     }
 #endif
+#endif
 
+#if defined(SUPPORT_RSA)
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
@@ -90,7 +95,9 @@ unsigned int pke_app_test(void)
         return 1;
     }
 #endif
+#endif
 
+#if defined(SUPPORT_C25519)
 #if 1
     /*This demo uses the trng module and must call the trng_dig_en function interface.*/
     trng_dig_en();
@@ -98,7 +105,7 @@ unsigned int pke_app_test(void)
         return 1;
     }
 #endif
-
+#endif
     return 0;
 }
 

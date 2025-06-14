@@ -31,7 +31,9 @@
 #ifndef __AUDIO_H_
 #define __AUDIO_H_
 
-#include "driver.h"
+#include "lib/include/analog.h"
+#include "gpio.h"
+#include "dma.h"
 
 /**********************************************************************************************************************
  *                                                Audio anc enum/struct                                               *
@@ -3476,6 +3478,17 @@ void audio_spdif_set_pin(spdif_pin_config_t *config);
 static inline void audio_side_tone_ch_en(audio_side_tone_chn_e sdtn_chn)
 {
     reg_audio_matrix_sdtn_en |= BIT(sdtn_chn);
+}
+
+/**
+ * @brief      This function servers to disable side tone.
+ *
+ * @param[in]  sdtn_chn    - side tone channel.
+ * @return     none
+ */
+static inline void audio_side_tone_ch_dis(audio_side_tone_chn_e sdtn_chn)
+{
+    reg_audio_matrix_sdtn_en &= ~BIT(sdtn_chn);
 }
 
 /**

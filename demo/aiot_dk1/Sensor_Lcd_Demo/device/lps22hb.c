@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "lps22hb.h"
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 __attribute__((unused)) static uint8_t lps22hb_iic_read(uint8_t reg_addr, uint8_t *pData, uint32_t Size)
 {

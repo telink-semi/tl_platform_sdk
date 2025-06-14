@@ -62,7 +62,7 @@ void user_init(void)
         ;                    //This mode is used for currents testing
     #else
 
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) 
             #if (GPIO_MODE == GPIO_IRQ)
     /****GPIO_IRQ POL_FALLING   Press SW2 to connect IRQ_PIN and KEY3 to trigger an interrupt. **/
     //if disable gpio interrupt,choose disable gpio mask , use interface gpio_clr_irq_mask instead of gpio_irq_dis,if use gpio_irq_dis,may generate a false interrupt.
@@ -100,7 +100,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GPIO_SRC0 + BIT_LOW_BIT(IRQ_PIN & 0x00ff));
             #endif
 
-        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)
+        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)
 
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLDOWN_100K);
 
@@ -250,7 +250,7 @@ PLIC_ISR_REGISTER(gpio_src7_irq_handler, IRQ_GPIO_SRC7)
         #endif
     #endif
 
-    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)
 volatile unsigned int gpio_irq0_cnt = 0;
 volatile unsigned int gpio_irq7_cnt = 0;
         #if (GPIO_MODE == GPIO_IRQ_NUM0)

@@ -49,6 +49,46 @@ enum
 };
 
 #define areg_0x10d 0x10d
+#define areg_0x120 0x120
+enum
+{
+    FLD_WT_PWR          = BIT_RNG(0, 2), /**< Power Level Sensitivity */
+    FLD_WT_NTRACK       = BIT_RNG(3, 5), /**< Background Noise Tracking parameter */
+    FLD_WT_VTRACK       = BIT_RNG(6, 7), /**< Voice Tracking parameter */
+};
+
+#define areg_0x121 0x121
+enum
+{
+    FLD_WT_MINEVENT     = BIT_RNG(0, 2), /**< Minimum Event Duration */
+    FLD_WT_MINDELAY     = BIT_RNG(3, 4), /**< Minimum Delay */
+};
+
+#define areg_0x122 0x122
+enum
+{
+    FLD_WT_NFI_DET      = BIT_RNG(0, 5), /**< NFI Detection */
+};
+
+#define areg_0x123 0x123
+enum
+{
+    FLD_WT_MCLK_DIV      = BIT_RNG(3, 5), /**< Clock selection */
+    FLD_WT_SLEEP         = BIT(6),        /**< Sleep mode */
+    FLD_WT_SB            = BIT(7),        /**< Stand-by mode */
+};
+
+#define areg_0x124 0x124
+enum
+{
+    FLD_WT_IRQ_FLAG      = BIT(1), /**< Interrupt ReQuest flag */
+    FLD_WT_IRQ_MODE      = BIT(2), /**< IRQ mode selection */
+};
+
+#define areg_0x125 0x125 /**< NFI value read back */
+#define areg_0x126 0x126 /**< NFI_SYNC value read back */
+#define areg_0x127 0x127 /**< read status: 0x55  successful, 0x00 failed */
+
 #define areg_0x147 0x147
 
 enum

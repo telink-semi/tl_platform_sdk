@@ -31,19 +31,19 @@
 
 unsigned char device_desc[] = {
     0x12,
-    0x01,
+    USB_DESC_DEVICE,
     0x00,
     0x02,
     0x00,
     0x00,
     0x00,
     0x40,
-    0x8A,
-    0x24,
-    0x06,
-    0x80,
-    0x00,
-    0x01,
+    U16_LOW_BYTE(ID_VENDOR),
+    U16_HIGH_BYTE(ID_VENDOR),
+    U16_LOW_BYTE(ID_PRODUCT),
+    U16_HIGH_BYTE(ID_PRODUCT),
+    U16_LOW_BYTE(ID_VERSION),
+    U16_HIGH_BYTE(ID_VERSION),
     0x01,
     0x02,
     0x03,
@@ -58,7 +58,7 @@ unsigned char *usbd_get_device_descriptor(unsigned char bus)
 
 unsigned char config_desc[] = {
     0x09,
-    0x02,
+    USB_DESC_CONFIGURATION,
     0x6E,
     0x00,
     0x02,
@@ -67,7 +67,7 @@ unsigned char config_desc[] = {
     0x80,
     0x19,
     0x09,
-    0x04,
+    USB_DESC_INTERFACE,
     0x00,
     0x00,
     0x00,
@@ -152,12 +152,16 @@ unsigned char config_desc[] = {
     0x3E,
     0x00,
     0x09,
-    0x05,
-    0x06,
+    USB_DESC_ENDPOINT,
+    AUDIO_SPK_OUT_ENDPOINT_ADDRESS,
     0x09,
-    0x40,
-    0x00,
+    U16_LOW_BYTE(AUDIO_SPK_OUT_ENDPOINT_SIZE),
+    U16_HIGH_BYTE(AUDIO_SPK_OUT_ENDPOINT_SIZE),
+#if USB_HIGH_SPEED_EN
     0x04,
+#else
+    0x01,
+#endif
     0x00,
     0x00,
     0x07,
@@ -175,7 +179,18 @@ unsigned char *usbd_get_config_descriptor(unsigned char bus)
     return (unsigned char *)&config_desc;
 }
 
-unsigned char device_qualifier[] = {0x0a, 0x06, 0x00, 0x02, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00};
+unsigned char device_qualifier[] = {
+    0x0a,
+    USB_DESC_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x01,
+    0x00,
+};
 
 unsigned char *usbd_get_device_qualifier_descriptor(unsigned char bus)
 {
@@ -187,7 +202,7 @@ unsigned char *usbd_get_device_qualifier_descriptor(unsigned char bus)
 // this example use the same configuration for both high and full speed mode
 unsigned char other_speed_config[] = {
     0x09,
-    0x02,
+    USB_DESC_CONFIGURATION,
     0x6E,
     0x00,
     0x02,
@@ -196,7 +211,7 @@ unsigned char other_speed_config[] = {
     0x80,
     0x19,
     0x09,
-    0x04,
+    USB_DESC_INTERFACE,
     0x00,
     0x00,
     0x00,
@@ -281,11 +296,11 @@ unsigned char other_speed_config[] = {
     0x3E,
     0x00,
     0x09,
-    0x05,
-    0x06,
+    USB_DESC_ENDPOINT,
+    AUDIO_SPK_OUT_ENDPOINT_ADDRESS,
     0x09,
-    0x40,
-    0x00,
+    U16_LOW_BYTE(AUDIO_SPK_OUT_ENDPOINT_SIZE),
+    U16_HIGH_BYTE(AUDIO_SPK_OUT_ENDPOINT_SIZE),
     0x01,
     0x00,
     0x00,
@@ -309,10 +324,10 @@ unsigned char *usbd_get_other_speed_configuration_descriptor(unsigned char bus, 
 }
 
 char const *string_desc_arr[] = {
-    (const char[]){0x09, 0x04}, // 0: is supported language is English (0x0409)
-    "usbtst sim", // 1: Manufacturer
-    "usbtst sim spk", // 2: Product
-    "12345678", // 3: Serials will use unique ID if possible
+    (const char[]){0x09, 0x04},
+    STRING_VENDOR,
+    STRING_PRODUCT,
+    STRING_SERIAL,
 };
 
 static unsigned short _desc_str[64 + 1];

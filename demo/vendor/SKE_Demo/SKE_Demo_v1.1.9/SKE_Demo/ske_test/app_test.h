@@ -35,7 +35,7 @@ extern "C"
     unsigned int  SKE_LP_GMAC_all_test(void);
     unsigned char SKE_sample_all_test(void);
     unsigned int  SKE_all_test(void);
-
+    unsigned int SKE_LP_XTS_all_Test(void);
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

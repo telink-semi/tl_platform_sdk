@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "../../usb_default.h"
-#include "../../dk1_codec_app_config.h"
+#include "common.h"
 #include "usbaud.h"
 
 #include "../usbstd/usb.h"

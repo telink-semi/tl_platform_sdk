@@ -28,7 +28,7 @@
 extern "C"
 {
 #endif
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 #define LSM9DS1_I2C_AG_ADDR  0xD6
 #define LSM9DS1_I2C_MAG_ADDR 0x3C

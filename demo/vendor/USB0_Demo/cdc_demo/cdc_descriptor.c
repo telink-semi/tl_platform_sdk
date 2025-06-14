@@ -31,7 +31,7 @@
 
 unsigned char device_desc[] = {
     0x12,
-    0x01,
+    USB_DESC_DEVICE,
     0x00,
     0x02,
     0x02,
@@ -58,7 +58,7 @@ unsigned char *usbd_get_device_descriptor(unsigned char bus)
 
 unsigned char config_desc[] = {
     0x09,
-    0x02,
+    USB_DESC_CONFIGURATION,
     0x43,
     0x00,
     0x02,
@@ -67,7 +67,7 @@ unsigned char config_desc[] = {
     0x80,
     0x7D,
     0x09,
-    0x04,
+    USB_DESC_INTERFACE,
     0x00,
     0x00,
     0x01,
@@ -95,14 +95,14 @@ unsigned char config_desc[] = {
     0x00,
     0x01,
     0x07,
-    0x05,
+    USB_DESC_ENDPOINT,
     CDC_NOTIFICATION_IN_ENDPOINT_ADDRESS,
     0x03,
     U16_LOW_BYTE(CDC_NOTIFICATION_IN_ENDPOINT_SIZE),
     U16_HIGH_BYTE(CDC_NOTIFICATION_IN_ENDPOINT_SIZE),
     0x40,
     0x09,
-    0x04,
+    USB_DESC_INTERFACE,
     0x01,
     0x00,
     0x02,
@@ -111,14 +111,14 @@ unsigned char config_desc[] = {
     0x00,
     0x00,
     0x07,
-    0x05,
+    USB_DESC_ENDPOINT,
     CDC_DATA_OUT_ENDPOINT_ADDRESS,
     0x02,
     U16_LOW_BYTE(CDC_DATA_OUT_ENDPOINT_SIZE),
     U16_HIGH_BYTE(CDC_DATA_OUT_ENDPOINT_SIZE),
     0x00,
     0x07,
-    0x05,
+    USB_DESC_ENDPOINT,
     CDC_DATA_IN_ENDPOINT_ADDRESS,
     0x02,
     U16_LOW_BYTE(CDC_DATA_IN_ENDPOINT_SIZE),
@@ -132,7 +132,18 @@ unsigned char *usbd_get_config_descriptor(unsigned char bus)
     return (unsigned char *)&config_desc;
 }
 
-unsigned char device_qualifier[] = {0x0a, 0x06, 0x00, 0x02, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00};
+unsigned char device_qualifier[] = {
+    0x0a,
+    USB_DESC_DEVICE_QUALIFIER,
+    0x00,
+    0x02,
+    0x00,
+    0x00,
+    0x00,
+    0x40,
+    0x01,
+    0x00,
+};
 
 unsigned char *usbd_get_device_qualifier_descriptor(unsigned char bus)
 {
@@ -144,7 +155,7 @@ unsigned char *usbd_get_device_qualifier_descriptor(unsigned char bus)
 // this example use the same configuration for both high and full speed mode
 unsigned char other_speed_config[] = {
     0x09,
-    0x02,
+    USB_DESC_CONFIGURATION,
     0x43,
     0x00,
     0x02,
@@ -153,7 +164,7 @@ unsigned char other_speed_config[] = {
     0x80,
     0x7D,
     0x09,
-    0x04,
+    USB_DESC_INTERFACE,
     0x00,
     0x00,
     0x01,
@@ -181,14 +192,14 @@ unsigned char other_speed_config[] = {
     0x00,
     0x01,
     0x07,
-    0x05,
+    USB_DESC_ENDPOINT,
     CDC_NOTIFICATION_IN_ENDPOINT_ADDRESS,
     0x03,
     U16_LOW_BYTE(CDC_NOTIFICATION_IN_ENDPOINT_SIZE),
     U16_HIGH_BYTE(CDC_NOTIFICATION_IN_ENDPOINT_SIZE),
     0x40,
     0x09,
-    0x04,
+    USB_DESC_INTERFACE,
     0x01,
     0x00,
     0x02,
@@ -197,18 +208,18 @@ unsigned char other_speed_config[] = {
     0x00,
     0x00,
     0x07,
-    0x05,
+    USB_DESC_ENDPOINT,
     CDC_DATA_OUT_ENDPOINT_ADDRESS,
     0x02,
-    U16_LOW_BYTE(CDC_DATA_OUT_ENDPOINT_SIZE),
-    U16_HIGH_BYTE(CDC_DATA_OUT_ENDPOINT_SIZE),
+    0x40,
+    0x00,
     0x00,
     0x07,
     0x05,
     CDC_DATA_IN_ENDPOINT_ADDRESS,
     0x02,
-    U16_LOW_BYTE(CDC_DATA_IN_ENDPOINT_SIZE),
-    U16_HIGH_BYTE(CDC_DATA_IN_ENDPOINT_SIZE),
+    0x40,
+    0x00,
     0x00,
 };
 
@@ -223,10 +234,10 @@ unsigned char *usbd_get_other_speed_configuration_descriptor(unsigned char bus, 
 }
 
 char const *string_desc_arr[] = {
-    (const char[]){0x09, 0x04}, // 0: is supported language is English (0x0409)
-    "usbtst sim", // 1: Manufacturer
-    "usbtst sim CDC", // 2: Product
-    "12345678", // 3: Serials will use unique ID if possible
+    (const char[]){0x09, 0x04},
+    STRING_VENDOR,
+    STRING_PRODUCT,
+    STRING_SERIAL,
 };
 
 static unsigned short _desc_str[64 + 1];

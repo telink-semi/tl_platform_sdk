@@ -29,7 +29,6 @@
 #include "lib/include/clock.h"
 #include "dma.h"
 
-#define PM_FUNCTION_SUPPORT    0
 
 /**
  * @brief   active mode CORE/SRAM output trim definition
@@ -37,9 +36,9 @@
  *          As we know, reducing voltage can reduce power consumption in some extent, but for this gear, the benefits may not be significant.
  *          At this gear, it will takes nearly 150us more time to enter sleep mode, which is unacceptable in most scenarios.
  */
-#define ALG0X21_DEFAULT_CONFIG  0xca
-#define ALG0X22_DEFAULT_CONFIG  0xbc
-#define ALG0XBK3_DEFAULT_CONFIG 0x00
+#define ALG0X21_DEFAULT_CONFIG  0xca //dvdd2
+#define ALG0X22_DEFAULT_CONFIG  0xbc //dvdd1
+#define ALG0XB2_DEFAULT_CONFIG  0x00 //bk3
 
 #define PM_AVDD1_CONFIG            PM_AVDD1_VOLTAGE_1V075
 #define PM_AVDD2_REF_CONFIG        PM_AVDD2_REF_0V740
@@ -63,7 +62,6 @@
 
 #define DCDC_WORKAROUND_MODE          0
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief these analog register can store data in deep sleep mode or deep sleep with SRAM retention mode.
  *        Reset these analog registers by watchdog, software reboot (sys_reboot()), RESET Pin, power cycle, 32k watchdog, vbus detect.
@@ -108,9 +106,9 @@ typedef enum
  */
 typedef enum
 {
-    D25F_RET_MODE_SRAM_LOW128K = 0x01, //for boot from sram
-    D25F_RET_MODE_SRAM_LOW256K = 0x03, //for boot from sram
-    D25F_RET_MODE_SRAM_LOW384K = 0x07, //for boot from sram
+    D25F_RET_MODE_SRAM_LOW128K = 0x0010, //for boot from sram
+    D25F_RET_MODE_SRAM_LOW256K = 0x0030, //for boot from sram
+    D25F_RET_MODE_SRAM_LOW384K = 0x0070, //for boot from sram
 } pm_d25f_ret_mode_e;
 
 /**
@@ -118,11 +116,11 @@ typedef enum
  */
 typedef enum
 {
-    N22_RET_MODE_SRAM_NONE    = 0x00, //for boot from sram
-    N22_RET_MODE_SRAM_LOW128K = 0x01, //for boot from sram
-    N22_RET_MODE_SRAM_LOW256K = 0x03, //for boot from sram
-    N22_RET_MODE_SRAM_LOW384K = 0x07, //for boot from sram
-    N22_RET_MODE_SRAM_LOW512K = 0x0f, //for boot from sram
+    N22_RET_MODE_SRAM_NONE    = 0x0000, //for boot from sram
+    N22_RET_MODE_SRAM_LOW128K = 0x0001, //for boot from sram
+    N22_RET_MODE_SRAM_LOW256K = 0x0003, //for boot from sram
+    N22_RET_MODE_SRAM_LOW384K = 0x0007, //for boot from sram
+    N22_RET_MODE_SRAM_LOW512K = 0x000f, //for boot from sram
 } pm_n22_ret_mode_e;
 
 /**
@@ -130,10 +128,10 @@ typedef enum
  */
 typedef enum
 {
-    DSP_RET_MODE_SRAM_NONE    = 0x00, //for boot from sram
-    DSP_RET_MODE_SRAM_LOW128K = 0x01, //for boot from sram
-    DSP_RET_MODE_SRAM_LOW256K = 0x03, //for boot from sram
-    DSP_RET_MODE_SRAM_LOW384K = 0x07, //for boot from sram
+    DSP_RET_MODE_SRAM_NONE    = 0x0000, //for boot from sram
+    DSP_RET_MODE_SRAM_LOW128K = 0x0100, //for boot from sram
+    DSP_RET_MODE_SRAM_LOW256K = 0x0300, //for boot from sram
+    DSP_RET_MODE_SRAM_LOW384K = 0x0700, //for boot from sram
 } pm_dsp_ret_mode_e;
 
 /**
@@ -142,11 +140,24 @@ typedef enum
 typedef enum
 {
     //available mode for customer
-    SUSPEND_SLEEP_MODE = 0x01,
-    DEEP_SLEEP_MODE    = 0x02, //when use deep mode pad wakeup(low or high level), if the high(low) level always in the pad,
+    SUSPEND_MODE   = 0x0000,
+    DEEPSLEEP_MODE = 0xf000,   //when use deep mode pad wakeup(low or high level), if the high(low) level always in the pad,
                                //system will not enter sleep and go to below of pm API, will reboot by core_6f = 0x20.
                                //deep retention also had this issue, but not to reboot.
-    RET_SLEEP_MODE = 0x03,     //for boot from sram
+    RET_MODE_SRAM_LOW128K_NONE_NONE       = 0x0010, //for boot from sram. d25f:LOW128K, n22:NONE, dsp:NONE
+    RET_MODE_SRAM_LOW256K_NONE_NONE       = 0x0030, //for boot from sram. d25f:LOW256K, n22:NONE, dsp:NONE
+    RET_MODE_SRAM_LOW384K_NONE_NONE       = 0x0070, //for boot from sram. d25f:LOW384K, n22:NONE, dsp:NONE
+    RET_MODE_SRAM_LOW384K_LOW128K_NONE    = 0x0071, //for boot from sram. d25f:LOW384K, n22:LOW128K, dsp:NONE
+    RET_MODE_SRAM_LOW384K_LOW256K_NONE    = 0x0073, //for boot from sram. d25f:LOW384K, n22:LOW256K, dsp:NONE
+    RET_MODE_SRAM_LOW384K_LOW384K_NONE    = 0x0077, //for boot from sram. d25f:LOW384K, n22:LOW384K, dsp:NONE
+    RET_MODE_SRAM_LOW384K_LOW512K_NONE    = 0x007F, //for boot from sram. d25f:LOW384K, n22:LOW512K, dsp:NONE
+    RET_MODE_SRAM_LOW384K_LOW512K_LOW128K = 0x017F, //for boot from sram. d25f:LOW384K, n22:LOW512K, dsp:LOW128K
+    RET_MODE_SRAM_LOW384K_LOW512K_LOW256K = 0x037F, //for boot from sram. d25f:LOW384K, n22:LOW512K, dsp:LOW256K
+    RET_MODE_SRAM_LOW384K_LOW512K_LOW384K = 0x077F, //for boot from sram. d25f:LOW384K, n22:LOW512K, dsp:LOW384K
+//  RET_MODE_SRAM_LOW384K_LOW512K_LOW384K = D25F_RET_MODE_SRAM_LOW384K|N22_RET_MODE_SRAM_LOW512K|DSP_RET_MODE_SRAM_LOW384K,
+
+    //not available mode
+    DEEPSLEEP_RETENTION_FLAG = 0x0FFF,
 } pm_sleep_mode_e;
 
 /**
@@ -187,14 +198,13 @@ typedef enum
     STATUS_CLEAR_FAIL           = BIT(29),
     STATUS_ENTER_SUSPEND        = BIT(30),
 } pm_suspend_wakeup_status_e;
-#endif
 
 /**
  * @brief   mcu status
  */
 typedef enum
 {
-    MCU_POWER_ON = BIT(0), /**< power on, vbus detect or reset pin */
+    MCU_POWER_ON                 = BIT(0), /**< power on, vbus detect or reset pin */
     //BIT(1) RSVD
     MCU_SW_REBOOT_BACK           = BIT(2), /**< Clear the watchdog status flag in time, otherwise, the system reboot may be wrongly judged as the watchdog.*/
     MCU_DEEPRET_BACK             = BIT(3),
@@ -205,10 +215,10 @@ typedef enum
                                               - but software reboot(sys_reboot())/deep/deepretation/32k watchdog come back,the status remains;
                                               */
 
-    MCU_STATUS_POWER_ON     = MCU_POWER_ON,
-    MCU_STATUS_REBOOT_BACK  = MCU_SW_REBOOT_BACK,
-    MCU_STATUS_DEEPRET_BACK = MCU_DEEPRET_BACK,
-    MCU_STATUS_DEEP_BACK    = MCU_DEEP_BACK,
+    MCU_STATUS_POWER_ON          = MCU_POWER_ON,
+    MCU_STATUS_REBOOT_BACK       = MCU_SW_REBOOT_BACK,
+    MCU_STATUS_DEEPRET_BACK      = MCU_DEEPRET_BACK,
+    MCU_STATUS_DEEP_BACK         = MCU_DEEP_BACK,
 } pm_mcu_status;
 
 /**
@@ -221,7 +231,6 @@ typedef enum
     PM_POWER_DOWN = 1,
 } pm_power_sel_e;
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief voltage select
  *
@@ -259,13 +268,11 @@ extern volatile pm_sleep_mode_s g_pm_sleep_mode;
  */
 typedef enum
 {
-    LDO_DVDD1_DVDD2_VOL_0P8V = 0, 
-    LDO_DVDD1_DVDD2_VOL_0P9V,     
-    DCDC_DVDD1_DVDD2_VOL_0P8V ,   
-    DCDC_DVDD1_DVDD2_VOL_0P9V,    
+    DVDD1_DVDD2_VOL_0P8V = 0, 
+    DVDD1_DVDD2_VOL_0P9V = 1,
 } pm_power_cfg_e;
 
-extern unsigned int g_dvdd_vol;
+extern pm_power_cfg_e g_dvdd_vol;
 
 /**
  * @brief   early wake up time
@@ -292,7 +299,6 @@ typedef struct
 } pm_r_delay_cycle_s;
 
 extern volatile pm_r_delay_cycle_s g_pm_r_delay_cycle;
-#endif
 
 /**
  * @brief   deep sleep wake up status
@@ -310,7 +316,6 @@ extern _attribute_aligned_(4) pm_status_info_s g_pm_status_info;
 extern _attribute_data_retention_sec_ unsigned char g_pm_vbat_v;
 extern unsigned char                                g_areg_aon_7f;
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief       This function serves to get deep retention flag.
  * @return      1 deep retention, 0 deep.
@@ -319,7 +324,6 @@ static inline unsigned char pm_get_deep_retention_flag(void)
 {
     return !(analog_read_reg8(0x7f) & BIT(0));
 }
-#endif
 
 /**
  * @brief       This function serves to get wakeup source.
@@ -330,10 +334,9 @@ static inline unsigned char pm_get_deep_retention_flag(void)
  */
 static _always_inline pm_wakeup_status_e pm_get_wakeup_src(void)
 {
-    return ((pm_wakeup_status_e)analog_read_reg8(0x64));
+    return ((pm_wakeup_status_e)analog_read_reg8(areg_aon_0x64));
 }
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief       This function serves to clear the wakeup bit.
  * @param[in]   status  - the interrupt status that needs to be cleared.
@@ -343,7 +346,7 @@ static _always_inline pm_wakeup_status_e pm_get_wakeup_src(void)
  */
 static _always_inline void pm_clr_irq_status(pm_wakeup_status_e status)
 {
-    analog_write_reg8(0x64, status);
+    analog_write_reg8(areg_aon_0x64, status);
 }
 
 /**
@@ -353,7 +356,7 @@ static _always_inline void pm_clr_irq_status(pm_wakeup_status_e status)
  */
 static _always_inline void pm_set_wakeup_src(pm_sleep_wakeup_src_e wakeup_src)
 {
-    analog_write_reg8(0x4b, wakeup_src);
+    analog_write_reg8(areg_aon_0x4b, wakeup_src);
 }
 
 /**
@@ -384,7 +387,6 @@ static inline void pm_powerdown_dcdc(void)
 {
     analog_write_reg8(0x07, 0x00);
 }
-#endif
 
 /**
  * @brief       This function serves to get DCDC power.
@@ -395,7 +397,6 @@ static inline unsigned char pm_get_dcdc_power(void)
     return analog_read_reg8(0x07);
 }
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief       This function configures a GPIO pin as the wakeup pin.
  * @param[in]   pin - the pins can be set to all GPIO except PB0/PC5 and GPIOG groups.
@@ -470,8 +471,7 @@ pm_pd_module_e pm_get_suspend_power_cfg(void);
  * @return      indicate whether the cpu is wake up successful.
  * @attention   Must ensure that all GPIOs cannot be floating status before going to sleep to prevent power leakage.
  */
-_attribute_text_sec_ int pm_sleep_wakeup(pm_sleep_mode_s sleep_mode, pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int wakeup_tick);
-#endif
+_attribute_text_sec_ int pm_sleep_wakeup(pm_sleep_mode_e sleep_mode, pm_sleep_wakeup_src_e wakeup_src, pm_wakeup_tick_type_e wakeup_tick_type, unsigned int wakeup_tick);
 
 /**
  * @brief       This function is used to obtain the cause of software reboot.
@@ -488,7 +488,6 @@ pm_sw_reboot_reason_e pm_get_sw_reboot_event(void);
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_set_dig_module_power_switch(pm_pd_module_e module, pm_power_sel_e power_sel);
 
-#if PM_FUNCTION_SUPPORT
 /**
  * @brief       This function serves to set dvdd
  * @param[in]   vol      - DVDD1_DVDD2_VOL_0P8V /DVDD1_DVDD2_VOL_0P9V.
@@ -508,6 +507,9 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_set_dig_module_power_switc
  *                so will turns off the general interrupt and clears all interrupt requests.
  *              4.When adjusting this voltage, no access ram operation is allowed, disable swire.
  *              5.If the check configuration fails, reboot.
+ *              6.Due to the loss of digital registers during deep/deep ret sleep, while the values of 3V analog registers are maintained, this can result in a mismatch
+ *                between the EMA digital register and the actual voltage after deep/deep ret wake-up, which may pose a risk of SRAM usage errors.
+ *                Therefore, make sure to call this interface to restore the voltage to 0.8V before going to sleep.
  */
 drv_api_status_e pm_set_dvdd(pm_power_cfg_e vol, dma_chn_e chn, sys_core_e core, unsigned int dma_timeout_us);
 
@@ -517,7 +519,6 @@ drv_api_status_e pm_set_dvdd(pm_power_cfg_e vol, dma_chn_e chn, sys_core_e core,
  * @return      none.
  */
 void pm_set_probe_vol_to_ana1(pm_vol_mux_sel_e mux_sel);
-#endif
 
 /**
  * @brief       This function serves to update wakeup status.

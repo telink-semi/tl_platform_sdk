@@ -23,8 +23,10 @@ set release_B91_flag=1
 set release_B92_flag=1
 set release_TL7518_flag=0
 set release_TL751X_flag=1
+set release_TL753X_flag=0
 set release_TL721X_flag=1
 set release_TL321X_flag=1
+set release_TL322X_flag=1
 set release_W92_flag=0
 
 set exc_mklib_flag=1
@@ -43,8 +45,10 @@ set Project_Path_B91=%Project_Path_Rlease_SDK%\project\tlsr_riscv\B91
 set Project_Path_B92=%Project_Path_Rlease_SDK%\project\tlsr_riscv\B92
 set Project_Path_TL7518=%Project_Path_Rlease_SDK%\project\tlsr_riscv\TL7518
 set Project_Path_TL751X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\tl751x
+set Project_Path_TL753X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\tl753x
 set Project_Path_TL721X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\TL721X
 set Project_Path_TL321X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\TL321X
+set Project_Path_TL322X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\tl322x
 set Project_Path_W92=%Project_Path_Rlease_SDK%\project\tlsr_riscv\W92
 
 REM If you need to customize the B80 chip, please set the following parameters, 0: S0, 1: S1, 2: S2, 3: S3, 4:s4
@@ -94,6 +98,16 @@ call :COMPILE_PROCESS_V2
 call %~dp0.\show_info "Compile Test tl751x Completed!" 4
 )
 
+if %release_TL753X_flag% == 1 (
+call :REMOVE_TEMP_FILE
+call %~dp0.\show_info "Compile Test tl753x" 1
+set ide_tool_path_release_sdk=%ide_tool_path_v2%
+set Project_Path_Compile=%Project_Path_TL753X%
+set Test_Compile_CompileOption=TL_PLATFORM_SDK_753X
+call :COMPILE_PROCESS_V2
+call %~dp0.\show_info "Compile Test tl753x Completed!" 4
+)
+
 if %release_TL721X_flag% == 1 (
 call :REMOVE_TEMP_FILE
 call %~dp0.\show_info "Compile Test TL721X" 1
@@ -112,6 +126,16 @@ set Project_Path_Compile=%Project_Path_TL321X%
 set Test_Compile_CompileOption=TL_PLATFORM_SDK_321X
 call :COMPILE_PROCESS_V2
 call %~dp0.\show_info "Compile Test TL321X Completed!" 4
+)
+
+if %release_TL322X_flag% == 1 (
+call :REMOVE_TEMP_FILE
+call %~dp0.\show_info "Compile Test tl322x" 1
+set ide_tool_path_release_sdk=%ide_tool_path_v2%
+set Project_Path_Compile=%Project_Path_TL322X%
+set Test_Compile_CompileOption=TL_PLATFORM_SDK_322X
+call :COMPILE_PROCESS_V2
+call %~dp0.\show_info "Compile Test tl322x Completed!" 4
 )
 
 if %release_W92_flag% == 1 (
@@ -197,6 +221,23 @@ if exist %Project_Path_Compile%\%compile_option% (rmdir /s /q %Project_Path_Comp
 )
 
 set ide_tool_path_release_sdk=%ide_tool_path_v2%
+set Project_Path_Compile=%Project_Path_TL753X%
+set Test_Compile_CompileOption=TL_PLATFORM_SDK_753X
+
+if %release_TL753X_flag% == 1 (
+call %~dp0.\show_info "Single Compile Test tl753x" 1
+call %~dp0.\show_info "Compile %compile_option%." 3
+call compile_v2 %ide_tool_path_release_sdk% %Project_Path_Compile% %Test_Compile_CompileOption% %compile_option%
+if exist %Project_Path_Compile%\%compile_option%\*.bin (
+call %~dp0.\show_info "PASS" 2
+) else (
+call %~dp0.\show_info "FAIL" 2
+pause
+)
+if exist %Project_Path_Compile%\%compile_option% (rmdir /s /q %Project_Path_Compile%\%compile_option%)
+)
+
+set ide_tool_path_release_sdk=%ide_tool_path_v2%
 set Project_Path_Compile=%Project_Path_TL721X%
 set Test_Compile_CompileOption=TL_PLATFORM_SDK_721X
 
@@ -219,6 +260,23 @@ set Test_Compile_CompileOption=TL_PLATFORM_SDK_321X
 
 if %release_TL321X_flag% == 1 (
 call %~dp0.\show_info "Single Compile Test TL321X" 1
+call %~dp0.\show_info "Compile %compile_option%." 3
+call compile_v2 %ide_tool_path_release_sdk% %Project_Path_Compile% %Test_Compile_CompileOption% %compile_option%
+if exist %Project_Path_Compile%\%compile_option%\*.bin (
+call %~dp0.\show_info "PASS" 2
+) else (
+call %~dp0.\show_info "FAIL" 2
+pause
+)
+if exist %Project_Path_Compile%\%compile_option% (rmdir /s /q %Project_Path_Compile%\%compile_option%)
+)
+
+set ide_tool_path_release_sdk=%ide_tool_path_v2%
+set Project_Path_Compile=%Project_Path_TL322X%
+set Test_Compile_CompileOption=TL_PLATFORM_SDK_322X
+
+if %release_TL322X_flag% == 1 (
+call %~dp0.\show_info "Single Compile Test tl322x" 1
 call %~dp0.\show_info "Compile %compile_option%." 3
 call compile_v2 %ide_tool_path_release_sdk% %Project_Path_Compile% %Test_Compile_CompileOption% %compile_option%
 if exist %Project_Path_Compile%\%compile_option%\*.bin (
@@ -297,11 +355,17 @@ REM copy %~dp0.\config\libTL7518.a %Project_Path_Rlease_SDK%\chip\TL7518\drivers
 if %release_TL751X_flag% == 1 (
 REM copy %~dp0.\config\libTL751X.a %Project_Path_Rlease_SDK%\chip\tl751x\drivers\lib\libdriver.a
 )
+if %release_TL753X_flag% == 1 (
+REM copy %~dp0.\config\libTL753X.a %Project_Path_Rlease_SDK%\chip\tl753x\drivers\lib\libdriver.a
+)
 if %release_TL721X_flag% == 1 (
 REM copy %~dp0.\config\libTL721X.a %Project_Path_Rlease_SDK%\chip\TL721X\drivers\lib\libdriver.a
 )
 if %release_TL321X_flag% == 1 (
 REM copy %~dp0.\config\libTL321X.a %Project_Path_Rlease_SDK%\chip\TL321X\drivers\lib\libdriver.a
+)
+if %release_TL322X_flag% == 1 (
+REM copy %~dp0.\config\libTL322X.a %Project_Path_Rlease_SDK%\chip\tl322x\drivers\lib\libdriver.a
 )
 if %release_W92_flag% == 1 (
 REM copy %~dp0.\config\libW92.a %Project_Path_Rlease_SDK%\chip\W92\drivers\lib\libdriver.a
@@ -374,7 +438,6 @@ set MakeLib_CompileOption=TL_PLATFORM_SDK_751X
 if %release_TL751X_flag% == 1 (
 @REM call %~dp0.\tool st_macro %Project_Path_Rlease_SDK%\chip\tl751x\drivers\lib\src\sys.c SDK_VERSION_SELECT SDK_VERSION_DRIVER
 REM set to EMI_DEMO
-call %~dp0.\tool st_macro %Project_Path_Rlease_SDK%\chip\tl751x\drivers\lib\include\pm\pm.h PM_FUNCTION_SUPPORT 0  
 call %~dp0.\show_info "Compile tl751x %build_prj_Rlease_SDK%." 3
 
 call %~dp0.\tool st_node %Project_Path_TL751X%\.cproject %~dp0config\cfg.ini Debug_Level %make_lib_compile_option%:max:none
@@ -397,6 +460,40 @@ call %~dp0.\tool st_node %Project_Path_TL751X%\.cproject %~dp0config\cfg.ini Deb
 if exist %Project_Path_MakeLib_Complie%\%build_prj_Rlease_SDK_N22%\*.bin (
 call %~dp0.\show_info "PASS" 2
 call %~dp0.\make_lib_v5 %ide_tool_path_release_sdk% %Project_Path_Rlease_SDK% %build_prj_Rlease_SDK_N22% tl751x 1
+) else (
+goto :MAKE_LIB_ERROR
+)
+)
+
+set ide_tool_path_release_sdk=%ide_tool_path_v2%
+set Project_Path_MakeLib_Complie=%Project_Path_TL753X%
+set MakeLib_CompileOption=TL_PLATFORM_SDK_753X
+if %release_TL753X_flag% == 1 (
+@REM call %~dp0.\tool st_macro %Project_Path_Rlease_SDK%\chip\tl753x\drivers\lib\src\sys.c SDK_VERSION_SELECT SDK_VERSION_DRIVER
+REM set to EMI_DEMO
+call %~dp0.\tool st_macro %Project_Path_Rlease_SDK%\chip\tl753x\drivers\lib\include\pm\pm.h PM_FUNCTION_SUPPORT 0
+call %~dp0.\show_info "Compile tl753x %build_prj_Rlease_SDK%." 3
+
+call %~dp0.\tool st_node %Project_Path_TL753X%\.cproject %~dp0config\cfg.ini Debug_Level %make_lib_compile_option%:max:none
+call %~dp0.\compile_v2 %ide_tool_path_release_sdk% %Project_Path_MakeLib_Complie% %MakeLib_CompileOption% %build_prj_Rlease_SDK%
+call %~dp0.\tool st_node %Project_Path_TL753X%\.cproject %~dp0config\cfg.ini Debug_Level %make_lib_compile_option%:none:max
+
+if exist %Project_Path_MakeLib_Complie%\%build_prj_Rlease_SDK%\*.bin (
+call %~dp0.\show_info "PASS" 2
+call %~dp0.\make_lib_v4 %ide_tool_path_release_sdk% %Project_Path_Rlease_SDK% %build_prj_Rlease_SDK% tl753x 1
+) else (
+goto :MAKE_LIB_ERROR
+)
+
+call %~dp0.\show_info "Compile tl753x %build_prj_Rlease_SDK_N22%." 3
+call :REMOVE_TEMP_FILE
+call %~dp0.\tool st_node %Project_Path_TL753X%\.cproject %~dp0config\cfg.ini Debug_Level %build_prj_Rlease_SDK_N22%:max:none
+call %~dp0.\compile_v2 %ide_tool_path_release_sdk% %Project_Path_MakeLib_Complie% %MakeLib_CompileOption% %build_prj_Rlease_SDK_N22%
+call %~dp0.\tool st_node %Project_Path_TL753X%\.cproject %~dp0config\cfg.ini Debug_Level %build_prj_Rlease_SDK_N22%:none:max
+
+if exist %Project_Path_MakeLib_Complie%\%build_prj_Rlease_SDK_N22%\*.bin (
+call %~dp0.\show_info "PASS" 2
+call %~dp0.\make_lib_v5 %ide_tool_path_release_sdk% %Project_Path_Rlease_SDK% %build_prj_Rlease_SDK_N22% tl753x 1
 ) else (
 goto :MAKE_LIB_ERROR
 )
@@ -435,6 +532,39 @@ call %~dp0.\tool st_node %Project_Path_TL321X%\.cproject %~dp0config\cfg.ini Deb
 if exist %Project_Path_MakeLib_Complie%\%build_prj_Rlease_SDK%\*.bin (
 call %~dp0.\show_info "PASS" 2
 call %~dp0.\make_lib_v3 %ide_tool_path_release_sdk% %Project_Path_Rlease_SDK% %build_prj_Rlease_SDK% TL321X 1
+) else (
+goto :MAKE_LIB_ERROR
+)
+)
+
+set ide_tool_path_release_sdk=%ide_tool_path_v2%
+set Project_Path_MakeLib_Complie=%Project_Path_TL322X%
+set MakeLib_CompileOption=TL_PLATFORM_SDK_322X
+if %release_TL322X_flag% == 1 (
+@REM call %~dp0.\tool st_macro %Project_Path_Rlease_SDK%\chip\tl322x\drivers\lib\src\sys.c SDK_VERSION_SELECT SDK_VERSION_DRIVER
+call %~dp0.\show_info "Compile tl322x %build_prj_Rlease_SDK%." 3
+call %~dp0.\tool st_macro %Project_Path_Rlease_SDK%\chip\tl322x\drivers\lib\include\pm\pm.h PM_FUNCTION_SUPPORT 0
+
+call %~dp0.\tool st_node %Project_Path_TL322X%\.cproject %~dp0config\cfg.ini Debug_Level %make_lib_compile_option%:max:none
+call %~dp0.\compile_v2 %ide_tool_path_release_sdk% %Project_Path_MakeLib_Complie% %MakeLib_CompileOption% %build_prj_Rlease_SDK%
+call %~dp0.\tool st_node %Project_Path_TL322X%\.cproject %~dp0config\cfg.ini Debug_Level %make_lib_compile_option%:none:max
+
+if exist %Project_Path_MakeLib_Complie%\%build_prj_Rlease_SDK%\*.bin (
+call %~dp0.\show_info "PASS" 2
+call %~dp0.\make_lib_v4 %ide_tool_path_release_sdk% %Project_Path_Rlease_SDK% %build_prj_Rlease_SDK% tl322x 1
+) else (
+goto :MAKE_LIB_ERROR
+)
+
+call %~dp0.\show_info "Compile tl322x N22_STimer_Demo." 3
+call :REMOVE_TEMP_FILE
+call %~dp0.\tool st_node %Project_Path_TL322X%\.cproject %~dp0config\cfg.ini Debug_Level N22_STimer_Demo:max:none
+call %~dp0.\compile_v2 %ide_tool_path_release_sdk% %Project_Path_MakeLib_Complie% %MakeLib_CompileOption% N22_STimer_Demo
+call %~dp0.\tool st_node %Project_Path_TL322X%\.cproject %~dp0config\cfg.ini Debug_Level N22_STimer_Demo:none:max
+
+if exist %Project_Path_MakeLib_Complie%\N22_STimer_Demo\*.bin (
+call %~dp0.\show_info "PASS" 2
+call %~dp0.\make_lib_v5 %ide_tool_path_release_sdk% %Project_Path_Rlease_SDK% N22_STimer_Demo tl322x 1
 ) else (
 goto :MAKE_LIB_ERROR
 )
@@ -498,6 +628,12 @@ call %~dp0.\tool rm_options %Project_Path_TL751X% %~dp0.\config\cfg.ini tl751x .
 call %~dp0.\show_info "Remove tl751x Compile Options Completed!" 4
 )
 
+if %release_TL753X_flag% == 1 (
+call %~dp0.\show_info "Remove tl753x Compile Options" 3
+call %~dp0.\tool rm_options %Project_Path_TL753X% %~dp0.\config\cfg.ini tl753x .\.cproject
+call %~dp0.\show_info "Remove tl753x Compile Options Completed!" 4
+)
+
 if %release_TL721X_flag% == 1 (
 call %~dp0.\show_info "Remove TL721X Compile Options" 3
 call %~dp0.\tool rm_options %Project_Path_TL721X% %~dp0.\config\cfg.ini TL721X .\.cproject
@@ -508,6 +644,12 @@ if %release_TL321X_flag% == 1 (
 call %~dp0.\show_info "Remove TL321X Compile Options" 3
 call %~dp0.\tool rm_options %Project_Path_TL321X% %~dp0.\config\cfg.ini TL321X .\.cproject
 call %~dp0.\show_info "Remove TL321X Compile Options Completed!" 4
+)
+
+if %release_TL322X_flag% == 1 (
+call %~dp0.\show_info "Remove tl322x Compile Options" 3
+call %~dp0.\tool rm_options %Project_Path_TL322X% %~dp0.\config\cfg.ini tl322x .\.cproject
+call %~dp0.\show_info "Remove tl322x Compile Options Completed!" 4
 )
 
 if %release_W92_flag% == 1 (

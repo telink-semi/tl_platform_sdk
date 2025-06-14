@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "driver.h"
 
-#include "../../dk1_codec_app_config.h"
+#include "common.h"
 #include "../../usb_default.h"
 
 #define MODULE_USB_ENABLE 1

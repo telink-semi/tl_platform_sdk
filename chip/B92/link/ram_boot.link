@@ -43,18 +43,15 @@ SECTIONS
         { KEEP(*(.retention_data )) }
     . = ALIGN(8);
     .ram_code   : 
-        { KEEP(*(.ram_code )) }
+        { KEEP(*(.ram_code )) KEEP(*libgcc.a:save-restore.o) KEEP(*(.exec.itable)) }
 
     .text       : 
         { *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning ) . = ALIGN(4); }
-    
-    .rodata     : 
-        { *(.rodata .rodata.* .gnu.linkonce.r.* )}
-        
+      
     .eh_frame_hdr   : 
         { *(.eh_frame_hdr ) }
     . = ALIGN(0x20);
-    .eh_frame   : AT(ALIGN(LOADADDR (.eh_frame_hdr) + SIZEOF (.eh_frame_hdr),  0X20))
+    .eh_frame   : 
         { KEEP(*(.eh_frame )) }
         
     .exec.itable    : 
@@ -69,6 +66,7 @@ SECTIONS
     .data    : 
         { *(.data .data.* .gnu.linkonce.d.* ) KEEP(*(.gnu.linkonce.d.*personality* )) SORT(CONSTRUCTORS) 
           *(.srodata.cst16 ) *(.srodata.cst8 ) *(.srodata.cst4 ) *(.srodata.cst2 ) *(.srodata .srodata.* ) *(.sdata .sdata.* .gnu.linkonce.s.* ) *(.sdata2 .sdata2.* .gnu.linkonce.s.* )
+          *(.rodata .rodata.* .gnu.linkonce.r.* )
         }
     . = ALIGN(8);
     PROVIDE (_BSS_VMA_START = .);

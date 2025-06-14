@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "../dk1_camera_app_config.h"
+#include "common.h"
+#include "../lcd/lcd_2inch_drv.h"
 
 #define CIS_USB_DISPLAY_EN 0
 #define I2C1_M_CLK_SPEED   200000
@@ -35,8 +36,8 @@ extern void lcd_spi_display(int x, int y, unsigned char *image, int width, int h
 #define GSPI_RX_DMA_CHN  DMA2
 #define GSPI_TX_DMA_CHN  DMA3
 
-#define CIS_IMAGE_WIDTH  320
-#define CIS_IMAGE_HEIGHT 240
+#define CIS_IMAGE_WIDTH  LCD_2IN_WIDTH
+#define CIS_IMAGE_HEIGHT LCD_2IN_HEIGHT
 #define CIS_RX_BUFF_LEN  (CIS_IMAGE_WIDTH * 5)
 #define CIS_FRAME_SIZE   (CIS_IMAGE_WIDTH * CIS_IMAGE_HEIGHT * 2)
 
@@ -303,6 +304,30 @@ static void spi_set_slave_transmode(spi_sel_e spi_sel, spi_tans_mode_e mode)
     reg_spi_slv_trans_mode(spi_sel) = ((reg_spi_slv_trans_mode(spi_sel) & (~FLD_SPI_SLV_TRANS_MODE)) | (mode & 0xf));
 }
 
+static void ov7670_i2c_write(uint8_t reg, uint8_t value)
+{
+    uint8_t buf[2];
+    buf[0] = reg;
+    buf[1] = value;
+    i2c1_m_master_write(0x42, buf, 2);
+}
+
+static void ov7670_config_window(uint16_t startx, uint16_t starty, uint16_t width, uint16_t height)
+{
+    uint16_t endx = (startx + width * 2) % 784; // VREF cycle is 784
+    uint16_t endy = starty + height * 2;
+
+    // config HREF
+    ov7670_i2c_write(0x32, (endx & 0x7) << 3 | (startx & 0x7));
+    ov7670_i2c_write(0x17, (startx & 0x7F8) >> 3);
+    ov7670_i2c_write(0x18, (endx & 0x7F8) >> 3);
+
+    // config VREF
+    ov7670_i2c_write(0x03, (endy & 0x3) << 2 | (starty & 0x3));
+    ov7670_i2c_write(0x19, (starty & 0x3FC) >> 2);
+    ov7670_i2c_write(0x1A, (endy & 0x3FC) >> 2);
+}
+
 void spi_dma_init(spi_sel_e spi, int chn)
 {
     // spi_slave_init(spi, SPI_MODE0);
@@ -407,6 +432,9 @@ unsigned int cis_init(void)
     for (unsigned int i = 0; i < sizeof(ov7670_reg_tbl); i += 2) {
         i2c1_m_master_write(0x42, ov7670_reg_tbl + i, 2);
     }
+
+    /*The starting point needs to be adjusted in conjunction with the lens field of view*/
+    ov7670_config_window(184, 10, LCD_2IN_WIDTH, LCD_2IN_HEIGHT);
 
 #if CIS_USB_DISPLAY_EN
     reg_usb_ep_irq_mask = FLD_USB_EDP8_IRQ;

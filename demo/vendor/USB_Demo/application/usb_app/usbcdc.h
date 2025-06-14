@@ -37,7 +37,7 @@ extern "C"
 
 
     extern unsigned char  usb_cdc_data[CDC_TXRX_EPSIZE];
-    extern unsigned short usb_cdc_data_len;
+    extern volatile unsigned short usb_cdc_data_len;
 
     extern unsigned int  usb_cdc_tx_cnt;
     extern unsigned char LineCoding[7];

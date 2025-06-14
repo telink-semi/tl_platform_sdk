@@ -45,11 +45,6 @@ extern "C"
  */
 #define FLASH_TEST          2
 
-/*
- * @note    Only some Flash supports this feature. Please refer to the Datasheet before enable.
- */
-#define FLASH_DDR_TEST          0
-
 #define FLASH_FUNCTION_MODE FLASH_TEST
 
 

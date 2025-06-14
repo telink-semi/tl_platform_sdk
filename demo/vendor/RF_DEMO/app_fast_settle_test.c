@@ -97,10 +97,10 @@ void main_loop(void)
         #if 0
     rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
         #else
-    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
-    rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+    rf_fast_settle_get_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+    rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         #endif
-    if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US)) {
+    if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US)) {
         //Incorrect configuration.
         gpio_toggle(LED2);
     }
@@ -247,7 +247,7 @@ void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_sett
 void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t *fs_cv)
 {
     //tx
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -261,7 +261,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+#elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -328,7 +328,6 @@ void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
         rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
     }
-    rf_cali_linear_fit(fs_cv);
 #elif defined(MCU_CORE_TL321X)
     for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
         rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);

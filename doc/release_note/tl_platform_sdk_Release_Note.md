@@ -1,3 +1,179 @@
+## 3.6.0
+
+### Version
+
+* SDK Version: tl_platform_sdk 3.6.0
+* Chip Version
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2),TL321X(A1/A2),TL322X
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20 
+  * TL721X: C1T315A20 
+  * TL321X: C1T335A20 
+  * TL322X: C1T371A20
+* Hardware AIOT_DK1 Version
+  * C1TXA104
+* Demo Platform Requirements 
+ 
+  | Demo Name       | Main Board | Sub-Board            |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC1/AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+  
+* Toolchain Version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+
+### Bug Fixes
+* **cpu**
+  * (B91)Due to inconsistencies between the compilation configurations of CoreMark/Dhrystone and libdriver.a, disable the LTO (Link Time Optimization) compilation option to prevent build errors.(merge_requests/@1723)
+* **uart**
+  * (B91/tl751x) Fix the bug that the UART finite state machine reset but the software read/write pointer is not cleared.(merge_requests/@1800)
+
+### BREAKING CHANGES
+* **pll**
+  * (B91/B92)The criteria for determining the stability of the PLL have become more stringent. Previously, it was considered passed if detected once; now, it is only considered passed if it is detected three times consecutively.(merge_requests/@1791)
+* **flash**
+  * (B92)Delete the 16M flash driver.(merge_requests/@1809)
+  
+### Features
+* **aiot_dk1**
+  * (TL721x/TL321x)Supports new screens with a resolution of 240x240 and supports the new codec module with the number nau8821.(merge_requests/@1731)
+* **32k watchdog**
+  * (TL321x)Add the interface wd_32k_feed for the dog-feeding function. Add the interface wd_32k_get_count_ms for obtaining the current 32k watchdog count value.(merge_requests/@1746)
+* **audio**
+  * (tl751X)Add audio_side_tone_ch_dis interface.(merge_requests/@1755)
+* **adc**
+  * (tl321X)Add adc_get_sample_status_dma() API.(merge_requests/@1741)
+* **emi**
+  * (B91/B92/TL721X/TL321X/TL751X):Add the emi_config_param_t structure, supporting configurable access code and tx payload length.(merge_requests/1792)
+* **calibration**
+  * (TL751X)Add user_calib_freq_offset and calibration_func interfaces(merge_requests/@1794)
+* **rf**
+  * (TL751X)Add rf_turn_off_internal_cap interface(merge_requests/@1794)
+* **adc**
+  * (B92)Added the function that PB0 can be used as ADC detection when the GPIO voltage is configured as 3.3V. Attention: PB0 cannot be used as ADC detection when the GPIO voltage is configured as 1.8V.(merge_requests/@1809)
+* **pm**
+  * (B92)Added a new api pm_set_probe_dcore_vol_to_pd7.(merge_requests/@1664)
+* **ske**
+  * (TL321X)Add drivers and demos for CBC-MAC, CMAC, and XTS algorithms.(merge_requests/@1741)
+* **USB**
+  * (TL721x) USB CDC demo support interrupt enumeration and data reception(merge_requests/@1766).
+
+### Refactoring
+* **aiot_dk1**
+  * (TL721x/TL321x)The app_config.h files in Codec_Demo/Sensor_Lcd_Demo/Camera_Demo folders have been relocated to the demo\vendor\common\common\app_config directory.(merge_requests/@1722)
+* **RF_Demo**
+  * (TL721x/TL321x)Fixed the compilation error issue of RF Demo RF_SAST_STTLE_TEST(merge_requests/@1732)
+* **adc**
+  * (tl751X)Optimized the large differential in ADC readings at the same voltage point across different temperatures.(merge_requests/@1803)
+* **rf**
+  * (TL721x) Optimized the fast settle calibration logic to reduce RAM usage, but this will increase calibration time. Modified related interfaces: rf_set_chn / rf_fast_settle_get_val, and the related structure rf_fast_settle_t (merge_requests/@1778).
+  * (TL321x) Optimize RF initialization configuration to reduce RAM usage, though this will increase the initialization time. Modify the relevant interfaces: rf_mode_init/rf_set_chn, and the related structure rf_fast_settle_t (merge_requests/@1750)
+* **link**
+ * (b91/b92/tl321x/tl721x/tl751x): 1.flash_boot.link, in order to save the space of dram, put the srodata segment in the data segment in the rodata segment; 2. ram_boot.link, put the rodata segment in the .data uniformly; 3. Os need the specific segment .exec.italic, put the ramcode segment uniformly in the ramcode segment;(merge_requests/@1776) 
+ * (tl751x): all link files to solve the problem when you want to move multiple segments together, to avoid inconsistency between LMA and VMA alignment, resulting in the handling of data or code does not correspond to the problem;(merge_requests/@1776)
+
+## 3.6.0
+
+### 版本
+
+* SDK 版本: tl_platform_sdk 3.6.0
+* 芯片版本
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2),TL321X(A1/A2),TL322X
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20 
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+  * TL322X: C1T371A20
+* 硬件AIOT_DK1版本
+  * C1TXA104
+* Demo平台要求
+ 
+  | 示例名称        | 主板       | 子板                 |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+
+### Bug Fixes
+* **cpu**
+  * (B91)由于CoreMark/Dhrystone与libdriver.a的编译配置不一致，需禁用LTO（链接时优化，Link Time Optimization）编译选项以避免构建错误。(merge_requests/@1723)
+* **uart**
+  * (B91/tl751x) 修复 UART 有限状态机复位但是软件读写指针没清零的 bug。(merge_requests/@1800)
+
+### BREAKING CHANGES
+* **pll**
+  * (B91/B92)判断PLL稳定的标志位的标准更加严格，以前检测到一次就通过，改为连续三次检测到才算通过。(merge_requests/@1791)
+* **flash**
+  * (B92)删除16M flash驱动。(merge_requests/@1809)
+  
+### Features
+* **aiot_dk1**
+  * (TL721x/TL321x)支持新的分辨率为240x240的屏幕以及支持新型号为nau8821的codec模块.(merge_requests/@1731)
+* **32k watchdog**
+  * (TL321x)添加接口wd_32k_feed，用于喂狗功能。添加接口wd_32k_get_count_ms，用于获取当前32k watchdog 计数值。(merge_requests/@1746)(merge_requests/@1791)
+* **adc**
+  * (tl321X)添加adc_get_sample_status_dma() API.(merge_requests/@1741)
+* **emi**
+  * (B91/B92/TL721X/TL321X/TL751X) 添加了emi_config_param_t结构体，支持access code 和payload length可配置(merge_requests/1792)
+* **calibration**
+  * (TL751X)添加 user_calib_freq_offset和calibration_func接口(merge_requests/@1794)
+* **rf**
+  * (TL751X)添加 rf_turn_off_internal_cap 接口(merge_requests/@1794)
+* **adc**
+  * (B92)添加了GPIO电压配置为3.3V时，PB0可作为ADC检测的功能，需注意：GPIO电压配置为1.8V时，PB0不可作为ADC检测功能。(merge_requests/@1809)
+* **pm**
+  * (B92)新增接口pm_set_probe_dcore_vol_to_pd7.(merge_requests/@1664)
+* **audio**
+  * (tl751X)新增audio_side_tone_ch_dis接口.(merge_requests/@1755)
+* **ske**
+  * (TL321X)新增 cbc_mac,cmac,xts算法驱动和Demo。(merge_requests/@1741)
+* **USB**
+  * (TL721x) USB CDC demo 支持中断枚举和数据接收(merge_requests/@1766).
+
+### Refactoring
+* **aiot_dk1**
+  * (TL721x/TL321x)Codec_Demo/Sensor_Lcd_Demo/Camera_Demo文件夹中的app_config.h文件被移动到demo\vendor\common\common\app_config 路径下.(merge_requests/@1722)
+* **RF_Demo**
+  * (TL721x/TL321x)修复了RF Demo RF_FAST_SETTLE_TEST编译报错问题(merge_requests/@1732)
+* **ADC_Demo**
+  * (TL751x) 优化了不同温度下ADC采集同一电压点的差值过大的问题。(merge_requests/@1803)
+* **rf**
+  * (TL721x)优化fast settle校准逻辑，以减小RAM占用，但会增加校准时间。修改相关接口:rf_set_chn/rf_fast_settle_get_val,相关结构体rf_fast_settle_t(merge_requests/@1778)
+  * (TL321x)优化RF初始化配置，以减小RAM占用，但会增加初始化时间。修改相关接口:rf_mode_init/rf_set_chn,相关结构体rf_fast_settle_t(merge_requests/@1750)
+* **link**
+ * (b91/b92/tl321x/tl721x/tl751x): 1.flash_boot.link,为了节省dram空间，将data段中的srodata段放在rodata段中; 2. ram_boot.link,将rodata段统一放在.data中; 3.Os需要的特定的段.exec.itable，统一放在ramcode段中;(merge_requests/@1776)
+ * (tl751x):所有link文件解决当想要一起搬移多个段，避免LMA和VMA对齐方式不一致，导致搬运的数据或者代码不对应的问题；(merge_requests/@1776)
+
+---
+
 ## V3.5.0
 
 ### Version
@@ -353,11 +529,6 @@
 * **adc**
   * (TL721X)PB0 works fine and is open. PD0 and PD1 are open for public use, but not recommended, with an error of 50-100mv, and are still being debugged internally.(merge_requests/@1509)
 
-### Refactoring
-
-* **flash**
-  * (B92) Change xx_MID1460c8 and xx_MID1560c8 to xx_MID1460C8 and xx_MID1560C8 to maintain consistency and be more standardized.(merge_requests/@1503)
-
 ### BREAKING CHANGES
 
 * **rf**
@@ -434,11 +605,6 @@
   * (TL721X) 添加了rf_set_rx_dcoc_cali_by_sw接口开关rx DCOC软件校准，以优化rf_mode_init执行时间（该接口在只用tx，不用rx的场景，才可以使用）(merge_requests/@1506)
 * **adc**
   * (TL721X)PB0可以正常使用，已开放。PD0、PD1已对外开放，但不建议使用，误差在50-100mv，内部还在debug中。(merge_requests/@1509)
-  
-### Refactoring
-
-* **flash**
-  * (B92) 为了更规范且和其他芯片保持一致性，将xx_MID1460c8和xx_MID1560c8修改为xx_MID1460C8和xx_MID1560C8。(merge_requests/@1503)
 
 ### BREAKING CHANGES
 
@@ -1070,8 +1236,6 @@
 
 ### Features
 
-* **flash**
-  * (TL321x)add new flash P25Q40SU/P25Q16SU.(merge_requests/@1171)
 * **Secure_Boot_Demo**
   * (TL721x/TL321x) Add Secure_Boot_Demo, compile the demo to generate runtime descriptors, etc. bin.(merge_requests/@1184)
 * **Toolchain**
@@ -1209,8 +1373,6 @@
 
 ### Features
 
-* **flash**
-  * (TL321x)添加新增flash P25Q40SU/P25Q16SU.(merge_requests/@1171)
 * **Secure_Boot_Demo**
   * (TL721x/TL321x) 添加Secure_Boot_Demo, 编译demo生成运行描述符等bin.(merge_requests/@1184)
 * **Toolchain**
@@ -1590,18 +1752,12 @@
 * **sys**
   * (TLSR922x/TLSR952x)Added the interface sys_set_dcdc_1pP4_ldo_2p0 to solve the issue on A3(A4 not have) that if there is a 1.4V dcdc inductor component on the hardware board and a 1.8V GPIO is used will cause a voltage pulse on vdd1v2 and vddo3.
   * (TLSR922x/TLSR952x) Added efuse_get_chip_id interface. Note: Only A3 and later are written as chip id values.
-* **flash**
-  * (TLSR922x/TLSR952x)Add 1M flash(GD25LQ80E) driver.
-  * (TLSR922x/TLSR952x)Add flash_write_config_mid146085() and modify flash_lock_mid146085() and flash_unlock_mid146085() to adapt the second-supply flash P25Q80SU.
 * **sys**
   * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)Add crystal_manual_settle() function into sys_init() and pm_sleep_wakeup() in order to quickly start the crystal oscillator.
 * **pm**
   * (TLSR921x/TLSR951x)Added pm_set_xtal_stable_timer_param() to set crystal related parameters when the crystal starts to vibrate relatively slowly.
 * **flash**
-  * (TLSR921x/TLSR951x)add new flash PY25Q128H driver and demo.(note:The flash sector erase time is 240ms maximum.)
-  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)add flash_get_capacity() and check flash capacity demo.
-* **flash**
-  * (TLSR922x/TLSR952x)add new flash GD25LQ32E/GD25LE32E driver and demo.  
+  * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)add flash_get_capacity() and check flash capacity demo. 
 * **core**
   * wait_condition_fails_or_timeout/wait_condition_fails_or_timeout_with_param:Added the above interface to provide uniform timeout handling for all modules;
 * **error_handler**              
@@ -1832,18 +1988,12 @@
 * **sys**
   * (TLSR922x/TLSR952x)增加了接口sys_set_dcdc_1pP4_ldo_2p0，以解决A3上（A4没有）如果硬件板上有1.4V dcdc电感器件且使用1.8V GPIO，则会在vdd1v2和vddo3上产生电压脉冲的问题。
   * (TLSR922x/TLSR952x)新增efuse_get_chip_id接口。注：只有A3及以后版本被写入芯片id值。
-* **flash**
-  * (TLSR922x/TLSR952x)增加1M flash(GD25LQ80E)驱动。
-  * (TLSR922x/TLSR952x)添加flash_write_config_mid146085()，并修改flash_lock_mid146085()和flash_unlock_mid146085()以适配二供flash P25Q80SU。
 * **sys**
   * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)sys_init和pm_sleep_wakeup函数实现中新增crystal_manual_settle函数以辅助晶振快速起振。
 * **pm**
   * (TLSR921x/TLSR951x)新增pm_set_xtal_stable_timer_param()用于在晶体起振相对较慢时调整设置晶体相关参数。
 * **flash**
-  * (TLSR921x/TLSR951x)添加新增flash PY25Q128H驱动和demo.（注意：该flash sector erase时间最大为240ms。）
   * (TLSR921x/TLSR951x/TLSR922x/TLSR952x)添加flash_get_capacity()和检查flash容量demo。
-* **flash**
-  * (TLSR922x/TLSR952x)添加GD25LQ32E/GD25LE32E的驱动和demo。
 * **core**
   * wait_condition_fails_or_timeout/wait_condition_fails_or_timeout_with_param:新增以上接口,为所有模块提供统一的超时处理;
 * **error_handler**              
@@ -2420,8 +2570,6 @@ rf_dis_hpmc_trim();rf_dis_ldo_trim();rf_dis_dcoc_trim();rf_dis_rccal_trim();
 
 * **usb**
   * (B92)Add set config and get config support when disable auto config.
-* **flash**
-  * (B92)Add 2M flash(GD25LQ16E).
 * **pm**
   * (B92)Add the function of clearing the pm interrupt flag bit.
 * **audio**
@@ -2619,8 +2767,6 @@ interfaces to improve the sensitivity performance of emi/bqb programs at 24M mul
 
 * **usb**
   * (B92)USB 手动配置模式下，支持获取配置命令和设置配置命令。  
-* **flash**
-  * (B92)增加2M flash(GD25LQ16E)。
 * **pm**
   * (B92)增加清除pm中断标志位的函数接口。
 * **audio**
@@ -2764,9 +2910,6 @@ interfaces to improve the sensitivity performance of emi/bqb programs at 24M mul
   * (B91)Added the function of triggering interrupts by using the buttons that come with the development board.
 * **vendor/common**
   * (B91)add 4M Flash Calibration.
-* **flash**
-  * (B91)add 2M flash(P25Q16SU)/4M flash(P25Q32SH).
-  * (B91)delete 4M flash (P25Q32SH) and add 4M wide press flash (P25Q32SU).
 * **RF**
   * (B91)Added PTA related interfaces and demos.
 * **swire**
@@ -2864,9 +3007,6 @@ interfaces to improve the sensitivity performance of emi/bqb programs at 24M mul
   * (B91)新增使用开发板自带的按键来触发中断的功能。 
 * **vendor/common**
   * (B91)添加4M flash calibration相关处理。
-* **flash**
-  * (B91)增加2M flash(P25Q16SU)/4M flash(P25Q32SH)。
-  * (B91)删掉了4M flash(P25Q32SH)，添加了4M 宽压flash(P25Q32SU)。
 * **RF**
   * (B91)增加PTA相关接口及demo。
 * **swire**

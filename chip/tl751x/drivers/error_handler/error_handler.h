@@ -63,6 +63,7 @@ typedef enum
     DRV_API_ERROR_TIMEOUT_ANALOG_WAIT   = 0x04,
     DRV_API_ERROR_TIMEOUT_ANA_TX_BUFCNT = 0x05,
     DRV_API_ERROR_TIMEOUT_EFUSE_WAIT    = 0x06,
+    DRV_API_ERROR_TIMEOUT_PLL_DONE      = 0x07,
 } drv_api_error_code_e;
 
 /**********************************************************************************************************************

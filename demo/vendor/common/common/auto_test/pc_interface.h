@@ -48,6 +48,9 @@
 #elif defined(MCU_CORE_TL751X)
     #define PARA_BASE_ADDR 0x00020004 // D25
 // #define PARA_BASE_ADDR    0x50020004    // N22
+#elif defined(MCU_CORE_TL753X)
+    #define PARA_BASE_ADDR 0x00020004 // D25
+// #define PARA_BASE_ADDR    0x50020004    // N22
 #elif defined(MCU_CORE_TL721X)
     #define PARA_BASE_ADDR 0x00040004
 #elif defined(MCU_CORE_TL321X)

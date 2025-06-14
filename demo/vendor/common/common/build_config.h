@@ -26,5 +26,5 @@
 #ifndef BUILD_CONFIG_H
 #define BUILD_CONFIG_H
 
-#define CURRENT_BUILD_UART_Demo       1//Compile option name
+#define CURRENT_BUILD_SD_ADC_Demo       1//Compile option name
 #endif

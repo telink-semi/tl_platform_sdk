@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "st7789.h"
 
-#include "../dk1_sensor_lcd_app_config.h"
+#include "common.h"
 #include "font.h"
 
 LCD_ST7789_ATTRIBUTES LCD_ST7789_ST;

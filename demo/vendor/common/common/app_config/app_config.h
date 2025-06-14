@@ -323,6 +323,34 @@ extern "C"
 #include "app_config/axon_app_config.h"
 #endif
 
+#if defined(CURRENT_BUILD_Camera_Demo)
+#if defined(MCU_CORE_TL721X)
+#include "app_config/dk1_camera_app_config.h"
+#endif
+#endif
+
+#if defined(CURRENT_BUILD_Codec_Demo)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#include "app_config/dk1_codec_app_config.h"
+#endif
+#endif
+
+#if defined(CURRENT_BUILD_Sensor_Lcd_Demo)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#include "app_config/dk1_sensor_lcd_app_config.h"
+#endif
+#endif
+
+#if defined(CURRENT_BUILD_SD_ADC_Demo)
+#if defined(MCU_CORE_TL322X)
+#include "app_config/sd_adc_app_config.h"
+#endif
+#endif
+
+#if defined(CURRENT_BUILD_CAN_Demo)
+#include "app_config/can_app_config.h"
+#endif
+
 #if defined(__cplusplus)
 }
 #endif

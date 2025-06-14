@@ -67,14 +67,6 @@ void user_init(void)
     //Downward Voltage
     PLL_240M_CCLK_120M_HCLK_60M_PCLK_60M_MSPI_48M;
     pm_set_dvdd(CORE_0P8V_SRAM_0P8V_BB_0P8V, DMA1, 1000);
-    #elif (defined(MCU_CORE_TL322X) && (PM_MODE == PM_SET_DIG_MODE))
-    //Upward Voltage
-    pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
-    PLL_192M_CCLK_96M_HCLK_D25F_N22_48M_PCLK_48M_MSPI_64M;
-
-    //Downward Voltage
-    PLL_144M_CCLK_72M_HCLK_D25F_N22_36M_PCLK_36M_MSPI_48M;
-    pm_set_dig_ldo(DIG_VOL_1V_MODE, 1000);
     #endif
     #if CURRENT_TEST
     gpio_shutdown(GPIO_ALL);

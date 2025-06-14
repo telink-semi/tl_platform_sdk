@@ -84,7 +84,7 @@
     .equ __DRAM_1_EN,   1
     .equ __DRAM_2_EN,   1
     .equ __DRAM_DIS,    0
-#else
+#elif (SRAM_SIZE == SRAM_128K)
     .equ __IRAM_2_EN,   0
     .equ __DRAM_1_EN,   0
     .equ __DRAM_2_EN,   0

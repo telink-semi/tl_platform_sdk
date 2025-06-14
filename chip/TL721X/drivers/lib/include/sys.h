@@ -189,6 +189,7 @@ typedef enum
     CHIP_VERSION_A0 = 0x00,
     CHIP_VERSION_A1 = 0x80,
     CHIP_VERSION_A2 = 0xc0,
+    CHIP_VERSION_A3 = 0x01,
 } sys_chip_version_e;
 
 /**********************************************************************************************************************

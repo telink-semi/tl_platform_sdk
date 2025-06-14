@@ -66,24 +66,24 @@
 volatile unsigned char usb_g_feature = 0;
 extern unsigned char   keyboard_interface_number, mouse_interface_number;
 
-unsigned char            host_keyboard_status;
-unsigned char            host_cmd[8];
-unsigned char            host_cmd_paring_ok = 0;
-static USB_Request_Hdr_t control_request;
-static unsigned char    *g_response             = 0;
-static unsigned short    g_response_len         = 0;
-static int               g_stall                = 0;
-unsigned char            usb_mouse_report_proto = 0; //default 1 for report proto
-unsigned char            g_rate                 = 0; //default 0 for all report
-unsigned char            g_usb_config           = 0;
-unsigned char            g_usb_config_value     = 0;
-static unsigned short    usb_len_idx_0;
-static unsigned short    usb_len_idx_s;
-static unsigned short    usb_len_idx_h;
-static usb_device_status_e g_usb_device_status;
+volatile unsigned char            host_keyboard_status;
+volatile unsigned char            host_cmd[8];
+volatile unsigned char            host_cmd_paring_ok = 0;
+static volatile USB_Request_Hdr_t control_request;
+static volatile unsigned char    *g_response             = 0;
+static volatile unsigned short    g_response_len         = 0;
+static volatile int               g_stall                = 0;
+volatile unsigned char            usb_mouse_report_proto = 0; //default 1 for report proto
+volatile unsigned char            g_rate                 = 0; //default 0 for all report
+volatile unsigned char            g_usb_config           = 0;
+volatile unsigned char            g_usb_config_value     = 0;
+static volatile unsigned short    usb_len_idx_0;
+static volatile unsigned short    usb_len_idx_s;
+static volatile unsigned short    usb_len_idx_h;
+static volatile usb_device_status_e g_usb_device_status;
 
     #if (USB_SPEAKER_ENABLE || USB_MIC_ENABLE)
-unsigned char usb_alt_intf[USB_INTF_MAX];
+volatile usb_alt_intfunsigned char usb_alt_intf[USB_INTF_MAX];
 
     #endif
 
@@ -310,8 +310,8 @@ void usb_handle_std_intf_req(void)
     return;
 }
 
-unsigned int custom_read_dat;
-unsigned int custom_reg_cmd;
+volatile unsigned int custom_read_dat;
+volatile unsigned int custom_reg_cmd;
 
 void usb_handle_out_class_intf_req(int data_request)
 {
@@ -769,9 +769,8 @@ void usb_handle_ctl_ep_status(void)
     }
 }
 
-unsigned char        usb_has_suspend_irq          = 0;
-unsigned char        usb_just_wakeup_from_suspend = 1;
-extern unsigned char rf_channel;
+volatile unsigned char        usb_has_suspend_irq          = 0;
+volatile unsigned char        usb_just_wakeup_from_suspend = 1;
 
 int usb_suspend_check(void)
 {
@@ -789,8 +788,121 @@ void usb_resume_host(void)
     sleep_us(6000);
 }
     #endif
-unsigned char edp_toggle[8];
+volatile unsigned char edp_toggle[8];
 
+#if defined(MCU_CORE_TL721X) && (USB_CDC_ENABLE)
+_attribute_ram_code_sec_ void usbhw_setup_handler(void)
+{
+    if (usbhw_get_ctrl_ep_irq() & FLD_CTRL_EP_IRQ_SETUP)
+    {
+        usbhw_clr_ctrl_ep_irq(FLD_CTRL_EP_IRQ_SETUP);
+        usb_handle_ctl_ep_setup();
+    }
+
+    usb_device_status_update();
+}
+PLIC_ISR_REGISTER(usbhw_setup_handler, IRQ_USB_CTRL_EP_SETUP)
+
+_attribute_ram_code_sec_ void usbhw_data_handler(void)
+{
+    if (usbhw_get_ctrl_ep_irq() & FLD_CTRL_EP_IRQ_DATA)
+    {
+        usbhw_clr_ctrl_ep_irq(FLD_CTRL_EP_IRQ_DATA);
+        usb_handle_ctl_ep_data();
+    }
+
+    usb_device_status_update();
+}
+PLIC_ISR_REGISTER(usbhw_data_handler, IRQ_USB_CTRL_EP_DATA)
+
+_attribute_ram_code_sec_ void usbhw_status_handler(void)
+{
+    if (usbhw_get_ctrl_ep_irq() & FLD_CTRL_EP_IRQ_STA)
+    {
+        usbhw_clr_ctrl_ep_irq(FLD_CTRL_EP_IRQ_STA);
+        usb_handle_ctl_ep_status();
+    }
+
+    if (usb_g_feature == 1)
+    {
+        delay_us(1000);
+        usb_g_feature = 0;
+    } //for Chapter 8 test
+
+    usb_device_status_update();
+}
+PLIC_ISR_REGISTER(usbhw_status_handler, IRQ_USB_CTRL_EP_STATUS)
+
+_attribute_ram_code_sec_ void usbhw_reset_handler(void)
+{
+    if (usbhw_get_irq_status(USB_IRQ_RESET_STATUS))
+    {
+        usbhw_clr_irq_status(USB_IRQ_RESET_STATUS); //Clear USB reset flag
+        usb_mouse_report_proto = 1;                 //1: report protocol; 0: start protocol
+        for (int i = 0; i < 8; i++)
+        {
+            reg_usb_ep_ctrl(i) = 0;
+            edp_toggle[i]      = 0;
+        }
+#if defined(MCU_CORE_B92) && USB_MIC_ENABLE && (USB_MODE == AISO)
+        reg_usb_ep_ctrl(USB_EDP_MIC) = FLD_USB_EP_EOF_ISO | FLD_USB_EP_BUSY;
+#endif
+#if defined(MCU_CORE_B92) && USB_SPEAKER_ENABLE && (USB_MODE == AISO)
+        reg_usb_ep_ctrl(USB_EDP_SPEAKER) = FLD_USB_EP_EOF_ISO | FLD_USB_EP_BUSY;
+#elif (USB_SPEAKER_ENABLE)
+        reg_usb_ep_ctrl(USB_EDP_SPEAKER) = FLD_USB_EP_BUSY;
+#endif
+
+#if (USB_CDC_ENABLE)
+        //must add ,if endpoint is reset and ack is not set,CDC out_irq will not be generated.
+        //The packet capture phenomenon of the USB analyzer is: device does not return ack.(kaixin modify,2020-01-15)
+        usbhw_data_ep_ack(USB_PHYSICAL_EDP_CDC_OUT);
+#endif
+#if (USB_MASS_STORAGE_ENABLE && MCU_CORE_B91)
+        reg_usb_ep_ctrl(USB_EDP_MS_OUT) = FLD_USB_EP_BUSY;
+        extern void usb_ctrl_reset_cb(void);
+        usb_ctrl_reset_cb();
+#endif
+    }
+
+    usb_device_status_update();
+}
+PLIC_ISR_REGISTER(usbhw_reset_handler, IRQ_USB_RESET)
+
+_attribute_ram_code_sec_ void usbhw_eps_handler(void)
+{
+    if (usbhw_get_eps_irq() & BIT(USB_PHYSICAL_EDP_CDC_IN))
+    {
+        usbhw_clr_eps_irq(BIT(USB_PHYSICAL_EDP_CDC_IN));
+    }
+
+    if (usbhw_get_eps_irq() & BIT(USB_PHYSICAL_EDP_CDC_OUT))
+    {
+        usbhw_clr_eps_irq(BIT(USB_PHYSICAL_EDP_CDC_OUT));
+        usb_cdc_rx_data_from_host(usb_cdc_data);
+        usbhw_data_ep_ack(USB_PHYSICAL_EDP_CDC_OUT);
+    }
+
+    usb_device_status_update();
+}
+PLIC_ISR_REGISTER(usbhw_eps_handler, IRQ_USB_ENDPOINT)
+
+_attribute_ram_code_sec_ void usbhw_suspend_handler(void)
+{
+    if (usbhw_get_irq_status(USB_IRQ_SUSPEND_STATUS))
+    {
+        usbhw_clr_irq_status(USB_IRQ_SUSPEND_STATUS);
+        usb_has_suspend_irq = 1;
+    }
+    else
+    {
+        usb_has_suspend_irq = 0;
+    }
+
+    usb_device_status_update();
+}
+PLIC_ISR_REGISTER(usbhw_suspend_handler, IRQ_USB_PWDN)
+#else
 void usb_handle_irq(void)
 {
     unsigned int irq = usbhw_get_ctrl_ep_irq();
@@ -886,6 +998,7 @@ void usb_handle_irq(void)
         usb_device_status_update();
     }
 }
+#endif
 
 void usb_device_status_update(void)
 {

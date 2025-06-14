@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "lcd/lcd_2inch_drv.h"
 #include "camera/cis_ov7670.h"
-#include "dk1_camera_app_config.h"
+#include "common.h"
 
 void user_init(void)
 {

@@ -133,6 +133,12 @@ _attribute_ram_code_ void dhry_main(void)
     #else
     cpu_mhz = sys_clk.n22_clk;
     #endif
+#elif defined(MCU_CORE_TL322X)
+    #if !defined(MCU_CORE_TL322X_N22)
+    cpu_mhz = sys_clk.cclk;
+    #else
+    cpu_mhz = sys_clk.hclk_n22;
+    #endif
 #else
     cpu_mhz = sys_clk.cclk;
 #endif

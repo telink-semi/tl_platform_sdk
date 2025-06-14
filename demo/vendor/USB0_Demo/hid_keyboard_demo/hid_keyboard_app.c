@@ -26,10 +26,11 @@
 #include "tl_usb/class/hid/usbd_hid.h"
 #include "hid_keyboard_descriptor.h"
 
-volatile char a_send_flag = 0;
-unsigned char data[8];
-
 static usbd_driver_t usbd_keyboard_driver;
+static volatile char g_send_flag = 0;
+static unsigned char hid_report_data[8];
+
+static void led_toggle(void);
 
 void usbd_hid_int_callback(unsigned char bus, unsigned char ep_addr, unsigned int len)
 {
@@ -50,7 +51,15 @@ void user_init(void)
     usbd_driver_register(0, &usbd_keyboard_driver, 0, HID_KEYBOARD_IN_ENDPOINT_ADDRESS);
     usbd_endpoint_register(0, HID_KEYBOARD_IN_ENDPOINT_ADDRESS, usbd_hid_int_callback);
 
+    /* USB0 digital voltage must be 1.1V and HCLK min's 48M. */
+    pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
+    PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_48M;
+
+#if USB_HIGH_SPEED_EN
     usb0hw_init(USB0_SPEED_HIGH);
+#else
+    usb0hw_init(USB0_SPEED_FULL);
+#endif
     usb0hw_set_grxfsiz(0x100);
     usb0hw_set_epin_size(USB0_EP0, 0x100, 64);
     usb0hw_set_epin_size(USB0_EP1, 0x100 + 64, 64);
@@ -61,33 +70,44 @@ void user_init(void)
 
 void main_loop(void)
 {
-    gpio_toggle(LED1);
-    delay_ms(500);
+    led_toggle();
 
-    if (a_send_flag == 1) {
-        a_send_flag = 0;
-        data[0]     = 0;
-        data[1]     = 0;
-        data[2]     = 0;
-        data[3]     = 0;
-        data[4]     = 0x59; // number key: 1
-        data[5]     = 0;    // number key: 2
-        data[6]     = 0;
-        data[7]     = 0;
+    if (g_send_flag == 1) {
+        g_send_flag        = 0;
+        hid_report_data[0] = 0;
+        hid_report_data[1] = 0;
+        hid_report_data[2] = 0;
+        hid_report_data[3] = 0;
+        hid_report_data[4] = 0x59;
+        hid_report_data[5] = 0;
+        hid_report_data[6] = 0;
+        hid_report_data[7] = 0;
         usb0hw_remote_wakeup();
-        usbd_ep_write(0, HID_KEYBOARD_IN_ENDPOINT_ADDRESS, data, 8);
+        usbd_ep_write(0, HID_KEYBOARD_IN_ENDPOINT_ADDRESS, hid_report_data, 8);
         delay_ms(1000);
-        data[0] = 0;
-        data[1] = 0;
-        data[2] = 0;
-        data[3] = 0;
-        data[4] = 0; // number key: 1
-        data[5] = 0; // number key: 2
-        data[6] = 0;
-        data[7] = 0;
+        hid_report_data[0] = 0;
+        hid_report_data[1] = 0;
+        hid_report_data[2] = 0;
+        hid_report_data[3] = 0;
+        hid_report_data[4] = 0;
+        hid_report_data[5] = 0;
+        hid_report_data[6] = 0;
+        hid_report_data[7] = 0;
         usb0hw_remote_wakeup();
-        usbd_ep_write(0, HID_KEYBOARD_IN_ENDPOINT_ADDRESS, data, 8);
+        usbd_ep_write(0, HID_KEYBOARD_IN_ENDPOINT_ADDRESS, hid_report_data, 8);
     }
+}
+
+static void led_toggle(void)
+{
+    static unsigned int start_time = 0;
+
+    if (stimer_get_tick() - start_time < 500 * SYSTEM_TIMER_TICK_1MS) {
+        return;
+    }
+
+    start_time += 500 * SYSTEM_TIMER_TICK_1MS;
+    gpio_toggle(LED1);
 }
 
 #endif

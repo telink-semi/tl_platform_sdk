@@ -5,8 +5,10 @@ set Project_Path_B91=%Project_Path_Rlease_SDK%\project\tlsr_riscv\B91
 set Project_Path_B92=%Project_Path_Rlease_SDK%\project\tlsr_riscv\B92
 set Project_Path_TL7518=%Project_Path_Rlease_SDK%\project\tlsr_riscv\TL7518
 set Project_Path_TL751X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\tl751x
+set Project_Path_TL753X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\tl753x
 set Project_Path_TL721X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\TL721X
 set Project_Path_TL321X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\TL321X
+set Project_Path_TL322X=%Project_Path_Rlease_SDK%\project\tlsr_riscv\tl322x
 set Project_Path_W92=%Project_Path_Rlease_SDK%\project\tlsr_riscv\W92
 
 goto :MAIN
@@ -39,6 +41,12 @@ call %~dp0.\tool rm_links %Project_Path_TL751X% %~dp0.\config\cfg.ini tl751x .\.
 call %~dp0.\show_info "Remove tl751x File Links Completed!" 4
 )
 
+if exist %Project_Path_TL753X% (
+call %~dp0.\show_info "Remove tl753x File Links" 3
+call %~dp0.\tool rm_links %Project_Path_TL753X% %~dp0.\config\cfg.ini tl753x .\.project
+call %~dp0.\show_info "Remove tl753x File Links Completed!" 4
+)
+
 if exist %Project_Path_TL721X% (
 call %~dp0.\show_info "Remove TL721X File Links" 3
 call %~dp0.\tool rm_links %Project_Path_TL721X% %~dp0.\config\cfg.ini TL721X .\.project
@@ -49,6 +57,12 @@ if exist %Project_Path_TL321X% (
 call %~dp0.\show_info "Remove TL321X File Links" 3
 call %~dp0.\tool rm_links %Project_Path_TL321X% %~dp0.\config\cfg.ini TL321X .\.project
 call %~dp0.\show_info "Remove TL321X File Links Completed!" 4
+)
+
+if exist %Project_Path_TL322X% (
+call %~dp0.\show_info "Remove tl322x File Links" 3
+call %~dp0.\tool rm_links %Project_Path_TL322X% %~dp0.\config\cfg.ini tl322x .\.project
+call %~dp0.\show_info "Remove tl322x File Links Completed!" 4
 )
 
 if exist %Project_Path_W92% (
@@ -79,6 +93,11 @@ call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl751x
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl751x chip\tl751x\drivers\reg_include\register.h
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl751x chip\tl751x\drivers\lib\pke\ecdh.c
 
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl753x
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl753x chip\tl753x\drivers\driver.h
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl753x chip\tl753x\drivers\reg_include\register.h
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl753x chip\tl753x\drivers\lib\pke\ecdh.c
+
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL721X
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL721X chip\TL721X\drivers\driver.h
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL721X chip\TL721X\drivers\adc.h
@@ -93,6 +112,11 @@ call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL321X
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL321X chip\TL321X\drivers\adc.c
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL321X chip\TL321X\drivers\reg_include\register.h
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini TL321X chip\TL321X\drivers\lib\src\pm.c
+
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl322x
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl322x chip\tl322x\drivers\driver.h
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl322x chip\tl322x\drivers\reg_include\register.h
+call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini tl322x chip\tl322x\drivers\lib\pke\ecdh.c
 
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini W92
 call %~dp0.\tool rm_files %Project_Path_Rlease_SDK% %~dp0.\config\cfg.ini W92 chip\W92\drivers\driver.h

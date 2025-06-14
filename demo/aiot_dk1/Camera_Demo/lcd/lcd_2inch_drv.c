@@ -24,7 +24,7 @@
 #include "lcd_2inch_drv.h"
 #include <string.h>
 #include <stdlib.h> //itoa()
-#include "../dk1_camera_app_config.h"
+#include "common.h"
 
 
 #define GSPI_TX_DMA_CHN   DMA3

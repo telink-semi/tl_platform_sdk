@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "dk1_sensor_lcd_app_config.h"
+#include "common.h"
 
 
 extern void user_init(void);

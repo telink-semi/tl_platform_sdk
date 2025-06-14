@@ -155,6 +155,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo/PKE_Demo_Telink_2023Q3-v1.1.9-a/PKE_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/PM_DEMO</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PM_DEMO</locationURI>
+		</link>
+		<link>
 			<name>vendor/PWM_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PWM_DEMO</locationURI>
