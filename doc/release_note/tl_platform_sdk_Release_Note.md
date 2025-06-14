@@ -87,6 +87,8 @@
 
 ### Performance Improvements
 
+* N/A
+
 ## 3.6.0
 
 ### 版本
@@ -175,6 +177,8 @@
  * (tl751x):所有link文件解决当想要一起搬移多个段，避免LMA和VMA对齐方式不一致，导致搬运的数据或者代码不对应的问题；(merge_requests/@1776)
 
 ### Performance Improvements
+
+* N/A
 
 ---
 
