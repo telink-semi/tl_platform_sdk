@@ -2,7 +2,7 @@
 
 ### Version
 
-* SDK Version: tl_platform_sdk 3.6.0
+* SDK Version: tl_platform_sdk V3.6.0
 * Chip Version
   - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2),TL321X(A1/A2),TL322X
 * Hardware EVK Version
@@ -93,7 +93,7 @@
 
 ### 版本
 
-* SDK 版本: tl_platform_sdk 3.6.0
+* SDK 版本: tl_platform_sdk V3.6.0
 * 芯片版本
   - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2),TL321X(A1/A2),TL322X
 * 硬件评估板版本
