@@ -57,7 +57,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
 void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t *fs_cv);
 #endif
 
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
     #else
 static unsigned char rxpara_flag = 1;
     #endif
@@ -471,7 +471,7 @@ void bqb_serviceloop(void)
             rf_set_rx_dma(bqbtest_buffer, 0, 272);
             rf_start_srx(rf_stimer_get_tick());
             delay_us(30);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
     #else
             if (rxpara_flag == 1) {
                 rf_set_rxpara();
@@ -782,7 +782,7 @@ void bqb_pa_set_mode(unsigned char rtx) //0:rx, 1:tx, other:off
 void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t *fs_cv)
 {
     //tx
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -802,6 +802,20 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
     rf_set_tx_settle_time(113);        //adjust TX settle time
 
     for (unsigned char f_chn = 4; f_chn <= 80; f_chn+=10) {
+        rf_set_chn(f_chn);
+        rf_set_txmode();
+        delay_us(113); //Wait for calibration to stabilize
+        rf_tx_fast_settle_get_cal_val(tx_settle_us, f_chn, fs_cv);
+
+        rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+        rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    }
+#elif defined(MCU_CORE_TL721X)
+    rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
+    rf_clr_irq_status(FLD_RF_IRQ_ALL);
+    rf_set_tx_settle_time(113);        //adjust TX settle time
+
+    for (unsigned char f_chn = 0; f_chn <= 80; f_chn++) {
         rf_set_chn(f_chn);
         rf_set_txmode();
         delay_us(113); //Wait for calibration to stabilize

@@ -53,12 +53,12 @@ void user_init(void)
 
 #if (defined(MCU_CORE_TL751X) && (PM_MODE == PM_SET_DVDD_MODE))
     //Upward Voltage
-    pm_set_dvdd(DVDD1_DVDD2_VOL_0P9V, DMA8, D25F, 1000);
-    PLL_300M_D25F_DSP_300M_HCLK_150M_PCLK_150M_MSPI_60M_WT_10M;
+    pm_set_dvdd(DVDD1_DVDD2_VOL_0P9V, 1000);
+    PLL_264M_D25F_DSP_264M_HCLK_132M_PCLK_66M_MSPI_44M_WT_12M;
 
     //Downward Voltage
     PLL_264M_D25F_DSP_132M_HCLK_66M_PCLK_66M_MSPI_44M_WT_11M;
-    pm_set_dvdd(DVDD1_DVDD2_VOL_0P8V, DMA8, D25F, 1000);
+    pm_set_dvdd(DVDD1_DVDD2_VOL_0P8V, 1000);
 #endif
 
 #if defined(MCU_CORE_TL322X) && (PM_MODE == PM_SET_DVDD_MODE)

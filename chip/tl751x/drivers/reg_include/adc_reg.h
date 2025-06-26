@@ -89,7 +89,7 @@ enum
     FLD_SAR_ADC_POWER_DOWN = BIT(5),
 };
 
-#define areg_temp_sensor_ctrl 0x06
+#define areg_temp_sensor_ctrl 0x0b
 
 enum
 {

@@ -100,6 +100,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/HASH_Demo/HASH_Demo_Telink_2024Q3-v1.0.3-a/HASH_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/IR_LEARN_Demo</name>
+			<type>2</type>
+			<location>E:/workspace/2025Q2/condor_32k_watchdog/tl_platform_src/demo/vendor/IR_LEARN_Demo</location>
+		</link>
+		<link>
 			<name>vendor/MULTI_CORE_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/MULTI_CORE_Demo</locationURI>

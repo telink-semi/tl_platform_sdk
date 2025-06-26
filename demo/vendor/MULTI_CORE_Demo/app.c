@@ -91,8 +91,13 @@ volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
                                                             The corresponding link file need to modify in the same time. */
         #endif
 
-        #define N22_DRAM_ADDR 0x50080000             /* Note:  If modified, please make sure this value is within the DRAM address range of N22.
+        #if defined(MCU_CORE_TL753X)
+            #define N22_DRAM_ADDR 0x51000000             /* Note:  If modified, please make sure this value is within the DRAM address range of N22.
                                                            The corresponding link file need to modify in the same time. */
+        #else
+            #define N22_DRAM_ADDR 0x50080000             /* Note:  If modified, please make sure this value is within the DRAM address range of N22.
+                                                           The corresponding link file need to modify in the same time. */
+        #endif
 
     #endif
 

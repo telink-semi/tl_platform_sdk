@@ -79,6 +79,20 @@ extern _attribute_data_retention_sec_ unsigned int  g_pm_tick_32k_cur;
 extern _attribute_data_retention_sec_ unsigned char g_pm_long_suspend;
 
 /**
+ * @brief registers related to sleep
+ * 
+ */
+typedef struct {
+    unsigned char ana_0x20;//bit2
+    unsigned char ana_0x54;//bit6
+} pm_sleep_reg_t;
+
+extern pm_sleep_reg_t pm_sleep_regs;
+
+#define PM_ANA_0x20_DEFAULT_VALUE   0xd1
+#define PM_ANA_0x54_DEFAULT_VALUE   0x10
+
+/**
  * @brief   active mode AVDD1 output trim definition
  * @note    The voltage values of the following gears are all theoretical values, and there may be deviations between the actual and theoretical values.
  */
@@ -376,6 +390,29 @@ static _always_inline void pm_trigger_sleep(void)
     //(add by bingyu.li, confirmed by jianzhi.chen 20230810)
     write_reg8(0x14082f, 0x81); //stall mcu trig
     __asm__ __volatile__("wfi");
+}
+
+/**
+ * @brief       This function is used to setup the registers before sleep.
+ * @return      none.
+ */
+static _always_inline void pm_setup_regs_before_sleep(pm_sleep_reg_t regs)
+{
+    //[2]enable the switch between dvdd2 and retram, only deep ret mode need to set this bit
+    analog_write_reg8(0x20, regs.ana_0x20);
+
+    //[6]force_sleep_ana, only suspend mode need to set this bit
+    analog_write_reg8(0x54, regs.ana_0x54);
+}
+
+/**
+ * @brief       This function is used to recovery the registers after sleep.
+ * @return      none.
+ */
+static _always_inline void pm_recovery_regs_after_sleep(void)
+{
+    analog_write_reg8(0x20, PM_ANA_0x20_DEFAULT_VALUE);
+    analog_write_reg8(0x54, PM_ANA_0x54_DEFAULT_VALUE);
 }
 
 /**

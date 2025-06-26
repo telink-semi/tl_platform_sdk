@@ -52,7 +52,7 @@ unsigned int hash_app_test(void)
 #endif
 
 #if 1
-    #if !defined(MCU_CORE_TL751X)
+    #if !(defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL753X))
     if (pbkdf2_hmac_test()) {
         return 1;
     }

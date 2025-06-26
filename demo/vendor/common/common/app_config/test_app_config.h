@@ -138,15 +138,17 @@ extern "C"
 
 
 #if defined(MCU_CORE_TL322X)
-#define TEST_HTOL_TL322X_MODE       60
+#define TEST_HTOL_TL322X_MODE       56
 #endif
 
-#define REBOOT_TEST                 55
+#define REBOOT_TEST                 57
 
-#define RRAM_QUALITY_TEST           56
-#define RRAM_WORK_VOLTAGE_TEST      57
+#define RRAM_QUALITY_TEST           58
+#define RRAM_WORK_VOLTAGE_TEST      59
+#define RRAM_SLEEP_CURRENT_MODE     60
+#define RRAM_POWER_ONOFF_TEST       61
 
-#define TEST_MODE                   REBOOT_TEST
+#define TEST_MODE                   RRAM_QUALITY_TEST
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M

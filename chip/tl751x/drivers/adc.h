@@ -46,14 +46,14 @@ extern unsigned char g_adc_rx_fifo_index;
 
 typedef enum
 {
-    ADC_VREF_GPIO_1P2V = 0x01,
-    ADC_VREF_VBAT_1P2V = 0x02,
+    ADC_VREF_1P2V = 0x01,
 } adc_ref_vol_e;
 
 typedef enum
 {
     ADC_VBAT_DIV_OFF = 0,
     ADC_VBAT_DIV_1F4 = 0x01,
+    ADC_VBAT_DIV_1F2 = 0x03,
 } adc_vbat_div_e;
 
 typedef enum {
@@ -200,6 +200,7 @@ typedef enum
 typedef enum
 {
     ADC_PRESCALE_1 = 0x00,
+    ADC_PRESCALE_1F2 = 0x01,
     ADC_PRESCALE_1F4 = 0x02,
     ADC_PRESCALE_1F8 = 0x03,
 } adc_pre_scale_e;
@@ -278,10 +279,9 @@ void adc_set_diff_pin(adc_sample_chn_e chn, adc_input_pin_def_e p_pin, adc_input
  * @brief      This function serves to select Vbat voltage division factor.
  * @param[in]  chn - enum variable of ADC sample channel
  * @param[in]  vbat_div - enum variable of Vbat division factor.
- * @param[in]  v_ref - enum variable of ADC reference voltage.
  * @return     none
  */
-void adc_set_vbat_divider(adc_sample_chn_e chn,adc_vbat_div_e vbat_div,adc_ref_vol_e v_ref);
+void adc_set_vbat_divider(adc_sample_chn_e chn,adc_vbat_div_e vbat_div);
 
 /**
  * @brief This function is used to initialize the ADC.

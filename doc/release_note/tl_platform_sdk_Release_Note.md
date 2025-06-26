@@ -1,3 +1,130 @@
+## 3.7.0
+
+### Version
+
+* SDK Version: tl_platform_sdk V3.7.0
+* Chip Version
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2),TL322X
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20 
+  * TL721X: C1T315A20 
+  * TL321X: C1T335A20 
+  * TL322X: C1T371A20
+* Hardware AIOT_DK1 Version
+  * C1TXA104
+* Demo Platform Requirements 
+ 
+  | Demo Name       | Main Board | Sub-Board            |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC1/AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+  
+* Toolchain Version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))  ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+  
+### Features
+* **gpio**
+  * (tl751X)Add gpio_ds_en() and gpio_ds_dis() API(merge_requests/@1772)
+* **ir_learn_Demo**
+  * (TL322x)Add ir_learn_Demo and users can develop infrared learning functionality.(merge_requests/@1814)
+  
+### Bug Fixes
+
+* **link**
+  * (TL322x) Solve the problem that D25F ram_boot.link has no 4-byte alignment compilation error.(merge_requests/@1825)
+
+### Refactoring
+* **adc**
+  * (TL751X) The VBAT was set to the VREF01 selection, with VBAT_DIV configured to 1/2 and the prescale set to 1/2, optimizing performance. The relevant configurations were updated accordingly.(merge_requests/@1826)
+  * (TL721) The VBAT is set to the VREF01 selection, as it performs better under extreme condition sampling.(merge_requests/@1826)
+
+### BREAKING CHANGES
+* **adc**
+  * (TL751X/TL721X) The second parameter of the adc_set_vbat_divider function has been removed because vbat and gpio share the same vref level, and there is no need to differentiate between them.(merge_requests/@1826)
+
+### Performance Improvements
+* **rf**
+  * (TL721x)Optimize RX sensitivity for partial frequency points. Added related interfaces: rf_set_rxpara, rf_ldot_ldo_rxtxlf_bypass_en, rf_ldot_ldo_rxtxlf_bypass_dis. Modified related interfaces: rf_emi_rx_setup, rf_emi_rx_setup_v1.(merge_requests/@1795)
+  * (TL721x) Adjust RSSI configuration to optimize RSSI accuracy.(merge_requests/@1795)
+
+
+## 3.7.0
+
+### 版本
+
+* SDK 版本: tl_platform_sdk V3.7.0
+* 芯片版本
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2),TL322X
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20 
+  * TL721X: C1T315A20
+  * TL321X: C1T335A20
+  * TL322X: C1T371A20
+* 硬件AIOT_DK1版本
+  * C1TXA104
+* Demo平台要求
+ 
+  | 示例名称        | 主板       | 子板                 |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE: [Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+  
+### Features
+* **gpio**
+  * (tl751X)新增 gpio_ds_en 和 gpio_ds_dis 接口。(merge_requests/@1772)
+* **ir_learn_Demo**
+  * (TL322x)新增ir_learn_Demo 用户可以开发红外学习功能.(merge_requests/@1814)
+  
+### Bug Fixes
+
+* **link**
+  * (TL322x)解决D25F ram_boot.link存在没有4字节对齐编译报错问题。(merge_requests/@1825)
+
+
+### Refactoring
+* **adc**
+ * (TL751X) 将VBAT设置为VREF01档位，VBAT_DIV配置为1/2，prescale设置为1/2，从而了优化了性能,相关配置已进行相应修改。(merge_requests/@1826)
+ * (TL721X) 将VBAT设置为VREF01档位，原因是在极端条件下，采样性能表现更优。(merge_requests/@1826)
+
+### BREAKING CHANGES
+* **adc**
+  * (TL751X/TL721X) adc_set_vbat_divider 函数的第二个参数已被删除，因为 vbat 和 gpio 使用的是相同的 vref 电压档，因此无需对它们进行区分。(merge_requests/@1826)
+
+### Performance Improvements
+* **rf**
+  * (TL721x)优化部分频点RX灵敏度，新增相关接口：rf_set_rxpara/rf_ldot_ldo_rxtxlf_bypass_en/rf_ldot_ldo_rxtxlf_bypass_dis；修改相关接口：rf_emi_rx_setup/rf_emi_rx_setup_v1。(merge_requests/@1795)
+  * (TL721x)调整RSSI配置，优化RSSI准确度。(merge_requests/@1795)
+
+
 ## 3.6.0
 
 ### Version
@@ -70,6 +197,8 @@
   * (TL321X)Add drivers and demos for CBC-MAC, CMAC, and XTS algorithms.(merge_requests/@1741)
 * **USB**
   * (TL721x) USB CDC demo support interrupt enumeration and data reception(merge_requests/@1766).
+* **Timer**
+  * (TL721x)Add input capture function driver and demo.(merge_requests/@1835)
 
 ### Refactoring
 * **aiot_dk1**
@@ -161,6 +290,8 @@
   * (TL321X)新增 cbc_mac,cmac,xts算法驱动和Demo。(merge_requests/@1741)
 * **USB**
   * (TL721x) USB CDC demo 支持中断枚举和数据接收(merge_requests/@1766).
+* **Timer**
+  * (TL721x)添加input capture功能驱动和demo。(merge_requests/@1835)
 
 ### Refactoring
 * **aiot_dk1**

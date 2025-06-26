@@ -36,8 +36,8 @@ extern void lcd_spi_display(int x, int y, unsigned char *image, int width, int h
 #define GSPI_RX_DMA_CHN  DMA2
 #define GSPI_TX_DMA_CHN  DMA3
 
-#define CIS_IMAGE_WIDTH  LCD_2IN_WIDTH
-#define CIS_IMAGE_HEIGHT LCD_2IN_HEIGHT
+#define CIS_IMAGE_WIDTH  LCD_2IN_HEIGHT
+#define CIS_IMAGE_HEIGHT LCD_2IN_WIDTH
 #define CIS_RX_BUFF_LEN  (CIS_IMAGE_WIDTH * 5)
 #define CIS_FRAME_SIZE   (CIS_IMAGE_WIDTH * CIS_IMAGE_HEIGHT * 2)
 
@@ -304,6 +304,7 @@ static void spi_set_slave_transmode(spi_sel_e spi_sel, spi_tans_mode_e mode)
     reg_spi_slv_trans_mode(spi_sel) = ((reg_spi_slv_trans_mode(spi_sel) & (~FLD_SPI_SLV_TRANS_MODE)) | (mode & 0xf));
 }
 
+#if((LCD_RES_SEL == LCD_RES_240X240))
 static void ov7670_i2c_write(uint8_t reg, uint8_t value)
 {
     uint8_t buf[2];
@@ -327,6 +328,7 @@ static void ov7670_config_window(uint16_t startx, uint16_t starty, uint16_t widt
     ov7670_i2c_write(0x19, (starty & 0x3FC) >> 2);
     ov7670_i2c_write(0x1A, (endy & 0x3FC) >> 2);
 }
+#endif
 
 void spi_dma_init(spi_sel_e spi, int chn)
 {
@@ -434,7 +436,9 @@ unsigned int cis_init(void)
     }
 
     /*The starting point needs to be adjusted in conjunction with the lens field of view*/
+#if((LCD_RES_SEL == LCD_RES_240X240))
     ov7670_config_window(184, 10, LCD_2IN_WIDTH, LCD_2IN_HEIGHT);
+#endif
 
 #if CIS_USB_DISPLAY_EN
     reg_usb_ep_irq_mask = FLD_USB_EDP8_IRQ;

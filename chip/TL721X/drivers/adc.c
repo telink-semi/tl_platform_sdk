@@ -354,18 +354,12 @@ void adc_set_diff_pin(adc_sample_chn_e chn, adc_input_pin_def_e p_pin, adc_input
 static void adc_set_ref_voltage(adc_sample_chn_e chn, adc_ref_vol_e v_ref)
 {
     g_adc_channel_set_state[chn] = (g_adc_channel_set_state[chn] & (~FLD_SEL_VREF)) | (v_ref << 6);
-    if (v_ref == ADC_VREF_GPIO_1P2V || v_ref == ADC_VREF_VBAT_1P2V) {
-        //Vref buffer bias current trimming:        150%
-        //Comparator preamp bias current trimming:  100%
-        analog_write_reg8(areg_ain_scale, (analog_read_reg8(areg_ain_scale) & (0xC0)) | 0x3d);
-    }
-    //Only for internal testing,not recommended.
-    //    else if(v_ref == ADC_VREF_0P9V)      //
-    //    {
-    //        //Vref buffer bias current trimming:        100%
-    //        //Comparator preamp bias current trimming:  100%
-    //        analog_write_reg8(areg_ain_scale  , (analog_read_reg8( areg_ain_scale  )&(0xC0)) | 0x15 );
-    //    }
+
+    //Vref buffer bias current trimming:        150%
+    //Comparator preamp bias current trimming:  100%
+    analog_write_reg8(areg_ain_scale, (analog_read_reg8(areg_ain_scale) & (0xC0)) | 0x3d);
+
+
 }
 
 /**
@@ -399,28 +393,15 @@ static inline void adc_set_scale_factor(adc_sample_chn_e chn, adc_pre_scale_e pr
  * @brief      This function serves to select Vbat voltage division factor.
  * @param[in]  chn - enum variable of ADC sample channel
  * @param[in]  vbat_div - enum variable of Vbat division factor.
- * @param[in]  v_ref - enum variable of ADC reference voltage.
  * @return     none
  * @note       adc_set_vbat_divider() does not take effect immediately after configuration, it needs to be delayed 100us after calling adc_dig_clk_en().
  */
-void adc_set_vbat_divider(adc_sample_chn_e chn, adc_vbat_div_e vbat_div,adc_ref_vol_e v_ref)
+void adc_set_vbat_divider(adc_sample_chn_e chn, adc_vbat_div_e vbat_div)
 {
     unsigned char offset = (chn == 0) ? 0 : (1 << chn);
 
     g_adc_vbat_div        = (g_adc_vbat_div & (~BIT_RNG(offset, offset + 1))) | ((vbat_div) << offset);
-    
-    if(v_ref == ADC_VREF_VBAT_1P2V){
-        if(vbat_div == ADC_VBAT_DIV_1F4){
-            g_adc_vbat_divider[chn] = 4;
-        }
-        else if (vbat_div == ADC_VBAT_DIV_1F2){
-            g_adc_vbat_divider[chn] = 2;
-        }
-    }
-    else if(v_ref == ADC_VREF_GPIO_1P2V){
-         g_adc_vbat_divider[chn] = 1;       //Setting any value for the divider does not affect GPIO sampling.
-    }
-
+    g_adc_vbat_divider[chn] = vbat_div ? (5 - vbat_div) : 1;
 }
 
 /**
@@ -490,7 +471,7 @@ void adc_chn_config(adc_sample_chn_e chn, adc_chn_cfg_t adc_cfg)
 {
     adc_set_diff_input(chn, adc_cfg.input_p, adc_cfg.input_n);
 
-    adc_set_vbat_divider(chn, adc_cfg.divider,adc_cfg.v_ref);
+    adc_set_vbat_divider(chn, adc_cfg.divider);
     adc_set_ref_voltage(chn, adc_cfg.v_ref);
     adc_set_scale_factor(chn, adc_cfg.pre_scale);
     adc_set_sample_rate(chn, adc_cfg.sample_freq);
@@ -516,7 +497,7 @@ void adc_gpio_sample_init(adc_sample_chn_e chn, adc_gpio_cfg_t cfg)
              * and the GPIO switching time to VBAT is shorter than the 100us stabilization time in multi-channel sampling, resulting in VBAT sampling abnormality.
              * (updated by bolong.zhang, confirmed by haitao.gu at 20250219)
              */
-            .divider     = ADC_VBAT_DIV_1F2,
+            .divider     = ADC_VBAT_DIV_OFF,
             .v_ref       = cfg.v_ref,
             .pre_scale   = cfg.pre_scale,
             .sample_freq = cfg.sample_freq,
@@ -548,7 +529,7 @@ void adc_vbat_sample_init(adc_sample_chn_e chn)
              * (updated by bolong.zhang, confirmed by haitao.gu at 20250219)
              */
             .divider     = ADC_VBAT_DIV_1F2,
-            .v_ref       = ADC_VREF_VBAT_1P2V,
+            .v_ref       = ADC_VREF_1P2V,
             .pre_scale   = ADC_PRESCALE_1F2,
             .sample_freq = ADC_SAMPLE_FREQ_96K,
             .input_p     = ADC_VBAT,
@@ -622,8 +603,8 @@ void adc_temp_init(adc_sample_chn_e chn)
 {
     adc_chn_cfg_t chn_cfg =
     {
-            .divider     = ADC_VBAT_DIV_1F2,
-            .v_ref       = ADC_VREF_VBAT_1P2V,
+            .divider     = ADC_VBAT_DIV_OFF,
+            .v_ref       = ADC_VREF_1P2V,
             .pre_scale   = ADC_PRESCALE_1,
             .sample_freq = ADC_SAMPLE_FREQ_96K,
             .input_p     = ADC_TEMPSENSORP_EE,

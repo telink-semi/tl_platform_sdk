@@ -455,4 +455,23 @@ static inline void pwm_32k_chn_dis(pwm_clk_32k_en_chn_e pwm_32K_en_chn)
 {
     BM_CLR(reg_pwm_mode32k, pwm_32K_en_chn);
 }
+
+/**
+ * @brief     This function servers to disable pwm0 output to analog.
+ * @return    none.
+ */
+static inline void pwm_set_pwm0_output_to_ana_ir_dis(void)
+{
+    BM_CLR(reg_pwm0_mode, BIT(4));
+}
+
+/**
+ * @brief     This function servers to set pwm0 output to analog.
+ * @return    none.
+ */
+static inline void pwm_set_pwm0_output_to_ana_ir_en(void)
+{
+    BM_SET(reg_pwm0_mode, BIT(4));
+}
+
 #endif

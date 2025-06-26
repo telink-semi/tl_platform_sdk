@@ -86,6 +86,10 @@ SECTIONS
     .eh_frame   :
         { KEEP(*(.eh_frame )) }
 
+/*
+ * the __global_pointer needs to be aligned to 4 bytes.
+ */
+    . = ALIGN(8);
     PROVIDE( __global_pointer$ = . + (4K / 2) );
     .rf_certification_cfg :
         { KEEP(*(.rf_certification_cfg)) }

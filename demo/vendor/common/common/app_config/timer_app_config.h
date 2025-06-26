@@ -45,7 +45,7 @@ extern "C"
     #define TIMER1_TRIG_PIN GPIO_PA3
 #endif
 
-
+#define PWM_OUTPUT_PIN          GPIO_FC_PB0
 #define TIMER0_CAPT_PIN         GPIO_PA1
 #define TIMER1_CAPT_PIN         GPIO_PA3
 #define TIMER0_COMP_PIN         GPIO_FC_PC0
@@ -60,8 +60,8 @@ extern "C"
 #if !defined(MCU_CORE_B91)
     #define TIMER_32K_WATCHDOG_MODE 6
 #endif
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
-    #define TIMER_INPUT_CAPTURE_MODE              7 //TIMER_INPUT_CAPTURE_MODE can be used with TIMER_SYS_CLOCK_MODE and TIMER_TICK_MODE.
+#if defined(MCU_CORE_TL721X)
+    #define TIMER_INPUT_CAPTURE_MODE              7
     #define TIMER_INPUT_CAPTURE_MODE_WITH_DMA     8
     #define TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP 9
 #endif

@@ -46,7 +46,7 @@
 /**
  * @brief       This macro is defined to distinguish between A1 and A2 versions of tx power list.
  */
-#define RF_TX_POWER_A2 1
+#define RF_TX_POWER_A2_A3 1
 
 /**
  *  @brief This define serve to calculate the DMA length of packet.
@@ -240,7 +240,7 @@ typedef enum
 typedef enum
 {
 
-#if RF_TX_POWER_A2
+#if RF_TX_POWER_A2_A3
     /*VBAT*/
     #ifdef GREATER_TX_POWER_EN
     RF_POWER_P12p11dBm = 63, /**<  12.1 dbm */
@@ -384,7 +384,7 @@ typedef enum
 typedef enum
 {
 
-#if RF_TX_POWER_A2
+#if RF_TX_POWER_A2_A3
     /*VBAT*/
     #ifdef GREATER_TX_POWER_EN
     RF_POWER_INDEX_P12p11dBm, /**<  12.1 dbm */
@@ -1451,5 +1451,41 @@ void rf_rx_fast_settle_set_cal_val(rf_rx_fast_settle_time_e rx_settle_time, unsi
  *              The corresponding y-values are taken from the calibration table in the fs_cv structure.
 */
 void rf_cali_linear_fit(rf_fast_settle_t *fs_cv);
+
+/**
+ * @brief      This function serves to optimize RF performance
+ *             This function must be called every time rx is turned on,
+ *             and is called by an internal function.
+ *             If there are other requirements that need to be called,
+ *             turn off rx first, then call it again to make sure the Settings take effect
+ * @param[in]  none
+ * @return     none
+ * @note       1.Call this function after turning on rx 30us, and the calibration value set by the function
+ *                will take effect after calling rf_ldot_ldo_rxtxlf_bypass_en;if automatic calibration is
+ *                required, you can use rf_ldot_ldo_rxtxlf_bypass_dis to turn off the bypass function; how to
+ *                use it can refer to bqb.c file or rf_emi_rx in emi.c
+ *             2. After using rf_ldot_ldo_rxtxlf_bypass_dis to turn off the bypass function and enter tx/rx
+ *                automatic calibration, to use this function again, you need to call the rf_set_rxpara function
+ *                again after entering rx 30us.
+ *
+ */
+
+void rf_set_rxpara(void);
+
+/**
+ * @brief       This function is used to enable the ldo rxtxlf bypass function, and the calibration value
+ *              written by the software will take effect after enabling.
+ * @param[in]   none.
+ * @return      none.
+ */
+void rf_ldot_ldo_rxtxlf_bypass_en(void);
+
+/**
+ * @brief       This function is used to close the ldo rxtxlf bypass function, and the hardware will
+ *              automatically perform the calibration function after closing.
+ * @param[in]   none.
+ * @return      none.
+ */
+void rf_ldot_ldo_rxtxlf_bypass_dis(void);
 
 #endif

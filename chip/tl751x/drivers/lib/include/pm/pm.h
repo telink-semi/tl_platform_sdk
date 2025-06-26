@@ -268,8 +268,8 @@ extern volatile pm_sleep_mode_s g_pm_sleep_mode;
  */
 typedef enum
 {
-    DVDD1_DVDD2_VOL_0P8V = 0, 
-    DVDD1_DVDD2_VOL_0P9V = 1,
+    DVDD1_DVDD2_VOL_0P8V = 0,
+    DVDD1_DVDD2_VOL_0P9V,
 } pm_power_cfg_e;
 
 extern pm_power_cfg_e g_dvdd_vol;
@@ -490,9 +490,7 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_set_dig_module_power_switc
 
 /**
  * @brief       This function serves to set dvdd
- * @param[in]   vol      - DVDD1_DVDD2_VOL_0P8V /DVDD1_DVDD2_VOL_0P9V.
- *                       - the 0.8v/0.9v confirms which of the pm_core_sram_bb_voltage_e enumeration is configured, and then assigns the value to the macro DVDD1_DVDD2_VOL_0P8V_CONFG/DVDD1_DVDD2_VOL_0P9V_CONFG.
- * @param[in]   chn      - dma channel.
+ * @param[in]   vol      - DVDD1_DVDD2_VOL_0P8V / DVDD1_DVDD2_VOL_0P9V.
  * @param[in]   dma_timeout_us - wait dma all chn complete timeout.
  * @return      DRV_API_SUCCESS - successful;
  *              DRV_API_INVALID_PARAM - equal to the current voltage configuration or dvdd1_dvdd2_vol error;
@@ -511,7 +509,7 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_set_dig_module_power_switc
  *                between the EMA digital register and the actual voltage after deep/deep ret wake-up, which may pose a risk of SRAM usage errors.
  *                Therefore, make sure to call this interface to restore the voltage to 0.8V before going to sleep.
  */
-drv_api_status_e pm_set_dvdd(pm_power_cfg_e vol, dma_chn_e chn, sys_core_e core, unsigned int dma_timeout_us);
+_attribute_ram_code_sec_noinline_ drv_api_status_e pm_set_dvdd(pm_power_cfg_e vol, unsigned int dma_timeout_us);
 
 /**
  * @brief       This function serves to test different voltages from ANA1.

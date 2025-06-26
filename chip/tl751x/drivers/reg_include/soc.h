@@ -418,6 +418,8 @@ enum
 
 #define D25F_SRAM_EMA_ADDR     (SC_BASE_ADDR + 0x70)                //D25F_PKE_SDIO_NPE_SRAM
 #define D25F_SRAM_EMA_DATA_LEN 8
+
+#define reg_soc_dp_sram_cfg    REG_ADDR16(D25F_SRAM_EMA_ADDR)
 #define reg_soc_dp_sram_cfg0   REG_ADDR8(D25F_SRAM_EMA_ADDR)
 
 enum
@@ -438,6 +440,7 @@ enum
     FLD_DP_SRAM_WABLM = BIT_RNG(6, 7),
 };
 
+#define reg_soc_2p_reg_cfg  REG_ADDR16(SC_BASE_ADDR + 0x72)
 #define reg_soc_2p_reg_cfg0 REG_ADDR8(SC_BASE_ADDR + 0x72)
 
 enum
@@ -455,6 +458,7 @@ enum
     FLD_2P_REG_WABLM = BIT_RNG(1, 2),
 };
 
+#define reg_soc_sram_cfg  REG_ADDR16(SC_BASE_ADDR + 0x74)
 #define reg_soc_sram_cfg0 REG_ADDR8(SC_BASE_ADDR + 0x74)
 
 enum
@@ -474,6 +478,7 @@ enum
     FLD_SRAM_WABLM = BIT_RNG(4, 6),
 };
 
+#define reg_soc_reg_cfg  REG_ADDR16(SC_BASE_ADDR + 0x76)
 #define reg_soc_reg_cfg0 REG_ADDR8(SC_BASE_ADDR + 0x76)
 
 enum

@@ -303,6 +303,10 @@ extern "C"
 #include "app_config/rram_app_config.h"
 #endif
 
+#if defined(CURRENT_BUILD_N22_RRAM_Demo)
+#include "app_config/rram_app_config.h"
+#endif
+
 #if defined(CURRENT_BUILD_PM_Demo)
 #include "app_config/pm_app_config.h"
 #endif
