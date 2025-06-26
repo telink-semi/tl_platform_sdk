@@ -508,6 +508,35 @@ void gpio_set_probe_clk_function(gpio_func_pin_e pin, probe_clk_sel_e sel_clk)
     gpio_function_dis((gpio_pin_e)pin);
 }
 
+/**
+ * @brief      This function set the pin's driving strength at strong.
+ * @param[in]  pin - the pin needs to set the driving strength
+ * @return     none
+ */
+void gpio_ds_en(gpio_pin_e pin)
+{
+    unsigned char  bit   = pin & 0xff;
+    if (((pin >> 8) & 0xff) == GPIO_GROUP_ANA) {
+        analog_write_reg8(areg_gpio_pana_setting, (analog_read_reg8(areg_gpio_pana_setting)) | (bit << 4));
+    } else {
+        BM_SET(reg_gpio_ds(pin), bit);
+    }
+}
+
+/**
+  * @brief      This function set the pin's driving strength.
+  * @param[in]  pin - the pin needs to set the driving strength at poor.
+  * @return     none
+  */
+void gpio_ds_dis(gpio_pin_e pin)
+{
+    unsigned char  bit   = pin & 0xff;
+    if (((pin >> 8) & 0xff) == GPIO_GROUP_ANA) {
+        analog_write_reg8(areg_gpio_pana_setting, (analog_read_reg8(areg_gpio_pana_setting)) & (~(bit << 4)));
+    } else {
+        BM_CLR(reg_gpio_ds(pin), bit);
+    }
+}
 /**********************************************************************************************************************
   *                                         local function implementation                                             *
   *********************************************************************************************************************/

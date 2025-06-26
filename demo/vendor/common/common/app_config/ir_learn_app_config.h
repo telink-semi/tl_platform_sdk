@@ -51,8 +51,11 @@ extern "C"
     #define IR_LEARN_RX_DATA_WIDTH 16 /* 16bits or 24bits. */
 #endif
 
+#if defined(MCU_CORE_TL322X)
+#define IR_LEARN_PM_FUNCTION_EN 0
+#else
 #define IR_LEARN_PM_FUNCTION_EN 1
-
+#endif
 
 #if defined(MCU_CORE_TL751X)
 #define PULL_WAKEUP_SRC_PA0 GPIO_PIN_UP_DOWN_FLOAT

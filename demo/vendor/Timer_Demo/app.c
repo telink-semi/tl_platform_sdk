@@ -36,8 +36,9 @@ volatile int          timer1_irq_cnt    = 0;
 volatile unsigned int timer0_gpio_width = 0;
 volatile unsigned int timer1_gpio_width = 0;
 
-#define PWM_PCLK_SPEED 12000000 //pwm clock 12M.
-
+#if defined(MCU_CORE_TL721X)
+#if((TIMER_MODE == TIMER_INPUT_CAPTURE_MODE) || (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA) || (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP))
+#define     PWM_PCLK_SPEED              12000000 //pwm clock 12M.
 /**
  * This configure is for PWM Ticks.
  */
@@ -47,6 +48,44 @@ enum
     CLOCK_PWM_CLOCK_1MS = (CLOCK_PWM_CLOCK_1S / 1000),
     CLOCK_PWM_CLOCK_1US = (CLOCK_PWM_CLOCK_1S / 1000000),
 };
+
+/**
+ * @brief     This function servers to set the pwm0 output waveform .
+ * @return    none.
+ */
+void pwm0_set_output(gpio_func_pin_e pin)
+{
+    pwm_set_pin(pin,PWM0);
+    pwm_set_clk((unsigned char) (sys_clk.pclk*1000*1000/PWM_PCLK_SPEED-1));
+    pwm_set_pwm0_mode(PWM_NORMAL_MODE);
+    pwm_set_tcmp(PWM0_ID,50 * CLOCK_PWM_CLOCK_1US);
+    pwm_set_tmax(PWM0_ID,100 * CLOCK_PWM_CLOCK_1US);
+    pwm_start(FLD_PWM0_EN);
+}
+#endif
+
+#if(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+volatile unsigned char tmr0_capt_cnt  = 0;
+volatile unsigned char tmr1_capt_cnt  = 0;
+volatile unsigned long g_tick_cycle_tmr0[200];
+volatile unsigned long timer0_curr_capt_val;
+volatile unsigned long timer0_last_capt_val;
+volatile unsigned long g_tick_cycle_tmr1[200];
+volatile unsigned long timer1_curr_capt_val;
+volatile unsigned long timer1_last_capt_val;
+
+#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA)
+unsigned char rev_buff1[256] __attribute__((aligned(4)))= {0};
+unsigned char rev_buff2[256] __attribute__((aligned(4)))= {0};
+
+#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP)
+#define DMA_REV_LEN          256
+dma_chain_config_t rx_dma_list1[2];
+dma_chain_config_t rx_dma_list2[2];
+unsigned char rev_buff3[256] __attribute__((aligned(4)))= {0};
+unsigned char rev_buff4[256] __attribute__((aligned(4)))= {0};
+#endif
+#endif
 
 void user_init(void)
 {
@@ -196,6 +235,71 @@ void user_init(void)
     wd_32k_set_interval_ms(1000);
     wd_32k_start();
     #endif
+
+#if defined(MCU_CORE_TL721X)
+#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+
+//PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
+    pwm0_set_output(PWM_OUTPUT_PIN);
+
+/*Timer0*/
+    timer_set_input_capture_mode(TIMER0,TMR_CAPT_FALLING_EDGE,TIMER0_CAPT_PIN);
+    timer_set_irq_mask(FLD_TMR0_CAPT_IRQ);
+    timer_start(TIMER0);
+
+/*Timer1*/
+    timer_set_input_capture_mode(TIMER1,TMR_CAPT_RISING_EDGE,TIMER1_CAPT_PIN);
+    timer_set_irq_mask(FLD_TMR1_CAPT_IRQ);
+    timer_start(TIMER1);
+
+    plic_interrupt_enable(IRQ_TIMER0);
+    plic_interrupt_enable(IRQ_TIMER1);
+    core_interrupt_enable();
+
+#elif (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA)
+
+//PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
+    pwm0_set_output(PWM_OUTPUT_PIN);
+/*Timer0*/
+    //timer0 DMA set
+    timer_set_rx_dma_config(TIMER0,DMA0);
+    timer_receive_dma(TIMER0,(unsigned char*)rev_buff1,256);
+    //timer0 input capture set
+    timer_set_input_capture_mode(TIMER0,TMR_CAPT_FALLING_EDGE,TIMER0_CAPT_PIN);
+    timer_start(TIMER0);
+/*Timer1*/
+    //timer1 DMA set
+    timer_set_rx_dma_config(TIMER1,DMA1);
+    timer_receive_dma(TIMER1,(unsigned char*)rev_buff2,256);
+    //timer1 input capture set
+    timer_set_input_capture_mode(TIMER1,TMR_CAPT_RISING_EDGE,TIMER1_CAPT_PIN);
+    timer_start(TIMER1);
+
+#elif (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP)
+//PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
+    pwm0_set_output(PWM_OUTPUT_PIN);
+/*Timer0*/
+    //timer0 DMA LLP set
+    timer_set_dma_chain_llp(TIMER0,DMA0,(unsigned char*)(rev_buff3),DMA_REV_LEN,&rx_dma_list1[0]);
+    timer_set_rx_dma_add_list_element(TIMER0,DMA0,&rx_dma_list1[0],&rx_dma_list1[1],(unsigned short*)(rev_buff3),DMA_REV_LEN);
+    timer_set_rx_dma_add_list_element(TIMER0,DMA0,&rx_dma_list1[1],&rx_dma_list1[0],(unsigned short*)(rev_buff3),DMA_REV_LEN);
+    dma_chn_en(DMA0);
+    //timer0 input capture set
+    timer_set_input_capture_mode(TIMER0,TMR_CAPT_FALLING_EDGE,TIMER0_CAPT_PIN);
+    timer_set_irq_mask(FLD_TMR0_CAPT_IRQ);
+    timer_start(TIMER0);
+
+/*Timer1*/
+    //timer1 DMA LLP set
+    timer_set_dma_chain_llp(TIMER1,DMA1,(unsigned char*)(rev_buff4),DMA_REV_LEN,&rx_dma_list2[0]);
+    timer_set_rx_dma_add_list_element(TIMER1,DMA1,&rx_dma_list2[0],&rx_dma_list2[1],(unsigned short*)(rev_buff4),DMA_REV_LEN);
+    timer_set_rx_dma_add_list_element(TIMER1,DMA1,&rx_dma_list2[1],&rx_dma_list2[0],(unsigned short*)(rev_buff4),DMA_REV_LEN);
+    dma_chn_en(DMA1);
+    //timer1 input capture set
+    timer_set_input_capture_mode(TIMER1,TMR_CAPT_RISING_EDGE,TIMER1_CAPT_PIN);
+    timer_set_irq_mask(FLD_TMR1_CAPT_IRQ);
+    timer_start(TIMER1);
+#endif
 #endif
 }
 
@@ -300,7 +404,21 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
         timer0_set_tick(0);
         gpio_toggle(LED2);
     }
-
+#if defined(MCU_CORE_TL721X)
+#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+    if(timer_get_irq_status(FLD_TMR0_CAPT_IRQ))//tmr0_capt_irq
+    {
+         timer_clr_irq_status(FLD_TMR0_CAPT_IRQ);
+         if(tmr0_capt_cnt >= 200)
+         {
+             tmr0_capt_cnt = 0;
+         }
+         timer0_curr_capt_val = timer_get_capture_value(TIMER0);
+         g_tick_cycle_tmr0[tmr0_capt_cnt] = (timer0_curr_capt_val - timer0_last_capt_val);
+         timer0_last_capt_val = timer0_curr_capt_val;
+         tmr0_capt_cnt++;
+    }
+#endif
 #endif
 }
 PLIC_ISR_REGISTER(timer0_irq_handler, IRQ_TIMER0)
@@ -353,6 +471,21 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
         timer1_set_tick(0);
         gpio_toggle(LED3);
     }
+#if defined(MCU_CORE_TL721X)
+#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+    if(timer_get_irq_status(FLD_TMR1_CAPT_IRQ))
+    {
+         timer_clr_irq_status(FLD_TMR1_CAPT_IRQ);
+         if(tmr1_capt_cnt >= 200)
+         {
+             tmr1_capt_cnt = 0;
+         }
+         timer1_curr_capt_val = timer_get_capture_value(TIMER1);
+         g_tick_cycle_tmr1[tmr1_capt_cnt] = (timer1_curr_capt_val - timer1_last_capt_val);
+         timer1_last_capt_val = timer1_curr_capt_val;
+         tmr1_capt_cnt++;
+    }
+#endif
 #endif
 }
 PLIC_ISR_REGISTER(timer1_irq_handler, IRQ_TIMER1)

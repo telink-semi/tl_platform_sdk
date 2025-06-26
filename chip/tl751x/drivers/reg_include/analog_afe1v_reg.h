@@ -127,6 +127,15 @@ enum
     FLD_CAL_24M_DONE = BIT(7),
 };
 
+#define areg_0x151 0x151
+
+enum
+{
+    FLD_BBPLL_LOCK_EN2X     = BIT(1),
+    FLD_BBPLL_LOCK_RSTN     = BIT(2),
+    FLD_AUDIO_BBPLL_LOCKDET = BIT(4),
+};
+
 #define areg_0x158 0x158
 #define areg_0x15a 0x15a
 #define areg_0x15b 0x15b

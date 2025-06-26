@@ -312,16 +312,13 @@ void adc_set_diff_pin(adc_sample_chn_e chn, adc_input_pin_def_e p_pin, adc_input
 static void adc_set_ref_voltage(adc_sample_chn_e chn,adc_ref_vol_e v_ref)
 {
     reg_adc_channel_set_state(chn) = (reg_adc_channel_set_state(chn) & (~FLD_SEL_VREF)) | (v_ref << 6);
-    if (v_ref == ADC_VREF_GPIO_1P2V || v_ref == ADC_VREF_VBAT_1P2V) {
     /*
      * During GPIO sampling in a low-temperature environment of -38°C, when the sampled voltage exceeds 3V, 
      * the sampled values exhibit abnormal fluctuations in the range of approximately 50mV to 100mV. To resolve this issue, 
      * the itrim value has been increased.(jira:PAN-36)(confirmed by bolong.zhang, haitao 20250325)
      */
-        analog_write_reg8(areg_ain_scale  ,0x2a);
-        g_adc_vref[chn] = 1175;
-    }
-
+    analog_write_reg8(areg_ain_scale  ,0x2a);
+    g_adc_vref[chn] = 1175;
 }
 /**
  * @brief This function serves to set the sample frequency.
@@ -354,20 +351,14 @@ static inline void adc_set_scale_factor(adc_sample_chn_e chn, adc_pre_scale_e pr
  * @brief      This function serves to select Vbat voltage division factor.
  * @param[in]  chn - enum variable of ADC sample channel
  * @param[in]  vbat_div - enum variable of Vbat division factor.
- * @param[in]  v_ref - enum variable of ADC reference voltage.
  * @return     none
  * @note       adc_set_vbat_divider() does not take effect immediately after configuration, it needs to be delayed 100us after calling adc_dig_clk_en().
  */
-void adc_set_vbat_divider(adc_sample_chn_e chn, adc_vbat_div_e vbat_div,adc_ref_vol_e v_ref)
+void adc_set_vbat_divider(adc_sample_chn_e chn, adc_vbat_div_e vbat_div)
 {
     unsigned char offset = (chn == 0) ? 0 : (1 << chn);
-
     reg_adc_vabt_div = (reg_adc_vabt_div & (~BIT_RNG(offset,offset+1)))| ((vbat_div) << offset);
-    if(v_ref == ADC_VREF_VBAT_1P2V){
-        g_adc_vbat_divider[chn] = 4;
-    }else{
-        g_adc_vbat_divider[chn] = 1;
-    }
+    g_adc_vbat_divider[chn] = vbat_div ? (5 - vbat_div) : 1;
 }
 /**
  * @brief       This function is used to enable the status of the valid adc code for the m channel.
@@ -421,7 +412,7 @@ void adc_chn_config(adc_sample_chn_e chn, adc_chn_cfg_t adc_cfg)
 {
     adc_set_diff_input(chn, adc_cfg.input_p, adc_cfg.input_n);
 
-    adc_set_vbat_divider(chn, adc_cfg.divider,adc_cfg.v_ref);
+    adc_set_vbat_divider(chn, adc_cfg.divider);
     adc_set_ref_voltage(chn, adc_cfg.v_ref);
     adc_set_scale_factor(chn, adc_cfg.pre_scale);
     adc_set_sample_rate(chn, adc_cfg.sample_freq);
@@ -439,7 +430,7 @@ void adc_gpio_sample_init(adc_sample_chn_e chn, adc_gpio_cfg_t cfg)
     adc_pin_config(ADC_GPIO_MODE, cfg.pin);
     adc_chn_cfg_t chn_cfg =
     {
-            .divider     = ADC_VBAT_DIV_1F4,
+            .divider     = ADC_VBAT_DIV_OFF,
             .v_ref       = cfg.v_ref,
             .pre_scale   = cfg.pre_scale,
             .sample_freq = cfg.sample_freq,
@@ -458,9 +449,9 @@ void adc_vbat_sample_init(adc_sample_chn_e chn)
 {
     adc_chn_cfg_t chn_cfg =
     {
-            .divider     = ADC_VBAT_DIV_1F4,
-            .v_ref       = ADC_VREF_VBAT_1P2V,
-            .pre_scale   = ADC_PRESCALE_1,
+            .divider     = ADC_VBAT_DIV_1F2,
+            .v_ref       = ADC_VREF_1P2V,
+            .pre_scale   = ADC_PRESCALE_1F2,
             .sample_freq = ADC_SAMPLE_FREQ_96K,
             .input_p     = ADC_VBAT,
             .input_n     = GND,
@@ -497,8 +488,8 @@ void adc_temp_init(adc_sample_chn_e chn)
 {
     adc_chn_cfg_t chn_cfg =
     {
-            .divider     = ADC_VBAT_DIV_1F4,
-            .v_ref = ADC_VREF_GPIO_1P2V,
+            .divider     = ADC_VBAT_DIV_OFF,
+            .v_ref = ADC_VREF_1P2V,
             .pre_scale   = ADC_PRESCALE_1,
             .sample_freq = ADC_SAMPLE_FREQ_96K,
             .input_p     = ADC_TEMPSENSORP_EE,

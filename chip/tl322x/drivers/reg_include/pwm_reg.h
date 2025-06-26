@@ -27,8 +27,8 @@
 #include "soc.h"
 
 
-/*******************************      pwm registers: 0x140400      ******************************/
-#define reg_pwm_data_buf_adr 0x80140448
+/*******************************      pwm registers: 0x140e00      ******************************/
+#define reg_pwm_data_buf_adr 0x80140e00
 
 
 /**
@@ -142,10 +142,10 @@ enum
 
 
 /**
- * This register configures the length of the capture segment of PWM5 ~ PWM0.
+ * This register configures the length of the capture segment of PWM6 ~ PWM0.
  * This value has a total of 16 bits, divided into lower 8 bits and higher 8 bits.
  */
-#define reg_pwm_cmp(i) REG_ADDR16(REG_PWM_BASE + 0x04 + (i << 2))
+#define reg_pwm_cmp(i)   REG_ADDR16(REG_PWM_BASE+0x20 +(i * 0x10))
 
 
 /**
@@ -161,10 +161,10 @@ enum
 #define FLD_PWM_CMP = BIT_RNG(0, 15),
 #define FLD_PWM_MAX = BIT_RNG(16, 31),
 /**
- * This register configures the length of the max segment of PWM5 ~ PWM0.
+ * This register configures the length of the max segment of PWM6 ~ PWM0.
  * This value has a total of 16 bits, divided into lower 8 bits and higher 8 bits.
  */
-#define reg_pwm_max(i) REG_ADDR16(REG_PWM_BASE + 0x16 + (i << 2))
+#define reg_pwm_max(i)   REG_ADDR16(REG_PWM_BASE+0x22 + (i * 0x10))
 
 
 /**
@@ -181,17 +181,13 @@ enum
 
 /**
  * This register is used to configure the PWM interrupt function.
- * BIT[0]:If this bit is set, an interrupt will be generated after a set of pulses has been sent. When this interrupt is enabled, you can capture an interrupt after a pulse is sent by detecting whether bit[0] of 0x140431 is set.
- * BIT[1]:Enable ir dma fifo mode interrupt.This bit is usually used with 0x140431BIT[1].
- * BIT[2]:Enable pwm0 frame interrupt.
- * BIT[3]:Enable pwm1 frame interrupt.
- * BIT[4]:Enable pwm2 frame interrupt.
- * BIT[5]:Enable pwm3 frame interrupt.
- * BIT[6]:Enable pwm4 frame interrupt.
- * BIT[7]:Enable pwm5 frame interrupt.
- * BIT[8]:The Bit is to enable the mask_lvl(This level specifically indicates the number of bytes in the FIFO that can trigger an interrupt) interrupt.
  */
-#define reg_pwm_irq_mask REG_ADDR16(REG_PWM_BASE + 0x30)
+#define reg_pwm_irq_mask   REG_ADDR8(REG_PWM_BASE + 0x12)
+enum{
+     FLD_IRQ_PWM_NUM_MASK       = BIT(0),
+     FLD_IRQ_FIFO_MASK          = BIT(1),
+     FLD_IRQ_LVL_MASK           = BIT(2),
+};
 
 
 /**
@@ -243,13 +239,13 @@ typedef enum
 /**
  * [7:0] bits 7-0 of PWM0's high time or low time(if pola[0]=1),if shadow bit(fifo data[14]) is 1 in ir fifo mode or dma fifo mode.
  */
-#define reg_pwm_tcmp0_shadow REG_ADDR16(REG_PWM_BASE + 0x44)
+#define reg_pwm_tcmp0_shadow    REG_ADDR16(REG_PWM_BASE+0x04)
 
 
 /**
  * [15:8] bits 15-8 of PWM0's high time or low time(if pola[0]=1),if shadow bit(fifo data[14]) is 1 in ir fifo mode or dma fifo mode.
  */
-#define reg_pwm_tmax0_shadow REG_ADDR16(REG_PWM_BASE + 0x46)
+#define reg_pwm_tmax0_shadow    REG_ADDR16(REG_PWM_BASE+0x06)
 
 
 /**

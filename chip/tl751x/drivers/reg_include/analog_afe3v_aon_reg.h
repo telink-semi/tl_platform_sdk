@@ -86,6 +86,8 @@ enum
     FLD_MSCN_PULLUP_RES_ENB = BIT(4), //mscn 1M pullup enb signal.
 };
 
+#define areg_aon_0x21 0x21
+#define areg_aon_0x22 0x22
 #define areg_aon_0x24 0x24
 
 enum
@@ -282,4 +284,5 @@ enum
     FLD_ADJUST_LP_SWITCH_EN  = BIT(4),
 };
 
+#define areg_aon_0xb2 0xb2
 #endif

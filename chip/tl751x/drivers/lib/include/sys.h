@@ -190,13 +190,13 @@ extern unsigned int g_chip_version;
  * @brief      This function reboot mcu.
  * @return     none
  */
-_attribute_text_sec_ void sys_reboot(void);
+_attribute_ram_code_sec_noinline_ void sys_reboot_ram(void);
 
 /**
  * @brief      This function reboot mcu.
  * @return     none
  */
-_attribute_ram_code_sec_noinline_ void sys_reboot_ram(void);
+_attribute_text_sec_ void sys_reboot(void);
 
 /**
  * @brief       This function serves to initialize system.

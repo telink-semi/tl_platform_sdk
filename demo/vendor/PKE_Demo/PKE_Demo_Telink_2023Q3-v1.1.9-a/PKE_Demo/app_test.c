@@ -26,7 +26,7 @@
 
 unsigned int pke_app_test(void)
 {
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) ||defined(MCU_CORE_W92)
+#if defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) ||defined(MCU_CORE_W92)
     pke_dig_en();
 #endif
 

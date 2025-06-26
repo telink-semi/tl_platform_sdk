@@ -24,8 +24,17 @@
 #ifndef LCD_2IN_DRIVER_H
 #define LCD_2IN_DRIVER_H
 
+#define LCD_RES_240X240            0
+#define LCD_RES_240X320            1
+#define LCD_RES_SEL                LCD_RES_240X320
+
+#if(LCD_RES_SEL == LCD_RES_240X240)
 #define LCD_2IN_WIDTH  240 //LCD width
 #define LCD_2IN_HEIGHT 240 //LCD height
+#elif(LCD_RES_SEL == LCD_RES_240X320)
+#define LCD_2IN_WIDTH  240 //LCD width
+#define LCD_2IN_HEIGHT 320 //LCD height
+#endif
 
 #define LCD_2IN_CS_0   DEV_Digital_Write(DEV_CS_PIN, 0)
 #define LCD_2IN_CS_1   DEV_Digital_Write(DEV_CS_PIN, 1)

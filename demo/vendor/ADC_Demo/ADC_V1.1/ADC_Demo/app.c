@@ -24,37 +24,25 @@
 #include "common.h"
 #if (DEMO_MODE == NORMAL_MODE)
 adc_gpio_cfg_t adc_gpio_cfg_m =
-    {
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
-        .v_ref = ADC_VREF_GPIO_1P2V,
-#else
-        .v_ref = ADC_VREF_1P2V,
-#endif
-        .pre_scale   = ADC_PRESCALE_1F4,
-        .sample_freq = ADC_SAMPLE_FREQ_96K,
-        .pin         = GPIO_M_CHN_SAMPLE_PIN,
+{
+    .v_ref       = ADC_VREF_1P2V,
+    .pre_scale   = ADC_PRESCALE_1F4,
+    .sample_freq = ADC_SAMPLE_FREQ_96K,
+    .pin         = GPIO_M_CHN_SAMPLE_PIN,
 };
 adc_gpio_cfg_t adc_gpio_cfg_l =
-    {
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
-        .v_ref = ADC_VREF_GPIO_1P2V,
-#else
-        .v_ref = ADC_VREF_1P2V,
-#endif
-        .pre_scale   = ADC_PRESCALE_1F4,
-        .sample_freq = ADC_SAMPLE_FREQ_96K,
-        .pin         = GPIO_L_CHN_SAMPLE_PIN,
+{
+    .v_ref       = ADC_VREF_1P2V,
+    .pre_scale   = ADC_PRESCALE_1F4,
+    .sample_freq = ADC_SAMPLE_FREQ_96K,
+    .pin         = GPIO_L_CHN_SAMPLE_PIN,
 };
 adc_gpio_cfg_t adc_gpio_cfg_r =
-    {
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
-        .v_ref = ADC_VREF_GPIO_1P2V,
-#else
-        .v_ref = ADC_VREF_1P2V,
-#endif
-        .pre_scale   = ADC_PRESCALE_1F4,
-        .sample_freq = ADC_SAMPLE_FREQ_96K,
-        .pin         = GPIO_R_CHN_SAMPLE_PIN,
+{
+    .v_ref       = ADC_VREF_1P2V,
+    .pre_scale   = ADC_PRESCALE_1F4,
+    .sample_freq = ADC_SAMPLE_FREQ_96K,
+    .pin         = GPIO_R_CHN_SAMPLE_PIN,
 };
 
 typedef enum

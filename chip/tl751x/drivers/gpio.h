@@ -927,4 +927,18 @@ void dsp_jtag_enable(dsp_jtag_pin_st *dsp_jtag_pin);
  * @return    none.
  */
 void gpio_set_probe_clk_function(gpio_func_pin_e pin, probe_clk_sel_e sel_clk);
+/**
+ * @brief      This function set the pin's driving strength at strong.
+ * @param[in]  pin - the pin needs to set the driving strength.
+ * @return     none.
+ */
+void gpio_ds_en(gpio_pin_e pin);
+
+
+/**
+ * @brief      This function set the pin's driving strength.
+ * @param[in]  pin - the pin needs to set the driving strength at poor.
+ * @return     none.
+ */
+void gpio_ds_dis(gpio_pin_e pin);
 #endif

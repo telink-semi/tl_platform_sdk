@@ -65,7 +65,7 @@ ENTRY(_RESET_ENTRY)
 SECTIONS
 {
     NDS_SAG_LMA_FLASH = 0x00400000 ;
-    . = 0x00400000; 
+    . = 0x00400000;
     PROVIDE (BIN_BEGIN = .);
     .vectors        : { KEEP(*(.vectors )) }
     . = 0x00000000;
@@ -88,24 +88,29 @@ SECTIONS
     PROVIDE (_RAMCODE_LMA_START = LOADADDR(.ram_code));
     PROVIDE (_RAMCODE_SIZE = SIZEOF (.ram_code)); 
     
-    . = (LOADADDR (.ram_code) + SIZEOF (.ram_code));
-    .text           : AT(ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code), ALIGNOF(.text))) 
-        { *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning )  }
+    . = ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code), 8);
+    .text           : AT(ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code), 8))
+        { *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning ) }
     .rodata         : AT(ALIGN(LOADADDR (.text) + SIZEOF (.text), ALIGNOF(.rodata))) 
         { *(.rodata .rodata.* .gnu.linkonce.r.* )
           *(.srodata.cst16 ) *(.srodata.cst8 ) *(.srodata.cst4 ) *(.srodata.cst2 ) *(.srodata .srodata.* )}
     .eh_frame_hdr   : AT(ALIGN(LOADADDR (.rodata) + SIZEOF (.rodata), ALIGNOF(.eh_frame_hdr)))
         { *(.eh_frame_hdr ) }
-    .eh_frame   : AT(ALIGN(LOADADDR (.eh_frame_hdr) + SIZEOF (.eh_frame_hdr), ALIGNOF(.eh_frame)))
+    . = ALIGN(0x20);
+    .eh_frame   : AT(ALIGN(LOADADDR (.eh_frame_hdr) + SIZEOF (.eh_frame_hdr), 32))
         { KEEP(*(.eh_frame )) }
         
     PROVIDE (_ILM_USE_START = ADDR(.retention_reset));
     PROVIDE (_ILM_USE_END = _RAMCODE_VMA_END);
     PROVIDE (_ILM_USE_SIZE = (_ILM_USE_END) -(_ILM_USE_START));
-               
+              
     . = 0x00080000;
     PROVIDE( __global_pointer$ = . + (4K / 2) );
-    .data   : AT(ALIGN(LOADADDR (.eh_frame) + SIZEOF (.eh_frame),  ALIGNOF(.data)))
+    .rf_certification_cfg : AT(ALIGN(LOADADDR(.eh_frame) + SIZEOF(.eh_frame), ALIGNOF(.rf_certification_cfg)))
+        { KEEP(*(.rf_certification_cfg)) }
+    PROVIDE (_RF_CERTIFICATION_CFG_ADDR_OFFSET = LOADADDR(.rf_certification_cfg) - BIN_BEGIN);
+  
+    .data   : AT(ALIGN(LOADADDR (.rf_certification_cfg) + SIZEOF (.rf_certification_cfg),  ALIGNOF(.data)))
         { *(.data .data.* .gnu.linkonce.d.* ) KEEP(*(.gnu.linkonce.d.*personality* )) SORT(CONSTRUCTORS) 
           *(.sdata .sdata.* .gnu.linkonce.s.* ) *(.sdata2 .sdata2.* .gnu.linkonce.s.* )
         }
@@ -122,7 +127,7 @@ SECTIONS
      * resulting in a store access fault.
      */
     PROVIDE (_BSS_VMA_END = ((. + 3) / 4)*4);
-    
+ 
     .sdk_version    : AT(LOADADDR (.data) + SIZEOF (.data))
         { KEEP(*(.sdk_version )) }
 
@@ -140,4 +145,3 @@ SECTIONS
 ASSERT((BIN_SIZE)<= FLASH_SIZE, "BIN FILE OVERFLOW");
 ASSERT((_ILM_USE_SIZE)<= 0x8000 * __D25F_IRAM_SIZE, "IRAM OVERFLOW");
 ASSERT((_DLM_USE_SIZE)<= (_STACK_TOP-600), "DRAM OVERFLOW");/*Error: RAM size maybe overflow.(This is determined based on the stack size of 600 bytes. If this does not match the actual usage, the corresponding judgment criteria in the link file can be modified*/
-
