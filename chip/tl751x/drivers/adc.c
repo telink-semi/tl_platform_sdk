@@ -24,13 +24,23 @@
 #include "adc.h"
 #include "compiler.h"
 #include "lib/include/stimer.h"
+#include "gpio.h"
+
 #define ADC_CHN_CNT                        3
-/**
- * Note: When the reference voltage is configured to 1.2V, the calculated ADC voltage value is closest to the actual voltage value using 1175 as the coefficient default.
- * 1175 is the value obtained by ATE through big data statistics, which is more in line with most chips than 1200.
- */
-_attribute_data_retention_sec_ unsigned short g_adc_vref[ADC_CHN_CNT] = {1175,1175,1175}; //default ADC ref voltage (unit:mV)
-_attribute_data_retention_sec_ signed char g_adc_vref_offset[ADC_CHN_CNT];//ADC calibration value voltage offset (unit:mV).
+
+#define ADC_GPIO_VREF_DEFAULT_VALUE        1148
+#define ADC_GPIO_VREF_OFFSET_DEFAULT_VALUE 0
+
+#define ADC_VBAT_VREF_DEFAULT_VALUE        1156
+#define ADC_VBAT_VREF_OFFSET_DEFAULT_VALUE 0
+
+
+_attribute_data_retention_sec_ short g_adc_vref[ADC_CHN_CNT] = {ADC_GPIO_VREF_DEFAULT_VALUE, ADC_VBAT_VREF_DEFAULT_VALUE, ADC_GPIO_VREF_DEFAULT_VALUE}; //default ADC ref voltage (unit:mV)
+_attribute_data_retention_sec_ signed char    g_adc_vref_offset[ADC_CHN_CNT];                                                                                    //ADC calibration value voltage offset (unit:mV).
+_attribute_data_retention_sec_ short          g_adc_gpio_calib_vref        = ADC_GPIO_VREF_DEFAULT_VALUE;                                                        //ADC gpio calibration value voltage (unit:mV)(used for gpio voltage sample).
+_attribute_data_retention_sec_ signed char    g_adc_gpio_calib_vref_offset = ADC_GPIO_VREF_OFFSET_DEFAULT_VALUE;                                                 //ADC gpio calibration value voltage offset (unit:mV)(used for gpio voltage sample).
+_attribute_data_retention_sec_ short          g_adc_vbat_calib_vref        = ADC_VBAT_VREF_DEFAULT_VALUE;                                                        //ADC vbat calibration value voltage (unit:mV)(used for vbat voltage sample).
+_attribute_data_retention_sec_ signed char    g_adc_vbat_calib_vref_offset = ADC_VBAT_VREF_OFFSET_DEFAULT_VALUE;    
 
 volatile unsigned char g_adc_pre_scale[ADC_CHN_CNT];
 volatile unsigned char g_adc_vbat_divider[ADC_CHN_CNT];
@@ -318,7 +328,6 @@ static void adc_set_ref_voltage(adc_sample_chn_e chn,adc_ref_vol_e v_ref)
      * the itrim value has been increased.(jira:PAN-36)(confirmed by bolong.zhang, haitao 20250325)
      */
     analog_write_reg8(areg_ain_scale  ,0x2a);
-    g_adc_vref[chn] = 1175;
 }
 /**
  * @brief This function serves to set the sample frequency.
@@ -360,16 +369,6 @@ void adc_set_vbat_divider(adc_sample_chn_e chn, adc_vbat_div_e vbat_div)
     reg_adc_vabt_div = (reg_adc_vabt_div & (~BIT_RNG(offset,offset+1)))| ((vbat_div) << offset);
     g_adc_vbat_divider[chn] = vbat_div ? (5 - vbat_div) : 1;
 }
-/**
- * @brief       This function is used to enable the status of the valid adc code for the m channel.
- * @return      none
- * @attention   The adc_ana_read_en() API must be called before the adc_get_m_chn_valid_status()API.
- * @note        This function is used in NDMA mode where adc_get_m_chn_valid_status() needs to be called.
- */
-static inline void adc_ana_read_en(void)
-{
-    analog_write_reg8(areg_adc_data_sample_control, analog_read_reg8(areg_adc_data_sample_control) | FLD_ANA_RD_EN);
-}
 
 /**
  * @brief This function is used to initialize the ADC.
@@ -386,6 +385,14 @@ void adc_init(adc_chn_cnt_e channel_cnt)
     adc_clk_en();                  //enable signal of 48M clock to sar adc
     adc_set_clk();                 //set adc digital clk to 24MHz and adc analog clk to 4MHz
     adc_set_resolution(ADC_RES12); //default adc_resolution set as 12bit ,BIT(11) is sign bit
+
+    /*
+     * To prevent aging, configure ANA0/1 as VREF output pins and pull up ANA0/1 pins with a 10k resistor.
+     * (updated by bolong.zhang, confirmed by haitao at 20250718 jira: PAN-78)
+     */
+    analog_write_reg8(areg_adc_sel_atb_o, analog_read_reg8(areg_adc_sel_atb_o) | FLD_ADC_VREF_ANA0 | FLD_ADC_VREF_ANA1);
+    gpio_set_up_down_res(GPIO_ANA0,GPIO_PIN_PULLUP_10K);
+    gpio_set_up_down_res(GPIO_ANA1,GPIO_PIN_PULLUP_10K);
 
     if (NDMA_M_CHN == channel_cnt) {
         adc_all_chn_data_to_fifo_dis();
@@ -438,6 +445,13 @@ void adc_gpio_sample_init(adc_sample_chn_e chn, adc_gpio_cfg_t cfg)
             .input_n     = GND,
     };
     adc_chn_config(chn, chn_cfg);
+    /**
+     * At present, the reference voltage is 1.2V by default, and the calibration is also based on 1.2V. If other chips have different gears in the future,
+     * it is necessary to add a judgment here: only when the corresponding gears of the corresponding calibration conditions are selected,
+     * the following calibration code can be invoked
+     */
+    g_adc_vref[chn]        = g_adc_gpio_calib_vref;        //set gpio sample calib vref
+    g_adc_vref_offset[chn] = g_adc_gpio_calib_vref_offset; //set adc_vref_offset as adc_gpio_calib_vref_offset
 }
 
 /**
@@ -458,9 +472,26 @@ void adc_vbat_sample_init(adc_sample_chn_e chn)
 
     };
     adc_chn_config(chn, chn_cfg);
-
+    /**
+     * At present, the reference voltage is 1.2V by default, and the calibration is also based on 1.2V. If other chips have different gears in the future,
+     * it is necessary to add a judgment here: only when the corresponding gears of the corresponding calibration conditions are selected,
+     * the following calibration code can be invoked
+     */
+    g_adc_vref[chn]        = g_adc_vbat_calib_vref;        //set vbat sample calib vref
+    g_adc_vref_offset[chn] = g_adc_vbat_calib_vref_offset; //set g_adc_vref_offset as g_adc_vbat_calib_vref_offset
 }
 #if INTERNAL_TEST_FUNC_EN
+/**
+ * @brief       This function is used to enable the status of the valid adc code for the m channel.
+ * @return      none
+ * @attention   The adc_ana_read_en() API must be called before the adc_get_m_chn_valid_status()API.
+ * @note        This function is used in NDMA mode where adc_get_m_chn_valid_status() needs to be called.
+ */
+static inline void adc_ana_read_en(void)
+{
+    analog_write_reg8(areg_adc_data_sample_control, analog_read_reg8(areg_adc_data_sample_control) | FLD_ANA_RD_EN);
+}
+
 /**
  * @brief      This function open temperature sensor power.
  * @return     none
@@ -538,7 +569,29 @@ unsigned short adc_calculate_voltage(adc_sample_chn_e chn, unsigned short adc_co
     }
 }
 
+/**
+ * @brief This function is used to calib ADC 1.2V vref for GPIO.
+ * @param[in] vref - GPIO sampling calibration value.
+ * @param[in] offset - GPIO sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_gpio_calib_vref(signed short vref, signed char offset)
+{
+    g_adc_gpio_calib_vref        = vref;
+    g_adc_gpio_calib_vref_offset = offset;
+}
 
+/**
+ * @brief This function is used to calib ADC 1.2V vref for Vbat.
+ * @param[in] vref - Vbat channel sampling calibration value.
+ * @param[in] offset - Vbat channel sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_vbat_calib_vref(signed short vref, signed char offset)
+{
+    g_adc_vbat_calib_vref        = vref;
+    g_adc_vbat_calib_vref_offset = offset;
+}
 /**********************************************************************************************************************
  *                                                DMA only interface                                                  *
  **********************************************************************************************************************/

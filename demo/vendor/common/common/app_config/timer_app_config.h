@@ -28,7 +28,12 @@ extern "C"
 {
 #endif
 
-
+#if defined(MCU_CORE_TL752X)
+#define TIMER_ONESHORT_MODE          0
+#define TIMER_PERIOD_MODE            1
+#define TIMER_PWM_MODE               2
+#define TIMER_MODE              TIMER_ONESHORT_MODE
+#else
 #if defined(MCU_CORE_TL751X)
     #define TIMER0_GPIO GPIO_PD0
     #define TIMER1_GPIO GPIO_PD1
@@ -86,6 +91,8 @@ extern "C"
 #endif
 
 #include "driver.h"
+
+#endif
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

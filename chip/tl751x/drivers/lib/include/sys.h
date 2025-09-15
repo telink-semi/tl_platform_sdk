@@ -139,8 +139,6 @@
 typedef enum
 {
     LDO_AVDD_LDO_DVDD                  = 0x00, /**< AVDD-LDO & DVDD-LDO mode */
-    DCDC_AVDD_DCDC_DVDD_PEAK_CUR_400MA = 0x11, /**< AVDD-DCDC & DVDD-DCDC mode, peak current 400mA */
-    DCDC_AVDD_DCDC_DVDD_PEAK_CUR_600MA = 0x33, /**< AVDD-DCDC & DVDD-DCDC mode, peak current 600mA */
     DCDC_AVDD_DCDC_DVDD_PEAK_CUR_800MA = 0x77, /**< AVDD-DCDC & DVDD-DCDC mode, peak current 800mA default*/
 } power_mode_e;
 

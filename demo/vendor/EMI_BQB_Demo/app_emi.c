@@ -37,7 +37,7 @@
         /*
  * @brief   this macro definition serve to enable function of swire-through-usb.
  * */
-        #define SWIRE_THROUGH_USB_EN 0 //0:disable swire-through-usb,1:enable swire-through-usb.
+        #define SWIRE_THROUGH_USB_EN  0 //0:disable swire-through-usb,1:enable swire-through-usb.
 
     #endif
 
@@ -237,6 +237,13 @@ void rf_emi_rx_current_test(rf_mode_e rf_mode, unsigned char pwr, signed char rf
 }
     #endif
 
+/**
+ * 
+ * @brief       This function serves to read the calibration value from flash.
+ * @param[in]   none
+ * @return      none
+ * @note       Attention:For TL751X and TL7518 chips, this function call must be made after rf_rode_init
+ */
 void read_calibration_flash(void)
 {
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) //Wait for the B92 calibration function to be added before changing here
@@ -263,6 +270,8 @@ void read_calibration_flash(void)
     default:
         break;
     }
+    #else
+    calibration_func();
     #endif
 }
 
@@ -753,14 +762,18 @@ void user_init(void)
     #if EMI_SUPPORT_SETTING
     pa_setting_init(g_emi_setting.pa_setting_pos, g_emi_setting.general_setting.pa_bypass_en);
     if (g_emi_setting.general_setting.swire_through_usb_en) {
-        usb_set_pin(1);
-        gpio_set_up_down_res(GPIO_DM, GPIO_PIN_PULLUP_10K);
+        #if defined(MCU_CORE_TL751X)
+            usbhw_init();
+        #endif
+            usb_set_pin(1);
     }
     #else
 
         #if SWIRE_THROUGH_USB_EN
-    usb_set_pin(1);
-    gpio_set_up_down_res(GPIO_DM, GPIO_PIN_PULLUP_10K);
+            #if defined(MCU_CORE_TL751X)
+                    usbhw_init();
+            #endif
+                    usb_set_pin(1);
         #endif
 
     #endif

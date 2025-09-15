@@ -23,7 +23,11 @@
  *******************************************************************************************************/
 #pragma once
 
+#if defined(MCU_CORE_TL752X)
+#include "usb1_type.h"
+#else
 #include "driver.h"
+#endif
 
 #ifdef MYUDB_DISABLE
 #else

@@ -27,6 +27,7 @@
 #if(CAN_TEST   ==    CAN_TX_FD_MODE)
 
 #define  IS_TX_RX    1
+#define  IS_LITTLE_END_CONVERT    0
 
 can_timing_config_t timing_cfg;
 can_timing_config_t can1_timing_cfg;
@@ -54,9 +55,10 @@ can_fd_frame_t can1_fd_rx_frame[4];
 can_fd_baud_rate_t  rate_cfg={
     .canfd_timing_mode = CANFD_FDCBT,
     .bit_rate = 1000000,
-    .bit_rate_fd = 8000000,
+    .bit_rate_fd = 1000000,
 };
 
+unsigned char g_tx_buff[16]= {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
 #define RXMB_START_INDEX         0
 #define MB_RX_NUM                4
@@ -148,10 +150,12 @@ void main_loop (void)
         tx_fd_frame.length = CAN_16B_PER_FRAME;
         tx_fd_frame.edl    = 1;
         tx_fd_frame.brs    = 1;
-        tx_fd_frame.data_word[0] = 0x11223344;
-        tx_fd_frame.data_word[1] = 0x55667788;
-        tx_fd_frame.data_word[2] = 0x99aabbcc;
-        tx_fd_frame.data_word[3] = 0xddeeff00;
+        for(volatile unsigned char j=0;j<DLC_LENGTH_DECODE(CAN_16B_PER_FRAME);j++){
+              *(((unsigned char *)tx_fd_frame.data_word)+j) = *(g_tx_buff+j);
+        }
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)tx_fd_frame.data_word,DLC_LENGTH_DECODE(CAN_16B_PER_FRAME));
+#endif
         canfd_write_tx_mb(CAN0,TXMB_START_INDEX,&tx_fd_frame);
         can_exit_freeze_mode(CAN0);
         tx_fd_frame.data_byte0++;
@@ -171,6 +175,9 @@ void main_loop (void)
      while(!(rx_done ==4));
      rx_done=0;
     for(volatile unsigned int i=0;i< 4;i++){
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)can1_rx_frame[i].data_word,DLC_LENGTH_DECODE(can1_rx_frame[i].length));
+#endif
         for(volatile unsigned char j=0;j<can1_rx_frame[i].length;j++){
                if(*((&(rx_fd_frame[i].data_byte0))+j) !=*((&(can1_rx_frame[i].data_byte0))+j)){
                    gpio_set_high_level(LED1);
@@ -205,6 +212,9 @@ _attribute_ram_code_sec_ void can0_irq_handler(void){
      for(unsigned char i=RXMB_START_INDEX;i<RXMB_START_INDEX+MB_RX_NUM;i++){
         if(can_get_mb_irq_status(CAN0,i)){
             canfd_read_rx_mb(CAN0,i,&rx_fd_frame[i]);
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)rx_fd_frame[i].data_word,DLC_LENGTH_DECODE(rx_fd_frame[i].length));
+#endif
             can_clr_mb_irq_status(CAN0,i);
             rx_done++;
             break;

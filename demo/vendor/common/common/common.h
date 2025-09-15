@@ -24,6 +24,7 @@
 #pragma once
 
 #include "app_config/app_config.h"
+#if !defined (MCU_CORE_TL752X)
 #include "auto_test/dut_cmd.h"
 #include "auto_test/pc_interface.h"
 #include "calibration.h"
@@ -89,7 +90,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
         #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 1)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT PLL_192M_CCLK_96M_HCLK_48M_PCLK_24M_MSPI_48M
+        #define CLOCK_INIT PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M
     #endif
 #elif defined(MCU_CORE_W92)
 void platform_init(vbat_type_e vbat_v, unsigned char flash_protect_en);
@@ -131,4 +132,7 @@ void platform_init(unsigned char flash_protect_en);
     #ifndef CLOCK_INIT
         #define CLOCK_INIT
     #endif
+#endif
+#else
+
 #endif

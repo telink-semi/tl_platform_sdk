@@ -121,6 +121,14 @@ void platform_init(void);
     #define RF_POWER RF_POWER_P4p52dBm
 #endif
 
+#if defined(MCU_CORE_TL721X)
+#define rf_timer_get_tick            rf_bb_timer_get_tick
+#else
+#define rf_timer_get_tick            stimer_get_tick
+#endif
+
+
+
 #include "driver.h"
 #include "calibration.h"
 #include "printf.h"

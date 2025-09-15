@@ -4,9 +4,9 @@
  * @brief   This is the boot file for tl322x
  *
  * @author  Driver Group
- * @date    2024
+ * @date    2025
  *
- * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2025, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@
  *******************************************************************************************************/
 #ifdef N22_MCU_STARTUP_RRAM
 
-/* If using Andes toolchain, this Macro is defined in it's toolchain */
-/* If using std gcc toolchain, this core register(not standard risc-v core register)
+/* If using Andes toolchain, these two Macro are defined in it's toolchain */
+/* If using std gcc toolchain, these two core registers(not standard risc-v core registers)
     should be defined here. */
 #ifdef STD_GCC
 #define mmisc_ctl  0x7D0
@@ -50,6 +50,7 @@
     .equ __N22_IRAM_SIZE,    1 //32KB
     .equ __N22_DRAM_SIZE,    1 //32KB
 #endif
+
     .equ __D25F_N22_RAM_REG,    ((__N22_DRAM_SIZE+__N22_IRAM_SIZE)<<12)|(__N22_DRAM_SIZE<<8)|(__D25F_DRAM_SIZE)
 
     .section .vectors, "ax"
@@ -60,6 +61,9 @@
     .global     __N22_DRAM_SIZE
     .global     __D25F_N22_RAM_REG
 
+    //.org  and linker's relaxation (-flto) cannot be used at the same time
+    //Pop corresponds to push. Before using .option norelax, use push to save the current .option configuration
+    //and then modify .option. After using norelax, use pop to restore
     .option push
     .option norelax
     .org 0x0
@@ -69,8 +73,7 @@
 
     .align 2
 _RESET_ENTRY:
-    j        _BOOTLOADER_INIT
-    //free the 6th ~ 7th byte to store the crc type of the bin file
+    j        _START
 
     .org 0x18
     .word (BIN_SIZE)
@@ -82,96 +85,20 @@ _RESET_ENTRY:
 /* set bit[22] to 1, enable timeout:
  * when xip reaches a certain time without fetching instructions, cs will not be pulled down, saving power consumption.
  */
-    .word (0x3b4097a9)          //DREAD:   cmd:1x, addr:1x, data:2x, dummy cycle:8
-//  .word (0xeb4493ba)          //X4READ:  cmd:1x, addr:4x, data:4x, dummy cycle:6
-//  .word (0xCB449EBB)          //X8READ:  cmd:1x, addr:8x, data:8x, dummy cycle:16 token:0x04
+      .word (0x3B4097A9)           //DREAD:   cmd:1x, addr:1x, data:2x, dummy:8
+//    .word (0xEB4095BA)           //X4READ:  cmd:1x, addr:4x, data:4x, dummy:6
+//    .word (0xEB4493BA)           //X4READ:  cmd:1x, addr:4x, data:4x, token:0x00, dummy:4
 
     .option pop
     .align 2
 
-
-_BOOTLOADER_INIT:
-    la  t1, _BOOTLOADER_LMA_START
-    la  t2, _BOOTLOADER_VMA_START
-    la  t3, _BOOTLOADER_VMA_END
-_BOOTLOADER_INIT_BEGIN:
-    bleu    t3, t2, _JUMP_TO_BOOTLOADER
-    lw  t0, 0(t1)
-    sw  t0, 0(t2)
-    addi    t1, t1, 4
-    addi    t2, t2, 4
-    j   _BOOTLOADER_INIT_BEGIN
-_JUMP_TO_BOOTLOADER:
-    la  t0, _BOOTLOADER_VMA_START
-    jr  t0
-
-.section .bootloader, "ax"
-    .option norelax
-    .align 2
-    /* Move start reset from flash to sram */
-_START_INIT:
-
-    la     t1, _START_LMA_START
-    la     t2, _START_VMA_START
-    la     t3, _START_LMA_VMA_END
-_START_BEGIN:
-    bleu   t3, t2, _RETENTION_DATA_INIT
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _START_BEGIN
-
-    /* Move retention from flash to sram */
-_RETENTION_DATA_INIT:
-    la     t1, _RETENTION_DATA_LMA_START
-    la     t2, _RETENTION_DATA_VMA_START
-    la     t3, _RETENTION_DATA_VMA_END
-_RETENTION_DATA_INIT_BEGIN:
-    bleu   t3, t2, _RAMCODE_INIT
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _RETENTION_DATA_INIT_BEGIN
-
-    /* Move ramcode from flash to sram */
-_RAMCODE_INIT:
-    la     t1, _RAMCODE_LMA_START
-    la     t2, _RAMCODE_VMA_START
-    la     t3, _RAMCODE_VMA_END
-_RAMCODE_INIT_BEGIN:
-    bleu   t3, t2, _DLM_INIT
-    lw     t0, 0(t1)
-    sw     t0, 0(t2)
-    addi   t1, t1, 4
-    addi   t2, t2, 4
-    j      _RAMCODE_INIT_BEGIN
-
-_DLM_INIT:
-    la  t1, _DATA_LMA_START
-    la  t2, _DATA_VMA_START
-    la  t3, _DATA_VMA_END
-_DLM_INIT_BEGIN:
-    bleu    t3, t2, _JUMP_TO_START
-    lw  t0, 0(t1)
-    sw  t0, 0(t2)
-    addi    t1, t1, 4
-    addi    t2, t2, 4
-    j   _DLM_INIT_BEGIN
-
-_JUMP_TO_START:
-    la  t0, _START
-    jr  t0
-
-
-
-
-.section .start, "ax"
-    .option norelax
-    .align 2
-
 _START:
+
+    /*Initialize D25 & N22 ILM DLM Size */
+   // lui    t0 , 0x80141
+   // li     t1 , __D25F_N22_RAM_REG
+   // sh     t1 , -2036(t0)              //write16(0x8014080c,0x2105)
+
     /* Initialize global pointer */
     .option push
     .option norelax
@@ -207,11 +134,63 @@ _START:
 #endif
 
     /* Enable I/D-Cache */
-    csrr    t0,  mcache_ctl
-    ori     t0,  t0,  1  #/I-Cache
-    ori     t0,  t0,  2  #/D-Cache
-    csrw    mcache_ctl,  t0
+    csrr   t0,  mcache_ctl
+    ori    t0,  t0,  1  #/I-Cache
+    ori    t0,  t0,  2  #/D-Cache
+    csrw   mcache_ctl,  t0
     fence.i
+
+    /* Move retention reset from flash to sram */
+_RETENTION_RESET_INIT:
+    la     t1, _RETENTION_RESET_LMA_START
+    la     t2, _RETENTION_RESET_VMA_START
+    la     t3, _RETENTION_RESET_VMA_END
+_RETENTION_RESET_BEGIN:
+    bleu   t3, t2, _RETENTION_DATA_INIT
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _RETENTION_RESET_BEGIN
+
+    /* Move retention from flash to sram */
+_RETENTION_DATA_INIT:
+    la     t1, _RETENTION_DATA_LMA_START
+    la     t2, _RETENTION_DATA_VMA_START
+    la     t3, _RETENTION_DATA_VMA_END
+_RETENTION_DATA_INIT_BEGIN:
+    bleu   t3, t2, _RAMCODE_INIT
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _RETENTION_DATA_INIT_BEGIN
+
+    /* Move ramcode from flash to sram */
+_RAMCODE_INIT:
+    la     t1, _RAMCODE_LMA_START
+    la     t2, _RAMCODE_VMA_START
+    la     t3, _RAMCODE_VMA_END
+_RAMCODE_INIT_BEGIN:
+    bleu   t3, t2, _DATA_INIT
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _RAMCODE_INIT_BEGIN
+
+    /* Move Data from flash to sram */
+_DATA_INIT:
+    la     t1, _DATA_LMA_START
+    la     t2, _DATA_VMA_START
+    la     t3, _DATA_VMA_END
+_DATA_INIT_BEGIN:
+    bleu   t3, t2, _ZERO_BSS
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _DATA_INIT_BEGIN
 
     /* Zero .bss section in sram */
 _ZERO_BSS:
@@ -229,14 +208,15 @@ _FILL_STK:
 #if 0
     lui    t0, 0x55555
     addi   t0, t0, 0x555
-    la     t2, _BSS_VMA_END     //_BSS_VMA_END  must be 4-byte aligned
-    la     t3, _STACK_TOP       //_STACK_TOP    must be 4-byte aligned
+    la     t2, _BSS_VMA_END    //_BSS_VMA_END  must be 4-byte aligned
+    la     t3, _STACK_TOP      //_STACK_TOP    must be 4-byte aligned
 _FILL_STK_BEGIN:
     bleu   t3, t2, _MAIN_FUNC
     sw     t0, 0(t2)
     addi   t2, t2, 4
     j      _FILL_STK_BEGIN
 #endif
+
     /* Jump to the main function */
 _MAIN_FUNC:
     nop
@@ -253,6 +233,8 @@ _END:
     j    _END
 
 
+
+.text
     .global default_irq_entry
     .align 2
 
@@ -272,22 +254,17 @@ default_irq_entry:
 
 #define VECTOR_NUMINTRS         82 /* 64+18  1~18 reserved */
 
+ .section .ram_code, "ax"
     .global __vectors
     .balign 512                    /*2^(ceiling(log2(N)+2),N=82*/
 
 
 __vectors:
-    /* Trap vector */
-    .long trap_entry
-
     /* CLIC interrupt vector */
     .altmacro
-    .set irqno, 1
+    .set irqno, 0
     .rept VECTOR_NUMINTRS/*  .rept  .endr  */
     INTERRUPT %irqno
     .set irqno, irqno+1
     .endr
-
-    .weak trap_entry
-    .end
 #endif

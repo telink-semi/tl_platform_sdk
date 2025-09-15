@@ -23,12 +23,20 @@
  *******************************************************************************************************/
 #pragma once
 
+#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
+#endif
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
+
+#define FLASH_TEST_MODE         1
+#define FLASH_LPC_PROTECT_MODE  2
+#define FLASH_DEMO_MODE         FLASH_TEST_MODE
+
+
 
 /*
  * @note    Because the flash enabled QE function is not compatible with each flash chip, when adding a new flash chip,

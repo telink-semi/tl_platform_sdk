@@ -70,6 +70,8 @@ typedef enum
 
 /**
  *  @brief  Define GPIO types
+ *  @note   the following one point need to noticed when using GPIOH and GPIOI groups:
+ *          Since these GPIOs are used for connecting the flash and have been occupied, they cannot be used as wake-up pins.
  */
 typedef enum
 {
@@ -178,8 +180,8 @@ typedef enum
     GPIO_PI5  = GPIO_GROUPI | BIT(5),      // MSPI_DM_IO(0)
     GPIOI_ALL = GPIO_GROUPI | 0x00ff,
 
-    GPIO_ANA0    = GPIO_GPOUPANA | BIT(0), // GPIO(default) no other functions
-    GPIO_ANA1    = GPIO_GPOUPANA | BIT(1), // GPIO(default) no other functions
+    GPIO_ANA0    = GPIO_GPOUPANA | BIT(0), // Only for anti-aging of ADC
+    GPIO_ANA1    = GPIO_GPOUPANA | BIT(1), // Only for anti-aging of ADC
     GPIO_ANA_ALL = GPIO_GPOUPANA | 0x0003,
 } gpio_pin_e;
 

@@ -41,7 +41,7 @@ void usbd_audio_open(unsigned char bus, unsigned char intf)
     (void)bus;
     (void)intf;
 
-    /* receive first cdc out data. */
+    /* receive first spk out data. */
     usbd_ep_read(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, audio_buffer, sizeof(audio_buffer));
 }
 
@@ -57,7 +57,7 @@ void usbd_audio_epout_callback(unsigned char bus, unsigned char ep_addr, unsigne
     (void)ep_addr;
     (void)len;
 
-    /* receive cdc out data. */
+    /* receive spk out data. */
     usbd_ep_read(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, audio_buffer, sizeof(audio_buffer));
 }
 

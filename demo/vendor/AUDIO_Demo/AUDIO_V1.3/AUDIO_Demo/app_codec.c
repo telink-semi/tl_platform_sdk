@@ -43,6 +43,13 @@ sdm_pin_config_t sdm_pin_config = {
     .sdm1_p_pin = GPIO_FC_PE3,
     .sdm1_n_pin = GPIO_FC_PA0, //Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
 };
+    #elif defined(MCU_CORE_TL322X)
+sdm_pin_config_t sdm_pin_config = {
+    .sdm0_p_pin = GPIO_FC_PF1,
+    .sdm0_n_pin = GPIO_FC_PF0,
+    .sdm1_p_pin = GPIO_FC_PC2,
+    .sdm1_n_pin = GPIO_FC_PC3,
+};
     #endif
 
     #if ((AUDIO_MODE == LINE_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == AMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMA_IRQ_TEST))
@@ -118,6 +125,8 @@ void user_init(void)
     audio_set_amic_bias_pin(GPIO_PD1);
             #elif defined(MCU_CORE_TL321X)
     audio_set_amic_bias_pin(GPIO_PB4);
+            #elif defined(MCU_CORE_TL322X)
+    audio_set_amic_bias_pin(GPIO_PA2);
             #endif
         #elif (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT)
     /****setting up the dmic's multiplexed pins****/
@@ -139,7 +148,6 @@ void user_init(void)
     /****stream0 line in/amic/dmic init****/
     audio_codec_stream0_input_init(&audio_codec_stream0_input);
     /****line output init****/
-
     audio_codec_stream_output_init(&audio_stream_output);
 
     /****rx tx dma init****/
@@ -187,7 +195,7 @@ void user_init(void)
     audio_tx_dma_chain_init(TX_FIFO_NUM, audio_stream_output.dma_num, (unsigned short *)audio_stream_output.data_buf, audio_stream_output.data_buf_size);
     /****audio starts run****/
     audio_codec_stream_output_en(audio_stream_output.dma_num);
-    #endif
+#endif
 }
 
     #if (AUDIO_MODE == DMA_IRQ_TEST)

@@ -119,7 +119,7 @@
     #define LED2 GPIO_PC2
     #define LED3 GPIO_PC1
     #define LED4 GPIO_PC0
-    #define KEY1 GPIO_PD4
+    #define KEY1 GPIO_PB7 //In the hardware design of TL7218X_C1T315A20_V1_5 and earlier versions, the PD4 pin used for KEY1 does not support I/O functionality. As a result, it has been replaced with the fully functional PB7 pin after adjustment.
     #define KEY2 GPIO_PD6
     #define KEY3 GPIO_PD5
     #define KEY4 GPIO_PD7
@@ -146,6 +146,10 @@
     #define LED2 GPIO_PD1
     #define LED3 GPIO_PD2
     #define LED4 GPIO_PD3
+    #define KEY1 GPIO_PD4
+    #define KEY2 GPIO_PD5
+    #define KEY3 GPIO_PD6
+    #define KEY4 GPIO_PD7
 #elif defined(MCU_CORE_TL322X)
 
     #define PULL_WAKEUP_SRC_PC4 GPIO_PIN_UP_DOWN_FLOAT

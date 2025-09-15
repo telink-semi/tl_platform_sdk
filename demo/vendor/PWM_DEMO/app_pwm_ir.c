@@ -39,6 +39,10 @@
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB5
         #define PWM_FUNC PWM0
+    #elif defined(MCU_CORE_TL322X)
+        #define PWM_ID   PWM0_ID
+        #define PWM_PIN  GPIO_FC_PB3
+        #define PWM_FUNC PWM0
     #endif
 
     /**
@@ -51,9 +55,13 @@ volatile unsigned char n;
 
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-    if (pwm_get_irq_status(FLD_PWM0_PNUM_IRQ)) {
-        pwm_clr_irq_status(FLD_PWM0_PNUM_IRQ);
-
+#if !defined(MCU_CORE_TL322X)
+    if(pwm_get_irq_status(FLD_PWM0_PNUM_IRQ )){
+        pwm_clr_irq_status(FLD_PWM0_PNUM_IRQ );
+#else
+    if(pwm_get_irq_status(PWM0_ID, FLD_PWM0_PNUM_IRQ)){
+        pwm_clr_irq_status(PWM0_ID, FLD_PWM0_PNUM_IRQ);
+#endif
         gpio_toggle(LED2);
 
         n++;
@@ -91,9 +99,13 @@ void user_init(void)
 
     pwm_set_pwm0_pulse_num(PWM_PULSE_NUM);
 
+#if !defined(MCU_CORE_TL322X)
     pwm_set_irq_mask(FLD_PWM0_PNUM_IRQ);
-
     pwm_clr_irq_status(FLD_PWM0_PNUM_IRQ);
+#else
+    pwm_set_irq_mask(PWM0_ID, FLD_PWM0_PNUM_IRQ);
+    pwm_clr_irq_status(PWM0_ID, FLD_PWM0_PNUM_IRQ);
+#endif
 
     core_interrupt_enable();
 

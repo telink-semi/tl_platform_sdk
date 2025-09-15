@@ -30,7 +30,7 @@ extern "C"
 
 #define I2C_MASTER_WRITE_READ_NO_DMA 1        //this mode can read and write data from fifo one byte a time
 #define I2C_MASTER_WRITE_READ_DMA    2        //this mode can read and write data through DMA, four byte a time
-#if !defined(MCU_CORE_B91)
+#if !(defined(MCU_CORE_B91)||defined(MCU_CORE_TL322X))
     #define I2C1_M_MASTER_WRITE_READ_NO_DMA 3 //this mode can read and write data from fifo one byte a time. Only supports master.
 #endif
 
@@ -64,12 +64,19 @@ extern "C"
 #elif defined(MCU_CORE_TL721X)
     #define I2C_GPIO_SDA_PIN GPIO_FC_PB3
     #define I2C_GPIO_SCL_PIN GPIO_FC_PB2
-#elif (MCU_CORE_TL321X)
+#elif defined(MCU_CORE_TL321X)
     #define I2C_GPIO_SDA_PIN GPIO_FC_PB5
     #define I2C_GPIO_SCL_PIN GPIO_FC_PB6
+#elif defined(MCU_CORE_TL322X)
+#define PULL_WAKEUP_SRC_PE0 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PE1 GPIO_PIN_UP_DOWN_FLOAT
+#define I2C_GPIO_SDA_PIN GPIO_FC_PE0
+#define I2C_GPIO_SCL_PIN GPIO_FC_PE1
 #endif
 
+#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
+#endif
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

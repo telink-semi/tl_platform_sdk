@@ -56,6 +56,13 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
     //8M
     {0x176085, FLASH_LOCK_LOW_4M_MID176085},
+#elif defined(MCU_CORE_TL752X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    //8M
+    {0x176085, FLASH_LOCK_LOW_4M_MID176085},
 #elif defined(MCU_CORE_TL753X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
@@ -111,7 +118,7 @@ flash_hal_user_handler_t flash_handler = {
     .list      = list_fp,
     .flash_cnt = (sizeof(flash_init_list) / sizeof(flash_user_defined_list_t)),
 };
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
 flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
     {
      .list       = list_fp,
@@ -277,38 +284,40 @@ void platform_init(unsigned char flash_protect_en)
     calibration_func();
 #elif defined(MCU_CORE_TL321X)
     calibration_func();
+#elif defined(MCU_CORE_TL751X)
+    calibration_func();
 #endif
 
-    //The A0 chip's AVDD1/AVDD2/DVDD1/DVDD2 voltages will be on the high side and need to be set to the correct gear according to the following requirements:
-    //1.DVDD2>DVDD1>0.8V
-    //2.Plus or minus 10% of the design value is safe.
-    //#if defined(MCU_CORE_TL7518)
-    //  pm_set_avdd1(PM_AVDD1_VOLTAGE_1V050);//AVDD1 voltage select(LDO) 000:1.050V,design value:1.15V
-    //  pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V750);//DVDD2 voltage select(LDO) 000:0.750V,design value:0.8V
-    //  pm_set_avdd2(PM_AVDD2_VOLTAGE_2V346);//AVDD2 voltage select(LDO) 000:2.346V,design value:1.8V
-    //  pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V725);//DVDD1 voltage select(LDO) 000:0.725V,design value:0.8V
-    //#endif
+//The A0 chip's AVDD1/AVDD2/DVDD1/DVDD2 voltages will be on the high side and need to be set to the correct gear according to the following requirements:
+//1.DVDD2>DVDD1>0.8V
+//2.Plus or minus 10% of the design value is safe.
+//#if defined(MCU_CORE_TL7518)
+//  pm_set_avdd1(PM_AVDD1_VOLTAGE_1V050);//AVDD1 voltage select(LDO) 000:1.050V,design value:1.15V
+//  pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V750);//DVDD2 voltage select(LDO) 000:0.750V,design value:0.8V
+//  pm_set_avdd2(PM_AVDD2_VOLTAGE_2V346);//AVDD2 voltage select(LDO) 000:2.346V,design value:1.8V
+//  pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V725);//DVDD1 voltage select(LDO) 000:0.725V,design value:0.8V
+//#endif
 
 //The A1 Chip consistency is poor, one is that some chips do not meet the DVDD2>=DVDD1>=0.8 this requirement,
 //two is that some chips AVDD1/AVDD2 does not meet the theoretical design value (ldo power supply mode reference value: 1.04v/1.8v):
 //When the performance test, the actual measurement of the default voltage, whether to adjust the corresponding voltage block to meet the above conditions.
-#if defined(MCU_CORE_TL751X)
-    if(g_chip_version==CHIP_VERSION_A1){
-        if (power_mode == LDO_AVDD_LDO_DVDD)
-        {
-            pm_set_avdd1(PM_AVDD1_VOLTAGE_1V075);                           //target 1.04
-            pm_set_avdd2(PM_AVDD2_REF_0V740, PM_AVDD2_VOLTAGE_1V890);       //target 1.8-1.98
-            pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V825);                           //target 0.8
-            pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V850);                           //target 0.8
-        }
-        else
-        {
-            pm_set_bk1(PM_BK1_TRIM_VOLTAGE_1V949, PM_BK1_ADJ_VOLTAGE_1V850);//target 1.8-1.98
-            pm_set_bk2(PM_BK2_3_4_VOLTAGE_1V04);                            //target 1.04
-            pm_set_bk3(PM_BK2_3_4_VOLTAGE_0V93);                            //target 0.8
-        }
-    }
-#endif
+//#if defined(MCU_CORE_TL751X)
+//    if(g_chip_version==CHIP_VERSION_A1){
+//        if (power_mode == LDO_AVDD_LDO_DVDD)
+//        {
+//            pm_set_avdd1(PM_AVDD1_VOLTAGE_1V075);                           //target 1.04
+//            pm_set_avdd2(PM_AVDD2_REF_0V740, PM_AVDD2_VOLTAGE_1V890);       //target 1.8-1.98
+//            pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V825);                           //target 0.8
+//            pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V850);                           //target 0.8
+//        }
+//        else
+//        {
+//            pm_set_bk1(PM_BK1_TRIM_VOLTAGE_1V949, PM_BK1_ADJ_VOLTAGE_1V850);//target 1.8-1.98
+//            pm_set_bk2(PM_BK2_3_4_VOLTAGE_1V04);                            //target 1.04
+//            pm_set_bk3(PM_BK2_3_4_VOLTAGE_0V93);                            //target 0.8
+//        }
+//    }
+//#endif
 
     /*
     * For the current A0 version, it is important to focus on whether the following voltage outputs meet expectations before testing, 
@@ -364,7 +373,7 @@ void platform_init(unsigned char flash_protect_en)
 
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
         unsigned char lock_flag = hal_flash_lock();
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
         #endif
         if (!(lock_flag == 1)) {

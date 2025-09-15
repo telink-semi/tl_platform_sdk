@@ -85,7 +85,7 @@ extern "C"
 
 #define HORIZONTAL        0
 #define VERTICAL          1
-#define LCD_ST7789_HEIGHT 240
+#define LCD_ST7789_HEIGHT 320
 #define LCD_ST7789_WIDTH  240
 
     typedef struct

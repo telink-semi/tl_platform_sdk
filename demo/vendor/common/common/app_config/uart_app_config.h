@@ -195,12 +195,17 @@ extern "C"
     #define UART4_RTS_PIN GPIO_FC_PC7
 #endif
 
-
+#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
+#endif
 #define UART_DMA  1 //uart use dma
 #define UART_NDMA 2 //uart not use dma
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     #define UART_DMA_LLP 3
+#endif
+
+#if defined(MCU_CORE_TL752X)
+#define  UART_TXDMA_RXNODMA    3
 #endif
 #define UART_MODE       UART_NDMA
 

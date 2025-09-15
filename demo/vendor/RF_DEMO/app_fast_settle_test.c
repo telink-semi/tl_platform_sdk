@@ -77,12 +77,8 @@ void main_loop(void)
     /* The channel has been modified in the rf_fast_settle_setup interface, so after setting fast settle, the channel needs to be reset.*/
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
 
-        #if 0
-    rf_fast_settle_setup(TX_SETTLE_TIME_50US,RX_SETTLE_TIME_45US);
-        #else
     rf_fast_settle_get_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
     rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
-        #endif
 
     rf_fast_settle_config(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US);
 
@@ -94,12 +90,9 @@ void main_loop(void)
 
     rf_set_chn(RF_FREQ);
     #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
-        #if 0
-    rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
-        #else
+
     rf_fast_settle_get_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
     rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
-        #endif
     if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US)) {
         //Incorrect configuration.
         gpio_toggle(LED2);
@@ -111,12 +104,9 @@ void main_loop(void)
 
     rf_set_chn(RF_FREQ);
     #elif defined(MCU_CORE_TL322X)
-        #if 0
-        rf_fast_settle_setup(TX_SETTLE_TIME_15US,RX_SETTLE_TIME_15US);
-        #else
+
         rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
-        #endif
         rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US);
 
         rf_tx_fast_settle_en();
@@ -261,7 +251,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+#elif defined(MCU_CORE_TL321X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -275,7 +265,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL721X)
+#elif defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL322X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -352,7 +342,6 @@ void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
         rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
     }
-    rf_cali_linear_fit(fs_cv);
 #endif
 }
 

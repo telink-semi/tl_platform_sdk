@@ -62,12 +62,10 @@ void usbd_audio_epin_callback(unsigned char bus, unsigned char ep_addr, unsigned
     (void)bus;
     (void)ep_addr;
     (void)len;
-    //    ep_tx_busy_flag = false;
     send_data++;
     memset(audio_buffer, send_data, AUDIO_IN_PACKET);
 
     usbd_ep_write(0, AUDIO_MIC_IN_ENDPOINT_ADDRESS, audio_buffer, sizeof(audio_buffer));
-    // printf("usbd audio in complete callback ep_addr = %d, len = %d\r\n", ep_addr, len);
 }
 
 unsigned char usbd_audio_interface_cb(unsigned char bus, usb_control_request_t const *setup)

@@ -236,8 +236,7 @@ void user_init(void)
     wd_32k_start();
     #endif
 
-#if defined(MCU_CORE_TL721X)
-#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+#elif(defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE))
 
 //PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
     pwm0_set_output(PWM_OUTPUT_PIN);
@@ -256,7 +255,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_TIMER1);
     core_interrupt_enable();
 
-#elif (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA)
+#elif(defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA))
 
 //PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
     pwm0_set_output(PWM_OUTPUT_PIN);
@@ -275,7 +274,7 @@ void user_init(void)
     timer_set_input_capture_mode(TIMER1,TMR_CAPT_RISING_EDGE,TIMER1_CAPT_PIN);
     timer_start(TIMER1);
 
-#elif (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP)
+#elif(defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP))
 //PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
     pwm0_set_output(PWM_OUTPUT_PIN);
 /*Timer0*/
@@ -299,7 +298,6 @@ void user_init(void)
     timer_set_input_capture_mode(TIMER1,TMR_CAPT_RISING_EDGE,TIMER1_CAPT_PIN);
     timer_set_irq_mask(FLD_TMR1_CAPT_IRQ);
     timer_start(TIMER1);
-#endif
 #endif
 }
 

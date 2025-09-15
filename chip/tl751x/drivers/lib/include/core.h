@@ -399,7 +399,7 @@ __attribute__((always_inline)) static _always_inline unsigned long long rdmcycle
  */
 static _always_inline _Bool core_cclk_time_exceed(unsigned long long ref, unsigned int us)
 {
-    return ((unsigned long long)(rdmcycle() - ref) > us * sys_clk.cclk_d25f_dsp);
+    return ((unsigned long long)(rdmcycle() - ref) > us * (int)sys_clk.cclk_d25f_dsp);
 }
 
 /**

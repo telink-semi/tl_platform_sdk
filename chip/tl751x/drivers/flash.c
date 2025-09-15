@@ -24,14 +24,17 @@
 #include "lib/include/sys.h"
 #include "lib/include/flash_base.h"
 #include "flash.h"
-
+#include "adc.h"
 #include "lib/include/mspi.h"
 #include "timer.h"
 #include "lib/include/core.h"
 #include "lib/include/stimer.h"
 #include "types.h"
 
+#include <string.h>
+
 #if !defined(MCU_CORE_TL751X_N22)
+
 _attribute_data_retention_sec_ flash_handler_t flash_read_page  = flash_dread;
 _attribute_data_retention_sec_ flash_handler_t flash_write_page = flash_page_program;
 /*
@@ -206,18 +209,38 @@ _attribute_text_sec_ unsigned char flash_4read_decrypt_check(unsigned long addr,
  * @param[in]   len     - the length(in byte, must be above 0) of content needs to write into the flash.
  * @param[in]   buf     - the start address of the content needs to write into(ram address).
  * @param[in]   cmd     - the write command. FLASH_WRITE_CMD or FLASH_QUAD_PAGE_PROGRAM_CMD.
+ * @note        buf pointer passed in should be a sram addr, otherwise a data access error will occurred in spi transfer stage,
+ *              because xip function was disabled during spi flash access.
+ *              to avoid this issue, a sram moving operation was added if the buf pointer passed in is flash addr, and the stack cost was defined by STACK_SIZE_FOR_FLASH_DATA.
+ *              once the passed buffer len is larger than STACK_SIZE_FOR_FLASH_DATA, the program stalled for user debug.
  * @return      none.
  */
 _attribute_text_sec_ static void flash_write(unsigned long addr, unsigned long len, unsigned char *buf, flash_command_e cmd)
 {
     unsigned int ns = PAGE_SIZE - (addr & (PAGE_SIZE - 1));
     int          nw = 0;
+    unsigned int is_flash_addr = (((unsigned int)buf & FLASH_ADDR_MASK) == FLASH_ADDR_BASE) ? 1 : 0;
 
     while (len > 0) {
         nw = len > ns ? ns : len;
-        DISABLE_BTB;
-        flash_mspi_write_ram(cmd, addr, buf, nw, FLASH_WRITE_ENABLE_CMD, FLASH_READ_STATUS_CMD_LOWBYTE);
-        ENABLE_BTB;
+
+        if(1 == is_flash_addr)
+        {
+            if(nw > STACK_SIZE_FOR_FLASH_DATA) while(1);
+            unsigned char const_buf[nw];
+            
+            memcpy(const_buf, buf, nw);
+            DISABLE_BTB;
+            flash_mspi_write_ram(cmd, addr, const_buf, nw, FLASH_WRITE_ENABLE_CMD, FLASH_READ_STATUS_CMD_LOWBYTE);
+            ENABLE_BTB;
+        }
+        else
+        {
+            DISABLE_BTB;
+            flash_mspi_write_ram(cmd, addr, buf, nw, FLASH_WRITE_ENABLE_CMD, FLASH_READ_STATUS_CMD_LOWBYTE);
+            ENABLE_BTB;
+        }
+
         ns = PAGE_SIZE;
         addr += nw;
         buf += nw;
@@ -672,5 +695,60 @@ flash_capacity_e flash_get_capacity(unsigned int flash_mid)
 {
     return (flash_mid & 0x00ff0000) >> 16;
 }
+
+typedef struct
+{
+    signed char gpio_offset;
+    unsigned char gpio_gain_low_bit;
+    unsigned char gpio_gain_high_bit;
+    signed char vbat_offset;
+    unsigned char vbat_gain_low_bit;
+    unsigned char vbat_gain_high_bit;
+
+} adc_calib_t;
+
+/**
+ * @brief       This function is used to Tighten the judgment of illegal values for gpio calibration and vbat calibration in the otp.
+ *              The ADC vref gain calibtation should range from 1100mV to 1350mV, the ADC vref offset calibration should range from -100mV to 100mV.
+ * @param[in]   gain - the value of gpio_calib_vref_gain or vbat_calib_vref_gain
+ *              offset - the value of gpio_calib_vref_offset or vbat_calib_vref_offset
+ *              calib_func - Function pointer to gpio_calibration or vbat_calibration.
+ * @return      DRV_API_FAILURE:the calibration function is invalid; DRV_API_SUCCESS:the calibration function is valid.
+ */
+
+drv_api_status_e flash_set_adc_calib_value(signed short gain, signed char offset, void (*calib_func)(signed short, signed char))
+{
+    /**
+     * The legal range of gain for both gpio and vbat in OTP is [0,250],
+     * and the legal range of offset for both gpio and vbat is [-100,100].
+     */
+    if ((gain > 1100) && (gain <1350) && (offset >= -100) && (offset <= 100)) {
+        (*calib_func)(gain, offset);
+        return DRV_API_SUCCESS;
+    } else {
+        return DRV_API_FAILURE;
+    }
+}
+
+/**
+ * @brief      This function is used to calib ADC 1.2V vref.
+ * @param[in]  addr    - the flash address.
+ * @return     DRV_API_SUCCESS - the calibration value update, DRV_API_FAILURE - the calibration value is not update.
+ */
+
+drv_api_status_e flash_calib_adc_vref(unsigned int addr)
+{
+    adc_calib_t calib_value;
+
+    flash_read_page(addr+0xc4, 6, (unsigned char *)&calib_value);
+
+    if (flash_set_adc_calib_value((signed short)(calib_value.vbat_gain_low_bit | (calib_value.vbat_gain_high_bit << 8)),calib_value.vbat_offset,adc_set_vbat_calib_vref)|| flash_set_adc_calib_value((signed short)(calib_value.gpio_gain_low_bit | (calib_value.gpio_gain_high_bit << 8)),calib_value.gpio_offset,adc_set_gpio_calib_vref))     //vbat_ft and gpio_ft
+    {
+        return DRV_API_FAILURE;
+
+    }
+    return DRV_API_SUCCESS;
+}
+
 
 #endif

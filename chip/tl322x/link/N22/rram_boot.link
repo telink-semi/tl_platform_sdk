@@ -4,9 +4,9 @@
  * @brief   This is the link file for tl322x
  *
  * @author  Driver Group
- * @date    2023
+ * @date    2025
  *
- * @par     Copyright (c) 2021, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2025, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  *          See the License for the specific language governing permissions and
  *          limitations under the License.
  *
- *******************************************************************************************************/
+ *******************************************************************************************************/ 
 /*
  * The alignment of VMA and LMA is as follows: 
  * VMA: 
@@ -68,57 +68,53 @@ SECTIONS
     . = 0x00540000;
     PROVIDE (BIN_BEGIN = .);
     .vectors        : { KEEP(*(.vectors )) }
+    . = 0x50000000;
+    .retention_reset    : AT( ALIGN(LOADADDR (.vectors) + SIZEOF (.vectors),ALIGNOF(.retention_reset))) 
+        { KEEP(*(.retention_reset )) }
+    PROVIDE (_RETENTION_RESET_VMA_START = ADDR(.retention_reset));
+    PROVIDE (_RETENTION_RESET_LMA_START = LOADADDR(.retention_reset));
+    PROVIDE (_RETENTION_RESET_VMA_END = .); 
 
-     . = 0x50000000;
-    .start : AT( ALIGN(LOADADDR (.vectors) + SIZEOF (.vectors),ALIGNOF(.start)))  { KEEP(*(.start )) }
-    PROVIDE (_START_VMA_START = ADDR(.start));
-    PROVIDE (_START_LMA_START = LOADADDR(.start));
-    PROVIDE (_START_LMA_VMA_END = .); 
-   
-    .retention_data : AT( ALIGN(LOADADDR (.start) + SIZEOF (.start),ALIGNOF(.retention_data)))   { KEEP(*(.retention_data )) }
+    .retention_data : AT( ALIGN(LOADADDR (.retention_reset) + SIZEOF (.retention_reset),ALIGNOF(.retention_data))) 
+        { KEEP(*(.retention_data )) }
     PROVIDE (_RETENTION_DATA_VMA_START = ADDR(.retention_data));
     PROVIDE (_RETENTION_DATA_LMA_START = LOADADDR(.retention_data));
     PROVIDE (_RETENTION_DATA_VMA_END = .); 
-/*
- *  The reason for wrapping these segments together: 
- *  The previous practice existed to carry multiple segments at once, the starting addresses of all LMAs and VMAs existed that were not aligned 
- *  according to the maximum alignment of all segments, and inconsistencies existed in the difference between the LMAs and VMAs of multiple segments. 
-*/
-    .ram_code   : AT( ALIGN(LOADADDR (.retention_data) + SIZEOF (.retention_data),ALIGNOF(.ram_code))) 
-        { 
-          *(.ram_code)
-          *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning )
-          KEEP(*(.eh_frame ))
-          *(.eh_frame_hdr ) 
-          KEEP(*(.exec.itable))       
-          
-         }
+    
+    .ram_code       : AT( ALIGN(LOADADDR (.retention_data) + SIZEOF (.retention_data),ALIGNOF(.ram_code))) 
+        { KEEP(*(.ram_code )) KEEP(*libgcc.a:save-restore.o) KEEP(*(.exec.itable)) }
     PROVIDE (_RAMCODE_VMA_END = .);
     PROVIDE (_RAMCODE_VMA_START = ADDR(.ram_code));
     PROVIDE (_RAMCODE_LMA_START = LOADADDR(.ram_code));
-  
-    .bootloader : AT( ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code),ALIGNOF(.bootloader))) { KEEP(*(.bootloader )) }
-    PROVIDE (_BOOTLOADER_VMA_START = ADDR(.bootloader));
-    PROVIDE (_BOOTLOADER_LMA_START = LOADADDR(.bootloader));
-    PROVIDE (_BOOTLOADER_VMA_END = .);
+    PROVIDE (_RAMCODE_SIZE = SIZEOF (.ram_code)); 
     
-    PROVIDE (_ILM_USE_START = ADDR(.start));
-    PROVIDE (_ILM_USE_END = .);
+    . = ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code), 8);
+    .text           : AT(ALIGN(LOADADDR (.ram_code) + SIZEOF (.ram_code),8))
+        { *(.text .stub .text.* .gnu.linkonce.t.* ) KEEP(*(.text.*personality* )) *(.gnu.warning ) }
+    .rodata         : AT(ALIGN(LOADADDR (.text) + SIZEOF (.text), ALIGNOF(.rodata))) 
+        { *(.rodata .rodata.* .gnu.linkonce.r.* )
+          *(.srodata.cst16 ) *(.srodata.cst8 ) *(.srodata.cst4 ) *(.srodata.cst2 ) *(.srodata .srodata.* )}
+    .eh_frame_hdr   : AT(ALIGN(LOADADDR (.rodata) + SIZEOF (.rodata), ALIGNOF(.eh_frame_hdr)))
+        { *(.eh_frame_hdr ) }
+    . = ALIGN(0x20);
+    .eh_frame   : AT(ALIGN(LOADADDR (.eh_frame_hdr) + SIZEOF (.eh_frame_hdr), 32))
+        { KEEP(*(.eh_frame )) }
+        
+    PROVIDE (_ILM_USE_START = ADDR(.retention_reset));
+    PROVIDE (_ILM_USE_END = _RAMCODE_VMA_END);
     PROVIDE (_ILM_USE_SIZE = (_ILM_USE_END) -(_ILM_USE_START));
-
-    . =  0x50080000;
+              
+    . = 0x50080000;
     PROVIDE( __global_pointer$ = . + (4K / 2) );
-    .data   : AT(ALIGN(LOADADDR (.bootloader) + SIZEOF (.bootloader),  ALIGNOF(.data)))
-        { *(.data .data.* .gnu.linkonce.d.* ) KEEP(*(.gnu.linkonce.d.*personality* )) SORT(CONSTRUCTORS)
-          *(.rodata .rodata.* .gnu.linkonce.r.* ) 
-          *(.srodata.cst16 ) *(.srodata.cst8 ) *(.srodata.cst4 ) *(.srodata.cst2 ) *(.srodata .srodata.* ) *(.sdata .sdata.* .gnu.linkonce.s.* ) *(.sdata2 .sdata2.* .gnu.linkonce.s.* )
+    .data   : AT(ALIGN(LOADADDR (.eh_frame) + SIZEOF (.eh_frame),  ALIGNOF(.data)))
+        { *(.data .data.* .gnu.linkonce.d.* ) KEEP(*(.gnu.linkonce.d.*personality* )) SORT(CONSTRUCTORS) 
+          *(.sdata .sdata.* .gnu.linkonce.s.* ) *(.sdata2 .sdata2.* .gnu.linkonce.s.* )
         }
     PROVIDE (_DATA_VMA_END = .);    
     PROVIDE (_DATA_VMA_START = ADDR(.data));
     PROVIDE (_DATA_LMA_START = LOADADDR(.data));
-    PROVIDE (BIN_SIZE = LOADADDR(.data) + SIZEOF(.data) - BIN_BEGIN);
     
-    . = ALIGN(4);
+    . = ALIGN(8);
     PROVIDE (_BSS_VMA_START = .);
     .sbss   (NOLOAD)    : { *(.dynsbss ) *(.sbss .sbss.* .gnu.linkonce.sb.* ) *(.scommon .scommon.* ) }
     .bss    (NOLOAD)    : { *(.dynbss ) *(.bss .bss.* .gnu.linkonce.b.* ) *(COMMON ) . = ALIGN(8); }
@@ -127,26 +123,21 @@ SECTIONS
      * resulting in a store access fault.
      */
     PROVIDE (_BSS_VMA_END = ((. + 3) / 4)*4);
-
+ 
     .sdk_version    : AT(LOADADDR (.data) + SIZEOF (.data))
         { KEEP(*(.sdk_version )) }
 
     PROVIDE (BIN_SIZE = LOADADDR(.sdk_version) + SIZEOF(.sdk_version) - BIN_BEGIN);
 
-    . = ALIGN(4);
+    . = ALIGN(8);
     /* end is the starting address of the heap, the heap grows upward */
-    
-    /*_edata= .;*/
     _end = .;
-    PROVIDE (_edata = .);   
-    PROVIDE (end = .);  
-    
-        
-    PROVIDE (_STACK_TOP = 0x50080000  + 0x8000 * __N22_DRAM_SIZE);
+    PROVIDE (end = .);      
+    PROVIDE (_STACK_TOP = 0x50080000 + 0x8000 * __N22_DRAM_SIZE);
     PROVIDE (FLASH_SIZE = 0x0100000);
     PROVIDE (_DLM_USE_SIZE = _BSS_VMA_END);
 }
 
 ASSERT((BIN_SIZE)<= FLASH_SIZE, "BIN FILE OVERFLOW");
-ASSERT((_ILM_USE_SIZE)<= 0x8000 * __N22_IRAM_SIZE, "IRAM OVERFLOW");
+ASSERT((_ILM_USE_SIZE)<= 0x8000 * __D25F_IRAM_SIZE, "IRAM OVERFLOW");
 ASSERT((_DLM_USE_SIZE)<= (_STACK_TOP-600), "DRAM OVERFLOW");/*Error: RAM size maybe overflow.(This is determined based on the stack size of 600 bytes. If this does not match the actual usage, the corresponding judgment criteria in the link file can be modified*/

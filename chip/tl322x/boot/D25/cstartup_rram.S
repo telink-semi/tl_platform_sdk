@@ -37,6 +37,9 @@
 #define DP_THROUGH_SWIRE_DIS      1
 #endif
 
+.global     rram_creg_crc_check
+
+
 /* If using Andes toolchain, these two Macro are defined in it's toolchain */
 /* If using std gcc toolchain, these two core registers(not standard risc-v core registers)
     should be defined here. */
@@ -393,6 +396,9 @@ _ISTART:
     ori     t0,  t0,  2  #/D-Cache
     csrw    mcache_ctl,  t0
     fence.i
+
+    la      t0, rram_creg_crc_check
+    jalr    t0
 
     /* flash wakeup */
     lui     t0, 0xA3FFF

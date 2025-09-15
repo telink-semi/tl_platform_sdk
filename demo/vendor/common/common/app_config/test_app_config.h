@@ -147,8 +147,10 @@ extern "C"
 #define RRAM_WORK_VOLTAGE_TEST      59
 #define RRAM_SLEEP_CURRENT_MODE     60
 #define RRAM_POWER_ONOFF_TEST       61
+#define RRAM_READ_TEST              62
+#define TEST_HTOL_TL322X_CRC_MODE   63
 
-#define TEST_MODE                   RRAM_QUALITY_TEST
+#define TEST_MODE                   TEST_HTOL_TL322X_MODE
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M
@@ -264,6 +266,7 @@ volatile unsigned char KEY2;
 #elif defined(MCU_CORE_TL322X)
 
 #define  PM_TL322X_96PIN        1
+#define  PM_C1T371A111_96PIN    2
 #define  PM_PIN_MODE            PM_TL322X_96PIN
 
 #if(PM_PIN_MODE == PM_TL322X_96PIN)
@@ -271,6 +274,11 @@ volatile unsigned char KEY2;
 #define TEST_LED2               GPIO_PC5
 #define TEST_LED3               GPIO_PC6
 #define TEST_LED4               GPIO_PC7
+#elif(PM_PIN_MODE == PM_C1T371A111_96PIN)
+#define TEST_LED1               GPIO_PF3
+#define TEST_LED2               GPIO_PF4
+#define TEST_LED3               GPIO_PF5
+#define TEST_LED4               GPIO_PF6
 #endif
 
 #endif

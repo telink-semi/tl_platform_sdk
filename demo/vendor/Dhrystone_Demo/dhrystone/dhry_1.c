@@ -26,7 +26,7 @@
 #include <string.h>
 #include "common.h"
 
-
+#define CURRENT_PER_MHZ_TEST 0
 /* Global Variables: */
 
 Rec_Pointer Ptr_Glob,

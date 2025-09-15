@@ -83,7 +83,7 @@ static volatile unsigned short    usb_len_idx_h;
 static volatile usb_device_status_e g_usb_device_status;
 
     #if (USB_SPEAKER_ENABLE || USB_MIC_ENABLE)
-volatile usb_alt_intfunsigned char usb_alt_intf[USB_INTF_MAX];
+volatile unsigned char usb_alt_intf[USB_INTF_MAX];
 
     #endif
 

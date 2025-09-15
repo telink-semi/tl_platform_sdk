@@ -40,6 +40,11 @@
         #define PWM_PIN1  GPIO_FC_PB6
         #define PWM_FUNC  PWM1
         #define PWM_FUNC1 PWM2
+     #elif defined(MCU_CORE_TL322X)
+        #define PWM_PIN     GPIO_FC_PA1
+        #define PWM_PIN1    GPIO_FC_PA2
+        #define PWM_FUNC    PWM2
+        #define PWM_FUNC1   PWM3
     #endif
 
 

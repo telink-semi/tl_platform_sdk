@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-#if defined(MCU_CORE_TL321X) && (DEMO_MODE == TEST_MODE)
+#if defined(MCU_CORE_TL321X) && (GPIO_TEST_MODE == AUTO_TEST_MODE)
 // set parament cmd
 
     #define CMD_CLOCK            0x04
@@ -91,7 +91,6 @@ void dhrystone_set_parameter(void)
             /* code */
             PLL_192M_CCLK_96M_HCLK_48M_PCLK_48M_MSPI_48M;
             break;
-
         default:
             break;
         }

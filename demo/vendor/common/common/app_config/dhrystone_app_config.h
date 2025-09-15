@@ -35,7 +35,7 @@ extern "C"
     #define GPIO_TEST_MODE             MANUAL_TEST_MODE
 
 
-    #define CURRENT_PER_MHZ_TEST       1
+    #define CURRENT_PER_MHZ_TEST       0
 
     #define CCLK_24M_HCLK_12M_PCLK_12M 1
     #define CCLK_24M_HCLK_24M_PCLK_12M 2

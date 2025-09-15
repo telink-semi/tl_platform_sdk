@@ -1174,7 +1174,7 @@ void audio_codec1_set_input_fs(audio_sample_rate_e fs)
  */
 void audio_codec0_set_output_filter_mode(audio_filter_mode_e fmode)
 {
-    reg_audio_codec_dac_cr_daca_freq_sel = (reg_audio_codec_dac_cr_daca_freq_sel & (~FLD_CODEC_DACA_FREQ)) | MASK_VAL(FLD_CODEC_DACA_FLT_CFG_SEL, fmode);
+    reg_audio_codec_dac_cr_daca_freq_sel = (reg_audio_codec_dac_cr_daca_freq_sel & (~FLD_CODEC_DACA_FLT_CFG_SEL)) | MASK_VAL(FLD_CODEC_DACA_FLT_CFG_SEL, fmode);
 }
 
 /**
