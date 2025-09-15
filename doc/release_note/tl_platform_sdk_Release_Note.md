@@ -25,12 +25,12 @@
   | Other demos     | EVK        | —                    |
 
 * Toolchain Version
-  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
-  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
 
 <hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
 
@@ -166,12 +166,12 @@
   | Other demos     | EVK        | —                    |
 
 * 工具链版本
-  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE: [telink_v323_rds](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IDE/telink_v323_rds_official_windows.zip) )
-  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
-  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))( IDE: [TelinkIoTStudio_V2024.8](https://wiki.telink-semi.cn/tools_and_sdk/Tools/IoTStudio/TelinkIoTStudio_V2024.8.zip) )
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
 
 <hr style="border-bottom:2.5px solid rgba(36, 190, 62, 1)">
 
