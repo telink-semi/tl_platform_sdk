@@ -23,8 +23,11 @@
  *******************************************************************************************************/
 #include "pc_interface.h"
 #include "printf.h"
-
+#if COMMUNICATION_PROTOCOL == TEST_COMMUNICATION_PROTOCOL
+unsigned char command_buff[4 * COMMAND_BUFF_SIZE];
+#else
 unsigned char command_buff[COMMAND_BUFF_CNT][COMMAND_BUFF_SIZE];
+#endif
 unsigned char result_buff[RESULT_BUFF_CNT][RESULT_BUFF_SIZE];
 unsigned char para_buff[COMMAND_BUFF_SIZE];
 

@@ -48,6 +48,9 @@
 #elif defined(MCU_CORE_TL751X)
     #define PARA_BASE_ADDR 0x00020004 // D25
 // #define PARA_BASE_ADDR    0x50020004    // N22
+#elif defined(MCU_CORE_TL752X)
+    #define PARA_BASE_ADDR 0x00020004 // D25
+// #define PARA_BASE_ADDR    0x50020004    // N22
 #elif defined(MCU_CORE_TL753X)
     #define PARA_BASE_ADDR 0x00020004 // D25
 // #define PARA_BASE_ADDR    0x50020004    // N22
@@ -86,7 +89,15 @@
 #define RESULT_BUFF_SIZE  64
 #define RESULT_BUFF_CNT   4
 
+#define FIOF_COMMUNICATION_PROTOCOL   1
+#define TEST_COMMUNICATION_PROTOCOL   2
+#define COMMUNICATION_PROTOCOL   TEST_COMMUNICATION_PROTOCOL
+
+#if COMMUNICATION_PROTOCOL == TEST_COMMUNICATION_PROTOCOL
+extern unsigned char command_buff[4 * COMMAND_BUFF_SIZE];
+#else
 extern unsigned char command_buff[COMMAND_BUFF_CNT][COMMAND_BUFF_SIZE];
+#endif
 extern unsigned char result_buff[RESULT_BUFF_CNT][RESULT_BUFF_SIZE];
 extern unsigned char para_buff[COMMAND_BUFF_SIZE];
 

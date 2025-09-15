@@ -27,7 +27,9 @@
 extern "C" {
 #endif
 
+#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
+#endif
 
 #define USB_MOUSE          1
 #define USB_KEYBOARD       2
@@ -35,6 +37,11 @@ extern "C" {
 #define USB_SPEAKER        4
 #define USB_CDC            5
 #define USB_MOUSE_KEYBOARD 6
+
+#if defined(MCU_CORE_TL752X)
+#define USB_MIC_SPK        7
+#endif
+
 #define USB_DEMO_TYPE      USB_MOUSE
 
 /* Disable C linkage for C++ Compilers: */

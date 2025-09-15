@@ -32,17 +32,24 @@
 //you can define a buf with the same size of the signed int type for use.
 signed short AUDIO_BUFF[AUDIO_BUFF_SIZE >> 1] __attribute__((aligned(4)));
 
-    #if defined(MCU_CORE_TL721X)
 /*Note:
- * 1.I2S input has no requirement for rx FIFO.
- * 2.The tx FIFO corresponding to the I2S output is fixed as shown in the table below (not modifiable):
- * | I2S output  |      tx FIFO    | Requirement |
- * |-------------|-----------------|-------------|
- * |    i2s0     |      fifo0      | must        |
- * |    i2s1     |      fifo1      | must        |
- * |    i2s2     |      fifo2      | must        |
+ * 1.I2S input has no requirement for TX FIFO.
+ * 2.The TX FIFO of the I2S output is fixed as shown in the table below:
+ * |---------------------------------------------------------------------------------------------------------------|
+ * | Chip name |  I2S output  |      RX FIFO      |    TX FIFO    |   BIT WIDTH   |   TDM MODE   |    2FIFO MODE   |
+ * |-----------|- ------------|-------------------|---------------|---------------|--------------------------------|
+ * |           |     I2S0     | FIFO0,FIFO1,FIFO2 |     FIFO0     |   16,20,24    |  not support | FIFO0_L,FIFO1_R |
+ * |           |---------------------------------------------------------------------------------------------------|
+ * |  TL721X   |     I2S1     | FIFO0,FIFO1,FIFO2 |     FIFO1     |   16,20,24    |  not support | FIFO1_L,FIFO2_R |
+ * |           |---------------------------------------------------------------------------------------------------|
+ * |           |     I2S2     | FIFO0,FIFO1,FIFO2 |     FIFO2     |   16,20,24    |    support   | FIFO1_L,FIFO2_R |
+ * |------------------------------------------------------------------------------|--------------------------------|
+ * |  TL321X   |     I2S2     | FIFO0,FIFO1,FIFO2 |     FIFO2     |   16,20,24    |    support   | FIFO1_L,FIFO2_R |
+ * |------------------------------------------------------------------------------|--------------------------------|
+ * |  TL322X   |     I2S2     |    FIFO0,FIFO1    |     FIFO1     |  16,20,24,32  |    support   | FIFO0_L,FIFO1_R |
+ * |---------------------------------------------------------------------------------------------------------------|
  */
-
+#if defined(MCU_CORE_TL721X)
 /**
  *                                          i2s_clk_config[2]   i2s_clk_config[3]-->lrclk_adc(sampling rate)
  *                                                  ||                  ||
@@ -185,13 +192,6 @@ unsigned short audio_i2s_tdm_48k_config[7][5] =
         {32, 625, 0, 256, 256}, //TDM MODE 24bit/slot:32bit 8Channel
 };
     #elif defined(MCU_CORE_TL321X)
-/*Note:
- * 1.I2S input has no requirement for rx FIFO.
- * 2.The tx FIFO corresponding to the I2S output is fixed as shown in the table below (not modifiable):
- * | I2S output  |      tx FIFO    | Requirement |
- * |-------------|-----------------|-------------|
- * |    i2s2     |      fifo2      | must        |
- */
 
 /**
  *                                          i2s_clk_config[2]   i2s_clk_config[3]-->lrclk_adc(sampling rate)
@@ -315,7 +315,137 @@ unsigned short audio_i2s_tdm_48k_config[0x07][0x05] =
         {16, 250, 0, 256, 256}, //TDM MODE 24bit/slot:32bit 8Channel
 };
 
-    #endif
+#elif defined(MCU_CORE_TL322X)
+
+/**
+ *                                          i2s_clk_config[2]   i2s_clk_config[3]-->lrclk_adc(sampling rate)
+ *                                                  ||                  ||
+ *  pll(144M default)------->div---->i2s_clk--->2 * div(div=0,bypass)--->blck----->div
+ *                           ||                                         ||
+ *           i2s_clk_config[0]/i2s_clk_config[1]                i2s_clk_config[4]-->lrclk_dac(sampling rate)
+ *           i2s_clk_config[1] must be at least twice i2s_clk_config[0]
+ * For example:sampling rate=16K, i2s_clk_config[5]={ 16,125,9,64,64}, sampling rate=144M*(6/125)/(2*9)/64=16K
+ *
+ */
+unsigned short audio_i2s_8k_config[5][5] = 
+{
+    {8, 125, 9, 64, 64},            //AUDIO_RATE_EQUAL   8000
+};
+
+unsigned short audio_i2s_16k_config[5][5] =
+{
+    {16, 125, 27, 64, 64},          //AUDIO_RATE_EQUAL  16000  i2s_clk=18.432M
+    {46, 154, 21, 64, 64},          //AUDIO_RATE_GT_L0  16001.86
+    {7,  164, 3,  64, 64},          //AUDIO_RATE_GT_L1  16006.1
+    {66, 221, 21, 64, 64},          //AUDIO_RATE_LT_L0  15998.71
+    {3,  211, 1,  64, 64},          //AUDIO_RATE_LT_L0  15995.26
+};
+
+unsigned short audio_i2s_24k_config[5][5] =
+{
+    {8, 125, 3, 64, 64},           //AUDIO_RATE_EQUAL  24000   144M*(8/125)/(2*3)/64=24K
+};
+
+unsigned short audio_i2s_32k_config[5][5] = 
+{
+    {32, 125, 9, 64, 64},           //32000
+};
+
+unsigned short audio_i2s_44k1_config[5][5] =
+{
+    {304, 705, 11, 64, 64},         //AUDIO_RATE_EQUAL  44100
+};
+
+unsigned short audio_i2s_48k_config[5][5] =
+{
+    {16, 750, 0, 64, 64},           //AUDIO_RATE_EQUAL  48000   144M*(16/125)/(2*3)/64=48K
+};
+
+unsigned short audio_i2s_96k_config[5][5] =
+{
+    {32, 125, 3, 64, 64},
+    {16, 125, 3, 32, 32},
+    {16, 100, 3, 40, 40},
+    {48, 250, 3, 48, 48},
+};
+
+unsigned short audio_i2s_192k_config[5][5] =
+{
+    {64, 375, 1, 64, 64},
+    {32, 125, 3, 32, 32},
+    {8,  25,  3, 40, 40},
+    {48, 125, 3, 48, 48},
+};
+
+/*  */
+unsigned short audio_i2s_tdm_8k_config[6][5] =
+{
+    {16, 375, 3, 128, 128},         //TDM MODE 16bit 8Channel
+    {8,  250, 3, 96,  96},          //TDM MODE 16bit 6Channel
+    {8,  375, 3, 64,  64},          //TDM MODE 16bit 4Channel
+
+    {8,  125, 3, 192, 192},         //TDM MODE 24bit 8Channel
+    {24, 500, 3, 144, 144},         //TDM MODE 24bit 6Channel
+    {8,  250, 3, 96,  96 },         //TDM MODE 24bit 4Channel
+};
+
+unsigned short audio_i2s_tdm_16k_config[6][5] =
+{
+    {32, 375, 3, 128, 128},         //TDM MODE 16bit 8Channel
+    {8,  125, 3, 96,  96},          //TDM MODE 16bit 6Channel
+    {16, 375, 3, 64,  64},          //TDM MODE 16bit 4Channel
+
+    {16, 125, 3, 192, 192},         //TDM MODE 24bit 8Channel
+    {24, 250, 3, 144, 144},         //TDM MODE 24bit 6Channel
+    {8,  125, 3, 96,  96},          //TDM MODE 24bit 4Channel
+};
+
+unsigned short audio_i2s_tdm_24k_config[6][5] =
+{
+    {16, 125, 3, 128, 128},         //TDM MODE 16bit 8Channel
+    {24, 250, 3, 96,  96},          //TDM MODE 16bit 6Channel
+    {8,  125, 3, 64,  64},          //TDM MODE 16bit 4Channel
+
+    {24, 125, 3, 192, 192},         //TDM MODE 24bit 8Channel
+    {72, 500, 3, 144, 144},         //TDM MODE 24bit 6Channel
+    {24, 250, 3, 96,  96},          //TDM MODE 24bit 4Channel
+};
+
+unsigned short audio_i2s_tdm_32k_config[6][5] =
+{
+    {64, 375, 3, 128, 128},         //TDM MODE 16bit 8Channel
+    {16, 125, 3, 96,  96},          //TDM MODE 16bit 6Channel
+    {32, 375, 3, 64,  64},          //TDM MODE 16bit 4Channel
+
+    {32, 125, 3, 192, 192},         //TDM MODE 24bit 8Channel
+    {24, 125, 3, 144, 144},         //TDM MODE 24bit 6Channel
+    {16, 125, 3, 96,  96 },         //TDM MODE 24bit 4Channel
+};
+
+unsigned short audio_i2s_tdm_44k1_config[6][5] =
+{
+    {1176,  5000,  3, 128, 128},    //TDM MODE 16bit 8Channel
+    {3528,  20000, 3, 96,  96 },    //TDM MODE 16bit 6Channel
+    {1176,  10000, 3, 64,  64 },    //TDM MODE 16bit 4Channel
+
+    {3528,  10000, 3, 192, 192},    //TDM MODE 24bit 8Channel
+    {10584, 40000, 3, 144, 144},    //TDM MODE 24bit 6Channel
+    {3528,  20000, 3, 96,  96 },    //TDM MODE 24bit 4Channel
+};
+
+unsigned short audio_i2s_tdm_48k_config[8][5] =
+{
+    {32,  125, 3, 128, 128},        //TDM MODE 16bit 8Channel
+    {24,  125, 3, 96,  96 },        //TDM MODE 16bit 6Channel
+    {16,  125, 3, 64,  64 },        //TDM MODE 16bit 4Channel
+    {8,   125, 3, 32,  32 },        //TDM MODE 16bit 2Channel
+
+    {48,  125, 3, 192, 192},        //TDM MODE 24bit 8Channel
+    {72,  250, 3, 144, 144},        //TDM MODE 24bit 6Channel
+    {24,  125, 3, 96,  96 },        //TDM MODE 24bit 4Channel
+    {128, 750, 1, 256, 256},        //TDM MODE 24bit/slot:32bit 8Channel
+};
+#endif
 
 
 void user_init(void)
@@ -359,7 +489,7 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
-            .fifo_chn      = FIFO2,
+            .fifo_chn      = FIFO0,
             .dma_num       = DMA0,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
@@ -369,7 +499,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA1,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
@@ -384,8 +519,10 @@ void user_init(void)
     audio_i2s_output_init(&audio_i2s_output);
     /**** setting the codec clock of audio as the current mclk clock****/
     audio_set_codec_clk_as_mclk(GPIO_FC_PC6); //only set i2s as master mclk=24*/2=12M
+#if !defined(MCU_CORE_TL322X)
     /**** configuring external codec-related registers via i2c***/
     audio_i2c_init_wm(GPIO_FC_PF7, GPIO_FC_PF6, (unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * 100000))); //set i2c frequency 100K
+#endif
     /**** tx rx dma init ****/
     audio_rx_dma_chain_init(audio_i2s_input.fifo_chn, audio_i2s_input.dma_num, (unsigned short *)audio_i2s_input.data_buf, audio_i2s_input.data_buf_size);
     audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num, (unsigned short *)audio_i2s_output.data_buf, audio_i2s_output.data_buf_size);
@@ -394,15 +531,6 @@ void user_init(void)
     audio_tx_dma_en(audio_i2s_output.dma_num);
     audio_i2s_clk_en(audio_i2s_config.i2s_select);
     #elif (AUDIO_MODE == I2S_OUTPUT_DOUBLE_BUFF)
-    /*Note:
-     * The tx and rx FIFO corresponding to the I2S output is fixed as shown in the table below (not modifiable):
-
-        | I2S 2FIFO Mode|             FIFO Usage              |
-        |---------------|-------------------------------------|
-        | I2S0_2FIFO    | I2S0_L->tx_FIFO0, I2S0_R->tx_FIFO1  |
-        | I2S1_2FIFO    | I2S1_L->tx_FIFO1, I2S1_R->tx_FIFO2  |
-        | I2S2_2FIFO    | I2S2_L->tx_FIFO1, I2S2_R->tx_FIFO2  |
-     */
 
     __attribute__((aligned(4))) signed short buff_L[0x10] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
 
@@ -431,7 +559,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO0,
+#else
             .fifo_chn      = FIFO1,
+#endif
             .dma_num       = DMA2,
             .data_buf      = buff_L,
             .data_buf_size = sizeof(buff_L),
@@ -441,7 +574,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA3,
             .data_buf      = buff_R,
             .data_buf_size = sizeof(buff_R),
@@ -492,7 +630,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2, //i2s2 input tdm mode only support FIFO2.
+#endif
             .dma_num       = DMA0,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
@@ -512,7 +655,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
-            .fifo_chn      = FIFO2,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
+            .fifo_chn      = FIFO2, //i2s2 input tdm mode only support FIFO2.
+#endif
             .dma_num       = DMA1,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
@@ -571,7 +719,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA0,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
@@ -614,13 +767,16 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA1,
             .data_buf      = SinData_16bit_ap,
             .data_buf_size = sizeof(SinData_16bit_ap),
         };
-
-
     audio_init();
     /**** i2s config init ****/
     audio_i2s_config_init(&audio_i2s_config);
@@ -669,7 +825,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA1,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
@@ -683,7 +844,8 @@ void user_init(void)
     /**** i2s output init ****/
     audio_i2s_output_init(&audio_i2s_output);
     /**** sets the threshold time at which the i2s is triggered(the i2s is only triggered to work if the threshold is reached.)****/
-    audio_set_i2s_target_value(audio_i2s_config.i2s_select, stimer_get_tick() + 1000);
+    audio_set_i2s_target_value(audio_i2s_config.i2s_select, stimer_get_tick() + 1000 * 24);
+
     /**** enable threshold trigger***/
     audio_i2s_schedule_en(audio_i2s_config.i2s_select);
     /**** rx tx dma init ****/
@@ -728,7 +890,12 @@ void user_init(void)
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+//Refer to the note at the start of the page to determine the corresponding FIFO channel.
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA1,
             .data_buf      = sin_48k_d2,
             .data_buf_size = sizeof(sin_48k_d2),
@@ -741,8 +908,14 @@ void user_init(void)
     audio_i2s_output_init(&audio_i2s_output);
     /**** i2s ascl config ****/
     audio_set_i2s_ascl_en(audio_i2s_config.i2s_select);
+
+#if defined(MCU_CORE_TL322X)
+    audio_set_ascl_gain(ASCL1, ASCL_OUT_D_GAIN_0_DB);
+    audio_ascl_set_conversion_sample_rate(ASCL1, AUDIO_ASCL_48K, AUDIO_ASCL_96K, AUDIO_STEREO);
+#else
     audio_set_ascl_gain(ASCL2, ASCL_OUT_D_GAIN_0_DB);
     audio_ascl_set_conversion_sample_rate(ASCL2, AUDIO_ASCL_48K, AUDIO_ASCL_96K, AUDIO_STEREO);
+#endif
     /**** tx dma init ****/
     audio_tx_dma_chain_init(audio_i2s_output.fifo_chn, audio_i2s_output.dma_num, (unsigned short *)audio_i2s_output.data_buf, audio_i2s_output.data_buf_size);
     /**** i2s starts run****/
@@ -750,8 +923,11 @@ void user_init(void)
     audio_i2s_clk_en(audio_i2s_config.i2s_select);
     #elif (AUDIO_MODE == AUDIO_FIFO_IRQ_TEST)
         #define FIFO0_NUM  FIFO0
+#if defined(MCU_CORE_TL322X)
+        #define FIFO2_NUM  FIFO1
+#else
         #define FIFO2_NUM  FIFO2
-
+#endif
         #define RX_DMA_CHN DMA0
         #define TX_DMA_CHN DMA1
 
@@ -997,9 +1173,15 @@ _attribute_ram_code_sec_ void audio_irq_handler(void)
         gpio_toggle(LED2);
         irq_cnt[0]++;
     }
+#if defined(MCU_CORE_TL322X)
+    if (audio_get_irq_status(AUDIO_TX_FIFO1_IRQ)) //tx0
+    {
+        audio_clr_irq_status(AUDIO_TX_FIFO1_IRQ);
+#else
     if (audio_get_irq_status(AUDIO_TX_FIFO2_IRQ)) //tx0
     {
         audio_clr_irq_status(AUDIO_TX_FIFO2_IRQ);
+#endif
         fifo_dma_ptr_test[2] = audio_get_tx_dma_rptr(TX_DMA_CHN) - (unsigned int)AUDIO_BUFF;
         fifo_dma_ptr_test[3] = audio_get_tx_rptr(FIFO2_NUM);
         fifo_dma_ptr_test[3] = fifo_dma_ptr_test[3] << 2; // =(AUDIO_BUFF_SIZE/2)+4
@@ -1009,7 +1191,6 @@ _attribute_ram_code_sec_ void audio_irq_handler(void)
 }
 PLIC_ISR_REGISTER(audio_irq_handler, IRQ_DFIFO)
     #endif
-
 
 void main_loop(void)
 {

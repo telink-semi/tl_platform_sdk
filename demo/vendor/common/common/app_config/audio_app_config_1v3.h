@@ -22,18 +22,35 @@
  *
  *******************************************************************************************************/
 #pragma once
-#include "driver.h"
+
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
 
+#if defined(MCU_CORE_TL322X)
+
+/*
+ * Attention: PC0 and PC1 are used as amic/line-in input Data IO, IO state must be set float,
+ * otherwise, amic/line-in performance will be bad.
+ *
+ */
+#define PULL_WAKEUP_SRC_PC0 GPIO_PIN_UP_DOWN_FLOAT // amic/line-in data
+#define PULL_WAKEUP_SRC_PC1 GPIO_PIN_UP_DOWN_FLOAT // amic/line-in data
+
+#endif
+
+#include "driver.h"
 /**
  *  TL721X
  *  codec support   input: line_in(mono only)/amic_in(mono only) /dmic_in
  *                  output: support SDM out
  *   I2S support 3 I2S (I2S0/I2S1/I2S2), only I2S2 supports TDM mode.
+ *  TL322X
+ *  codec support   input: line_in(mono only)/amic_in(mono only) /dmic_in
+ *                  output: support SDM out
+ *   I2S support 1 I2S (I2S2), supports TDM mode.
  */
 /* audio codec case */
 #define LINE_INPUT_TO_BUF_TO_LINEOUT 1 //line_in->buff->SDM out
@@ -53,8 +70,10 @@ extern "C"
 #if defined(MCU_CORE_TL721X)
     #define I2S_ALIGN 14          //I2S supports 3 alignment modes (I2S0_I2S1_ALIGN/I2S1_I2S2_ALIGN/I2S0_I2S1_I2S2_ALIGN), and aligned I2S share a fifo and buffer.
 #endif
+
 /* audio mix case */
 #define DMIC_INPUT_TO_BUF_TO_I2S 15 //dmic_in->buff->I2S out
+#define LINE_INPUT_TO_BUF_TO_I2S 16 //line_in->buff->I2S out
 
 #define AUDIO_MODE               AMIC_INPUT_TO_BUF_TO_LINEOUT
 

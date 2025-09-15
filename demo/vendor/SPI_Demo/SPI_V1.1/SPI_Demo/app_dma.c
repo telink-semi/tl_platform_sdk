@@ -30,7 +30,7 @@
     #define SPI_MASTER_DEVICE 1
     #define SPI_SLAVE_DEVICE  2
 
-    #define SPI_DEVICE        SPI_MASTER_DEVICE
+    #define SPI_DEVICE        SPI_SLAVE_DEVICE
 
     /**********************************************************************************************************************
  *                                         SPI protocol demo selection                                                *
@@ -48,7 +48,7 @@
     #define NORMAL_MODE    2 // Spi communication format: cmd+dummy+data
 
 
-    #define DATA_MODE      ONLY_DATA_MODE
+    #define DATA_MODE      NORMAL_MODE
 
     /**********************************************************************************************************************
  *                                         SPI module selection                                                       *
@@ -123,7 +123,7 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = GPIO_FC_PA0,
     .spi_clk_pin      = GPIO_FC_PA1,
     .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PB0,
     .spi_io2_pin      = GPIO_FC_PA3, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PA4, //quad  mode is required, otherwise it is NONE_PIN.
 };
@@ -133,7 +133,7 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = GPIO_FC_PF2,
     .spi_clk_pin      = GPIO_FC_PF3,
     .spi_mosi_io0_pin = GPIO_FC_PF4,
-    .spi_miso_io1_pin = GPIO_FC_PF5, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PF5,
     .spi_io2_pin      = GPIO_FC_PF6, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PF7, //quad  mode is required, otherwise it is NONE_PIN.
 };
@@ -144,7 +144,7 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = GPIO_FC_PA0,
     .spi_clk_pin      = GPIO_FC_PA1,
     .spi_mosi_io0_pin = GPIO_FC_PA2,
-    .spi_miso_io1_pin = GPIO_FC_PB0,   //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PB0,
     .spi_io2_pin      = GPIO_FC_PE2,   //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PE3,   //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io4_pin      = GPIO_FC_PE4,   //octal mode is required, otherwise it is NONE_PIN.
@@ -160,7 +160,7 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = GSPI_CSN0_PA0_PIN,
     .spi_clk_pin      = GSPI_CLK_PA1_PIN,
     .spi_mosi_io0_pin = GSPI_MOSI_PA2_PIN,
-    .spi_miso_io1_pin = GSPI_MISO_PA3_PIN, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GSPI_MISO_PA3_PIN,
     .spi_io2_pin      = GSPI_IO2_PA4_PIN,  //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GSPI_IO3_PA5_PIN,  //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io4_pin      = GSPI_IO4_PA6_PIN,  //octal mode is required, otherwise it is NONE_PIN.
@@ -179,7 +179,7 @@ gspi_pin_config_t gspi1_pin_config = {
     .spi_csn_pin      = GPIO_FC_PF2,
     .spi_clk_pin      = GPIO_FC_PF4,
     .spi_mosi_io0_pin = GPIO_FC_PG0,
-    .spi_miso_io1_pin = GPIO_FC_PF7, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PF7,
     .spi_io2_pin      = GPIO_FC_PF6, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PF5, //quad  mode is required, otherwise it is NONE_PIN.
 };
@@ -189,7 +189,7 @@ gspi_pin_config_t gspi2_pin_config = {
     .spi_csn_pin      = GPIO_FC_PF2,
     .spi_clk_pin      = GPIO_FC_PG1,
     .spi_mosi_io0_pin = GPIO_FC_PG5,
-    .spi_miso_io1_pin = GPIO_FC_PG4, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PG4,
     .spi_io2_pin      = GPIO_FC_PG3, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PG2, //quad  mode is required, otherwise it is NONE_PIN.
 };
@@ -199,7 +199,7 @@ gspi_pin_config_t gspi3_pin_config = {
     .spi_csn_pin      = GPIO_FC_PF2,
     .spi_clk_pin      = GPIO_FC_PG6,
     .spi_mosi_io0_pin = GPIO_FC_PH2,
-    .spi_miso_io1_pin = GPIO_FC_PH1, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PH1,
     .spi_io2_pin      = GPIO_FC_PH0, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PG7, //quad  mode is required, otherwise it is NONE_PIN.
 };
@@ -209,7 +209,7 @@ gspi_pin_config_t gspi4_pin_config = {
     .spi_csn_pin      = GPIO_FC_PF2,
     .spi_clk_pin      = GPIO_FC_PH3,
     .spi_mosi_io0_pin = GPIO_FC_PH7,
-    .spi_miso_io1_pin = GPIO_FC_PH6, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_miso_io1_pin = GPIO_FC_PH6,
     .spi_io2_pin      = GPIO_FC_PH5, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_FC_PH4, //quad  mode is required, otherwise it is NONE_PIN.
 };
@@ -737,7 +737,9 @@ void user_init(void)
     spi_set_dummy_cnt(SPI_MODULE_SEL, 0);
     spi_clr_irq_status(SPI_MODULE_SEL, SPI_END_INT);
     spi_set_irq_mask(SPI_MODULE_SEL, SPI_END_INT_EN); //endint_en txfifoint_en rxfifoint_en
+                #if defined(MCU_CORE_TL322X)
     spi_set_slave_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);
+                #endif
             #endif
     dma_set_irq_mask(SPI_RX_DMA_CHN, TC_MASK);
     plic_interrupt_enable(IRQ_DMA);

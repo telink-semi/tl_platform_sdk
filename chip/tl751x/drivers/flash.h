@@ -51,6 +51,13 @@
 #define PAGE_SIZE     256
 #define PAGE_SIZE_OTP 256
 
+#define FLASH_ADDR_BASE     0x20000000
+#define FLASH_ADDR_MASK     0xf0000000
+
+#ifndef STACK_SIZE_FOR_FLASH_DATA
+    #define STACK_SIZE_FOR_FLASH_DATA       256
+#endif
+
 /**
  * @brief     flash command definition.
  * |   --        |   --        |     --        |    --    |    --    |
@@ -507,3 +514,10 @@ unsigned int flash_get_vendor(unsigned int flash_mid);
  * @return      flash capacity.
  */
 flash_capacity_e flash_get_capacity(unsigned int flash_mid);
+
+/**
+ * @brief      This function is used to calib ADC 1.2V vref.
+ * @param[in]  addr    - the flash address.
+ * @return     DRV_API_SUCCESS - the calibration value update, DRV_API_FAILURE - the calibration value is not update.
+ */
+drv_api_status_e flash_calib_adc_vref(unsigned int addr);

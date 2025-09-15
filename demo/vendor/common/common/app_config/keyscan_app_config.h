@@ -28,9 +28,18 @@ extern "C"
 {
 #endif
 
-#include "driver.h"
+
+#define PULL_WAKEUP_SRC_PA0 GPIO_PIN_UP_DOWN_FLOAT
+#define KEYSCAN_ROW_COL_3X3      0
+#define KEYSCAN_ROW_COL_6X15     1
+#define KEYSCAN_ROW_COL_6X21     2
+#define KEYSCAN_ROW_COL_8X16     3
+#define KEYSCAN_ROW_COL_6X20     4
+
+#define KEYSCAN_ROW_COL_MODE     KEYSCAN_ROW_COL_6X20
 
 #if defined(MCU_CORE_TL322X)
+
     #define KEYSCAN_TEST_SUSPEND 0
 
     #define SOURCE_32K_RC        0
@@ -42,9 +51,13 @@ extern "C"
     #define KEYSCAN_DMA          1
     #define KEYSCAN_DMA_LLP      2
 
-    #define KEYSCAN_MODE         KEYSCAN_NDMA
+    #define KEYSCAN_MODE         KEYSCAN_DMA
 #endif
 
+#define KEYSCAN_AUTO_MODE      0
+#define KEYSCAN_MANUAL_MODE    1
+#define KEYCAN_MODE_TEST        KEYSCAN_MANUAL_MODE
+#include "driver.h"
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

@@ -73,4 +73,7 @@ void usbd_epout_complete_handler(unsigned char bus, unsigned char ep_index, unsi
 void            usbd_endpoint_set_status(unsigned char bus, unsigned char ep_addr, unsigned short ep_status);
 unsigned short *usbd_endpoint_get_status(unsigned char bus, unsigned char ep_addr);
 
+void usbd_suspend_callback(unsigned char bus);
+void usbd_resume_callback(unsigned char bus);
+
 #endif

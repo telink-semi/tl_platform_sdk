@@ -31,7 +31,7 @@
     /*
  * @brief This macro is defined to turn on the fastsettle function
  * */
-    #define RF_FAST_SETTLE 0
+    #define RF_FAST_SETTLE     0
 
     #if SUPPORT_CONFIGURATION
 usr_def_t usr_config;
@@ -140,6 +140,18 @@ void fs_get_value(void)
 
     rf_set_ble_2M_NO_PN_mode();
     rf_fast_settle_get_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_2m);
+    #elif defined(MCU_CORE_TL322X)
+    rf_set_ble_500K_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_s2);
+
+    rf_set_ble_125K_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_s8);
+
+    rf_set_ble_1M_NO_PN_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+
+    rf_set_ble_2M_NO_PN_mode();
+    rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_2m);
     #endif
 }
 
@@ -166,7 +178,7 @@ void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_sett
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -200,7 +212,7 @@ void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_sett
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL321X)
+#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
     rf_set_rx_settle_time(93); //adjust RX settle time
     for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
         rf_set_chn(f_chn);
@@ -355,6 +367,8 @@ void bqb_serviceloop(void)
                 rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
         #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
                 rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+        #elif defined(MCU_CORE_TL322X)
+            rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         #endif
     #endif
                 rf_access_code_comm(ACCESS_CODE);
@@ -376,6 +390,8 @@ void bqb_serviceloop(void)
                     rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
         #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
                     rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+        #elif defined(MCU_CORE_TL322X)
+                    rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         #endif
     #endif
                     rsp = 0;
@@ -678,12 +694,8 @@ void bqbtest_init()
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
 
     #if (RF_FAST_SETTLE)&&(!defined(MCU_CORE_TL751X))
-            #if 0
-    rf_fast_settle_setup(TX_SETTLE_TIME_50US,RX_SETTLE_TIME_45US);
-            #else
     fs_get_value();
     rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_1m);
-            #endif
     rf_fast_settle_config(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US);
 
     rf_tx_fast_settle_en();
@@ -695,12 +707,8 @@ void bqbtest_init()
     rf_set_chn(freq);
         #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
 
-            #if 0
-    rf_fast_settle_setup(TX_SETTLE_TIME_23US,RX_SETTLE_TIME_15US);
-            #else
     fs_get_value();
     rf_fast_settle_set_val(TX_SETTLE_TIME_23US, RX_SETTLE_TIME_15US, &fs_cv_1m);
-            #endif
     if (-1 == rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US)) {
         //Incorrect configuration.
         gpio_toggle(LED2);
@@ -711,6 +719,16 @@ void bqbtest_init()
     rf_set_rx_settle_time(15);
 
     rf_set_chn(freq);
+        #elif defined(MCU_CORE_TL322X)
+        fs_get_value();
+        rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
+        rf_fast_settle_config(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US);
+        rf_tx_fast_settle_en();
+        rf_rx_fast_settle_en();
+        rf_set_tx_settle_time(15);
+        rf_set_rx_settle_time(15);
+
+        rf_set_chn(freq);
         #endif
     #endif
     rf_access_code_comm(ACCESS_CODE);
@@ -796,7 +814,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+#elif defined(MCU_CORE_TL321X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -810,7 +828,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL721X)
+#elif defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL322X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -887,7 +905,6 @@ void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
         rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
     }
-    rf_cali_linear_fit(fs_cv);
 #endif
 }
 #endif

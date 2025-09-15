@@ -117,7 +117,7 @@
 		<link>
 			<name>vendor/I2C_Demo</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo/I2C_V1.0</locationURI>
 		</link>
 		<link>
 			<name>vendor/LPC_Demo</name>
@@ -143,11 +143,6 @@
 			<name>vendor/PWM_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PWM_DEMO</locationURI>
-		</link>
-		<link>
-			<name>vendor/RF_Certification</name>
-			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_Certification</locationURI>
 		</link>
 		<link>
 			<name>vendor/RF_DEMO</name>

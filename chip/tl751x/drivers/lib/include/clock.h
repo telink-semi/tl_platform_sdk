@@ -64,6 +64,8 @@
  * It is necessary to modify the frequency division based on the current size of the pclk. For the convenience of software processing, it is uniformly processed as 20m.
  */
 #define ALG_MODULE_MAX_CLK                20
+
+#define INTERNAL_PLL_CLK_TEST             0
 /*
  * note:
  * 1.Clock source pll, there are two kinds of clock source,pll_bb and pll_audio, you can flexibly choose which kind of clock pll source,
@@ -72,10 +74,6 @@
  */
 
 //0.9v (note: the maximum pclk is 75m )
-#define PLL_300M_D25F_DSP_300M_HCLK_150M_PCLK_75M_MSPI_60M_WT_10M \
-    clock_init(CLK_BASEBAND_PLL_300M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV5_TO_MSPI_CLK, CLK_DIV15);
-#define PLL_264M_D25F_DSP_264M_HCLK_132M_PCLK_66M_MSPI_44M_WT_12M \
-    clock_init(CLK_BASEBAND_PLL_264M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV6_TO_MSPI_CLK, CLK_DIV11);
 #define PLL_192M_D25F_DSP_192M_HCLK_96M_PCLK_48M_MSPI_48M_WT_12M \
     clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV4_TO_MSPI_CLK, CLK_DIV4);
 //0.8v
@@ -104,6 +102,33 @@
 
 #define XTAL_48M_D25F_DSP_48M_HCLK_48M_PCLK_48M_MSPI_48M clock_init(CLK_XTAL_48M,CLK_DIV1, CCLK_DIV1_TO_HCLK_DIV1_TO_PCLK, PLL_DIV1_TO_MSPI_CLK, CLK_DIV4);
 #define RC_24M_D25F_DSP_24M_HCLK_24M_PCLK_24M_MSPI_24M   clock_init(CLK_RC_24M,CLK_DIV1, CCLK_DIV1_TO_HCLK_DIV1_TO_PCLK, PLL_DIV1_TO_MSPI_CLK, CLK_DIV2);
+
+/**********************************************************************************************************************
+ *                                          INTERNAL_PLL_CLK_TEST                                                     *
+ *********************************************************************************************************************/
+#if (INTERNAL_PLL_CLK_TEST)
+#define PLL_264M_D25F_DSP_132M_HCLK_66M_PCLK_66M_MSPI_44M_WT_11M \
+    clock_init(CLK_BASEBAND_PLL_264M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, PLL_DIV6_TO_MSPI_CLK, CLK_DIV6);
+#define PLL_276M_D25F_DSP_138M_HCLK_69M_PCLK_69M_MSPI_46M_WT_11M \
+    clock_init(CLK_BASEBAND_PLL_276M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, PLL_DIV6_TO_MSPI_CLK, CLK_DIV6);
+#define PLL_288M_D25F_DSP_144M_HCLK_72M_PCLK_72M_MSPI_48M_WT_12M \
+    clock_init(CLK_BASEBAND_PLL_288M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, PLL_DIV6_TO_MSPI_CLK, CLK_DIV6);
+#define PLL_300M_D25F_DSP_150M_HCLK_75M_PCLK_75M_MSPI_42M_WT_12M \
+    clock_init(CLK_BASEBAND_PLL_300M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, PLL_DIV7_TO_MSPI_CLK, CLK_DIV6);
+#define PLL_312M_D25F_DSP_156M_HCLK_78M_PCLK_39M_MSPI_44M_WT_9M \
+    clock_init(CLK_BASEBAND_PLL_312M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV7_TO_MSPI_CLK, CLK_DIV4);
+#define PLL_324M_D25F_DSP_162M_HCLK_81M_PCLK_40M_MSPI_46M_WT_10M \
+    clock_init(CLK_BASEBAND_PLL_324M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV7_TO_MSPI_CLK, CLK_DIV4);
+#define PLL_336M_D25F_DSP_168M_HCLK_84M_PCLK_42M_MSPI_48M_WT_10M \
+    clock_init(CLK_BASEBAND_PLL_336M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV7_TO_MSPI_CLK, CLK_DIV4);
+
+#define PLL_204M_D25F_DSP_204M_HCLK_102M_PCLK_51M_MSPI_40M_WT_12M \
+    clock_init(CLK_BASEBAND_PLL_204M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV5_TO_MSPI_CLK, CLK_DIV4);
+#define PLL_216M_D25F_DSP_216M_HCLK_108M_PCLK_54M_MSPI_43M_WT_10M \
+    clock_init(CLK_BASEBAND_PLL_216M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV5_TO_MSPI_CLK, CLK_DIV5);
+#define PLL_228M_D25F_DSP_228M_HCLK_114M_PCLK_57M_MSPI_45M_WT_11M \
+    clock_init(CLK_BASEBAND_PLL_228M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV4_TO_PCLK, PLL_DIV5_TO_MSPI_CLK, CLK_DIV5);
+#endif
 
 /**********************************************************************************************************************
  *                                         global data type                                                           *
@@ -146,6 +171,16 @@ typedef enum
     PLL_192M = 0,
     PLL_264M,
     PLL_300M,
+#if (INTERNAL_PLL_CLK_TEST)
+    PLL_204M,
+    PLL_216M,
+    PLL_228M,
+    PLL_276M,
+    PLL_288M,
+    PLL_312M,
+    PLL_324M,
+    PLL_336M,
+#endif
 } pll_bb_clk_e;
 
 typedef struct
@@ -200,6 +235,16 @@ typedef enum
     CLK_BASEBAND_PLL_192M  = BASEBAND_PLL | (PLL_192M << 8),
     CLK_BASEBAND_PLL_264M  = BASEBAND_PLL | (PLL_264M << 8),
     CLK_BASEBAND_PLL_300M  = BASEBAND_PLL | (PLL_300M << 8),
+#if (INTERNAL_PLL_CLK_TEST)
+    CLK_BASEBAND_PLL_204M  = BASEBAND_PLL | (PLL_204M << 8),
+    CLK_BASEBAND_PLL_216M  = BASEBAND_PLL | (PLL_216M << 8),
+    CLK_BASEBAND_PLL_228M  = BASEBAND_PLL | (PLL_228M << 8),
+    CLK_BASEBAND_PLL_276M  = BASEBAND_PLL | (PLL_276M << 8),
+    CLK_BASEBAND_PLL_288M  = BASEBAND_PLL | (PLL_288M << 8),
+    CLK_BASEBAND_PLL_312M  = BASEBAND_PLL | (PLL_312M << 8),
+    CLK_BASEBAND_PLL_324M  = BASEBAND_PLL | (PLL_324M << 8),
+    CLK_BASEBAND_PLL_336M  = BASEBAND_PLL | (PLL_336M << 8),
+#endif
     CLK_AUDIO_PLL_33P8688M = AUDIO_PLL | (PLL_AUDIO_CLK_33P8688M << 8),
     CLK_AUDIO_PLL_36P864M  = AUDIO_PLL | (PLL_AUDIO_CLK_36P864M << 8),
     CLK_AUDIO_PLL_147P456M = AUDIO_PLL | (PLL_AUDIO_CLK_147P456M << 8),
@@ -251,6 +296,16 @@ typedef enum
     SRC_CLK_BASEBAND_PLL_192M  = 192 * 1000000 | (BASEBAND_PLL >> 4),
     SRC_CLK_BASEBAND_PLL_264M  = 264 * 1000000 | (BASEBAND_PLL >> 4),
     SRC_CLK_BASEBAND_PLL_300M  = 300 * 1000000 | (BASEBAND_PLL >> 4),
+#if (INTERNAL_PLL_CLK_TEST)
+    SRC_CLK_BASEBAND_PLL_204M  = 204 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_216M  = 216 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_228M  = 228 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_276M  = 276 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_288M  = 288 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_312M  = 312 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_324M  = 324 * 1000000 | (BASEBAND_PLL >> 4),
+    SRC_CLK_BASEBAND_PLL_336M  = 336 * 1000000 | (BASEBAND_PLL >> 4),
+#endif
     SRC_CLK_AUDIO_PLL_33P8688M = 33868800 | (AUDIO_PLL >> 4),
     SRC_CLK_AUDIO_PLL_36P864M  = 36864000 | (AUDIO_PLL >> 4),
     SRC_CLK_AUDIO_PLL_147P456M = 147456000 | (AUDIO_PLL >> 4),
@@ -478,6 +533,18 @@ _attribute_ram_code_sec_noinline_ void clock_n22_clk_config(sys_clock_div_e div)
   *              -----------------------------------------------------------------------
   */
 _attribute_ram_code_sec_noinline_ void clock_set_all_clock_to_default(void);
+
+/**
+ * @brief       This function use to set all clock to XTAL.
+ * @return      none.
+ * @note        After call this, the following clock will set to XTAL source:
+ *              -----------------------------------------------------------------------
+ *              clock source |          clock
+ *              -----------------------------------------------------------------------
+ *              XTAL 48M     | HCLK 24M, PCLK 24M, WTCLK 4M, CCLK_D25F_DSP CLK 24M, MSPI CLK 48M, N22 CLK 48M.
+ *              -----------------------------------------------------------------------
+ */
+_attribute_ram_code_sec_optimize_o2_noinline_ void clock_set_all_clock_to_xtal(void);
 
 /**
  * @brief       This function use to save all clock configuration for the follow-up restore.

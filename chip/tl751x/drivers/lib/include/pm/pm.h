@@ -375,7 +375,7 @@ static inline void pm_set_usb_wakeup(void)
 static inline void pm_poweron_dcdc(void)
 {
     analog_write_reg8(0x07, 0x55);
-    core_cclk_delay_tick((unsigned long long)(sys_clk.cclk_d25f_dsp * 100));
+    core_cclk_delay_tick((unsigned long long)((int)sys_clk.cclk_d25f_dsp * 100));
     analog_write_reg8(0x07, 0xff);
 }
 
@@ -399,7 +399,7 @@ static inline unsigned char pm_get_dcdc_power(void)
 
 /**
  * @brief       This function configures a GPIO pin as the wakeup pin.
- * @param[in]   pin - the pins can be set to all GPIO except PB0/PC5 and GPIOG groups.
+ * @param[in]   pin - the pins can be set to all GPIO except GPIOH and GPIOI groups.
  * @param[in]   pol - the wakeup polarity of the pad pin(0: low-level wakeup, 1: high-level wakeup).
  * @param[in]   en  - enable or disable the wakeup function for the pan pin(1: enable, 0: disable).
  * @return      none.

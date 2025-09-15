@@ -23,6 +23,7 @@
  *******************************************************************************************************/
 #include <string.h>
 #include <stdbool.h>
+#if !defined(MCU_CORE_TL752X)
 #include "flash/flash_common.h"
 
 /**
@@ -84,7 +85,7 @@ unsigned char hal_flash_lock(void);
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported
  */
 unsigned char hal_flash_unlock(void);
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
 extern bool                g_mid_matched[SLAVE_CNT];
 extern flash_hal_handler_t g_flash_handler[SLAVE_CNT];
 /**
@@ -127,4 +128,6 @@ unsigned char hal_flash_lock_with_device_num(mspi_slave_device_num_e device_num)
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported
  */
 unsigned char hal_flash_unlock_with_device_num(mspi_slave_device_num_e device_num);
+#endif
+#else
 #endif

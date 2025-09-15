@@ -25,7 +25,7 @@
 #include "tx_ping_pong_mode_refer/tx_ping_pong.h"
 
 #if(CAN_TEST   ==    CAN_TX_MODE)
-
+#define IS_LITTLE_END_CONVERT  0
 
 #define TX_ONE_MB     0
 #define TX_PING_PONG  1
@@ -84,6 +84,7 @@ can_frame_t can1_rx_frame[4];
 #define TXMB_START_INDEX         4
 
 #define CAN_BIT_RATE     1000000
+unsigned char g_tx_buff[8]= {0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77};
 void user_init(void)
 {
     //io
@@ -109,7 +110,14 @@ void user_init(void)
         can_set_rx_individual_mask(CAN0,i+RXMB_START_INDEX,&rxmb_individual_mask[i]);
     }
     //txmb
+#if(TX_MODE    ==  TX_ONE_MB)
     can_set_tx_mailbox_cfg(CAN0,TXMB_START_INDEX,1);
+#elif(TX_MODE   ==    TX_PING_PONG)
+    for(unsigned char i=0; i<tx_task_low.tx_mailbox_cnt;i++){
+        can_set_tx_mailbox_cfg(CAN0,TXMB_START_INDEX+i,1);
+    }
+#endif
+
 
     //irq
     for(unsigned char i=0; i<sizeof(rxmb_cfg)/sizeof(can_rx_mb_config_t);i++){
@@ -166,15 +174,18 @@ void main_loop (void)
 {
 
 #if(TX_MODE == TX_PING_PONG)
-  for(unsigned char j=0;j<2;j++){
-          for(unsigned char i=0;i<sizeof(rxmb_cfg)/sizeof(can_rx_mb_config_t);i++){
+  for(volatile unsigned char j=0;j<1;j++){
+          for(volatile unsigned char i=0;i<sizeof(rxmb_cfg)/sizeof(can_rx_mb_config_t);i++){
                 tx_frame.id     = rxmb_cfg[i].id;
                 tx_frame.format = CAN_FRAME_FORMAT_STANDARD;
                 tx_frame.type   = CAN_FRAME_TYPE_DATA;
-                tx_frame.length = 0x08;
-                tx_frame.data_word0 = 0x44332211;
-                tx_frame.data_word1 = 0x88776655;
-                can_write_tx_mb(CAN0,TXMB_START_INDEX,&tx_frame,0);
+                tx_frame.length = CAN_8B_PER_FRAME;
+                for(volatile unsigned char m=0;m<DLC_LENGTH_DECODE(CAN_8B_PER_FRAME);m++){
+                      *(((unsigned char *)&tx_frame.data_word0)+m) = *(g_tx_buff+m);
+                }
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)&tx_frame.data_word0,DLC_LENGTH_DECODE(CAN_8B_PER_FRAME));
+#endif
                 tx_frame.data_byte0++;
                 while(!can_tx_buff_enqueue(CAN0,&tx_task_low,&tx_frame)){};
                 can_exit_freeze_mode(CAN0);
@@ -188,8 +199,12 @@ void main_loop (void)
         tx_frame.format = CAN_FRAME_FORMAT_STANDARD;
         tx_frame.type   = CAN_FRAME_TYPE_DATA;
         tx_frame.length = CAN_8B_PER_FRAME;
-        tx_frame.data_word0 = 0x44332211;
-        tx_frame.data_word1 = 0x88776655;
+        for(volatile unsigned char j=0;j<DLC_LENGTH_DECODE(CAN_8B_PER_FRAME);j++){
+              *(((unsigned char *)&tx_frame.data_word0)+j) = *(g_tx_buff+j);
+        }
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)&tx_frame.data_word0,DLC_LENGTH_DECODE(CAN_8B_PER_FRAME));
+#endif
         can_write_tx_mb(CAN0,TXMB_START_INDEX,&tx_frame,0);
         can_exit_freeze_mode(CAN0);
 
@@ -211,6 +226,9 @@ void main_loop (void)
      while(!(rx_done ==4));
      rx_done=0;
     for(volatile unsigned int i=0;i< 4;i++){
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)&can1_rx_frame[i].data_word0,DLC_LENGTH_DECODE(can1_rx_frame[i].length));
+#endif
         for(volatile unsigned char j=0;j<can1_rx_frame[i].length;j++){
                if(*((&(rx_frame[i].data_byte0))+j) !=*((&(can1_rx_frame[i].data_byte0))+j)){
                    gpio_set_high_level(LED1);
@@ -230,6 +248,9 @@ _attribute_ram_code_sec_ void can0_irq_handler(void){
     for(unsigned char i=RXMB_START_INDEX;i<RXMB_START_INDEX+MB_RX_NUM;i++){
         if(can_get_mb_irq_status(CAN0,i)){
             can_read_rx_mb(CAN0,i,&rx_frame[i]);
+#if IS_LITTLE_END_CONVERT
+        data_convert_by_word((unsigned char*)&rx_frame[i].data_word0,DLC_LENGTH_DECODE(rx_frame[i].length));
+#endif
             can_clr_mb_irq_status(CAN0,i);
             rx_done++;
             break;

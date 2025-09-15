@@ -2201,6 +2201,16 @@ enum
     FLD_RF_LOCD_WAIT_L = BIT(7),
 };
 
+#define reg_rf_ldo1_1       REG_ADDR8(REG_TL_RADIO_BASE_ADDR + 0x141)
+enum
+{
+    FLD_RF_LDO_PLL_BOOST   = BIT(0),
+    FLD_RF_LDO_VCO_BYPASS  = BIT(1),
+    FLD_RF_LDO_VCO_BOOST   = BIT(2),
+    FLD_RF_LDO_CAL_BYPASS  = BIT(3),
+    FLD_RF_LDO_CAL_BOOST   = BIT(4),
+    FLD_RF_LDO_ANT_BYPASS  = BIT(5),
+};
 #define reg_rf_lnm_pa_0      REG_ADDR8(REG_TL_RADIO_BASE_ADDR + 0x14c)
 enum
 {

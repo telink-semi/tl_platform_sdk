@@ -38,6 +38,14 @@
  */
 #define rf_tx_packet_dma_len(rf_data_len) (((rf_data_len) + 3) / 4) | (((rf_data_len) % 4) << 22)
 
+/**
+ *  @brief This define serve to compensate for RF RSSI offset values.
+ */
+#define RF_RSSI_OFFSET        3
+/**
+ *  @brief This macro provides an alternative name for the rf_get_latched_rssi() function to be compatible with older versions of code
+ */
+#define rf_get_rssi rf_get_latched_rssi
 /**********************************************************************************************************************
  *                                       RF global data type                                                          *
  *********************************************************************************************************************/
@@ -213,6 +221,16 @@ typedef enum
     RF_CHANNEL_ALL  = 0x3f,   /**< all RF channel */
 } rf_channel_e;
 
+/**
+ *  @brief  RF module state machine definition.
+ */
+typedef enum {
+    RF_IDLE_STATE, /**< RF idle state */
+    RF_TX_STATE,   /**< RF tx state */
+    RF_RX_STATE,   /**< RF rx state */
+    RF_TX_WAIT,    /**< RF wait for tx state */
+    RF_RX_WAIT,    /**< RF wait for rx state */
+}rf_state_e;
 /**********************************************************************************************************************
  *                                         RF global constants                                                        *
  *********************************************************************************************************************/
@@ -638,12 +656,35 @@ void rf_start_srx(unsigned int tick);
 
 
 /**
- * @brief       This function serves to get rssi.
+ * @brief       This function serves to get latched rssi.
  * @return      rssi value.
- *              TODO:This function interface is not available at this time, and will be updated in subsequent releases.(unverified)
+ * @note        1.The RSSI values above -20dBm tend to saturate, resulting in unreliable measurements.
  */
-signed char rf_get_rssi(void);
+signed char rf_get_latched_rssi(void);
 
+/**
+ * @brief       This function serves to get the real time rssi.
+ * @return      rssi value.
+ * @note        1.The RSSI values above -20dBm tend to saturate, resulting in unreliable measurements.
+ *              2.The RSSI values detected by different chips for the same signal strength may vary.
+ */
+signed char rf_get_real_time_rssi(void);
+
+/**
+ * @brief       This function is used to convert the RSSI value of the HD information in the Packet.
+ * @param[in]   pkt_rssi  -  the RSSI value of the HD information in the received packets
+ * @return      rssi value.
+ * @note        1.The RSSI values above -20dBm tend to saturate, resulting in unreliable measurements.
+ */
+signed char rf_decode_pkt_rssi(unsigned char pkt_rssi);
+
+/**
+ * @brief       This function serves to get the max rssi.
+ * @return      rssi value.
+ * @note        1.The RSSI values above -20dBm tend to saturate, resulting in unreliable measurements.
+ *              2.The RSSI values detected by different chips for the same signal strength may vary.
+ */
+signed char rf_get_max_rssi(void);
 /**
  * @brief       This function serves to set RF Tx mode.
  * @return      none.
@@ -707,16 +748,19 @@ void rf_set_power_level_index(rf_power_level_index_e idx);
 
 /**
  * @brief       This function serves to update the value of internal cap.
- * @param[in]   value   - The value of internal cap which you want to set.
+ * @param[in]   value   - The value of internal cap which you want to set.(0 < value < 0xff)
  * @return      none.
  * @note        Attention:
  *             (1)Adjusting the capacitance value may cause abnormal operation of the crystal oscillator!!!
+ *             (2)This function call must be made after rf_mode_init
  */
 void rf_update_internal_cap(unsigned char value);
 
 /**
  * @brief       This function serves to close internal cap;
  * @return      none.
+ * @note        Attention: This function call must be made after rf_mode_init
+ *
  */
 void rf_turn_off_internal_cap(void);
 
@@ -805,6 +849,7 @@ _attribute_ram_code_sec_noinline_ void rf_clr_dig_logic_state(void);
  * @brief       This interface is used to obtain whether sequence is completed during the TX process.
  * @param[in]   none.
  * @return     1:Tx sequence completed. 0:Tx sequence not completed
+ * @note       This interface is only valid when the RF state is TX_STATE.
  */
 static inline bool rf_get_tx_sequence_done(void)
 {
@@ -815,10 +860,86 @@ static inline bool rf_get_tx_sequence_done(void)
  * @brief       This interface is used to obtain whether sequence is completed during the RX process.
  * @param[in]   none.
  * @return     1:Rx sequence completed. 0:Rx sequence not completed
+ * @note       This interface is only valid when the RF state is RF_RX_STATE.
  */
 static inline bool rf_get_rx_sequence_done(void)
 {
     return ((reg_rf_ana_trx_rf_block_ena&0x01) == 0x01);
+}
+
+/**
+ * @brief This function checks the RF state register to determine if the RF is in IDLE, TX, RX, or waiting states.
+ * @return rf_state_e Current RF operational state (RF_IDLE_STATE/RF_TX_STATE/RF_RX_STATE/RF_TX_WAIT/RF_RX_WAIT)
+ *
+ * @note Register 0x24[2:0] encoding:
+ *   0: Idle      | 1: Active (unused) | 2: TX Start-up
+ *   3: TX State  | 4: RX Wait         | 5: RX State
+ *   6: TX Wait   | 7: Reserved
+ */
+static inline rf_state_e rf_get_state(void)
+{
+    unsigned char rf_state = reg_rf_ll_2d_sclk & 0x07;
+    
+    /* State decoding */
+    switch(rf_state) {
+        case FLD_RF_STATE_MACHINE_TX_SETTLE:  // TX_STL: Transmitter settle (merge to TX_STATE)
+        case FLD_RF_STATE_MACHINE_TX:  // TX_ACT: Active transmission
+            return RF_TX_STATE;
+            
+        case FLD_RF_STATE_MACHINE_RX:  // RX_ACT: Active reception
+            return RF_RX_STATE;
+            
+        case FLD_RF_STATE_MACHINE_RX_WAIT:  // RX_WAIT: Waiting for receiver activation
+            return RF_RX_WAIT;
+            
+        case FLD_RF_STATE_MACHINE_TX_WAIT:  // TX_WAIT: Waiting for transmitter activation
+            return RF_TX_WAIT;
+            
+        default: // IDLE/Reserved/Undefined states
+            return RF_IDLE_STATE;
+    }
+}
+
+/**
+ * @brief       This function is used to reliably reset the RF digital logic state, preventing abnormal RF conditions due to reset sequence issues.
+ * @param[in]   none.
+ * @return      none
+ * @note        The core flags rf_get_rx_sequence_done() and rf_get_tx_sequence_done() are only valid during LL RX STATE and LL TX STATE. These flags are unreliable while in the IDLE state.
+ */
+static inline void rf_reset_baseband(void)
+{
+    rf_state_e state = rf_get_state();
+    if(RF_RX_STATE == state)
+    {
+        while (!rf_get_rx_sequence_done())
+        {
+            if(rf_get_state() == RF_TX_STATE)
+            {
+                 while (!rf_get_tx_sequence_done());
+                 break;
+            }
+            else{
+                break;
+            }
+        }
+    }
+    else if (RF_TX_STATE == state)
+    {
+        while (!rf_get_tx_sequence_done())
+        {
+            if(rf_get_state() == RF_RX_STATE)
+            {
+                while (!rf_get_rx_sequence_done());
+                break;
+            }
+            else{
+                break;
+            }
+        }
+    }
+    rf_clr_dig_logic_state();
+    rf_dma_reset();
+    rf_clr_dig_logic_state();
 }
 
 #endif

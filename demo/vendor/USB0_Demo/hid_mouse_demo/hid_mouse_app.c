@@ -81,6 +81,34 @@ _attribute_ram_code_sec_ void usbd_hid_int_callback(unsigned char bus, unsigned 
 }
 #endif
 
+void usbd_suspend_callback(unsigned char bus)
+{
+    if(bus == 0) {
+        pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER, 0);
+    }
+}
+
+void usbd_resume_callback(unsigned char bus)
+{
+    if(bus == 0) {
+        hid_report_data[0] = 1;
+        hid_report_data[1] = 2;
+        hid_report_data[2] = 0;
+        hid_report_data[3] = 0;
+        hid_report_data[4] = 0;
+        usb0hw_remote_wakeup();
+        usbd_ep_write(0, HID_MOUSE_IN_ENDPOINT_ADDRESS, hid_report_data, 5);
+        delay_ms(2);
+        hid_report_data[0] = 1;
+        hid_report_data[1] = 0;
+        hid_report_data[2] = 0;
+        hid_report_data[3] = 0;
+        hid_report_data[4] = 0;
+        usb0hw_remote_wakeup();
+        usbd_ep_write(0, HID_MOUSE_IN_ENDPOINT_ADDRESS, hid_report_data, 5);
+    }
+}
+
 void user_init(void)
 {
     gpio_function_en(LED1);
@@ -107,6 +135,9 @@ void user_init(void)
 
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_USB0);
+
+    pm_set_usb0_wakeup();
+    pm_set_suspend_power_cfg(FLD_PD_USB_EN, 1);
 }
 
 void main_loop(void)

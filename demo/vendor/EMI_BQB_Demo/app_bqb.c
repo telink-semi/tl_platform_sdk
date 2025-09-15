@@ -153,6 +153,12 @@ uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin, gpio_func_pin_e rx_pin, unsi
 }
     #endif
 
+/**
+ * @brief       This function serves to read the calibration value from flash.
+ * @param[in]   none
+ * @return      none
+ * @note       Attention:For TL751X and TL7518 chips, this function call must be made after rf_rode_init
+ */
 void read_bqb_calibration(void)
 {
     unsigned char chnidx = 0xff;

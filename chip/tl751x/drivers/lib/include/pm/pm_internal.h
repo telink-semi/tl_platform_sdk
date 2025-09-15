@@ -87,10 +87,67 @@ typedef struct {
     unsigned char ana_0x54;//bit6
 } pm_sleep_reg_t;
 
-extern pm_sleep_reg_t pm_sleep_regs;
+/**
+ * @brief for voltage calibration
+ */
+typedef struct
+{
+    /* for ldo */
+    unsigned char avdd1_1p04;
+    unsigned char avdd2_1p8;
+    unsigned char dvdd1_0p8;
+    unsigned char dvdd1_0p9;
+    unsigned char dvdd2_0p8;
+    unsigned char dvdd2_0p9;
 
-#define PM_ANA_0x20_DEFAULT_VALUE   0xd1
-#define PM_ANA_0x54_DEFAULT_VALUE   0x10
+    unsigned char lc_dvdd1_0p6;
+    unsigned char lc_dvdd2_0p6;
+    unsigned char vddo1v8;
+    unsigned char vddo3v3;
+
+    /* for dcdc */
+    unsigned char bk1_1p8;//[2:0]->0xb0[2:0], [5-3]->0xb6[6-4]
+    unsigned char bk2_1p04;
+    unsigned char bk3_0p85;
+    unsigned char bk3_0p95;
+    unsigned char bk3_spd_0p6;
+
+    unsigned char is_cal;
+}pm_voltage_cal_t;
+
+extern _attribute_data_retention_sec_ pm_voltage_cal_t pm_voltage_cal;
+
+/**
+ * @brief   active mode 1.8V IO output trim definition
+ * @note    The voltage values of the following gears are all theoretical values, and there may be deviations between the actual and theoretical values.
+ */
+typedef enum
+{
+    PM_1V8O_VOLTAGE_1V65 = 0x00, /**< 1.8V IO output 1.65V */
+    PM_1V8O_VOLTAGE_1V70 = 0x01, /**< 1.8V IO output 1.70V */
+    PM_1V8O_VOLTAGE_1V75 = 0x02, /**< 1.8V IO output 1.75V */
+    PM_1V8O_VOLTAGE_1V80 = 0x03, /**< 1.8V IO output 1.80V (default) */
+    PM_1V8O_VOLTAGE_1V85 = 0x04, /**< 1.8V IO output 1.85V */
+    PM_1V8O_VOLTAGE_1V90 = 0x05, /**< 1.8V IO output 1.90V */
+    PM_1V8O_VOLTAGE_1V95 = 0x06, /**< 1.8V IO output 1.95V */
+    PM_1V8O_VOLTAGE_2V00 = 0x07, /**< 1.8V IO output 2.00V */
+} pm_1v8o_voltage_e;
+
+/**
+ * @brief   active mode 3.3V IO output trim definition
+ * @note    The voltage values of the following gears are all theoretical values, and there may be deviations between the actual and theoretical values.
+ */
+typedef enum
+{
+    PM_3V3O_VOLTAGE_3V10 = 0x00, /**< 3.3V IO output 3.10V */
+    PM_3V3O_VOLTAGE_3V15 = 0x01, /**< 3.3V IO output 3.15V */
+    PM_3V3O_VOLTAGE_3V20 = 0x02, /**< 3.3V IO output 3.20V */
+    PM_3V3O_VOLTAGE_3V25 = 0x03, /**< 3.3V IO output 3.25V */
+    PM_3V3O_VOLTAGE_3V30 = 0x04, /**< 3.3V IO output 3.30V (default) */
+    PM_3V3O_VOLTAGE_3V35 = 0x05, /**< 3.3V IO output 3.35V */
+    PM_3V3O_VOLTAGE_3V40 = 0x06, /**< 3.3V IO output 3.40V */
+    PM_3V3O_VOLTAGE_3V45 = 0x07, /**< 3.3V IO output 3.45V */
+} pm_3v3o_voltage_e;
 
 /**
  * @brief   active mode AVDD1 output trim definition
@@ -179,6 +236,22 @@ typedef enum
     PM_DVDD2_VOLTAGE_0V900 = 0x06, /**< DVDD2 output 0.900V */
     PM_DVDD2_VOLTAGE_0V925 = 0x07, /**< DVDD2 output 0.925V */
 } pm_dvdd2_voltage_e;
+
+/**
+ * @brief   low power mode DVDD1 or DVDD2 output trim definition
+ * @note    The voltage values of the following gears are all theoretical values, and there may be deviations between the actual and theoretical values.
+ */
+typedef enum
+{
+    PM_DVDD1_LC_DVDD2_LC_0V575 = 0x00, /**< DVDD1 LC or DVDD2 LC output 0.575V */
+    PM_DVDD1_LC_DVDD2_LC_0V625 = 0x01, /**< DVDD1 LC or DVDD2 LC output 0.625V */
+    PM_DVDD1_LC_DVDD2_LC_0V675 = 0x02, /**< DVDD1 LC or DVDD2 LC output 0.675V */
+    PM_DVDD1_LC_DVDD2_LC_0V725 = 0x03, /**< DVDD1 LC or DVDD2 LC output 0.725V (default) */
+    PM_DVDD1_LC_DVDD2_LC_0V775 = 0x04, /**< DVDD1 LC or DVDD2 LC output 0.775V */
+    PM_DVDD1_LC_DVDD2_LC_0V825 = 0x05, /**< DVDD1 LC or DVDD2 LC output 0.825V */
+    PM_DVDD1_LC_DVDD2_LC_0V875 = 0x06, /**< DVDD1 LC or DVDD2 LC output 0.875V */
+    PM_DVDD1_LC_DVDD2_LC_0V925 = 0x07, /**< DVDD1 LC or DVDD2 LC output 0.925V */
+} pm_dvdd1_lc_dvdd2_lc_voltage_e;
 
 /**
  * @brief   active mode BK1 output adjust definition
@@ -356,6 +429,38 @@ static _always_inline void pm_set_ret_ldo_voltage(pm_ret_ldo_trim_e ret_ldo_trim
 }
 
 /**
+ * @brief       This function serves to trim bk3 in low power mode.
+ * @param[in]   bk3_lp_trim - bk3 voltage in low power mode
+ * @return      none
+ */
+static _always_inline void pm_set_bk3_lp_voltage(pm_bk2_3_4_voltage_e bk3_lp_trim)
+{
+    analog_write_reg8(0xad, (analog_read_reg8(0xad) & 0xc0) | bk3_lp_trim);
+}
+
+/**
+ * @brief       This function serves to trim dvdd1 and dvdd2 voltage in low power mode.
+ * @param[in]   dvdd1_lc_trim - dvdd1 voltage in low power mode
+ * @param[in]   dvdd2_lc_trim - dvdd2 voltage in low power mode
+ * @return      none
+ */
+static _always_inline void pm_set_dvdd1_lp_dvdd2_lp_voltage(pm_dvdd1_lc_dvdd2_lc_voltage_e dvdd1_lc_trim, pm_dvdd1_lc_dvdd2_lc_voltage_e dvdd2_lc_trim)
+{
+    analog_write_reg8(0x0b, (analog_read_reg8(0x0b) & 0x88) | dvdd1_lc_trim | (dvdd2_lc_trim<<4));
+}
+
+/**
+ * @brief       This function serves to trim IV8O and 3V3O voltage.
+ * @param[in]   io1v8_trim - 1.8V IO voltage
+ * @param[in]   io3v3_trim - 3.3V IO voltage
+ * @return      none
+ */
+static _always_inline void pm_set_io1v8_io3v3_voltage(pm_1v8o_voltage_e io1v8_trim, pm_3v3o_voltage_e io3v3_trim)
+{
+    analog_write_reg8(0x0c, (analog_read_reg8(0x0c) & 0x88) | io1v8_trim | (io3v3_trim<<4));
+}
+
+/**
  * @brief       This function configures the values of xtal_delay cycle and r_delay cycle.
  * @param[in]   xtal_delay - xtal_delay cycle.
  * @param[in]   r_delay - r_delay cycle.
@@ -402,6 +507,7 @@ static _always_inline void pm_setup_regs_before_sleep(pm_sleep_reg_t regs)
     analog_write_reg8(0x20, regs.ana_0x20);
 
     //[6]force_sleep_ana, only suspend mode need to set this bit
+    //[7]if wakeup src is wt, this bit should never set to 0.
     analog_write_reg8(0x54, regs.ana_0x54);
 }
 
@@ -411,8 +517,9 @@ static _always_inline void pm_setup_regs_before_sleep(pm_sleep_reg_t regs)
  */
 static _always_inline void pm_recovery_regs_after_sleep(void)
 {
-    analog_write_reg8(0x20, PM_ANA_0x20_DEFAULT_VALUE);
-    analog_write_reg8(0x54, PM_ANA_0x54_DEFAULT_VALUE);
+    analog_write_reg8(0x20, analog_read_reg8(0x20) & ~(BIT(2)));
+    //if wakeup src is wt, 0x54<7> should never set to 0.
+    analog_write_reg8(0x54, analog_read_reg8(0x54) & ~(BIT(6)));
 }
 
 /**
@@ -429,7 +536,7 @@ static _always_inline void pm_24mrc_power_up(void)
          * the calibration of 24m RC should wait for 1us if just power it up.
          * (added by jilong.liu, confirmed by yangya at 20240805)
         */
-        core_cclk_delay_tick((unsigned long long)(2 * sys_clk.cclk_d25f_dsp));
+        core_cclk_delay_tick((unsigned long long)((int)sys_clk.cclk_d25f_dsp * 2));
     }
 }
 
@@ -452,9 +559,11 @@ static _always_inline void pm_24mrc_power_down_if_unused(void)
 
 /**
  * @brief       This function servers to power up BBPLL.
+ * @param[in]   all_ramcode_en  - Whether all processing in this function is required to be ram code. If this parameter is set to 1, it requires that:
+ *              before calling this function, you have done the disable BTB, disable interrupt, mspi_stop_xip and other operations as the corresponding function configured to 0.
  * @return      none.
  */
-_attribute_ram_code_sec_optimize_o2_noinline_ void pm_bbpll_power_up(void);
+_attribute_ram_code_sec_optimize_o2_noinline_ void pm_bbpll_power_up(unsigned char all_ramcode_en);
 
 /**
  * @brief       This function servers to power down BBPLL.
@@ -464,9 +573,11 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void pm_bbpll_power_down(void);
 
 /**
  * @brief       This function servers to wait BBPLL clock lock.
+ * @param[in]   all_ramcode_en  - Whether all processing in this function is required to be ram code. If this parameter is set to 1, it requires that:
+ *              before calling this function, you have done the disable BTB, disable interrupt, mspi_stop_xip and other operations as the corresponding function configured to 0.
  * @return      none.
  */
-_attribute_ram_code_sec_optimize_o2_noinline_ void pm_wait_bbpll_done(void);
+_attribute_ram_code_sec_optimize_o2_noinline_ void pm_wait_bbpll_done(unsigned char all_ramcode_en);
 
 /**
  * @brief       This function servers to powen on bbpll to audio clock lock.
@@ -525,3 +636,4 @@ _attribute_ram_code_sec_optimize_o2_noinline_ unsigned char pm_clr_all_irq_statu
  * @return      none.
  */
 _attribute_ram_code_sec_optimize_o2_noinline_ void pm_stimer_recover(void);
+

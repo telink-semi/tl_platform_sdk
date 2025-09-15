@@ -43,7 +43,7 @@
     #elif defined(MCU_CORE_TL751X)
         #define BQB_TX_POWER RF_POWER_P10p00dBm
     #elif defined(MCU_CORE_TL322X)
-        #define BQB_TX_POWER RF_POWER_P7p11dBm
+        #define BQB_TX_POWER RF_POWER_P7p00dBm
     #else
         #define BQB_TX_POWER RF_POWER_P7p52dBm
     #endif

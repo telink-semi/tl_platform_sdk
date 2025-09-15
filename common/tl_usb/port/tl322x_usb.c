@@ -27,6 +27,18 @@
 
 unsigned char ep0_out_data[64];
 
+__attribute__((weak)) void usbd_suspend_callback(unsigned char bus) 
+{
+    (void)bus;
+    usb_log("usb0 default suspend function %d\r\n", bus);
+}
+
+__attribute__((weak)) void usbd_resume_callback(unsigned char bus) 
+{
+    (void)bus;
+    usb_log("usb0 default resume function %d\r\n", bus);
+}
+
 void usbd_ep_open(unsigned char bus, usb_endpoint_descriptor_t *endpoint_desc)
 {
     (void)bus;
@@ -217,11 +229,17 @@ _attribute_ram_code_sec_ void usb0_irq_handler(void)
     if (status & FLD_USB_GINTSTS_USBSUSP) {
         usb_log("usb0 suspend irq handler\r\n");
         usb0hw_clear_gintsts(FLD_USB_GINTSTS_USBSUSP);
+        usb0hw_pcgc_clk_dis();
+        usb0hw_phy_pll_dis();
+        usbd_suspend_callback(0);
     }
 
     if (status & FLD_USB_GINTSTS_WKUPINT) {
         usb_log("usb0 wakeup irq handler\r\n");
         usb0hw_clear_gintsts(FLD_USB_GINTSTS_WKUPINT);
+        usb0hw_pcgc_clk_en();
+        usb0hw_phy_pll_en();
+        usbd_resume_callback(0);
     }
 
     if (status & FLD_USB_GINTSTS_USBRST) {

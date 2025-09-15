@@ -68,6 +68,7 @@
 #define PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_48M  clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV4)
 #define PLL_144M_D25F_48M_HCLK_N22_48M_PCLK_48M_MSPI_48M  clock_init(CLK_BASEBAND_PLL_144M, CLK_DIV3, CCLK_DIV1_TO_HCLK_DIV1_TO_PCLK, CLK_DIV3)
 #define PLL_180M_D25F_180M_HCLK_N22_90M_PCLK_90M_MSPI_45M clock_init(CLK_BASEBAND_PLL_180M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV4)
+#define PLL_120M_D25F_120M_HCLK_N22_60M_PCLK_60M_MSPI_30M clock_init(CLK_BASEBAND_PLL_120M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV4)
 //core 1.0V
 #define PLL_144M_D25F_72M_HCLK_N22_36M_PCLK_36M_MSPI_48M clock_init(CLK_BASEBAND_PLL_144M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
 #define PLL_192M_D25F_64M_HCLK_N22_32M_PCLK_32M_MSPI_48M clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV3, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV4)
@@ -84,10 +85,10 @@
  *and the high and low temperature long-term stability test speed is no problem.
  */
 //core 1.1V
-#define PLL_192M_CCLK_192M_HCLK_D25F_N22_96M_PCLK_96M_MSPI_64M clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
-#define PLL_192M_CCLK_96M_HCLK_D25F_N22_48M_PCLK_48M_MSPI_64M  clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
-
-
+#define PLL_192M_D25F_192M_HCLK_N22_96M_PCLK_96M_MSPI_64M clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
+#define PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_64M  clock_init(CLK_BASEBAND_PLL_192M, CLK_DIV2, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
+#define PLL_120M_D25F_120M_HCLK_N22_60M_PCLK_60M_MSPI_40M clock_init(CLK_BASEBAND_PLL_120M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
+#define PLL_180M_D25F_180M_HCLK_N22_90M_PCLK_90M_MSPI_60M clock_init(CLK_BASEBAND_PLL_180M, CLK_DIV1, CCLK_DIV2_TO_HCLK_DIV2_TO_PCLK, CLK_DIV3)
 /**********************************************************************************************************************
  *                                         global data type                                                           *
  *********************************************************************************************************************/
@@ -107,10 +108,12 @@ typedef struct
  *  @brief  Define sys_clk_config_t struct.
  */
 typedef struct
-{
-    unsigned char cclk_cfg;      /* cpu clk cfg */
-    unsigned char hclk_pclk_cfg; /* hclk and pclk cfg */
-    unsigned char mspi_clk_cfg;  /* mspi_clk cfg */
+{   
+    unsigned char bbpll_input_divider;      /* bbpll input divider */
+    unsigned char bbpll_divider_control;    /* bbpll divider control */
+    unsigned char cclk_cfg;                 /* cpu clk cfg */
+    unsigned char hclk_pclk_cfg;            /* hclk and pclk cfg */
+    unsigned char mspi_clk_cfg;             /* mspi_clk cfg */
     unsigned char rc_24m_is_used;
     unsigned char bbpll_is_used;
 } sys_clk_config_t;
@@ -130,9 +133,9 @@ typedef enum
 
 typedef enum
 {
-    PLL_144M = 0,
-    PLL_156M,      /*in order to at 0.8v, cclk/hclk/pclk can reach the maximum*/
-    PLL_180M,      /*For the baud rate of can, 5M can be configured*/
+    PLL_120M = 0,      /*For the baud rate of can, 5M can be configured*/
+    PLL_144M,
+    PLL_180M,
     PLL_192M,
 } pll_bb_clk_e;
 
@@ -152,25 +155,11 @@ typedef enum
 {
     CLK_RC_24M             = RC_24M ,
     CLK_XTAL_24M           = XTAL_24M,
+    CLK_BASEBAND_PLL_120M  = BASEBAND_PLL | (PLL_120M << 8),
     CLK_BASEBAND_PLL_144M  = BASEBAND_PLL | (PLL_144M << 8),
-    CLK_BASEBAND_PLL_156M  = BASEBAND_PLL | (PLL_156M << 8),
     CLK_BASEBAND_PLL_180M  = BASEBAND_PLL | (PLL_180M << 8),
     CLK_BASEBAND_PLL_192M  = BASEBAND_PLL | (PLL_192M << 8),
 } sys_clk_src_config_e;
-
-/**
- * @brief system clock type
- * |                                    |                                     |               |
- * |                                    | :-------------------------------    | :------------ |
- * |<6>                                 |               <12:8>                |     <31:24>   |
- * |analog_81<6> selclkout_bpll_1p05v   | analog_82<4:0> div_bpll_1p05v<4:0>  |      clk      |
- */
-typedef enum{
-    PLL_CLK_144M = (0x00 |(0x18 <<8)|(144 << 16)),
-    PLL_CLK_156M = (0x00 |(0x1a <<8)|(156 << 16)),
-    PLL_CLK_180M = (0x00 |(0x1e <<8)|(180 << 16)),
-    PLL_CLK_192M = (0x40 |(0x10 <<8)|(192 << 16)),
-}sys_pll_clk_e;
 
 /**
  * @brief system clock power up status.
@@ -321,7 +310,7 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void clock_set_32k_tick(unsigned i
  * @param[in]   div - the mspi clk source divider
  * @return      none.
  */
-_attribute_ram_code_sec_optimize_o2_noinline_ void clock_mspi_clk_config(sys_clock_src_e src, sys_clock_div_e div);
+_attribute_ram_code_sec_optimize_o2_noinline_ void clock_mspi_clk_config(sys_clk_src_config_e src, sys_clock_div_e div);
 
 /**
  * @brief       This function used to configure the frequency of CCLK/HCLK/PCLK when the PLL is 240M.
@@ -332,7 +321,7 @@ _attribute_ram_code_sec_optimize_o2_noinline_ void clock_mspi_clk_config(sys_clo
  * @param[in]   pclk_div - divider of PCLK.
  * @return      none
  */
-_attribute_ram_code_sec_optimize_o2_noinline_ void clock_cclk_hclk_pclk_config(sys_clock_src_e src, sys_clock_div_e cclk_div, sys_cclk_div_to_hclk_pclk_e hclk_pclk_div);
+_attribute_ram_code_sec_optimize_o2_noinline_ void clock_cclk_hclk_pclk_config(sys_clk_src_config_e src, sys_clock_div_e cclk_div, sys_cclk_div_to_hclk_pclk_e hclk_pclk_div);
 
 /**
  * @brief       This function use to set all clock to default. 

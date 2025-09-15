@@ -100,7 +100,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GPIO_SRC0 + BIT_LOW_BIT(IRQ_PIN & 0x00ff));
             #endif
 
-        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)
+        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)
 
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLDOWN_100K);
 
@@ -111,12 +111,14 @@ void user_init(void)
     gpio_set_irq(GPIO_IRQ0, IRQ_PIN, INTR_RISING_EDGE);
     gpio_set_irq_mask(GPIO_IRQ_IRQ0);
     plic_interrupt_enable(IRQ_GPIO_IRQ0);
+
             #elif (GPIO_MODE == GPIO_IRQ_NUM1)
-    /****GPIO_IRQ7  POL_RISING   Trigger an interrupt by externally flooding the IRQ_PIN pin with a rising edge. **/
+    /****GPIO_IRQ7  POL_FALLING   Trigger an interrupt by externally flooding the IRQ_PIN pin with a falling edge. **/
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLUP_10K);
     gpio_set_irq(GPIO_IRQ7, IRQ_PIN, INTR_FALLING_EDGE);
     gpio_set_irq_mask(GPIO_IRQ_IRQ7);
     plic_interrupt_enable(IRQ_GPIO_IRQ7);
+
             #endif
         #endif
     core_interrupt_enable();
@@ -250,7 +252,7 @@ PLIC_ISR_REGISTER(gpio_src7_irq_handler, IRQ_GPIO_SRC7)
         #endif
     #endif
 
-    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)
+    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)
 volatile unsigned int gpio_irq0_cnt = 0;
 volatile unsigned int gpio_irq7_cnt = 0;
         #if (GPIO_MODE == GPIO_IRQ_NUM0)

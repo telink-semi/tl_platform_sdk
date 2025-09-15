@@ -255,4 +255,35 @@ void can_fd_send_mailbox_request(can_chn_e chn,can_fd_tx_task_t *task){
     }
 }
 
+/*!
+ * @brief This interface is used for data conversion in word
+ * @param[in] data    - the convert buff
+ * @param[in] len - data length.
+ * @return  none
+ */
+void data_convert_by_word(unsigned char *data,unsigned char len){
+    unsigned int wordCount = len>>2;
+    volatile unsigned int rem = len & 3;
+    unsigned int *wd = (unsigned int *)data;
+    volatile unsigned char i = 0;
+    unsigned char word[4];
+    volatile unsigned char j=0;
+    for (j=0; j<wordCount; j++) {
+        word[0] = wd[j]>>24;
+        word[1] = wd[j]>>16;
+        word[2] = wd[j]>>8;
+        word[3] = wd[j];
+        *(((unsigned int *)data)+j) = *(unsigned int*)word;
+        i=4*(j+1);
+    }
 
+    unsigned char *ofp = (unsigned char *)&wd[j];
+    unsigned char rem_data[4];
+    for(j=0;j<rem;j++){
+        rem_data[j] = ofp[rem-j-1];
+    }
+    for(j=0;j<rem;j++){
+        data[i+j]=rem_data[j];
+    }
+
+}

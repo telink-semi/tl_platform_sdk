@@ -33,7 +33,7 @@ unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10
 
     #define TX             1
     #define RX             2
-    #define RF_TRX_MODE    TX
+    #define RF_TRX_MODE    RX
 
     #define AUTO           1
     #define MANUAL         2
@@ -47,8 +47,8 @@ unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10
     #define RX_FIFO_DEP    128
 
 
-    #define RF_FREQ        17
-    #define ACCESS_CODE    0x29417671 //0xd6be898e// 0x898e898e//
+    #define RF_FREQ        37
+    #define ACCESS_CODE    0xf8118ac9//0x29417671 //0xd6be898e// 0x898e898e//
 
 volatile unsigned int rx_cnt = 0;
 volatile unsigned int tx_cnt = 0;
@@ -56,6 +56,7 @@ volatile unsigned int tx_cnt = 0;
 _attribute_ram_code_sec_ void rf_irq_handler(void)
 {
     if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
+        rx_irq_cnt++;
         #if (RF_AUTO_MODE == AUTO)
         unsigned char *raw_pkt = rf_get_rx_packet_addr(RX_FIFO_NUM, RX_FIFO_DEP, rx_packet);
         if (rf_ble_packet_crc_ok(raw_pkt)) {
@@ -88,11 +89,19 @@ PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
 void user_init(void)
 {
     rf_set_power_level(RF_POWER);
+#if defined(MCU_CORE_TL753X)//TODO this function just used on fpga.
+        #if (RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN)
+    rf_set_chn_fpga(RF_FREQ);
+        #else
+    rf_set_ble_chn_fpga(RF_FREQ);
+        #endif
+#else
         #if (RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN)
     rf_set_chn(RF_FREQ);
         #else
     rf_set_ble_chn(RF_FREQ);
         #endif
+#endif
     rf_access_code_comm(ACCESS_CODE);
 
         #if (RF_TRX_MODE == TX)
@@ -113,18 +122,18 @@ void user_init(void)
             #endif
         #endif
 
-    gpio_function_en(LED1);
-    gpio_output_en(LED1);
-    gpio_input_dis(LED1);
-    gpio_function_en(LED2);
-    gpio_output_en(LED2);
-    gpio_input_dis(LED2);
-    gpio_function_en(LED3);
-    gpio_output_en(LED3);
-    gpio_input_dis(LED3);
-    gpio_function_en(LED4);
-    gpio_output_en(LED4);
-    gpio_input_dis(LED4);
+//    gpio_function_en(LED1);
+//    gpio_output_en(LED1);
+//    gpio_input_dis(LED1);
+//    gpio_function_en(LED2);
+//    gpio_output_en(LED2);
+//    gpio_input_dis(LED2);
+//    gpio_function_en(LED3);
+//    gpio_output_en(LED3);
+//    gpio_input_dis(LED3);
+//    gpio_function_en(LED4);
+//    gpio_output_en(LED4);
+//    gpio_input_dis(LED4);
 }
 
 void main_loop(void)
@@ -161,8 +170,8 @@ void main_loop(void)
         delay_us(20);
         rf_set_vant1p05_power_trim_vol_up();
         rf_start_stx(ble_tx_packet, rf_stimer_get_tick());
-        gpio_toggle(LED1);
-        //delay_ms(100);
+//        gpio_toggle(LED1);
+        delay_ms(100);
         tx_cnt++;
     }
 

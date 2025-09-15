@@ -35,14 +35,30 @@ signed short AUDIO_BUFF[AUDIO_BUFF_SIZE >> 1] __attribute__((aligned(4)));
     #define RX_DMA_CHN  DMA0
     #define TX_DMA_CHN  DMA1
 
+#if (AUDIO_MODE == LINE_INPUT_TO_BUF_TO_I2S)
+    #define INPUT_SRC   LINE_STREAM0_MONO_L
+#elif (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_I2S)
     #define INPUT_SRC   DMIC_STREAM0_STEREO
+#endif
 
     #if defined(MCU_CORE_TL721X)
-unsigned short audio_i2s_48k_config[5] = {8, 625, 0, 64, 64};  //240M * 8 / 625 /64 = 48K
-unsigned short audio_i2s_16k_config[5] = {8, 1875, 0, 64, 64}; //240M * 8 / 1875 /64 = 16K
+unsigned short audio_i2s_48k_config[5] = {8,  625,  0, 64, 64}; //240M * 8  / 625  / 64 = 48K
+unsigned short audio_i2s_32k_config[5] = {16, 1875, 0, 64, 64}; //240M * 16 / 1875 / 64 = 32K
+unsigned short audio_i2s_24k_config[5] = {4,  625,  0, 64, 64}; //240M * 4  / 625  / 64 = 24K
+unsigned short audio_i2s_16k_config[5] = {8,  1875, 0, 64, 64}; //240M * 8  / 1875 / 64 = 16K
+unsigned short audio_i2s_12k_config[5] = {2,  625,  0, 64, 64}; //240M * 2  / 625  / 64 = 12K
     #elif defined(MCU_CORE_TL321X)
-unsigned short audio_i2s_48k_config[5] = {2, 125, 0, 64, 64}; //192M * 2 / 125 / 64 = 48K
-unsigned short audio_i2s_16k_config[5] = {8, 125, 6, 64, 64}; //192M * 8 / 125 / (2*6) / 64 = 16K
+unsigned short audio_i2s_48k_config[5] = {2,  125, 0, 64, 64}; //192M * 2  / 125 / 64 = 48K
+unsigned short audio_i2s_32k_config[5] = {16, 125, 6, 64, 64}; //192M * 16 / 125 / (2*6) / 64 = 32K
+unsigned short audio_i2s_24k_config[5] = {1,  125, 0, 64, 64}; //192M * 1  / 125 / 64 = 24K
+unsigned short audio_i2s_16k_config[5] = {8,  125, 6, 64, 64}; //192M * 8  / 125 / (2*6) / 64 = 16K
+unsigned short audio_i2s_12k_config[5] = {1,  125, 1, 64, 64}; //192M * 1  / 125 / (2*1) /64 = 12K
+    #elif defined(MCU_CORE_TL322X)
+unsigned short audio_i2s_48k_config[5] = {16, 125, 3, 64, 64}; //144M * 16 / 125 / (2*3) / 64 = 48K
+unsigned short audio_i2s_32k_config[5] = {32, 125, 9, 64, 64}; //144M * 32 / 125 / (2*9) / 64 = 32K
+unsigned short audio_i2s_24k_config[5] = {8,  125, 3, 64, 64}; //144M * 8  / 125 / (2*3) / 64 = 24K
+unsigned short audio_i2s_16k_config[5] = {16, 125, 9, 64, 64}; //144M * 16 / 125 / (2*9) / 64 = 16K
+unsigned short audio_i2s_12k_config[5] = {4,  125, 3, 64, 64}; //144M * 4  / 125 / (2*3) / 64 = 12K
     #endif
 
 audio_codec_stream0_input_t audio_codec_stream0_input =
@@ -71,7 +87,7 @@ void user_init(void)
     gpio_input_dis(LED3);
 
     audio_init();
-    #if (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_I2S)
+    #if ((AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_I2S) || (AUDIO_MODE == LINE_INPUT_TO_BUF_TO_I2S))
     i2s_pin_config_t i2s_pin_config = {
         .bclk_pin       = GPIO_FC_PD5,
         .adc_lr_clk_pin = GPIO_NONE_PIN,
@@ -92,15 +108,25 @@ void user_init(void)
         {
             .i2s_select    = audio_i2s_config.i2s_select,
             .data_width    = audio_i2s_config.data_width,
+#if (AUDIO_MODE == LINE_INPUT_TO_BUF_TO_I2S)
+            .i2s_ch_sel    = I2S_CHANNEL_LEFT,
+#elif (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_I2S)
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+#endif
+#if defined(MCU_CORE_TL322X)
+            .fifo_chn      = FIFO1,
+#else
             .fifo_chn      = FIFO2,
+#endif
             .dma_num       = DMA1,
             .data_buf      = AUDIO_BUFF,
             .data_buf_size = sizeof(AUDIO_BUFF),
         };
-
+#if (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_I2S)
     /****setting up the dmic's multiplexed pins****/
     audio_set_stream0_dmic_pin(GPIO_FC_PA2, GPIO_FC_PA3, GPIO_FC_PA4);
+#endif
+
     /****stream0 line in/amic/dmic init****/
     audio_codec_stream0_input_init(&audio_codec_stream0_input);
         #if defined(MCU_CORE_TL721X)

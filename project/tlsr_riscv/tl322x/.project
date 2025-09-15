@@ -52,12 +52,17 @@
 		<link>
 			<name>vendor/ADC_Demo</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/ADC_Demo/ADC_V1.1/ADC_Demo</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/ADC_Demo/ADC_V1.2/ADC_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/ALG_REG_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/ALG_REG_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/AUDIO_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/AUDIO_Demo/AUDIO_V1.3/AUDIO_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/CAN_Demo</name>
@@ -100,9 +105,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/HASH_Demo/HASH_Demo_Telink_2024Q3-v1.0.3-a/HASH_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/I2C_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo/I2C_V1.1</locationURI>
+		</link>
+		<link>
 			<name>vendor/IR_LEARN_Demo</name>
 			<type>2</type>
-			<location>E:/workspace/2025Q2/condor_32k_watchdog/tl_platform_src/demo/vendor/IR_LEARN_Demo</location>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/IR_LEARN_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/Keyscan_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Keyscan_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/LIN_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/LIN_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/MULTI_CORE_Demo</name>
@@ -135,14 +155,24 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo/PKE_Demo_Telink_2024Q3-v1.0.3-a/PKE_Demo</locationURI>
 		</link>
 		<link>
-			<name>vendor/RF_Certification</name>
+			<name>vendor/PM_DEMO</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_Certification</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PM_DEMO</locationURI>
+		</link>
+		<link>
+			<name>vendor/PWM_DEMO</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PWM_DEMO</locationURI>
 		</link>
 		<link>
 			<name>vendor/RF_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RF_DEMO</locationURI>
+		</link>
+		<link>
+			<name>vendor/RZ_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/RZ_DEMO</locationURI>
 		</link>
 		<link>
 			<name>vendor/SD_ADC_Demo</name>
@@ -183,6 +213,11 @@
 			<name>vendor/UART_DEMO</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/UART_DEMO</locationURI>
+		</link>
+		<link>
+			<name>vendor/USB0_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/USB0_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/common</name>

@@ -27,8 +27,9 @@
 extern "C"
 {
 #endif
-
+#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
+#endif
 
 #if !defined(MCU_CORE_TL322X)
     #define ENABLE_DSP 0

@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    sd_adc_app_config_1v1.h
+ * @file    sd_adc_app_config.h
  *
  * @brief   This is the header file for Telink RISC-V MCU
  *

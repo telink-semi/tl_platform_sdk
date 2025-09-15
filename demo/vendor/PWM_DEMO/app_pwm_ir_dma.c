@@ -39,6 +39,10 @@
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB5
         #define PWM_FUNC PWM0
+    #elif defined(MCU_CORE_TL322X)
+        #define PWM_ID   PWM0_ID
+        #define PWM_PIN  GPIO_FC_PB3
+        #define PWM_FUNC PWM0
     #endif
 
     #define DMA_CHN DMA2
@@ -79,8 +83,13 @@ volatile unsigned char index3 = 0;
     #if (SET_PWM_DMA_MODE == PWM_IR_FIFO_DMA)
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-    if (pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ)) {
-        pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ);
+#if !defined(MCU_CORE_TL322X)
+    if(pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ )){
+        pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ );
+#else
+    if(pwm_get_irq_status(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ)){
+        pwm_clr_irq_status(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ);
+#endif
 
         irq_index = 0;
 
@@ -142,9 +151,13 @@ void user_init(void)
 
     pwm_set_dma_buf(DMA_CHN, (unsigned int)IR_DMA_Buff, 6);
 
-    pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ);
-
+#if !defined(MCU_CORE_TL322X)
+    pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ );
     pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ);
+#else
+    pwm_set_irq_mask(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ);
+    pwm_clr_irq_status(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ);
+#endif
 
     core_interrupt_enable();
 

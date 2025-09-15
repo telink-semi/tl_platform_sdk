@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "common.h"
 
-#if !defined(MCU_CORE_TL321X) || (DEMO_MODE == MANUAL_TEST_MODE)
+#if !defined(MCU_CORE_TL321X) || (GPIO_TEST_MODE == MANUAL_TEST_MODE)
 
 extern float Dhrystone_DMIPS_Per_MHz;
 

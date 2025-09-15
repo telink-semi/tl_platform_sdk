@@ -250,17 +250,11 @@ default_irq_entry:
 
 
 __vectors:
-    /* Trap vector */
-    .long trap_entry
-
     /* CLIC interrupt vector */
     .altmacro
-    .set irqno, 1
+    .set irqno, 0
     .rept VECTOR_NUMINTRS/*  .rept  .endr  */
     INTERRUPT %irqno
     .set irqno, irqno+1
     .endr
-
-    .weak trap_entry
-    .end
 #endif

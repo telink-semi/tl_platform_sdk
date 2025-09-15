@@ -34,7 +34,7 @@ extern "C"
 
 #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     #define PWM0_PIN        GPIO_FC_PA1
-    #define INPUT_CAPT_PIN  GPIO_PD4
+    #define INPUT_CAPT_PIN  GPIO_PD5
     #define CAPT_DMA_CHN    DMA0
     #define CAPT_DMA_STATUS BIT(CAPT_DMA_CHN)
 #endif
@@ -44,7 +44,7 @@ extern "C"
 
 #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
     #define STIMER_IRQ                        2
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL752X)
     #define STIMER_IRQ_D25                    3
     #define STIMER_IRQ_D25_N22_DSP            4
 #endif
@@ -72,7 +72,9 @@ extern "C"
 #define PULL_WAKEUP_SRC_PD4 GPIO_PIN_UP_DOWN_FLOAT
 #endif
 
+#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
+#endif
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

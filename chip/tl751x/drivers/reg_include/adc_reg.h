@@ -71,6 +71,12 @@ enum
  */
 #define areg_adc_misc_l 0x177
 #define areg_adc_misc_h 0x178
+#define areg_adc_sel_atb_o 0x179
+enum
+{
+    FLD_ADC_VREF_ANA0  =  BIT(4),
+    FLD_ADC_VREF_ANA1  =  BIT(5),
+};
 
 
 #define areg_ain_scale  0x17a

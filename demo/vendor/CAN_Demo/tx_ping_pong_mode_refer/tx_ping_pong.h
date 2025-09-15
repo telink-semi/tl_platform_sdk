@@ -100,5 +100,11 @@ unsigned char can_fd_tx_buff_enqueue(can_chn_e chn,can_fd_tx_task_t *task, can_f
 
 void can_fd_send_mailbox_request(can_chn_e chn,can_fd_tx_task_t *task);
 
-
+/*!
+ * @brief This interface is used for data conversion in word
+ * @param[in] data    - the convert buff
+ * @param[in] len - data length.
+ * @return  none
+ */
+void data_convert_by_word(unsigned char *data,unsigned char len);
 

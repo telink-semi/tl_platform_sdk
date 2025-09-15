@@ -128,11 +128,11 @@ void main_loop(void)
     if (g_send_flag == 1) {
         g_send_flag   = 0;
         cdc_epin_busy = true;
-        usbd_ep_write(0, CDC_DATA_IN_ENDPOINT_ADDRESS, cdc_in_buffer, 65);
+        usbd_ep_write(0, CDC_DATA_IN_ENDPOINT_ADDRESS, cdc_in_buffer, CDC_DATA_IN_ENDPOINT_SIZE);
         while (cdc_epin_busy) {
         }
         cdc_epin_busy = true;
-        usbd_ep_write(0, CDC_DATA_IN_ENDPOINT_ADDRESS, cdc_in_buffer, 65);
+        usbd_ep_write(0, CDC_DATA_IN_ENDPOINT_ADDRESS, cdc_in_buffer, CDC_DATA_IN_ENDPOINT_SIZE);
         while (cdc_epin_busy) {
         }
     }

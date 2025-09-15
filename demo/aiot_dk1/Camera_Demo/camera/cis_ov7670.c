@@ -304,7 +304,6 @@ static void spi_set_slave_transmode(spi_sel_e spi_sel, spi_tans_mode_e mode)
     reg_spi_slv_trans_mode(spi_sel) = ((reg_spi_slv_trans_mode(spi_sel) & (~FLD_SPI_SLV_TRANS_MODE)) | (mode & 0xf));
 }
 
-#if((LCD_RES_SEL == LCD_RES_240X240))
 static void ov7670_i2c_write(uint8_t reg, uint8_t value)
 {
     uint8_t buf[2];
@@ -328,7 +327,6 @@ static void ov7670_config_window(uint16_t startx, uint16_t starty, uint16_t widt
     ov7670_i2c_write(0x19, (starty & 0x3FC) >> 2);
     ov7670_i2c_write(0x1A, (endy & 0x3FC) >> 2);
 }
-#endif
 
 void spi_dma_init(spi_sel_e spi, int chn)
 {
@@ -392,13 +390,11 @@ unsigned int cis_init(void)
 
     spi_dma_init(LSPI_MODULE, LSPI_RX_DMA_CHN);
     //gpio_function_en((gpio_pin_e)lspi_pin_config.spi_csn_pin);        //disable SPI
-    dma_chn_en(LSPI_RX_DMA_CHN);
+
 
     spi_dma_init(GSPI_MODULE, GSPI_RX_DMA_CHN);
     //gpio_function_en((gpio_pin_e)gspi_pin_config.spi_clk_pin);        //disable SPI
-    dma_chn_en(GSPI_RX_DMA_CHN);
 
-    plic_interrupt_enable(IRQ_DMA);
 
     //plic_interrupt_enable(IRQ_LSPI);
 
@@ -436,9 +432,7 @@ unsigned int cis_init(void)
     }
 
     /*The starting point needs to be adjusted in conjunction with the lens field of view*/
-#if((LCD_RES_SEL == LCD_RES_240X240))
-    ov7670_config_window(184, 10, LCD_2IN_WIDTH, LCD_2IN_HEIGHT);
-#endif
+    ov7670_config_window(184, 10, CIS_IMAGE_WIDTH, CIS_IMAGE_HEIGHT);
 
 #if CIS_USB_DISPLAY_EN
     reg_usb_ep_irq_mask = FLD_USB_EDP8_IRQ;
@@ -451,7 +445,6 @@ unsigned int cis_init(void)
     gpio_input_en(cis_cfg.pin_vs);
     gpio_set_irq(cis_cfg.pin_vs, INTR_RISING_EDGE); //When SW2 is pressed, the falling edge triggers the interrupt.
     gpio_clr_irq_status(FLD_GPIO_IRQ_CLR);
-    plic_interrupt_enable(IRQ_GPIO);
 
     plic_set_priority(IRQ_USB_ENDPOINT, IRQ_PRI_LEV3);
     plic_set_priority(IRQ_GPIO, IRQ_PRI_LEV2);
@@ -460,6 +453,11 @@ unsigned int cis_init(void)
     plic_preempt_feature_en(CORE_PREEMPT_PRI_MODE0);
 
     //flash_read_page(0x80000, 153600, cis_frame);
+
+    dma_chn_en(LSPI_RX_DMA_CHN);
+    dma_chn_en(GSPI_RX_DMA_CHN);
+    plic_interrupt_enable(IRQ_DMA);
+    plic_interrupt_enable(IRQ_GPIO);
 
     return pid;
 }
@@ -578,7 +576,7 @@ static int cis_capture_idle(void)
 #endif
 }
 
-__attribute__((optimize("O1"))) void cis_sta_machine(void)
+_attribute_ram_code_sec_noinline_ void cis_sta_machine(void)
 {
     static uint32_t cis_cnt = 0;
     cis_cnt++;

@@ -75,3 +75,4 @@
 #include "can.h"
 #include "gpio_default.h"
 #include "ir_learn.h"
+#include "rz.h"

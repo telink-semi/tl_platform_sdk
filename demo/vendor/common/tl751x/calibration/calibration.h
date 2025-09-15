@@ -50,6 +50,10 @@
     #define FLASH_CAP_VALUE_ADDR_4M 0x3fe000
 #endif
 
+#ifndef FLASH_CAP_VALUE_ADDR_8M
+    #define FLASH_CAP_VALUE_ADDR_8M 0x7fe000
+#endif
+
 #ifndef FLASH_CAP_VALUE_ADDR_16M
     #define FLASH_CAP_VALUE_ADDR_16M 0xffe000
 #endif
@@ -67,6 +71,7 @@ void calibration_func(void);
  * @brief      This function serves to update rf frequency offset.
  * @param[in]  addr - the frequency offset value address of flash.
  * @return     1 - the frequency offset update, 0 - the frequency offset is not update.
+ * @note       Attention:This function call must be made after rf_mode_init
  */
 unsigned char user_calib_freq_offset(unsigned int addr);
 

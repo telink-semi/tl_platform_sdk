@@ -23,6 +23,8 @@
  *******************************************************************************************************/
 #include "common.h"
 
+#if (FLASH_DEMO_MODE == FLASH_TEST_MODE)
+
 /*
  * @note    It is used to verify the write protection function of the security registers.
  *          The default value of FLASH_OTP_LOCK is 0 , which prevents the security registers from being write protected when the user verifies the functions,
@@ -1708,8 +1710,53 @@ void user_init(void)
 }
 #endif
 
+#elif(FLASH_DEMO_MODE ==  FLASH_LPC_PROTECT_MODE)
+void user_init(void)
+{
+#if defined(MCU_CORE_TL321X)
+    /**
+    ===============================================================================
+                        ##### power-down flash protection #####
+    ===============================================================================
+    -# Flash power-off protection solution is as follows:
+    The LPC continuously monitors the voltage of PBx (PBx voltage is configured as high-level output in software).
+    If during chip power-off the LPC detects PBx voltage drops below 2.0V, it triggers an LPC interrupt,
+    in the LPC interrupt, MSPI is reset(​​holds MSPI in reset state), all clocks are reduced to 24MHz,
+    and finally the MCU is reset(​​holds MCU in reset state),ensuring flash data won't be modified during power-off.
+
+    -# The default hardware for lpc detection is PB4, you can select one of PB1-7
+    according to the actual application.Once selected, this gpio cannot be used for other functions.
+
+    -# lpc_flash_prot_config() and core_interrupt_enable() should be called as early as possible
+    to activate flash power-down protection and core_interrupt_enable() needs to be added by yourself
+    in the application.This maximizes the duration of flash protection.
+    ===============================================================================
+    */
+    lpc_flash_prot_config(LPC_INPUT_PB4);
+    core_interrupt_enable();
+#endif
+}
+#endif
+
 void main_loop(void)
 {
     delay_ms(500);
     gpio_toggle(LED1);
 }
+
+#if(FLASH_DEMO_MODE ==  FLASH_LPC_PROTECT_MODE)
+#if defined(MCU_CORE_TL321X)
+_attribute_ram_code_sec_ void pm_level_irq_handler(void)
+{
+    pm_wakeup_status_e pm_wakeup_status = pm_get_wakeup_src();
+    if (pm_wakeup_status & FLD_WAKEUP_STATUS_COMPARATOR) {
+        mspi_reset_hold();
+        RC_24M_CCLK_24M_HCLK_24M_PCLK_24M_MSPI_24M;
+        sys_mcu_reset_hold();
+    }
+        pm_clr_irq_status(pm_wakeup_status);
+
+}
+PLIC_ISR_REGISTER(pm_level_irq_handler, IRQ_PM_LVL)
+#endif
+#endif

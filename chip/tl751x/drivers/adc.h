@@ -452,3 +452,19 @@ static inline void adc_clr_rx_fifo_cnt(void)
     reg_adc_r_tsamp |= FLD_RX_FIFO_CLR;
     adc_clr_rx_index();
 }
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref for Vbat.
+ * @param[in] vref - Vbat channel sampling calibration value.
+ * @param[in] offset - Vbat channel sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_vbat_calib_vref(signed short vref, signed char offset);
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref for GPIO.
+ * @param[in] vref - GPIO sampling calibration value.
+ * @param[in] offset - GPIO sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_gpio_calib_vref(signed short vref, signed char offset);

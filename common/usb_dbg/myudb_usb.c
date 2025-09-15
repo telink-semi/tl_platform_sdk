@@ -32,7 +32,13 @@
     #if (USB_CNT == 0)
         #include "reg_include/usb_reg.h"
     #elif (USB_CNT == 1)
-        #include "reg_include/usb1_reg.h"
+        #if defined(MCU_CORE_TL752X)
+            #include "usb1_reg.h"
+            #include "usb1hw.h"
+            #include "compiler.h"
+        #else
+            #include "reg_include/usb1_reg.h"
+        #endif
     #endif
 
     #define HCI_VCD_EN 0
@@ -328,7 +334,6 @@ void myudb_usb_handle_ctl_ep_status(void)
     }
     #endif
 }
-
 _attribute_ram_code_sec_noinline_ void usb_send_status_pkt(unsigned char status, unsigned char buffer_num, unsigned char *pkt, unsigned short len)
 {
     if (((myudb_fifo->wptr - myudb_fifo->rptr) & 255) >= myudb_fifo->num) {
@@ -508,6 +513,11 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
             n = 256;
         }
 
+#if defined(MCU_CORE_TL752X)
+        (void) type;
+        (void) adr;
+        // For TL752X, we use a different flash read function
+#else
         if (type == 0) {
             memcpy(rsp + 6, (void *)adr, n);
         } else if (type == 1) {
@@ -518,7 +528,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
         {
             flash_read_page(adr, n, rsp + 6);
         }
-
+#endif
         usb_send_status_pkt(0x82, 8, rsp, n + 6);
     }
     //////////////////////////  Memory Write ////////////////////////////////////
@@ -530,6 +540,11 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
         unsigned int  adr  = p[2] | (p[3] << 8) | (p[4] << 16) | (p[5] << 24);
         int           n    = len - 6;
 
+#if defined(MCU_CORE_TL752X)
+        (void) type;
+        (void) adr;
+        // For TL752X, we use a different flash read function
+#else
         if (type == 0)        //RAM
         {
             memcpy((void *)adr, p + 6, n);
@@ -561,7 +576,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
     //              flash_erase_chip ();
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
                 unsigned int flash_mid = flash_read_mid();
-    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
                 unsigned int flash_mid = flash_read_mid_with_device_num(0);
     #endif
                 flash_mid >>= 16;
@@ -575,6 +590,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
             core_interrupt_disable();
             ret = MYHCI_FW_DOWNLOAD;
         }
+#endif
         usb_send_status_pkt(0x82, 8, rsp, 14);
     } else {
         ret = 1;

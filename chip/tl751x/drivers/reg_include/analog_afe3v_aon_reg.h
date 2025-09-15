@@ -77,6 +77,10 @@ enum
     FLD_EN_BYPASS_LDORAM_3V = BIT(15),
 };
 
+#define areg_aon_0x0b 0x0b
+
+#define areg_aon_0x0c 0x0c
+
 #define areg_aon_0x20 0x20
 
 enum
@@ -188,6 +192,7 @@ typedef enum
     XTAL_UNSTABLE            = 0x01,
     PM_CLR_PLIC_REQUEST_FAIL = 0x02,
     WAIT_TIMEOUT             = 0x03,
+    PLL_DONE                 = 0x04,
 } pm_sw_reboot_reason_e;
 
 #define areg_aon_0x3d 0x3d

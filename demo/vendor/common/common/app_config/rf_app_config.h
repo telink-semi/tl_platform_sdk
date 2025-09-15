@@ -75,18 +75,18 @@ extern "C"
 
 #define RF_FAST_SETTLE_TEST 41
 
-#define RF_MODE             RF_BLE_1M
+#define RF_MODE             RF_BLE_2M
 
 #if defined(MCU_CORE_TL721X)
     //The following operation is used only when CAL_0P94V_TO_0P95V is selected and an energy slot with the VANT keyword is used.
     #define rf_set_vant1p05_power_trim_vol_up()                  \
         do {                                                     \
             pm_cal_0p94v_e pm_trim_vol = pm_get_vdd0p94_level(); \
-            if (((RF_POWER == RF_1P05_VANT_POWER_P5p11dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P5p00dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P4p60dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P4p00dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P3p52dBm)) &&   \
+            if (((RF_POWER == RF_1P05_VANT_POWER_P4p30dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P4p20dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P3p80dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P3p30dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P2p85dBm)) &&   \
                 (pm_trim_vol == CAL_0P94V_TO_0P95V)) {           \
                 pm_set_vdd0p94(CAL_0P94V_TO_1P05V);              \
             }                                                    \
@@ -95,15 +95,36 @@ extern "C"
     #define rf_set_vant1p05_power_trim_vol_down()                \
         do {                                                     \
             pm_cal_0p94v_e pm_trim_vol = pm_get_vdd0p94_level(); \
-            if (((RF_POWER == RF_1P05_VANT_POWER_P5p11dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P5p00dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P4p60dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P4p00dBm) ||    \
-                 (RF_POWER == RF_1P05_VANT_POWER_P3p52dBm)) &&   \
+            if (((RF_POWER == RF_1P05_VANT_POWER_P4p30dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P4p20dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P3p80dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P3p30dBm) ||    \
+                 (RF_POWER == RF_1P05_VANT_POWER_P2p85dBm)) &&   \
                 (pm_trim_vol == CAL_0P94V_TO_1P05V)) {           \
                 pm_set_vdd0p94(CAL_0P94V_TO_0P95V);              \
             }                                                    \
         } while (0)
+#elif defined(MCU_CORE_TL322X)
+
+  #define rf_set_vant1p05_power_trim_vol_up()            \
+        do{                                              \
+            if (((RF_POWER == RF_VANT_POWER_P6p40) ||    \
+                 (RF_POWER == RF_VANT_POWER_P6p00) ||    \
+                 (RF_POWER == RF_VANT_POWER_P5p50) ||    \
+                 (RF_POWER == RF_VANT_POWER_P5p00))){    \
+                rf_set_vant_power_trim_level(RF_VANT_HIGH_POWER); \
+            }                                                     \
+        }while(0)
+
+#define rf_set_vant1p05_power_trim_vol_down()            \
+      do{                                              \
+          if (((RF_POWER == RF_VANT_POWER_P6p40) ||    \
+                 (RF_POWER == RF_VANT_POWER_P6p00) ||    \
+                 (RF_POWER == RF_VANT_POWER_P5p50) ||    \
+                 (RF_POWER == RF_VANT_POWER_P5p00))){    \
+              rf_set_vant_power_trim_level(RF_VANT_NORMAL_POWER); \
+          }                                                     \
+      }while(0)
 #else
     #define rf_set_vant1p05_power_trim_vol_up() \
         do {                                    \
@@ -139,6 +160,8 @@ extern "C"
 #elif defined(MCU_CORE_TL322X)
     #define RF_POWER RF_POWER_P4p50dBm
 #elif defined(MCU_CORE_TL751X)
+    #define RF_POWER RF_POWER_P10p00dBm
+#elif defined(MCU_CORE_TL753X)
     #define RF_POWER RF_POWER_P10p00dBm
 #endif
 

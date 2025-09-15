@@ -126,12 +126,20 @@ void user_init(void)
 
     /* pwm config. */
     pwm_send_init();
+#if defined(MCU_CORE_TL322X)
+    pwm_set_pin(GPIO_FC_PB3, PWM0);
+#else
     pwm_set_pin(GPIO_FC_PB0, PWM0);
+#endif
 
     /* interrupt config. */
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_PWM);
-    pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ);
+#if !defined(MCU_CORE_TL322X)
+    pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ );
+#else
+    pwm_set_irq_mask(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ);
+#endif
 
     /* dam config. */
     pwm_set_dma_config(DMA0);
@@ -192,7 +200,11 @@ void user_init(void)
     /* interrupt config. */
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_PWM);
-    pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ);
+#if !defined(MCU_CORE_TL322X)
+    pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ );
+#else
+    pwm_set_irq_mask(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ);
+#endif
 
     /* dam config. */
     pwm_set_dma_config(DMA0);
@@ -298,8 +310,13 @@ PLIC_ISR_REGISTER(ir_learn_irq_handler, IRQ_IR_LEARN)
 #if (IR_LEARN_MODE == IR_DIGITAL_TX_MODE) || (IR_LEARN_MODE == IR_ANALOG_TX_MODE)
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-    if (pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ)) {
-        pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ);
+#if !defined(MCU_CORE_TL322X)
+    if(pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ )){
+        pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ );
+#else
+    if(pwm_get_irq_status(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ)){
+        pwm_clr_irq_status(PWM0_ID, FLD_PWM0_IR_DMA_FIFO_IRQ);
+#endif
         gpio_toggle(LED2);
     }
 }

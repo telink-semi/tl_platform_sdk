@@ -41,6 +41,8 @@ extern "C"
 #endif
 #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
 #include "app_config/adc_app_config_1v1.h"
+#elif defined(MCU_CORE_TL322X)
+#include "app_config/adc_app_config_1v2.h"
 #endif
 #endif
 
@@ -82,11 +84,14 @@ extern "C"
 #if defined(MCU_CORE_B92)
 #include "app_config/audio_app_config_1v1.h"
 #endif
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
 #include "app_config/audio_app_config_1v3.h"
 #endif
 #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518)
 #include "app_config/audio_app_config_1v2.h"
+#endif
+#if defined(MCU_CORE_TL752X)
+#include "app_config/audio_app_config_1v4.h"
 #endif
 #endif
 
@@ -287,6 +292,10 @@ extern "C"
 #include "app_config/n22_test_app_config.h"
 #endif
 
+#if defined(CURRENT_BUILD_N22_Test_Demo_Bootloader_by_N22_RRAM_MCU)
+#include "app_config/n22_test_app_config.h"
+#endif
+
 #if defined(CURRENT_BUILD_PEM_Demo)
 #include "app_config/pem_app_config.h"
 #endif
@@ -353,6 +362,14 @@ extern "C"
 
 #if defined(CURRENT_BUILD_CAN_Demo)
 #include "app_config/can_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_RZ_Demo)
+#include "app_config/rz_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_SD_HOST_Demo)
+#include "app_config/sd_host_config.h"
 #endif
 
 #if defined(__cplusplus)
