@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    tl_hal_adc.c
  *
- * @brief   This is the source file for TL321X and TL323X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2025

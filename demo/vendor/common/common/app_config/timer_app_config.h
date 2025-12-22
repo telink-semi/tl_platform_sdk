@@ -29,10 +29,18 @@ extern "C"
 #endif
 
 #if defined(MCU_CORE_TL752X)
-#define TIMER_ONESHORT_MODE          0
-#define TIMER_PERIOD_MODE            1
-#define TIMER_PWM_MODE               2
-#define TIMER_MODE              TIMER_ONESHORT_MODE
+
+/**
+ * When core voltage is 0.72~0.8V, the timer clock supports the maximum frequency up to 25MHz.
+ * When core voltage is 0.81~0.99V, the timer clock supports the maximum frequency up to 50MHz.
+ */
+#define TIMER_TICK_CLK_25M  25000000
+#define TIMER_TICK_CLK_50M  50000000
+#define TIMER_TICK_CLK      TIMER_TICK_CLK_25M
+
+#define TIMER_PERIOD_MODE            0
+#define TIMER_PWM_MODE               1
+#define TIMER_MODE              TIMER_PERIOD_MODE
 #else
 #if defined(MCU_CORE_TL751X)
     #define TIMER0_GPIO GPIO_PD0
@@ -90,9 +98,8 @@ extern "C"
 #define PULL_WAKEUP_SRC_PC1 GPIO_PIN_UP_DOWN_FLOAT
 #endif
 
-#include "driver.h"
-
 #endif
+#include "driver.h"
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

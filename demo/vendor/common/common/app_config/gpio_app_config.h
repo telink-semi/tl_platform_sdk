@@ -47,7 +47,7 @@ extern "C"
  * Do not recommended that two or more GPIOs be set to the same interrupt source, as the interrupt is uncertain if triggered at the same time.
  */
         #define GPIO_MODE GPIO_IRQ
-    #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+    #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
         //GPIO_MODE can be configured as GPIO_IRQ0~7, 8 interrupts can be used at the same time.
         #define GPIO_IRQ_NUM0 6
         #define GPIO_IRQ_NUM1 7

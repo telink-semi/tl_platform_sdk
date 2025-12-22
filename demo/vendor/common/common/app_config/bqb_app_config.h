@@ -80,7 +80,11 @@ extern "C"
 #elif defined(MCU_CORE_TL322X)
     #define BQB_UART_TX_PORT GPIO_FC_PD6
     #define BQB_UART_RX_PORT GPIO_FC_PD7
+#elif defined(MCU_CORE_TL323X)
+    #define BQB_UART_TX_PORT GPIO_FC_PD1
+    #define BQB_UART_RX_PORT GPIO_FC_PA1
 #endif
+
 
 #include "driver.h"
 /* Disable C linkage for C++ Compilers: */

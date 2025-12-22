@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    hal_i2s.h
  *
- * @brief   This is the source file for TL7518/TL721X/TL321X
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024

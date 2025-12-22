@@ -72,7 +72,18 @@ void user_init(void)
 {
     delay_ms(2000);
 
-    #if (!CURRENT_TEST)
+    #if CURRENT_TEST
+    gpio_shutdown(GPIO_ALL);
+
+    #if (DSP_TEST)
+    pm_set_dig_module_power_switch(FLD_PD_DSP_EN, PM_POWER_UP);
+    #endif
+
+    #if (N22_TEST)
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN, PM_POWER_UP);
+    #endif
+
+    #else
     // init the LED pin, for indication
     led_init(LED1, 1);
     delay_ms(1000);
@@ -100,24 +111,18 @@ void user_init(void)
     #endif
 
     #if (N22_TEST)
+    #if defined(MCU_CORE_TL751X)
     sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
     sys_n22_start();
-    #if defined(MCU_CORE_TL751X)
     mailbox_set_irq_mask(FLD_MAILBOX_N22_TO_D25F_IRQ);
     #else
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN, PM_POWER_UP);
+    sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
+    sys_n22_start();
     mailbox_set_irq_mask_d25f();
     #endif
     plic_interrupt_enable(IRQ_MAILBOX_N22_TO_D25);
     core_interrupt_enable();
-    #endif
-
-    #else
-    #if (DSP_TEST)
-    pm_set_dig_module_power_switch(FLD_PD_DSP_EN, PM_POWER_UP);
-    #endif
-
-    #if (N22_TEST)
-    pm_set_dig_module_power_switch(FLD_PD_ZB_EN, PM_POWER_UP);
     #endif
 
     #endif
@@ -269,6 +274,9 @@ void main_loop(void)
     #if (N22_TEST)
     if (pm_get_suspend_power_cfg() & FLD_PD_ZB_EN)
     {
+#if defined(MCU_CORE_TL322X)
+        pm_set_dig_module_power_switch(FLD_PD_ZB_EN, PM_POWER_UP);
+#endif
         sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
         sys_n22_start();
     }

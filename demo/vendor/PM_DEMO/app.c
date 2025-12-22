@@ -194,6 +194,11 @@ void main_loop(void)
     gpio_set_low_level(LED2);
     #endif
 
+    if(PM_SLEEP_MODE == PM_SUSPEND_MODE)
+    {
+        pm_set_suspend_power_cfg(FLD_PD_ZB_EN, 1);
+    }
+
     //When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,
     //otherwise can not enter sleep normally, crash occurs.
     // CTB mode : For internal testing only, this function is not available externally

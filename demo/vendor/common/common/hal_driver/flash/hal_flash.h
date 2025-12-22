@@ -45,7 +45,7 @@
  */
 #define FLASH_PROTECT_MODIFY_CONFIG 0
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
 extern flash_hal_handler_t g_flash_handler;
 extern bool                g_mid_matched;
 /**

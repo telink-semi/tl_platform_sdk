@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    app.c
  *
- * @brief   This is the source file for TL7518/TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
@@ -203,7 +203,6 @@ void main_loop (void)
 #if(ADC_MODE == ADC_DMA_MODE)
 _attribute_ram_code_sec_ void dma_irq_handler(void)
 {
-    gpio_toggle(GPIO_PA3);
     if(dma_get_tc_irq_status(BIT(ADC_DMA_CHN)))
     {
         adc_dma_rx_done_flag = 1;
@@ -272,7 +271,6 @@ short adc_get_result(adc_num_e sar_adc_num,adc_transfer_mode_e transfer_mode,adc
             if (sample_cnt > 0)
             {
                 channel_buffers[chn][cnt]= adc_get_raw_code(sar_adc_num);
-                gpio_toggle(GPIO_PA3);
 
                 if(channel_buffers[chn][cnt] & BIT(11)){ //12 bit resolution, BIT(11) is sign bit, 1 means negative voltage in differential_mode
                     channel_buffers[chn][cnt]=0;

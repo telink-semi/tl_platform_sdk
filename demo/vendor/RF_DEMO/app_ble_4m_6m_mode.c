@@ -49,7 +49,7 @@ unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10
 
     #define RF_FREQ        17
     #define ACCESS_CODE    0x29417671 //0xd6be898e// 0x898e898e//
-    #define RF_HIGH_PER_MODE     1
+
 
 volatile unsigned int rx_cnt = 0;
 volatile unsigned int tx_cnt = 0;
@@ -88,13 +88,6 @@ PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
     #if (RF_AUTO_MODE == AUTO)
 void user_init(void)
 {
-    // Set modem rate to 48 MHz for 4/6 Mbps operation
-    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
-#if (RF_HIGH_PER_MODE)
-    rf_modem_hp_path(1);
-#else
-    rf_modem_hp_path(0);
-#endif
     rf_set_power_level(RF_POWER);
         #if (RF_MODE == RF_BLE_4M_NO_PN || RF_MODE == RF_BLE_6M_NO_PN)
     rf_set_chn(RF_FREQ);
@@ -186,13 +179,6 @@ void main_loop(void)
 
 void user_init(void)
 {
-    // Set modem rate to 48 MHz for 4/6 Mbps operation
-    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
-#if (RF_HIGH_PER_MODE)
-    rf_modem_hp_path(1);
-#else
-    rf_modem_hp_path(0);
-#endif
     rf_set_power_level(RF_POWER);
         #if (RF_MODE == RF_BLE_4M_NO_PN || RF_MODE == RF_BLE_6M_NO_PN)
     rf_set_chn(RF_FREQ);

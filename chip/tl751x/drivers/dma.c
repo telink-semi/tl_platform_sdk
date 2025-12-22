@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    dma.c
  *
- * @brief   This is the header file for TL751X
+ * @brief   This is the source file for tl751x
  *
  * @author  Driver Group
  * @date    2024

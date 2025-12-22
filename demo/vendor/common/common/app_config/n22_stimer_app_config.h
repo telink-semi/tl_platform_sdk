@@ -37,6 +37,7 @@ extern "C"
 #define STIMER_DELAY            1
 #define STIMER_IRQ_D25_N22_DSP  2
 #define STIMER_IRQ_N22          3
+#if !defined(MCU_CORE_TL752X)
 #define STIMER_GET_32K_TICK     4
 #define STIMER_SET_32K_TICK     5
 #define STIMER_SET_32K_TICK_LVL 6
@@ -47,8 +48,9 @@ extern "C"
     #define STIMER_INPUT_CAPTURE_DMA          10
     #define STIMER_INPUT_CAPTURE_DMA_LLP_MODE 11
 #endif
+#endif
 
-#define STIMER_MODE STIMER_DELAY
+#define STIMER_MODE STIMER_IRQ_N22
 
 #if defined(MCU_CORE_TL751X)
 #define PULL_WAKEUP_SRC_PB0 GPIO_PIN_UP_DOWN_FLOAT
@@ -56,6 +58,7 @@ extern "C"
 #endif
 
 #include "driver.h"
+
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

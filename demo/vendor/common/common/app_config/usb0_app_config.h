@@ -27,9 +27,7 @@
 extern "C" {
 #endif
 
-#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
-#endif
 
 #define USB_MOUSE          1
 #define USB_KEYBOARD       2

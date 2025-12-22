@@ -28,7 +28,9 @@
 extern "C"
 {
 #endif
+
 #include "driver.h"
+
 #define INTERRUPT_NON_NESTED_DEMO 1 // external non_interrupt
 #define INTERRUPT_NESTED_DEMO     2 /*  external interrupt. */
 #define INTERRUPT_MTIME_DEMO      3 /* machine time interrupt. */

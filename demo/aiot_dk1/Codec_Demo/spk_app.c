@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    spk_app.c
  *
- * @brief   This is the header file for TL7518/TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024

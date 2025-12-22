@@ -26,7 +26,19 @@
 #define DUTCMD_FIRMWARE_ENCRYPT 0x68
 #define TL_TEST_RESP_OK         1
 #define TL_TEST_RESP_ERR        0
-
+#if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
+    #define SRAM_BASE_ADDR 0x00020000
+#elif defined(MCU_CORE_TL721X)
+    #define SRAM_BASE_ADDR 0x00040000
+#elif defined(MCU_CORE_TL321X)
+    #define SRAM_BASE_ADDR 0x00068000
+#elif defined(MCU_CORE_TL322X)
+    #define SRAM_BASE_ADDR 0x00000000
+#elif defined(MCU_CORE_TL753X)
+    #define SRAM_BASE_ADDR 0x10000000
+#else
+    #define SRAM_BASE_ADDR 0xc0000000
+#endif
 typedef struct
 {
     unsigned char cmd   : 7; //bit0~bit6
@@ -63,17 +75,29 @@ struct DUT_CMD_FUNC
    If the test item passes, the program returns "TL_TEST_RESP_OK".
 */
 int                                 flash_firmware_protect(void);
-volatile tl_test_cmd_pkt_t_another *g_test_cmd_ptr = (tl_test_cmd_pkt_t_another *)0xc0000004;
+volatile tl_test_cmd_pkt_t_another *g_test_cmd_ptr = (tl_test_cmd_pkt_t_another *)(SRAM_BASE_ADDR + 4);
 
 struct DUT_CMD_FUNC dut_cmd_func[] = {
     {DUTCMD_FIRMWARE_ENCRYPT, flash_firmware_protect},
 };
 
-void firmware_encrypt_based_on_uid(unsigned char *uid, unsigned char *ciphertext)
+int  firmware_encrypt_based_on_uid(unsigned char *uid, unsigned char *ciphertext)
 {
     //Users can change the secret key according to their own needs.
-    unsigned char key[16] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
-    aes_encrypt(key, uid, ciphertext);
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
+        unsigned char key[16] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
+        aes_encrypt(key, uid, ciphertext);
+    return 0;
+    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) ||  defined(MCU_CORE_TL751X)
+        ske_dig_en();
+        unsigned char key[16] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
+        unsigned int ret= ske_lp_crypto(SKE_ALG_AES_128, SKE_MODE_ECB, SKE_CRYPTO_ENCRYPT, key, 0, NULL, uid, ciphertext, 16);
+        return ret;
+    #else
+        (void) uid;
+        (void) ciphertext ;
+        return 1;
+    #endif
 }
 
 int flash_firmware_protect(void)
@@ -84,18 +108,25 @@ int flash_firmware_protect(void)
     unsigned int  address = g_test_cmd_ptr->param[0];
     unsigned int  flash_mid, i;
     unsigned char flash_uid[16], rbuf[16];
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
     int           flag       = flash_read_mid_uid_with_check(&flash_mid, flash_uid);
     g_test_cmd_ptr->param[0] = flash_mid;
     if (flag == TL_TEST_RESP_ERR) {
         return TL_TEST_RESP_ERR;
     }
+    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X)
+    flash_mid = flash_read_mid_with_device_num(SLAVE0);
+    g_test_cmd_ptr->param[0] = flash_mid;
+    flash_read_uid_with_device_num(SLAVE0,((FLASH_READ_UID_CMD_GD_PUYA_ZB_TH >> 24) & 0xff), flash_uid);
+    #endif
     /********************************************************************************************************
              Use UID and Key as input for AES encryption, customers can modify the algorithm by themselves
              Algorithms can be more complex, such as multiple AES encryption, or adding some XOR operations, etc.
     *******************************************************************************************************/
     unsigned char ciphertext[16] = {0};
-    firmware_encrypt_based_on_uid(flash_uid, ciphertext);
-
+    if(firmware_encrypt_based_on_uid(flash_uid, ciphertext)) {
+        return TL_TEST_RESP_ERR;
+    }
     /********************************************************************************************************
                           Burn the ciphertext and judge whether the burning is successful
     *******************************************************************************************************/

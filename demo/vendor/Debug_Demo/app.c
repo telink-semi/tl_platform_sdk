@@ -57,7 +57,6 @@ void user_init(void)
     printf("\n Driver version: %2x \n", 0xa001);
     printf("\n Copyright (c) %d \n", 2020);
     printf("\n Telink semiconductor (%s)Ltd, Co \n", "shanghai");
-
 #endif
 }
 

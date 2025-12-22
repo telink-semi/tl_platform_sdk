@@ -52,7 +52,7 @@
     #elif defined(MCU_CORE_TL322X)
         #define SRAM_BASE_ADDR 0x00000000
     #else
-        #define SRAM_BASE_ADDR 0xc0000000
+        #define SRAM_BASE_ADDR 0x00000000
     #endif
 
     #define TX_PACKET_MODE_ADDR (SRAM_BASE_ADDR + 0x05)

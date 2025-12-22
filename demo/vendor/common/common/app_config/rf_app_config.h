@@ -27,7 +27,7 @@
 extern "C"
 {
 #endif
-
+#include "driver.h"
 #define GPIO_TOGGLE     1
 
 #define RF_BLE_1M       1
@@ -58,7 +58,7 @@ extern "C"
     #define RF_BLE_1M_HYPER_LENGTH 18 //TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
 #endif
 
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #define RF_PRI_GENERIC_1M   22
     #define RF_PRI_GENERIC_2M   23
@@ -75,7 +75,11 @@ extern "C"
 
 #define RF_FAST_SETTLE_TEST 41
 
-#define RF_MODE             RF_BLE_2M
+#define RF_MODE             RF_BLE_1M
+
+#if defined(MCU_CORE_TL322X)
+#define RF_HIGH_PER_MODE     1
+#endif
 
 #if defined(MCU_CORE_TL721X)
     //The following operation is used only when CAL_0P94V_TO_0P95V is selected and an energy slot with the VANT keyword is used.
@@ -138,6 +142,7 @@ extern "C"
     #define rf_stimer_get_tick()     rf_bb_timer_get_tick()
     #define RF_SYSTEM_TIMER_TICK_1US BB_TIMER_TICK_1US
     #define RF_SYSTEM_TIMER_TICK_1MS BB_TIMER_TICK_1MS
+
 #else
     #define rf_stimer_get_tick()     stimer_get_tick()
     #define RF_SYSTEM_TIMER_TICK_1US SYSTEM_TIMER_TICK_1US
@@ -156,16 +161,22 @@ extern "C"
 #elif defined(MCU_CORE_TL321X)
     #define RF_POWER RF_POWER_P4p52dBm
 #elif defined(MCU_CORE_TL323X)
-    #define RF_POWER RF_POWER_P4p47dBm
+    #define RF_POWER RF_POWER_P4p50dBm
 #elif defined(MCU_CORE_TL322X)
     #define RF_POWER RF_POWER_P4p50dBm
 #elif defined(MCU_CORE_TL751X)
     #define RF_POWER RF_POWER_P10p00dBm
+#elif defined(MCU_CORE_TL752X)
+    #define RF_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL753X)
     #define RF_POWER RF_POWER_P10p00dBm
+#elif defined(MCU_CORE_TL521X)
+    #define RF_POWER RF_POWER_P4p47dBm
 #endif
 
+#if(!defined(MCU_CORE_TL752X))
 #include "driver.h"
+#endif
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

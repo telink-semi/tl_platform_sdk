@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    wt.h
  *
- * @brief   This is the source file for tl751x
+ * @brief   This is the header file for tl751x
  *
  * @author  Driver Group
  * @date    2025

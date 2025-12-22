@@ -34,12 +34,14 @@
 unsigned int           val_n22_to_d25f_word[2]     = {0x01234567, 0x89abcdef};
 unsigned int           val_d25f_to_n22_word[2]     = {0};
 volatile unsigned char mailbox_d25_to_n22_irq_flag = 0;
+volatile unsigned char mailbox_d25_to_n22_cnt      = 0;
     #endif
 
     #if !defined(MCU_CORE_TL322X) && (MAILBOX_N22_DSP)
 unsigned int           val_n22_to_dsp_word[2]      = {0x01234567, 0x89abcdef};
 unsigned int           val_dsp_to_n22_word[2]      = {0};
 volatile unsigned char mailbox_dsp_to_n22_irq_flag = 0;
+volatile unsigned char mailbox_dsp_to_n22_cnt      = 0;
     #endif
 #endif
 
@@ -122,6 +124,7 @@ _attribute_ram_code_sec_noinline_ void mailbox_d25_to_n22_irq_handler(void)
         mailbox_clr_irq_status_n22();
         mailbox_n22_get_d25f_msg(val_d25f_to_n22_word);
         mailbox_d25_to_n22_irq_flag = 1;
+        mailbox_d25_to_n22_cnt ++;
     }
 }
 CLIC_ISR_REGISTER(mailbox_d25_to_n22_irq_handler, IRQ_IRQ_MAILBOX_D25_TO_N22)
@@ -134,6 +137,7 @@ _attribute_ram_code_sec_noinline_ void mailbox_d25_to_n22_irq_handler(void)
         mailbox_clr_irq_status(FLD_MAILBOX_D25F_TO_N22_IRQ);
         mailbox_n22_get_d25f_msg(val_d25f_to_n22_word);
         mailbox_d25_to_n22_irq_flag = 1;
+        mailbox_d25_to_n22_cnt ++;
     }
 }
 CLIC_ISR_REGISTER(mailbox_d25_to_n22_irq_handler, IRQ_IRQ_MAILBOX_D25_TO_N22)
@@ -146,6 +150,7 @@ _attribute_ram_code_sec_noinline_ void mailbox_dsp_to_n22_irq_handler(void)
         mailbox_clr_irq_status(FLD_MAILBOX_DSP_TO_N22_IRQ);
         mailbox_n22_get_dsp_msg(val_dsp_to_n22_word);
         mailbox_dsp_to_n22_irq_flag = 1;
+        mailbox_dsp_to_n22_cnt ++;
     }
 }
 CLIC_ISR_REGISTER(mailbox_dsp_to_n22_irq_handler, IRQ_IRQ_MAILBOX_DSP_TO_N22)

@@ -47,7 +47,7 @@ unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10
     #define RX_FIFO_DEP    128
 
 
-    #define RF_FREQ        37
+    #define RF_FREQ        40
     #define ACCESS_CODE    0xf8118ac9//0x29417671 //0xd6be898e// 0x898e898e//
 
 volatile unsigned int rx_cnt = 0;
@@ -56,12 +56,12 @@ volatile unsigned int tx_cnt = 0;
 _attribute_ram_code_sec_ void rf_irq_handler(void)
 {
     if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
-        rx_irq_cnt++;
+        // rx_irq_cnt++;
         #if (RF_AUTO_MODE == AUTO)
         unsigned char *raw_pkt = rf_get_rx_packet_addr(RX_FIFO_NUM, RX_FIFO_DEP, rx_packet);
         if (rf_ble_packet_crc_ok(raw_pkt)) {
             rx_cnt++;
-            gpio_toggle(LED2);
+            gpio_toggle(LED1);
         }
         rf_start_srx(rf_stimer_get_tick());
         #else
@@ -312,7 +312,7 @@ void main_loop(void)
 
                 #if (defined(MCU_CORE_TL7518))
     delay_us(43); //Wait for calibration to stabilize
-                #elif (defined(MCU_CORE_TL7518))
+                #elif (defined(MCU_CORE_TL751X))
     delay_us(45); //Wait for calibration to stabilize
                 #else
     delay_us(85); //Wait for calibration to stabilize

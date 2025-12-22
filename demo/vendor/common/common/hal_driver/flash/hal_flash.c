@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    hal_flash.c
  *
- * @brief   This is the source file for B91
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "hal_flash.h"
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
 
 
 extern const flash_hal_handler_t flash_list[];

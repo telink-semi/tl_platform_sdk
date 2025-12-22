@@ -27,6 +27,7 @@
 extern "C" {
 #endif
 
+#include "driver.h"
 #define SD_HOST_MMC       1
 #define SD_HOST_SDMMC     2
 #define SD_HOST_DEMO_TYPE SD_HOST_MMC

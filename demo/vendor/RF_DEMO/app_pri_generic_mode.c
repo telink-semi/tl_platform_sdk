@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "common.h"
 
-#if ((defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)) && (RF_MODE == RF_PRI_GENERIC_1M || RF_MODE == RF_PRI_GENERIC_2M || RF_MODE == RF_PRI_GENERIC_250K || RF_MODE == RF_PRI_GENERIC_500K))
+#if ((defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)) && (RF_MODE == RF_PRI_GENERIC_1M || RF_MODE == RF_PRI_GENERIC_2M || RF_MODE == RF_PRI_GENERIC_250K || RF_MODE == RF_PRI_GENERIC_500K))
 
 
 unsigned char rx_packet[128 * 4] __attribute__((aligned(4)));
@@ -39,7 +39,9 @@ unsigned char Private_generic_tx_packet[48] __attribute__((aligned(4))) = {3, 0,
 
 
     #define PRI_GENERIC_FLT_MODE_EN 0
-
+#if(defined(MCU_CORE_TL323X))
+    #define PRI_GENERIC_3BIT_HEADWE_EN    0
+#endif
     #define RF_RX_IRQ_EN            0
 
     #define TX_PKT_PAYLOAD          32
@@ -49,6 +51,17 @@ unsigned char Private_generic_tx_packet[48] __attribute__((aligned(4))) = {3, 0,
 
     #define RF_FREQ                 17
     #define ACCESS_CODE             0x29417671 // 0xd6be898e//
+    #if(PRI_GENERIC_3BIT_HEADWE_EN)
+volatile unsigned int rx_cnt      = 0;
+volatile unsigned int math_cnt    = 0;
+volatile unsigned int unmath_cnt  = 0;
+volatile unsigned int tx_cnt      = 0;
+unsigned char         h0_size     = 0;//must be 0
+unsigned char         h1_size     = 8;//must be 8
+unsigned char         length_size = 8;//must be 8
+unsigned char         h1_val      = 13;
+
+    #else
 volatile unsigned int rx_cnt      = 0;
 volatile unsigned int math_cnt    = 0;
 volatile unsigned int unmath_cnt  = 0;
@@ -58,6 +71,7 @@ unsigned char         h1_size     = 4;
 unsigned char         length_size = 15;
 unsigned short        h0_val      = 26;
 unsigned short        h1_val      = 14;
+    #endif
 
     #if (PRI_GENERIC_FLT_MODE_EN)
 /**
@@ -109,7 +123,18 @@ void user_init(void)
     rf_access_code_comm(ACCESS_CODE);
 
     rf_set_pri_generic_header_size(h0_size, length_size, h1_size);
+
+        #if(PRI_GENERIC_3BIT_HEADWE_EN)
+    rf_set_pri_generic_length_adj(1);
+
+    rf_set_crc_config(&rf_crc_config[3]);
+
+    rf_set_pri_generic_3bit_header_en();
+        #else
+    rf_set_crc_config(&rf_crc_config[1]);
+    rf_set_pri_generic_3bit_header_dis();
     rf_set_pri_generic_length_adj(2);
+        #endif
         #if (PRI_GENERIC_FLT_MODE_EN)
     rf_set_pkt_filter(rf_pkt_flt);
         #endif
@@ -199,7 +224,17 @@ void user_init(void)
     rf_access_code_comm(ACCESS_CODE);
 
     rf_set_pri_generic_header_size(h0_size, length_size, h1_size);
+     #if(PRI_GENERIC_3BIT_HEADWE_EN)
+    rf_set_pri_generic_length_adj(1);
+
+    rf_set_crc_config(&rf_crc_config[3]);
+
+    rf_set_pri_generic_3bit_header_en();
+      #else
+    rf_set_crc_config(&rf_crc_config[1]);
+    rf_set_pri_generic_3bit_header_dis();
     rf_set_pri_generic_length_adj(2);
+      #endif
         #if (PRI_GENERIC_FLT_MODE_EN)
     rf_set_pkt_filter(rf_pkt_flt);
         #endif

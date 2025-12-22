@@ -21,6 +21,40 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+ /**
+ * @page RF RF Module Configuration Guide
+ * 
+ * @brief This page provides detailed usage notes, power configuration instructions, and key precautions for the RF module.
+ * 
+ * @par Header File
+ *      rf_common.h
+ * 
+ * @section rf_pm_precautions RF and PM Usage Precautions
+ * When using RF and Power Management (PM) functions in combination, note the following requirements for different low-power modes:
+ * 
+ * - <b>Suspend mode</b>:
+ *   RF-related digital registers will be lost. After waking up from suspend mode, re-invoke all RF-related function interfaces to restore functionality.
+ *   <br>
+ *   If you don't want to re-invoke RF-related function interfaces after waking up, you can use the <code>pm_set_suspend_power_cfg</code> function 
+ *   to set <code>PM_POWER_BASEBAND</code> to maintain power during suspend sleep. 
+ *   <b>Note:</b> This will increase power consumption during suspend.
+ * 
+ * - <b>Deep retention mode</b>:
+ *   RF-related digital registers will be lost. After waking up from deep retention mode, re-invoke all RF-related function interfaces to restore functionality.
+ * 
+ * - <b>Deep mode</b>:
+ *   RF-related digital registers will be lost. After waking up from deep mode, re-invoke all RF-related function interfaces to restore functionality.
+ * 
+ * @section rf_power_explanation RF Transmit Power Configuration
+ * 
+ * @subsection rf_power_table TX Power Table (Driver-Provided)
+ * - The default <code>rf_power_level_e</code> enumeration is tested with VDDRF1 at 1.8V and VDDRF2 at 1.04V for BGA package by default.
+ * - Use the driver-provided <code>rf_set_power_level</code> function to configure the RF transmit power level.
+ *
+ * @subsection rf_power_notes Supplementary Notes
+ * 1. For package-specific detailed power data (e.g., actual power values corresponding to each level), refer to the <cite>[Chip Model] RF Test Report</cite>.
+ * 2. Actual transmit power is affected by antenna matching, PCB layout, and hardware design. Mandatory hardware calibration is required for mass production or high-precision applications.
+ */
 #ifndef RF_COMMON_H
 #define RF_COMMON_H
 
@@ -318,6 +352,7 @@ static inline void rf_set_tx_rx_off(void)
 {
     write_reg8(0xd4170028, 0x80);                              // rx disable
     write_reg8(0xd4170202, 0x45);                              // reset tx/rx state machine
+    write_reg8(0xd417022b, read_reg8(0xd417022b) & (~BIT(7))); //dis continue mode.
 }
 
 /**
@@ -807,6 +842,9 @@ _attribute_ram_code_sec_noinline_ void rf_start_stx2rx(void *addr, unsigned int 
 /**
  * @brief       This function serves to set RF Rx manual on.
  * @return      none.
+ * @note        The state machine of the manual RX mode for TL751X chip is similar to that of the SRX state machine.
+ *              The key difference is that after being triggered, the manual RX mode enables RX (via RX_EN signal) again at fixed intervals to receive packets, following the form of continue mode.
+ *              The default setting for the rx continue mode interval in manual mode is 14us.
  */
 _attribute_ram_code_sec_noinline_ void rf_set_rxmode(void);
 

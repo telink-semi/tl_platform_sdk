@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    cstartup_ram.S
  *
- * @brief   This is the boot file for tl751x
+ * @brief   This is the boot file for tl322x
  *
  * @author  Driver Group
  * @date    2023

@@ -142,6 +142,7 @@ struct PC_CMD_FUNC
     unsigned short cmd_name;
     void (*func)(void);
 };
+
 #if defined(MCU_CORE_TL751X)
 volatile unsigned int adc_data = 0;
 void adc_collection_data(void)

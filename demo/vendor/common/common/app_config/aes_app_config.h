@@ -27,9 +27,7 @@
 extern "C"
 {
 #endif
-#if !defined(MCU_CORE_TL752X)
 #include "driver.h"
-#endif
 
 #define AES_ECB_MODE 1
 #define AES_CBC_MODE 2

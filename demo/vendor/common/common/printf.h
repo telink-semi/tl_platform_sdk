@@ -22,15 +22,16 @@
  *
  *******************************************************************************************************/
 #pragma once
-#if !defined(MCU_CORE_TL752X)
+#define DEBUG_MODE 1
+#if !(defined(MCU_CORE_TL752X) ||defined(MCU_CORE_TL651X))
 #include "gpio.h"
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL521X)
     #include "lib/include/stimer.h"
 #else
     #include "stimer.h"
 #endif
 #include <stdio.h>
-#define DEBUG_MODE 1
+
 
 #if (DEBUG_MODE == 1)
 

@@ -24,12 +24,16 @@
 #ifndef COMPILER_H_
 #define COMPILER_H_
 
-#ifdef MCU_CORE_TL752X
+#if defined(MCU_CORE_TL752X)|| defined(MCU_CORE_TL651X)
 #define _attribute_ram_code_sec_            __attribute__((section(".ilm_code")))
 #define _attribute_ram_code_sec_noinline_   __attribute__((section(".ilm_code"))) __attribute__((noinline))
 
 #define _attribute_text_sec_                __attribute__((section(".flash"))) __attribute__((noinline)) //Inlining happens when __attribute__((noinline)) is not added.
 #define _attribute_text_sec_optimize_o2_    __attribute__((section(".flash"))) __attribute__((optimize("O2"))) __attribute__((noinline)) __attribute__((no_execit))
+#define _attribute_data_retention_sec_
+
+#define _attribute_retention_ram_code_sec_            __attribute__((section(".ilm_code")))
+#define _attribute_retention_ram_code_sec_noinline_   __attribute__((section(".ilm_code"))) __attribute__((noinline))
 
 #ifndef STD_GCC //standard open source risc-V GCC
 #define _attribute_flash_code_sec_noinline_     __attribute__((section(".flash"))) __attribute__((optimize("O2"))) __attribute__((noinline)) __attribute__((no_execit))

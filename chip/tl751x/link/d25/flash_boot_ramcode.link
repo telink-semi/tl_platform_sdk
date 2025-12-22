@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    flash_boot_ramcode.link
  *
- * @brief   This is the link file for TL751X
+ * @brief   This is the link file for tl751x
  *
  * @author  Driver Group
  * @date    2025

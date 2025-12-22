@@ -80,9 +80,11 @@ volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
     #define N22_BOOTLOADER_BY_RRAM_MCU 2
 #endif
 
-    #define N22_BOOTLOADER_MODE   N22_BOOTLOADER_BY_DMA
+    #define N22_BOOTLOADER_BY_POINTER   3
 
-    #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA)
+    #define N22_BOOTLOADER_MODE   N22_BOOTLOADER_BY_POINTER
+
+    #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA  ||N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_POINTER)
         #if defined(MCU_CORE_TL7518)
             #define N22_IRAM_STARTUP_ADDR 0x50068000 /* Note:  If modified, please make sure this value is within the IRAM address range of N22.
                                                             The corresponding link file need to modify in the same time. */
@@ -116,7 +118,7 @@ volatile unsigned char mailbox_n22_to_d25_irq_flag = 0;
 volatile unsigned char mailbox_n22_to_d25_cnt      = 0;
     #endif
 
-    #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA)
+    #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA  || N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_POINTER)
 unsigned int n22_ilm_bin_size  = 0;
 unsigned int n22_dlm_bin_size  = 0;
 unsigned int n22_dlm_lma_start = 0;
@@ -174,6 +176,8 @@ void user_init(void)
 
 #if (ENABLE_N22)
     #if (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_DMA)
+    /* Powers on RF module. Required before any RF operations on N22. */
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     sys_n22_init(N22_IRAM_STARTUP_ADDR);
 
     n22_ilm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x08);
@@ -196,10 +200,24 @@ void user_init(void)
         ;
 
     sys_n22_start();
+    #elif (N22_BOOTLOADER_MODE ==N22_BOOTLOADER_BY_POINTER)
+    sys_n22_init(N22_IRAM_STARTUP_ADDR);
+
+    n22_ilm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x08);
+    n22_dlm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x0c);
+    n22_dlm_lma_start = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x10) + N22_FW_DOWNLOAD_FLASH_ADDR;
+
+    memcpy((unsigned int*)N22_IRAM_STARTUP_ADDR, (unsigned int*)N22_FW_DOWNLOAD_FLASH_ADDR, n22_ilm_bin_size);
+    memcpy((unsigned int*)N22_DRAM_ADDR, (unsigned int*)n22_dlm_lma_start, n22_dlm_bin_size);
+    sys_n22_start();
     #elif (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_MCU)
+    /* Powers on RF module. Required before any RF operations on N22. */
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
     sys_n22_start();
 #elif(N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_RRAM_MCU)
+    /* Powers on RF module. Required before any RF operations on N22. */
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     sys_n22_init(N22_FW_DOWNLOAD_RRAM_ADDR);
     sys_n22_start();
     #endif

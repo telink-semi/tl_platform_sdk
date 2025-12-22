@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    adc.c
  *
- * @brief   This is the source file for TL322X
+ * @brief   This is the source file for tl322x
  *
  * @author  Driver Group
  * @date    2024
@@ -305,6 +305,7 @@ void adc_power_on(adc_num_e sar_adc_num)
 {
     adc_set_scan_chn_dis(sar_adc_num);
     adc_reset(sar_adc_num);
+    adc_set_scan_chn_cnt(sar_adc_num, 1);
     analog_write_reg8(areg_adc_pga_ctrl(sar_adc_num), (analog_read_reg8(areg_adc_pga_ctrl(sar_adc_num))&(~FLD_SAR_ADC_POWER_DOWN)));
     adc_dig_clk_en(sar_adc_num);
 
@@ -349,7 +350,7 @@ static void adc_set_ref_voltage(adc_num_e sar_adc_num,adc_sample_chn_e chn)
     reg_adc_channel_set_state(sar_adc_num,chn) = (reg_adc_channel_set_state(sar_adc_num,chn)&(~FLD_SEL_VREF)) | (ADC_VREF_1P2V<<6);
     //Vref buffer bias current trimming:        150%
     //Comparator preamp bias current trimming:  100%
-    analog_write_reg8(areg_ain_scale(sar_adc_num)  , (analog_read_reg8(areg_ain_scale(sar_adc_num)  )&(0xC0)) | 0x1d );
+    analog_write_reg8(areg_ain_scale(sar_adc_num)  , (analog_read_reg8(areg_ain_scale(sar_adc_num)  )&(0xC0)) | 0x15 );
     g_adc_vref[chn] = 1175;
 }
 /**
@@ -614,8 +615,13 @@ void adc_channel_sample_init(adc_num_e sar_adc_num,adc_mode_e mode,adc_sample_ch
      * it is necessary to add a judgment here: only when the corresponding gears of the corresponding calibration conditions are selected,
      * the following calibration code can be invoked
      */
-    g_adc_vref[chn]        = g_adc_gpio_calib_vref;        //set gpio sample calib vref
-    g_adc_vref_offset[chn] = g_adc_gpio_calib_vref_offset; //set adc_vref_offset as adc_gpio_calib_vref_offset
+    if(mode == ADC_GPIO_MODE){
+        g_adc_vref[chn]        = g_adc_gpio_calib_vref;        //set gpio sample calib vref
+        g_adc_vref_offset[chn] = g_adc_gpio_calib_vref_offset; //set adc_vref_offset as adc_gpio_calib_vref_offset
+    }else if(mode == ADC_VBAT_MODE){
+        g_adc_vref[chn]        = g_adc_vbat_calib_vref;        //set vbat sample calib vref
+        g_adc_vref_offset[chn] = g_adc_vbat_calib_vref_offset; //set g_adc_vref_offset as g_adc_vbat_calib_vref_offset
+    }
 }
 
 /**
@@ -645,6 +651,11 @@ void adc_keyscan_sample_init(adc_num_e sar_adc_num)
         adc_pin_config(GPIO_PC1);
         adc_pin_config(GPIO_PC2);
         adc_pin_config(GPIO_PC3);
+        adc_pin_config(GPIO_PC4);
+        adc_pin_config(GPIO_PC5);
+        adc_pin_config(GPIO_PC6);
+        adc_pin_config(GPIO_PC7);
+
         reg_pad_auto_p(ADC0) = 0x87654321;
         reg_pad_auto_n(ADC0) = 0xbbbbbbbb;//GND
     }else{
@@ -652,13 +663,15 @@ void adc_keyscan_sample_init(adc_num_e sar_adc_num)
         adc_pin_config(GPIO_PB1);
         adc_pin_config(GPIO_PB2);
         adc_pin_config(GPIO_PB3);
-        adc_pin_config(GPIO_PB7);//PB7->GND
+
+        reg_pad_auto_p(ADC0) = 0x43214321;
+        reg_pad_auto_n(ADC0) = 0xbbbbbbbb;//GND
+
         reg_pad_auto_p(ADC1) = 0x43214321;
-        reg_pad_auto_n(ADC1) = 0x88888888;//PB7->GND
+        reg_pad_auto_n(ADC1) = 0xbbbbbbbb;//GND
     }
     analog_write_reg8(areg_adc_vref_fast_startup_sampled_inuput(sar_adc_num),FLD_VREF_FAST_STARTUP|FLD_SAMPLED_INPUT_MODEBAR); //Quickly start the ADC
 }
-
 /**
  * @brief This function serves to calculate voltage from adc sample code.
  * @param[in]   mode - ADC sample mode

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    usb0hw.c
  *
- * @brief   This is the header file for tl322x
+ * @brief   This is the source file for tl322x
  *
  * @author  Driver Group
  * @date    2024

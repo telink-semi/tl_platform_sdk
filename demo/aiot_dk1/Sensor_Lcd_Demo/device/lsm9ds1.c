@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    lsm9ds1.c
  *
- * @brief   This is the source file for TL7518/TL721X/TL321X
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
