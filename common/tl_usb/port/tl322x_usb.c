@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    tl322x_usb.c
  *
- * @brief   This is the source file for tl322x
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2025

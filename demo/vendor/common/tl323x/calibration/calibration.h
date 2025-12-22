@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.h
  *
- * @brief   This is the header file for Telink RISC-V MCU
+ * @brief   This is the header file for tl323x
  *
  * @author  Driver Group
  * @date    2024
@@ -50,6 +50,10 @@
     #define FLASH_CAP_VALUE_ADDR_4M 0x3fe000
 #endif
 
+#ifndef FLASH_CAP_VALUE_ADDR_8M
+    #define FLASH_CAP_VALUE_ADDR_8M 0x7fe000
+#endif
+
 #ifndef FLASH_CAP_VALUE_ADDR_16M
     #define FLASH_CAP_VALUE_ADDR_16M 0xffe000
 #endif
@@ -79,6 +83,10 @@
     #define FLASH_IEEE_ADDR_LOCATION_4M 0x3ff000
 #endif
 
+#ifndef FLASH_IEEE_ADDR_LOCATION_8M
+    #define FLASH_IEEE_ADDR_LOCATION_8M 0x7ff000
+#endif
+
 #ifndef FLASH_IEEE_ADDR_LOCATION_16M
     #define FLASH_IEEE_ADDR_LOCATION_16M 0xfff000
 #endif
@@ -87,7 +95,7 @@ typedef enum
 {
     IEEE_ADDR_NOT_EXIST,
     IEEE_ADDR_FROM_FLASH,
-    IEEE_ADDR_FROM_OTP,
+    IEEE_ADDR_FROM_EFUSE,
 } ieee_addr_source_e;
 
 /**
@@ -107,7 +115,7 @@ void calibration_func(void);
 unsigned char user_calib_freq_offset(unsigned int addr);
 
 /**
- * @brief      This function serves to read IEEE address from FLASH or OTP.
+ * @brief      This function serves to read IEEE address from FLASH or EFUSE.
  * @param[in]  addr - the IEEE address of flash.
  * @param[out] buf  - Pointer to IEEE address buffer
  * @return     ieee_addr_source_e

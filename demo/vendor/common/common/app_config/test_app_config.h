@@ -88,9 +88,9 @@ extern "C"
 #define TEST_AUDIO_RELATED          33
 #define TEST_USB_LED_KEY_AUDIO      34
 #endif
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)
+//#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL7518)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)
 #define TEST_DCORE_TEST             35
-#endif
+//#endif
 #if defined(MCU_CORE_TL721X)
 #define TEST_HTOL_TL721X_MODE       36
 #endif
@@ -107,7 +107,7 @@ extern "C"
 
 #define TEST_SECURE_BOOT            42
 
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
 #define TEST_OTP_TEST               43
 #endif
 
@@ -139,18 +139,35 @@ extern "C"
 
 #if defined(MCU_CORE_TL322X)
 #define TEST_HTOL_TL322X_MODE       56
+#define TEST_HTOL_TL322X_N22_MODE   57
+
 #endif
 
-#define REBOOT_TEST                 57
+#define REBOOT_TEST                 58
 
-#define RRAM_QUALITY_TEST           58
-#define RRAM_WORK_VOLTAGE_TEST      59
-#define RRAM_SLEEP_CURRENT_MODE     60
-#define RRAM_POWER_ONOFF_TEST       61
-#define RRAM_READ_TEST              62
-#define TEST_HTOL_TL322X_CRC_MODE   63
+#define RRAM_QUALITY_TEST           59
+#define RRAM_WORK_VOLTAGE_TEST      60
+#define RRAM_SLEEP_CURRENT_MODE     61
+#define RRAM_POWER_ONOFF_TEST       62
+#define RRAM_READ_TEST              63
+#define RRAM_LIFE_2_TEST            64
+#define RRAM_LIFE_3_TEST            65
 
-#define TEST_MODE                   TEST_HTOL_TL322X_MODE
+#define TEST_HTOL_TL322X_CRC_MODE   66
+#define PM_ZB_AUDIO_USB_TEST        67
+
+#if defined(MCU_CORE_TL753X)
+#define TEST_HTOL_TL753X_MODE       68
+#define TEST_HTOL_TL753X_N22_MODE   69
+#endif
+
+#define FLASH_10W_TIME_TEST         70
+
+#if defined(MCU_CORE_TL323X)
+#define TEST_HTOL_TL323X_MODE       71
+#endif
+
+#define TEST_MODE                   RRAM_LIFE_2_TEST
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M
@@ -231,7 +248,7 @@ volatile unsigned char KEY2;
 #define TEST_LED4               GPIO_PD1
 #endif
 
-#elif defined(MCU_CORE_TL721X)
+#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL323X)
 
 #define TEST_LED1               GPIO_PC0
 #define TEST_LED2               GPIO_PC1
@@ -267,9 +284,11 @@ volatile unsigned char KEY2;
 
 #define  PM_TL322X_96PIN        1
 #define  PM_C1T371A111_96PIN    2
-#define  PM_PIN_MODE            PM_TL322X_96PIN
+#define  PM_C1T378A20_80PIN     3
+#define  PM_TL322X_56PIN        4
+#define  PM_PIN_MODE            PM_TL322X_56PIN
 
-#if(PM_PIN_MODE == PM_TL322X_96PIN)
+#if(PM_PIN_MODE == PM_TL322X_96PIN)||(PM_PIN_MODE == PM_C1T378A20_80PIN)||(PM_PIN_MODE == PM_TL322X_56PIN)
 #define TEST_LED1               GPIO_PC4
 #define TEST_LED2               GPIO_PC5
 #define TEST_LED3               GPIO_PC6

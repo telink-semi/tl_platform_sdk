@@ -1375,7 +1375,7 @@ static inline void gpio_analog_resistance_init(void)
     //G<7:4>
     analog_write_reg8(0x8d, PULL_WAKEUP_SRC_PG4 | (PULL_WAKEUP_SRC_PG5 << 2) | (PULL_WAKEUP_SRC_PG6 << 4));
     //ANA<1:0>
-    analog_write_reg8(0xaa, (PULL_WAKEUP_SRC_PANA0 << 4) | (PULL_WAKEUP_SRC_PANA1 << 6));
+    analog_write_reg8(0xaa, (analog_read_reg8(0xaa) & 0x0f) | (PULL_WAKEUP_SRC_PANA0 << 4) | (PULL_WAKEUP_SRC_PANA1 << 6));
 }
 
 /*

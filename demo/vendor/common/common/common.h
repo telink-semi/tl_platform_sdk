@@ -24,7 +24,8 @@
 #pragma once
 
 #include "app_config/app_config.h"
-#if !defined (MCU_CORE_TL752X)
+
+#if !(defined(MCU_CORE_TL752X)||defined(MCU_CORE_TL651X))
 #include "auto_test/dut_cmd.h"
 #include "auto_test/pc_interface.h"
 #include "calibration.h"
@@ -32,6 +33,11 @@
 #include <string.h>
 #include "hal_driver/flash/hal_flash.h"
 #include "gpio.h"
+#else
+#include "soc_printf.h"
+#include "tl_log_transport.h"
+#include "tl_log.h"
+#endif
 /**
     ===============================================================================
                          ##### platform init and clock init #####
@@ -44,6 +50,10 @@
     @note if flash protection fails, LED1 lights up long, and keeps while.
     ===============================================================================
 */
+
+extern volatile unsigned int g_debug_flag;
+#define  DEBUG_DOT()    do{g_debug_flag = (0xff000000 | __LINE__);}while(0)
+
 #if defined(MCU_CORE_B91)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
@@ -114,12 +124,38 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
         #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT
+        #define CLOCK_INIT        PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M
     #endif
 #elif defined(MCU_CORE_TL753X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
         #define PLATFORM_INIT platform_init(LDO_AVDD_LDO_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6, 0)
+    #endif
+    #ifndef CLOCK_INIT
+        #define CLOCK_INIT
+    #endif
+#elif defined(MCU_CORE_TL521X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);
+    #ifndef PLATFORM_INIT
+     #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
+    #endif
+    #ifndef CLOCK_INIT
+        #define CLOCK_INIT
+    #endif
+#elif defined (MCU_CORE_TL752X)
+#include "tl_chip.h"
+void platform_init(void);
+    #ifndef PLATFORM_INIT
+        #define PLATFORM_INIT platform_init()
+    #endif
+    #ifndef CLOCK_INIT
+        #define CLOCK_INIT
+    #endif
+#elif defined (MCU_CORE_TL651X)
+#include "epm_chip.h"
+void platform_init(void);
+    #ifndef PLATFORM_INIT
+        #define PLATFORM_INIT   platform_init()
     #endif
     #ifndef CLOCK_INIT
         #define CLOCK_INIT
@@ -133,6 +169,4 @@ void platform_init(unsigned char flash_protect_en);
         #define CLOCK_INIT
     #endif
 #endif
-#else
 
-#endif

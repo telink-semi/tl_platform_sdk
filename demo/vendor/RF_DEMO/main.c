@@ -33,20 +33,30 @@ extern void main_loop(void);
  */
 int main(void)
 {
-#if (defined(MCU_CORE_TL751X_N22)) || (defined(MCU_CORE_TL322X_N22))
+#if ((defined(MCU_CORE_TL751X_N22)) || (defined(MCU_CORE_TL322X_N22)))
     rf_n22_dig_init();
     rf_clr_irq_mask(FLD_RF_IRQ_ALL);
 #else
     PLATFORM_INIT;
     CLOCK_INIT;
-    #if (defined(MCU_CORE_TL751X)) || (defined(MCU_CORE_TL322X))
-
+#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X))
+    #if (defined(MCU_CORE_TL751X))
     sys_n22_init(0x20080000);
+    #elif(defined(MCU_CORE_TL322X))
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
+    #endif
     rf_n22_dig_init();
     rf_clr_irq_mask(FLD_RF_IRQ_ALL);
-    #endif
+#endif
 #endif
     rf_mode_init();
+
+#if (defined(MCU_CORE_TL322X))
+#if RF_HIGH_PER_MODE
+    rf_modem_hp_path(1);
+#endif
+#endif
+
 #if (RF_MODE == RF_BLE_1M)         //1
     rf_set_ble_1M_mode();
 #elif (RF_MODE == RF_BLE_1M_NO_PN) //2
@@ -115,12 +125,16 @@ int main(void)
 
 #if defined(MCU_CORE_TL322X)
     #if (RF_MODE == RF_BLE_4M)
+    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_4M_mode();//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #elif (RF_MODE == RF_BLE_6M)
+    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_6M_mode();
     #elif (RF_MODE == RF_BLE_4M_NO_PN)
+    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_4M_NO_PN_mode();//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #elif (RF_MODE == RF_BLE_6M_NO_PN)
+    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_6M_NO_PN_mode();
     #endif
 #endif

@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    adc.h
  *
- * @brief   This is the header file for TL322X
+ * @brief   This is the header file for tl322x
  *
  * @author  Driver Group
  * @date    2024
@@ -265,6 +265,7 @@ typedef enum
 } adc_transfer_mode_e;
 
 typedef enum{
+    FLD_CLOCK_RC,
     FLD_CLOCK_XTL,
     FLD_CLOCK_PLL,
 }adc_dig_clk_src_e;
@@ -555,7 +556,7 @@ void adc_chn_config(adc_num_e sar_adc_num,adc_sample_chn_e chn,adc_chn_cfg_t *ad
  */
 static inline void adc_keyscan_auto_en(adc_num_e sar_adc_num)
 {
-    reg_adc_config2(sar_adc_num) |= FLD_PAD_AUTO_MUX_EN;
+    reg_adc_oversample(sar_adc_num) |= FLD_PAD_AUTO_MUX_EN;
 }
 
 /**
@@ -624,3 +625,19 @@ void adc_trigger_en(adc_num_e sar_adc_num);
  * @note       Manual trigger required
  */
 void adc_trigger_dis(adc_num_e sar_adc_num);
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref for GPIO.
+ * @param[in] vref - GPIO sampling calibration value.
+ * @param[in] offset - GPIO sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_gpio_calib_vref(unsigned short vref, signed char offset);
+
+/**
+ * @brief This function is used to calib ADC 1.2V vref for Vbat.
+ * @param[in] vref - Vbat channel sampling calibration value.
+ * @param[in] offset - Vbat channel sampling two-point calibration value offset.
+ * @return none
+ */
+void adc_set_vbat_calib_vref(unsigned short vref, signed char offset);

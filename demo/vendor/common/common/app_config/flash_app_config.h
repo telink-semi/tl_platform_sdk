@@ -23,14 +23,23 @@
  *******************************************************************************************************/
 #pragma once
 
-#if !defined(MCU_CORE_TL752X)
+
 #include "driver.h"
-#endif
+
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
+
+#if defined(MCU_CORE_TL752X)||defined(MCU_CORE_TL651X)
+#define NORMAL_MODE               1
+#define FLASH_QUALITY_TEST        2
+#define FLASH_WORK_VOLTAGE_TEST   3
+#define FLASH_10W_TIME_TEST       4
+#define DEMO_MODE                 NORMAL_MODE
+
+#else
 
 #define FLASH_TEST_MODE         1
 #define FLASH_LPC_PROTECT_MODE  2
@@ -55,6 +64,7 @@ extern "C"
 
 #define FLASH_FUNCTION_MODE FLASH_TEST
 
+#endif
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

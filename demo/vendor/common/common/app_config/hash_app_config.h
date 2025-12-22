@@ -34,6 +34,7 @@ extern "C"
 #ifdef HASH_DMA_FUNCTION
 extern int buf_hash_dma[0x600];
 #define DMA_RAM_BASE (buf_hash_dma) //just for temporary use
+#define HASH_DMA_RAM_BASE (buf_hash_dma) 
 #endif /* HASH_DMA_FUNCTION */
 
 

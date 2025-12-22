@@ -142,14 +142,14 @@
     #define KEY3 GPIO_PD6
     #define KEY4 GPIO_PD7
 #elif defined(MCU_CORE_TL323X)
-    #define LED1 GPIO_PD0
-    #define LED2 GPIO_PD1
-    #define LED3 GPIO_PD2
-    #define LED4 GPIO_PD3
-    #define KEY1 GPIO_PD4
-    #define KEY2 GPIO_PD5
-    #define KEY3 GPIO_PD6
-    #define KEY4 GPIO_PD7
+    #define LED1 GPIO_PC0
+    #define LED2 GPIO_PC1
+    #define LED3 GPIO_PC2
+    #define LED4 GPIO_PC3
+    #define KEY1 GPIO_PC4
+    #define KEY2 GPIO_PC5
+    #define KEY3 GPIO_PC6
+    #define KEY4 GPIO_PC7
 #elif defined(MCU_CORE_TL322X)
 
     #define PULL_WAKEUP_SRC_PC4 GPIO_PIN_UP_DOWN_FLOAT
@@ -171,12 +171,12 @@
     #define KEY3 GPIO_PG1
     #define KEY4 GPIO_PG0
 #else
-    #define LED1 GPIO_PD1
-    #define LED2 GPIO_PD3
-    #define LED3 GPIO_PD4
-    #define LED4 GPIO_PD5
-    #define LED5 GPIO_PD0
-    #define LED6 GPIO_PD2
+    #define LED1 GPIO_PD0
+    #define LED2 GPIO_PD1
+    #define LED3 GPIO_PD2
+    #define LED4 GPIO_PD3
+    #define LED5 GPIO_PD4
+    #define LED6 GPIO_PD5
 
     #define KEY1 GPIO_PA3
     #define KEY2 GPIO_PE3

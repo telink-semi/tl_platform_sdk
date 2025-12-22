@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    rz_app_config.h
  *
- * @brief   This is the source file for Telink RISC-V MCU
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2025

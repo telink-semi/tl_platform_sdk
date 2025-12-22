@@ -97,7 +97,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e g
     #ifndef CLOCK_INIT
         #define CLOCK_INIT CCLK_24M_HCLK_24M_PCLK_24M
     #endif
-#elif defined(MCU_CORE_TL321X)
+#elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
 #elif defined(MCU_CORE_TL721X)
 #else
 void platform_init(void);

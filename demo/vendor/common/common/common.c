@@ -22,6 +22,27 @@
  *
  *******************************************************************************************************/
 #include "common.h"
+#include "driver.h"
+
+volatile unsigned int g_debug_flag;
+
+#if defined(MCU_CORE_TL752X)
+
+void platform_init(void)
+{
+    sys_init();
+
+    pm_update_status_info(0);
+}
+
+#elif defined(MCU_CORE_TL651X)
+void platform_init(void)
+{
+    WRITE_REG(*(unsigned int *)0xa0120008,0x04000000);
+}
+
+#else
+
 /*
  * @note The flash protection size has been allocated by default, refer to the comment FLASH_PROTECT_MODIFY_CONFIG for details.
  */
@@ -97,6 +118,15 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+#elif defined(MCU_CORE_TL323X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    {0x1460c8, FLASH_LOCK_LOW_512K_MID1460C8},
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
 #elif defined(MCU_CORE_W92)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
@@ -112,7 +142,7 @@ flash_user_defined_list_t flash_init_list[] = {
 #endif
 
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
 
 flash_hal_user_handler_t flash_handler = {
     .list      = list_fp,
@@ -164,10 +194,28 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL753X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL521X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #else
 void platform_init(unsigned char flash_protect_en)
 #endif
 {
+/**
+    ===============================================================================
+                         ##### 24M RC ENABLE #####
+    ===============================================================================
+    If it cannot be guaranteed that the clock is 24 MHz RC before sys_init,
+    then this piece of code needs to be enabled.
+    ===============================================================================
+*/
+#if (defined(DUT_TEST))
+    reg_rst    |= 0x00000800;
+    reg_clk_en |= 0x00000800;
+
+    analog_write_reg8(areg_aon_0x05, analog_read_reg8(areg_aon_0x05) & ~(FLD_24M_RC_PD)); //power on 24M RC
+    clock_set_all_clock_to_default();
+#endif
+
 /**
     ===============================================================================
                          ##### sys_init #####
@@ -193,6 +241,9 @@ void platform_init(unsigned char flash_protect_en)
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_TL753X)
     sys_init(power_mode, vbat_v);
+#elif defined(MCU_CORE_TL521X)
+#define INTERNAL_SIMULATION_DEBUG
+    sys_init(power_mode, vbat_v, cap);
 #else
     sys_init();
 #endif
@@ -224,7 +275,7 @@ void platform_init(unsigned char flash_protect_en)
     Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
     ===============================================================================
 */
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     pm_update_status_info(1);
 #endif
 
@@ -285,6 +336,10 @@ void platform_init(unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL321X)
     calibration_func();
 #elif defined(MCU_CORE_TL751X)
+    calibration_func();
+#elif defined(MCU_CORE_TL322X)
+    calibration_func();
+#elif defined(MCU_CORE_TL323X)
     calibration_func();
 #endif
 
@@ -357,7 +412,7 @@ void platform_init(unsigned char flash_protect_en)
 #if !defined(INTERNAL_SIMULATION_DEBUG)
     #if (!defined(DUT_TEST) && defined(MCU_STARTUP_FLASH))
     if (flash_protect_en) {
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
         unsigned char flash_init_flag = hal_flash_init(&flash_handler);
         #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X)
         unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t *)flash_handler);
@@ -371,7 +426,7 @@ void platform_init(unsigned char flash_protect_en)
         }
 
 
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
         unsigned char lock_flag = hal_flash_lock();
         #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
@@ -418,4 +473,6 @@ _attribute_ram_code_sec_ void pm_level_irq_handler(void)
     pm_clr_irq_status(FLD_WAKEUP_STATUS_ALL);
 }
 PLIC_ISR_REGISTER(pm_level_irq_handler, IRQ_PM_LVL)
+#endif
+
 #endif

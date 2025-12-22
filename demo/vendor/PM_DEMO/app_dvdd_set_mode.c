@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    app.c
+ * @file    app_dvdd_set_mode.c
  *
  * @brief   This is the source file for Telink RISC-V MCU
  *

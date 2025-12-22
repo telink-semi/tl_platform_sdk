@@ -29,7 +29,9 @@ extern "C"
 #endif
 
 #include "build_config.h"
+#if !defined(MCU_CORE_TL752X)
 #include "led_and_key_config.h"
+#endif
 
 #if defined(CURRENT_BUILD_UART_Demo)
 #include "app_config/uart_app_config.h"
@@ -69,12 +71,12 @@ extern "C"
 #endif
 #endif
 
-#if defined(CURRENT_BUILD_Flash_Demo)
+#if defined(CURRENT_BUILD_Flash_Demo) || defined(CURRENT_BUILD_Flash_Demo_No_Bootloader)
 #include "app_config/flash_app_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_ALG_Keyscan_Demo)
-#include "app_config/alg_keyscan_app_config.h"
+#include "app_config/keyscan_ana_app_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_AUDIO_Demo)
@@ -105,7 +107,7 @@ extern "C"
 #include "app_config/coremark_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_Debug_Demo)
+#if defined(CURRENT_BUILD_Debug_Demo) || defined(CURRENT_BUILD_Debug_RAM_Demo)
 #include "app_config/debug_app_config.h"
 #endif
 
@@ -131,6 +133,10 @@ extern "C"
 
 #if defined(CURRENT_BUILD_Keyscan_Demo)
 #include "app_config/keyscan_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_Keyscan_Ana_Demo)
+#include "app_config/keyscan_ana_app_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_LIN_Demo)
@@ -292,6 +298,10 @@ extern "C"
 #include "app_config/n22_test_app_config.h"
 #endif
 
+#if defined(CURRENT_BUILD_N22_Test_Demo)|| defined(CURRENT_BUILD_N22_Test_Demo_BY_MCUA)
+#include "app_config/n22_test_app_config.h"
+#endif
+
 #if defined(CURRENT_BUILD_N22_Test_Demo_Bootloader_by_N22_RRAM_MCU)
 #include "app_config/n22_test_app_config.h"
 #endif
@@ -302,10 +312,21 @@ extern "C"
 
 #if defined(CURRENT_BUILD_Test_Demo)
 #include "app_config/test_app_config.h"
+#if defined(MCU_CORE_TL323X)
+#include "app_config/sd_adc_app_config.h"
+#endif
 #endif
 
-#if defined(CURRENT_BUILD_N22_Test_Demo)
-#include "app_config/n22_test_app_config.h"
+#if defined(CURRENT_BUILD_Test_N22_Demo)
+#include "app_config/test_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_Test_Rram_Demo)
+#include "app_config/test_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_Test_Rram_N22_Demo)
+#include "app_config/test_app_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_RRAM_Demo)
@@ -355,7 +376,7 @@ extern "C"
 #endif
 
 #if defined(CURRENT_BUILD_SD_ADC_Demo)
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
 #include "app_config/sd_adc_app_config.h"
 #endif
 #endif
@@ -364,12 +385,32 @@ extern "C"
 #include "app_config/can_app_config.h"
 #endif
 
+#if defined(CURRENT_BUILD_I3C_Demo)
+#include "app_config/i3c_app_config.h"
+#endif
 #if defined(CURRENT_BUILD_RZ_Demo)
 #include "app_config/rz_app_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_SD_HOST_Demo)
 #include "app_config/sd_host_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_32K_RC_Demo)
+#include "app_config/32krc_app_config.h"
+#endif
+
+
+#if defined(CURRENT_BUILD_SLE_Demo)||defined(CURRENT_BUILD_D25F_SLE_Demo)||defined(CURRENT_BUILD_N22_SLE_Demo)
+#if defined(MCU_CORE_TL752X)
+#include "app_config/sle_app_config.h"
+#endif
+#endif
+
+#if defined(CURRENT_BUILD_DMA_Demo)
+#if defined(MCU_CORE_TL752X)
+#include "app_config/dma_app_config.h"
+#endif
 #endif
 
 #if defined(__cplusplus)

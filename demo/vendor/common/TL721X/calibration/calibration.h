@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.h
  *
- * @brief   This is the header file for Telink RISC-V MCU
+ * @brief   This is the header file for TL721X
  *
  * @author  Driver Group
  * @date    2024

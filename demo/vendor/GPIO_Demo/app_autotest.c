@@ -302,6 +302,7 @@ void gpio_input_test(void)
     result_buff_write(send_data, send_data[2]);
 }
 
+
 void gpio_output_low_test(void)
 {
     autotest_package_t_ptr para = (autotest_package_t_ptr)para_buff;

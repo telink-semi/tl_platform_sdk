@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    calibration.c
  *
- * @brief   This is the source file for Telink RISC-V MCU
+ * @brief   This is the source file for tl323x
  *
  * @author  Driver Group
  * @date    2024
@@ -44,7 +44,7 @@ unsigned char user_calib_freq_offset(unsigned int addr)
 
 /**
  * @brief       This function is used to calibrate the user's parameters.
- *              This function is to read the calibration value stored in otp and flash,
+ *              This function is to read the calibration value stored in efuse and flash,
  *              and use the calibration value to configure the chip to improve chip performance.
  *              (reduce adc measurement error, reduce frequency offset, etc.)
  * @return      none.
@@ -87,6 +87,10 @@ void calibration_func(void)
             cap_value_addr = FLASH_CAP_VALUE_ADDR_4M;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_4M;
             break;
+        case FLASH_SIZE_8M:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_8M;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_8M;
+            break;
         case FLASH_SIZE_16M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_16M;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_16M;
@@ -124,41 +128,43 @@ unsigned char user_check_ieee_addr(unsigned char *value)
 }
 
 /**
- * @brief      This function serves to read IEEE address from OTP.
- * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
+ * @brief      This function serves to read IEEE address from EFUSE.
+ * @param[out] buf  - Pointer to IEEE address buffer
  * @return     ieee_addr_source_e
  */
-ieee_addr_source_e user_get_otp_ieee_addr(unsigned char *buf)
+ieee_addr_source_e user_get_efuse_ieee_addr(unsigned char *buf)
 {
-    //Read IEEE address priority: FLASH > OTP
-    //otp_get_ieee_addr(buf);
+    extern void efuse_get_ieee_addr(unsigned char *buf);
+    //Read IEEE address priority: FLASH > EFUSE
+    efuse_get_ieee_addr(buf);
     if (user_check_ieee_addr(buf)) {
-        return IEEE_ADDR_FROM_OTP;
+        return IEEE_ADDR_FROM_EFUSE;
     } else {
         return IEEE_ADDR_NOT_EXIST;
     }
 }
 
+
 /**
- * @brief      This function serves to read IEEE address from FLASH or OTP.
+ * @brief      This function serves to read IEEE address from FLASH or EFUSE.
  * @param[in]  addr - the IEEE address of flash
- *                    0:     Read the IEEE address from OTP.
+ *                    0:     Read the IEEE address from EFUSE.
  *                    other: first read the IEEE address from the flash memory.
- *                           If it is not a valid value, then read it from OTP.
+ *                           If it is not a valid value, then read it from EFUSE.
  * @param[out] buf  - Pointer to IEEE address buffer(IEEE address is 8bytes)
  * @return     ieee_addr_source_e
  */
 ieee_addr_source_e user_get_ieee_addr(unsigned int addr, unsigned char *buf)
 {
     if (addr == 0) {
-        return user_get_otp_ieee_addr(buf);
+        return user_get_efuse_ieee_addr(buf);
     } else {
-        //Read IEEE address priority: FLASH > OTP
+        //Read IEEE address priority: FLASH > EFUSE
         flash_read_page(addr, 8, buf);
         if (user_check_ieee_addr(buf)) {
             return IEEE_ADDR_FROM_FLASH;
         } else {
-            return user_get_otp_ieee_addr(buf);
+            return user_get_efuse_ieee_addr(buf);
         }
     }
 }

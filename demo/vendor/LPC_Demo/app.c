@@ -22,6 +22,14 @@
  *
  *******************************************************************************************************/
 #include "common.h"
+#include "lpc.h"
+
+
+#define LPC_GPIO_DETECTION   0
+#if defined(MCU_CORE_TL323X)
+#define LPC_VBAT_DETECTION   1
+#endif
+#define LPC_DETECTION_MODE   LPC_GPIO_DETECTION
 
 void user_init(void)
 {
@@ -29,14 +37,17 @@ void user_init(void)
     gpio_output_en(LED1);
     gpio_input_dis(LED1);
 
+#if LPC_DETECTION_MODE == LPC_GPIO_DETECTION
 #if defined(MCU_CORE_TL751X)
-    lpc_set_input_chn(LPC_INPUT_PG1);
+    lpc_gpio_vol_detect_init(LPC_NORMAL,LPC_INPUT_PG5,LPC_REF_872MV,LPC_SCALING_PER50);
 #else
-    lpc_set_input_chn(LPC_INPUT_PB1);
-#endif
     //When the chip works in low power mode, the reference voltage can only be provided by UVLO or from PB0 and PB3.
-    lpc_set_input_ref(LPC_NORMAL, LPC_REF_872MV);
-    lpc_set_scaling_coeff(LPC_SCALING_PER50);
+    lpc_gpio_vol_detect_init(LPC_NORMAL,LPC_INPUT_PB5,LPC_REF_872MV,LPC_SCALING_PER50);
+#endif
+#elif LPC_DETECTION_MODE == LPC_VBAT_DETECTION
+    lpc_vbat_vol_detect_init(LPC_VBAT_FALLING_2P20V_RISING_2P30V);
+
+#endif
     //LPC POWER must be turned on last.
     lpc_power_on();
     //The LPC sampling clock source is RC 32K. After turning on the LPC POWER, you must wait for two sampling periods to obtain the sampling value.
@@ -46,7 +57,6 @@ void user_init(void)
 void main_loop(void)
 {
     printf("result = %d\r\n", lpc_get_result());
-
     gpio_toggle(LED1);
     delay_ms(200);
 }

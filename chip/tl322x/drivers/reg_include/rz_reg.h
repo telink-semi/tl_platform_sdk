@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    rz_reg.h
  *
- * @brief   This is the header file for TL322X
+ * @brief   This is the header file for tl322x
  *
  * @author  Driver Group
  * @date    2025
@@ -27,21 +27,30 @@
 #include "soc.h"
 /*******************************      rz registers: 0x240240       ******************************/
 #define RZ_BASE_ADDR 0x240240
-#define reg_rz_ctrl0 REG_ADDR32(RZ_BASE_ADDR)
+#define reg_rz_ctrl0 REG_ADDR8(RZ_BASE_ADDR)
 enum
 {
     FLD_RZ_TX_CLR            = BIT(0),
-    FLD_RZ_JITTER_L_EN       = BIT(8),
-    FLD_RZ_JITTER_H_EN       = BIT(9),
-    FLD_RZ_POLA              = BIT(10),
-    FLD_RZ_BIT_MSB           = BIT(11),
-    FLD_RZ_BIG_ENDIAN_MODE   = BIT(12),
-    FLD_RZ_ALIGN_32BITS_MODE = BIT(13),
-    FLD_RZ_GLOBAL_DATA_MODE  = BIT(14),
-    FLD_RZ_ADDR_MODE         = BIT(15),
-    FLD_RZ_JITTER_RANGE      = BIT_RNG(16, 18),
-    FLD_RZ_FIFO_LVL          = BIT_RNG(19, 21),
-    FLD_RZ_AUTO_TXCLR_EN     = BIT(22),
+};
+
+#define reg_rz_ctrl1 REG_ADDR8(RZ_BASE_ADDR+0x01)
+enum
+{
+    FLD_RZ_JITTER_L_EN       = BIT(0),
+    FLD_RZ_JITTER_H_EN       = BIT(1),
+    FLD_RZ_POLA              = BIT(2),
+    FLD_RZ_BIT_MSB           = BIT(3),
+    FLD_RZ_BIG_ENDIAN_MODE   = BIT(4),
+    FLD_RZ_ALIGN_32BITS_MODE = BIT(5),
+    FLD_RZ_GLOBAL_DATA_MODE  = BIT(6),
+    FLD_RZ_ADDR_MODE         = BIT(7),
+};
+#define reg_rz_ctrl2 REG_ADDR8(RZ_BASE_ADDR+0x02)
+enum
+{
+    FLD_RZ_JITTER_RANGE      = BIT_RNG(0, 2),
+    FLD_RZ_FIFO_LVL          = BIT_RNG(3, 5),
+    FLD_RZ_AUTO_TXCLR_EN     = BIT(7),
 };
 
 #define reg_rz_fifo_sts REG_ADDR8(RZ_BASE_ADDR + 0x3)

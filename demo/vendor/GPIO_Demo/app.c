@@ -100,7 +100,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GPIO_SRC0 + BIT_LOW_BIT(IRQ_PIN & 0x00ff));
             #endif
 
-        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)
+        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLDOWN_100K);
 
@@ -252,7 +252,7 @@ PLIC_ISR_REGISTER(gpio_src7_irq_handler, IRQ_GPIO_SRC7)
         #endif
     #endif
 
-    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
 volatile unsigned int gpio_irq0_cnt = 0;
 volatile unsigned int gpio_irq7_cnt = 0;
         #if (GPIO_MODE == GPIO_IRQ_NUM0)

@@ -30,6 +30,7 @@ extern "C"
 
 #define EMI_DEMO  0
 #define BQB_DEMO  1
+#define SLE_EMI_DEMO  2
 #define TEST_DEMO EMI_DEMO
 
 /**
@@ -87,11 +88,17 @@ extern "C"
 
         #define BQB_UART_TX_PORT GPIO_FC_PB5
         #define BQB_UART_RX_PORT GPIO_FC_PB6
+    #elif defined(MCU_CORE_TL752X)
+        typedef unsigned int gpio_pin_name_t;
+        typedef unsigned int gpio_port_name_t;
+        #define BQB_UART_TX_PIN GPIO_PIN_0
+        #define BQB_UART_RX_PIN GPIO_PIN_1
+        #define BQB_UART_RX_PORT GPIO_PORT_A
     #elif defined(MCU_CORE_TL322X)
         #define BQB_UART_TX_PORT GPIO_FC_PB5
         #define BQB_UART_RX_PORT GPIO_FC_PB6
     #endif
-    #define BQB_UART_BAUD 115200
+    #define BQB_UART_BAUD 500000 //TODO: The baud of the TL752X needs to be divisible by MCLK0.
 
 #endif
 

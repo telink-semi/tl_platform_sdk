@@ -25,8 +25,6 @@
 
 #if !defined(MCU_CORE_TL321X) || (GPIO_TEST_MODE == MANUAL_TEST_MODE)
 
-extern float Dhrystone_DMIPS_Per_MHz;
-
 void user_init(void)
 {
     #if defined(MCU_CORE_TL321X) && (CURRENT_PER_MHZ_TEST)
@@ -49,6 +47,36 @@ void user_init(void)
         #endif
 
     gpio_shutdown(GPIO_ALL);
+
+    for (int i = 0; i < 10; i++) {
+        dhry_main();
+    }
+    #elif defined(MCU_CORE_TL323X) && (CURRENT_PER_MHZ_TEST)
+        #if (CLOCK_FREQUENCY == CCLK_24M_HCLK_12M_PCLK_12M)
+    PLL_192M_CCLK_24M_HCLK_12M_PCLK_12M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_12M)
+    PLL_192M_CCLK_48M_HCLK_24M_PCLK_12M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_24M)
+    PLL_192M_CCLK_24M_HCLK_24M_PCLK_24M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_24M)
+    PLL_192M_CCLK_48M_HCLK_24M_PCLK_24M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_24M)
+    PLL_192M_CCLK_48M_HCLK_48M_PCLK_24M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_48M)
+    PLL_192M_CCLK_96M_HCLK_48M_PCLK_48M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_96M_HCLK_96M_PCLK_48M)
+    PLL_192M_CCLK_96M_HCLK_96M_PCLK_48M_MSPI_48M;
+        #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_48M)
+    PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M;
+        #endif
+    gpio_shutdown(GPIO_ALL);
+
+    reg_rst      = 0x96b88080;
+    reg_clk_en   = 0x1e30a080;
+
+    reg_rst_1    = 0x00800004;
+    reg_clk_en_1 = 0x00800044;
+
     for (int i = 0; i < 10; i++) {
         dhry_main();
     }

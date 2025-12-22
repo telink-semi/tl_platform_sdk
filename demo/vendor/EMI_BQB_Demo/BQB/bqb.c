@@ -57,7 +57,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
 void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_settle_time_e rx_settle_us, rf_fast_settle_t *fs_cv);
 #endif
 
-    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL751X)
     #else
 static unsigned char rxpara_flag = 1;
     #endif
@@ -398,6 +398,9 @@ void bqb_serviceloop(void)
                 } else if (para == 2) //BLE 2M
                 {
                     rf_set_ble_2M_NO_PN_mode();
+#if defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL322X)
+                    rf_ble_hp_set_modem_sync_byte_len(0x05);
+#endif
     #if (RF_FAST_SETTLE)&&(!defined(MCU_CORE_TL751X))
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)
                     rf_fast_settle_set_val(TX_SETTLE_TIME_50US, RX_SETTLE_TIME_45US, &fs_cv_2m);
@@ -487,7 +490,7 @@ void bqb_serviceloop(void)
             rf_set_rx_dma(bqbtest_buffer, 0, 272);
             rf_start_srx(rf_stimer_get_tick());
             delay_us(30);
-    #if defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL751X)
     #else
             if (rxpara_flag == 1) {
                 rf_set_rxpara();

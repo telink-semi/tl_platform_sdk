@@ -31,11 +31,11 @@ unsigned char Private_SB_tx_packet[48] __attribute__((aligned(4)))   = {3, 0, 0,
 
     #define TX             1
     #define RX             2
-    #define RF_TRX_MODE    RX
+    #define RF_TRX_MODE    TX
 
     #define AUTO           1
     #define MANUAL         2
-    #define RF_AUTO_MODE   MANUAL
+    #define RF_AUTO_MODE   AUTO
 
     #define TPLL_MODE      1
     #define SB_MODE        2

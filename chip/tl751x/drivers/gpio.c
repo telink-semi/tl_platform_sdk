@@ -249,9 +249,9 @@ void gpio_shutdown(gpio_pin_e pin)
        
         // set 100K pull down(except SWS)
         //A<3:0>
-        analog_write_reg8(0x080, 0x6a);//SWS set 1M pull up
+        analog_write_reg8(0x080, 0xaa);
         //A<7:4>
-        analog_write_reg8(0x081, 0xaa);
+        analog_write_reg8(0x081, 0x6a); ///SWS set 1M pull up
         //B<3:0>
         analog_write_reg8(0x082, 0xaa);
         //B<7:4>

@@ -136,7 +136,11 @@ int main(void)
 
 #if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X))
     //TL751X and tl322x chip rf module power-up method and digital module power-up method need to call the following interface realization
+    #if(defined(MCU_CORE_TL751X))
     sys_n22_init(0x20080000);
+    #elif(defined(MCU_CORE_TL322X))
+    pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
+    #endif
     rf_n22_dig_init();
     rf_clr_irq_mask(FLD_RF_IRQ_ALL);
     rf_mode_init();

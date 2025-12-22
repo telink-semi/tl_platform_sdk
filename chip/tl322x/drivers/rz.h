@@ -12,7 +12,7 @@
  *          you may not use this file except in compliance with the License.
  *          You may obtain a copy of the License at
  *
- *          http://www.apache.org/licenses/LICENSE-2.0
+ *              http://www.apache.org/licenses/LICENSE-2.0
  *
  *          Unless required by applicable law or agreed to in writing, software
  *          distributed under the License is distributed on an "AS IS" BASIS,
@@ -154,7 +154,7 @@ void rz_set_dma_config(dma_chn_e chn);
  */
 static inline void rz_set_polarity(rz_output_inv_e pol)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_POLA)) | pol;
+    reg_rz_ctrl1 = (reg_rz_ctrl1 & (~FLD_RZ_POLA)) | MASK_VAL(FLD_RZ_POLA, pol);
 }
 
 /**
@@ -164,7 +164,7 @@ static inline void rz_set_polarity(rz_output_inv_e pol)
  */
 static inline void rz_set_msb_lsb_mode(rz_bit_ctrl_e bit_ctrl)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_BIT_MSB)) | bit_ctrl;
+    reg_rz_ctrl1 = (reg_rz_ctrl1 & (~FLD_RZ_BIT_MSB)) | MASK_VAL(FLD_RZ_BIT_MSB, bit_ctrl);
 }
 
 /**
@@ -174,7 +174,7 @@ static inline void rz_set_msb_lsb_mode(rz_bit_ctrl_e bit_ctrl)
  */
 static inline void rz_set_big_little_endian_mode(rz_byte_ctrl_e byte_ctrl)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_BIG_ENDIAN_MODE)) | byte_ctrl;
+    reg_rz_ctrl1 = (reg_rz_ctrl1 & (~FLD_RZ_BIG_ENDIAN_MODE)) | MASK_VAL(FLD_RZ_BIG_ENDIAN_MODE, byte_ctrl);
 }
 
 /**
@@ -184,7 +184,7 @@ static inline void rz_set_big_little_endian_mode(rz_byte_ctrl_e byte_ctrl)
  */
 static inline void rz_set_data_align_mode(rz_data_align_ctrl_e data_align_ctrl)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_ALIGN_32BITS_MODE)) | data_align_ctrl;
+    reg_rz_ctrl1 = (reg_rz_ctrl1 & (~FLD_RZ_ALIGN_32BITS_MODE)) | MASK_VAL(FLD_RZ_ALIGN_32BITS_MODE, data_align_ctrl);
 }
 
 /**
@@ -194,7 +194,7 @@ static inline void rz_set_data_align_mode(rz_data_align_ctrl_e data_align_ctrl)
  */
 static inline void rz_set_global_data_mode(rz_global_data_ctrl_e global_data_ctrl)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_GLOBAL_DATA_MODE)) | global_data_ctrl;
+    reg_rz_ctrl1 = (reg_rz_ctrl1 & (~FLD_RZ_GLOBAL_DATA_MODE)) | MASK_VAL(FLD_RZ_GLOBAL_DATA_MODE, global_data_ctrl);
 }
 
 /**
@@ -204,17 +204,7 @@ static inline void rz_set_global_data_mode(rz_global_data_ctrl_e global_data_ctr
  */
 static inline void rz_set_tx_data_mode(rz_tx_data_mode_e tx_data_mode)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_ADDR_MODE)) | tx_data_mode;
-}
-
-/**
- * @brief      This function refer to set the fifo lvl.
- * @param[in]  fifo_lvl - set the fifo depth size.
- * @return     none
- */
-static inline void rz_set_fifo_lvl(unsigned char fifo_lvl)
-{
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_FIFO_LVL)) | fifo_lvl;
+    reg_rz_ctrl1 = (reg_rz_ctrl1 & (~FLD_RZ_ADDR_MODE)) | MASK_VAL(FLD_RZ_ADDR_MODE, tx_data_mode);
 }
 
 /**
@@ -358,7 +348,7 @@ static inline void rz_clr_txfifo_manual(void)
  */
 static inline void rz_clr_txfifo_auto(void)
 {
-    reg_rz_ctrl0 |= FLD_RZ_AUTO_TXCLR_EN;
+    reg_rz_ctrl2 |= FLD_RZ_AUTO_TXCLR_EN;
 }
 
 /**
@@ -368,7 +358,17 @@ static inline void rz_clr_txfifo_auto(void)
  */
 static inline void rz_jitter_range_config(rz_jitter_range_e jitter_range)
 {
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_JITTER_RANGE)) | (jitter_range);
+    reg_rz_ctrl2 = (reg_rz_ctrl2 & (~FLD_RZ_JITTER_RANGE)) | MASK_VAL(FLD_RZ_JITTER_RANGE, jitter_range);
+}
+
+/**
+ * @brief      This function refer to set the fifo lvl.
+ * @param[in]  fifo_lvl - set the fifo depth size.the range is less than 8.
+ * @return     none
+ */
+static inline void rz_set_fifo_lvl(unsigned char fifo_lvl)
+{
+    reg_rz_ctrl2 = (reg_rz_ctrl2 & (~FLD_RZ_FIFO_LVL)) | MASK_VAL(FLD_RZ_FIFO_LVL, fifo_lvl);
 }
 
 /**
@@ -384,16 +384,6 @@ void rz_t0h_t1h_jitter_config(rz_jitter_ctrl_th_e jitter_ctrl_th);
  * @return    none.
  */
 void rz_t0l_t1l_jitter_config(rz_jitter_ctrl_tl_e jitter_ctrl_tl);
-
-/**
- * @brief     This function servers to config fifo level.
- * @param[in] tx_level - the trigger level,the range is less than 8.
- * @return    none.
- */
-static inline void rz_set_tx_fifo_irq_trig_level(unsigned char tx_level)
-{
-    reg_rz_ctrl0 = (reg_rz_ctrl0 & (~FLD_RZ_FIFO_LVL)) | (tx_level);
-}
 
 /**
  * @brief      This function configures rz control register.

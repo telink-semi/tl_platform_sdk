@@ -40,7 +40,7 @@
  */
 #define SLAVE_SPACE_DIV_EN 0
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     #define FLASH_ADDR          0x00d000
     #define FLASH_SECURITY_ADDR 0x001000
 #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
@@ -82,14 +82,17 @@ typedef struct
     unsigned char write_err                 : 1;
     unsigned char lock_err                  : 1;
     unsigned char unlock_err                : 1;
+
     unsigned char otp_erase_err             : 1;
     unsigned char otp_write_err             : 1;
     unsigned char otp_lock_err              : 1;
     unsigned char uid_err                   : 1;
+
     unsigned char read_decrypt_check_err    : 1;
     unsigned char flash_vendor_add_err      : 1;
     unsigned char flash_capacity_add_err    : 1;
     unsigned char flash_lock_init_add_err   : 1;
+
     unsigned char flash_unlock_init_add_err : 1;
     unsigned char writex4_err               : 1;
     unsigned char set_4line_err             : 1;
@@ -141,6 +144,8 @@ unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_2M, FLASH_SI
 unsigned char flash_support_capacity[] = {FLASH_SIZE_4M};
 #elif defined(MCU_CORE_TL323X)
 unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_2M};
+#elif defined(MCU_CORE_TL521X)
+unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_2M};
 #endif
 const unsigned char FLASH_CAP_CNT = sizeof(flash_support_capacity) / sizeof(*flash_support_capacity);
 
@@ -174,7 +179,7 @@ unsigned char flash_set_4line_read_write(unsigned int flash_mid)
     }
     return status;
 }
-#elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 /**
  * @brief       This function is used to set the use of four lines when reading and writing flash.
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported.
@@ -277,7 +282,7 @@ void flash_mid182085_test(void)
     #endif
 }
 #endif
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 void flash_mid146085_test(void)
 {
     int i;
@@ -349,7 +354,7 @@ void flash_mid146085_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 void flash_mid156085_test(void)
 {
     int i;
@@ -421,7 +426,7 @@ void flash_mid156085_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
 void flash_mid166085_test(void)
 {
     int i;
@@ -492,7 +497,7 @@ void flash_mid166085_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 void flash_mid1560c8_test(void)
 {
     int i;
@@ -1223,7 +1228,7 @@ void user_init(void)
     //Since the bin code is protected in platform_init, FLASH_ADDR may be in the protected area,
     //and it is necessary to unprotect the address when erasing it
     //(the principle of bin code protection is that it is generally not recommended to put the data area in the protected area).
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     hal_flash_unlock();
     g_flash_mid = flash_read_mid();
     #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
@@ -1236,7 +1241,7 @@ void user_init(void)
 
     delay_ms(1000);
 
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     if (flash_set_4line_read_write(g_flash_mid) != 1) {
         err_status.set_4line_err = 1;
         while (1)
@@ -1432,6 +1437,26 @@ void user_init(void)
     case MID1560C8:
         flash_mid1560c8_test();
         break;
+    case MID166085:
+        flash_mid166085_test();
+        break;
+    default:
+        break;
+    }
+    #elif defined(MCU_CORE_TL521X)
+    switch (g_flash_mid) {
+    case MID146085:
+        flash_mid146085_test();
+        break;
+    case MID1460C8:
+        flash_mid1460c8_test();
+        break;
+    case MID156085:
+        flash_mid156085_test();
+        break;
+    case MID1560C8:
+        flash_mid1560c8_test();
+        break;
     default:
         break;
     }
@@ -1448,7 +1473,7 @@ void user_init(void)
     }
     #endif
 
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     check_status.umid_check = flash_read_mid_uid_with_check((unsigned int *)(&(g_flash_mid)), uid);
     #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL7518)
     check_status.umid_check = flash_read_mid_uid_with_check_with_device_num(SLAVE_N, (unsigned int *)(&(g_flash_mid)), uid);
@@ -1471,7 +1496,7 @@ void user_init(void)
     if (check_status.flash_capacity_add_check != 1) {
         err_status.flash_capacity_add_err = 1;
     }
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     if (hal_flash_lock() == 1) {
         check_status.flash_lock_init_add_check = 1;
     } else {
@@ -1500,7 +1525,7 @@ void user_init(void)
     //and it is necessary to unprotect the address when erasing it
     //(the principle of bin code protection is that it is generally not recommended to put the data area in the protected area).
     //restore it to firmware protection.
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     hal_flash_lock();
     #else
     hal_flash_lock_with_device_num(SLAVE_N);
@@ -1511,7 +1536,7 @@ void user_init(void)
 #if (FLASH_FUNCTION_MODE == FLASH_QE_ENABLE)
 void user_init(void)
 {
-    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     g_flash_mid = flash_read_mid();
     #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92)
     g_flash_mid = flash_read_mid_with_device_num(SLAVE_N);
@@ -1675,6 +1700,31 @@ void user_init(void)
         break;
     }
     #elif defined(MCU_CORE_TL323X)
+    switch (g_flash_mid) {
+    case MID146085:
+        flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);
+        g_qe_status = flash_read_status_mid146085();
+        break;
+    case MID1460C8:
+        flash_write_status_mid1460c8(0x200, FLASH_WRITE_STATUS_QE_MID1460C8);
+        g_qe_status = flash_read_status_mid1460c8();
+        break;
+    case MID156085:
+        flash_write_status_mid156085(0x200, FLASH_WRITE_STATUS_QE_MID156085);
+        g_qe_status = flash_read_status_mid156085();
+        break;
+    case MID1560C8:
+        flash_write_status_mid1560c8(0x200, FLASH_WRITE_STATUS_QE_MID1560C8);
+        g_qe_status = flash_read_status_mid1560c8();
+        break;
+    case MID166085:
+        flash_write_status_mid166085(0x200, FLASH_WRITE_STATUS_QE_MID166085);
+        g_qe_status = flash_read_status_mid166085();
+        break;
+    default:
+        break;
+    }
+    #elif defined(MCU_CORE_TL521X)
     switch (g_flash_mid) {
     case MID146085:
         flash_write_status_mid146085(0x200, FLASH_WRITE_STATUS_QE_MID146085);

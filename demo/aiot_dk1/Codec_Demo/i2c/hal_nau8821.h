@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    hal_nau8821.h
  *
- * @brief   This is the source file for TL7518/TL721X/TL321X
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2024
@@ -21,7 +21,6 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-
 #ifndef __NAU8821_H__
 #define __NAU8821_H__
 

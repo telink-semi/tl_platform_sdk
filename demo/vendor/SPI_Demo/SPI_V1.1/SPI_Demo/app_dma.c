@@ -30,7 +30,7 @@
     #define SPI_MASTER_DEVICE 1
     #define SPI_SLAVE_DEVICE  2
 
-    #define SPI_DEVICE        SPI_SLAVE_DEVICE
+    #define SPI_DEVICE        SPI_MASTER_DEVICE
 
     /**********************************************************************************************************************
  *                                         SPI protocol demo selection                                                *
@@ -53,8 +53,8 @@
     /**********************************************************************************************************************
  *                                         SPI module selection                                                       *
  *********************************************************************************************************************/
-    /* Note:TL321X only supports gspi!!!*/
-    #ifndef MCU_CORE_TL321X
+    /* Note:TL321X/TL323X only supports gspi!!!*/
+ #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
         #define LSPI_MODULE 0
     #endif
     #define GSPI_MODULE 1
@@ -65,7 +65,7 @@
         #define GSPI4_MODULE 5
     #endif
 
-    #if defined(MCU_CORE_TL321X)
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
         #define SPI_MODULE_SEL GSPI_MODULE
     #else
         #define SPI_MODULE_SEL GSPI_MODULE
@@ -118,7 +118,7 @@
  *********************************************************************************************************************/
 
     #if (SPI_MODULE_SEL == GSPI_MODULE)
-        #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+        #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
 gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = GPIO_FC_PA0,
     .spi_clk_pin      = GPIO_FC_PA1,
@@ -247,7 +247,7 @@ gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {
 gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, GPIO_FC_PA1, GPIO_FC_PA2, GPIO_FC_PA3, GPIO_FC_PA4, GPIO_FC_PA5, GPIO_FC_PA6, GPIO_FC_PB0};
         #endif
     #endif
-    #ifndef MCU_CORE_TL321X
+#if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
         #if (SPI_MODULE_SEL == LSPI_MODULE)
             #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X)
 lspi_pin_config_t lspi_pin_config = {
@@ -447,7 +447,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GSPI4);
             #endif
         #endif
-        #ifndef MCU_CORE_TL321X
+#if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
             #if (SPI_MODULE_SEL == LSPI_MODULE)
     lspi_set_pin(&lspi_pin_config);
     plic_interrupt_enable(IRQ_LSPI);
@@ -457,9 +457,9 @@ void user_init(void)
     spi_master_config(SPI_MODULE_SEL, SPI_NORMAL);
         #elif (SPI_PROTOCOL == B91M_SLAVE_PROTOCOL)
     spi_master_config_plus(SPI_MODULE_SEL, &spi_b91m_slave_protocol_config);
-            #if (SPI_SLAVE_READY_TEST == 1)
+        #if (SPI_SLAVE_READY_TEST == 1)
     spi_b91m_slave_io_mode = spi_b91m_slave_protocol_config.spi_io_mode;
-            #endif
+        #endif
 
         #elif (SPI_PROTOCOL == B91M_SPI_SLAVE_PROTOCOL)
     spi_master_config_plus(SPI_MODULE_SEL, &spi_b91m_spi_slave_protocol_config);
@@ -585,7 +585,7 @@ void main_loop(void)
     for (unsigned char i = 0; i < DATA_BYTE_LEN; i++) {
         if (spi_tx_buff.data[3 + i] != (spi_rx_buff[i])) {
             gpio_set_high_level(LED2); //LED on indicate data error
-            while (1)
+            //while (1)
                 ;
         }
     }
@@ -642,7 +642,7 @@ _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
                 _attribute_ram_code_sec_noinline_ void gspi4_irq_handler(void)
             #endif
         #endif
-        #ifndef MCU_CORE_TL321X
+       #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
             #if (SPI_MODULE_SEL == LSPI_MODULE)
                     _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
             #endif
@@ -672,7 +672,8 @@ PLIC_ISR_REGISTER(gspi3_irq_handler, IRQ_GSPI3)
 PLIC_ISR_REGISTER(gspi4_irq_handler, IRQ_GSPI4)
             #endif
         #endif
-        #ifndef MCU_CORE_TL321X
+
+    #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
             #if (SPI_MODULE_SEL == LSPI_MODULE)
 PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
             #endif
@@ -730,16 +731,14 @@ void user_init(void)
             #elif (DATA_MODE == ONLY_DATA_MODE)
     spi_cmd_dis(SPI_MODULE_SEL);
     spi_addr_dis(SPI_MODULE_SEL);
-                #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+                #if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)
     spi_txdma_req_after_cmd_dis(SPI_MODULE_SEL);
                 #endif
     spi_set_io_mode(SPI_MODULE_SEL, SPI_SINGLE_MODE);
     spi_set_dummy_cnt(SPI_MODULE_SEL, 0);
     spi_clr_irq_status(SPI_MODULE_SEL, SPI_END_INT);
     spi_set_irq_mask(SPI_MODULE_SEL, SPI_END_INT_EN); //endint_en txfifoint_en rxfifoint_en
-                #if defined(MCU_CORE_TL322X)
-    spi_set_slave_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);
-                #endif
+    spi_set_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);   
             #endif
     dma_set_irq_mask(SPI_RX_DMA_CHN, TC_MASK);
     plic_interrupt_enable(IRQ_DMA);
@@ -765,7 +764,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GSPI4);
                 #endif
             #endif
-            #ifndef MCU_CORE_TL321X
+             #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
                 #if (SPI_MODULE_SEL == LSPI_MODULE)
     lspi_set_pin(&lspi_pin_config);
     plic_interrupt_enable(IRQ_LSPI);
@@ -781,6 +780,10 @@ void user_init(void)
             #endif
 
     core_interrupt_enable();
+#if((DATA_MODE == NORMAL_MODE)&&(defined(MCU_CORE_TL322X)))
+    spi_set_rx_dma(SPI_MODULE_SEL, (unsigned char *)(spi_slave_rx_buff + 4), SPI_RX_BUFF_LEN);
+    spi_set_tx_dma(SPI_MODULE_SEL, (unsigned char *)(spi_slave_rx_buff + 4 + DATA_BYTE_OFFSET), DATA_BYTE_LEN);
+#endif
         #elif (SPI_PROTOCOL == B91M_SPI_SLAVE_PROTOCOL)
             #if defined(MCU_CORE_B92)
     spi_slave_set_pin(); //spi slave only need set pin.
@@ -795,10 +798,7 @@ void user_init(void)
     spi_slave_set_pin(&sspi_pin_config); //spi slave only need set pin.
             #endif
         #endif
-#if((DATA_MODE == NORMAL_MODE)&&(defined(MCU_CORE_TL322X)))
-    spi_set_rx_dma(SPI_MODULE_SEL, (unsigned char *)(spi_slave_rx_buff + 4), SPI_RX_BUFF_LEN);
-    spi_set_tx_dma(SPI_MODULE_SEL, (unsigned char *)(spi_slave_rx_buff + 4 + DATA_BYTE_OFFSET), DATA_BYTE_LEN);
-#endif
+
 }
 
 void main_loop(void)
@@ -810,7 +810,7 @@ void main_loop(void)
     gpio_toggle(LED1);
 }
 
-
+ #if (SPI_PROTOCOL == B91M_SLAVE_PROTOCOL)
         #if (SPI_MODULE_SEL == GSPI_MODULE)
 _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
         #endif
@@ -828,7 +828,7 @@ _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
                 _attribute_ram_code_sec_noinline_ void gspi4_irq_handler(void)
             #endif
         #endif
-        #ifndef MCU_CORE_TL321X
+         #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
             #if (SPI_MODULE_SEL == LSPI_MODULE)
                     _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
             #endif
@@ -874,7 +874,7 @@ _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
         #endif
         #if defined(MCU_CORE_TL322X)&&(DATA_MODE == ONLY_DATA_MODE)
         if (spi_get_slave_transmode(SPI_MODULE_SEL) == SPI_MODE_WRITE_ONLY) {
-            spi_set_slave_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);
+            spi_set_transmode(SPI_MODULE_SEL, SPI_MODE_READ_ONLY);
             spi_set_rx_dma(SPI_MODULE_SEL, (unsigned char *)(spi_slave_rx_buff + 4), SPI_RX_BUFF_LEN);
         }
         #endif
@@ -899,7 +899,7 @@ PLIC_ISR_REGISTER(gspi3_irq_handler, IRQ_GSPI3)
 PLIC_ISR_REGISTER(gspi4_irq_handler, IRQ_GSPI4)
             #endif
         #endif
-        #ifndef MCU_CORE_TL321X
+         #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
             #if (SPI_MODULE_SEL == LSPI_MODULE)
 PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
             #endif
@@ -908,7 +908,7 @@ PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
  * In order to solve the logic bug of GSPI rx DMA (LSPI tx/rx dma,GSPI tx DMA does not affect),
  * spi_hw_fsm_reset(GSPI_MODULE); must be called every time the DMA transfer is complete when using GSPI rx DMA.
  * Bugfix: reset GSPI RXDMA in DMA transfer completion interrupt(this is a hardware bug already confirmed with jianzhi)
- * changed by pengxiang.hong 20230328.
+ * changed by minghai 20230328.
  */
 _attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
 {
@@ -920,12 +920,12 @@ _attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
         }
         #endif
 #if defined(MCU_CORE_TL322X)&&(DATA_MODE == ONLY_DATA_MODE)
-        spi_set_slave_transmode(SPI_MODULE_SEL, SPI_MODE_WRITE_ONLY);
+        spi_set_transmode(SPI_MODULE_SEL, SPI_MODE_WRITE_ONLY);
         spi_set_tx_dma(SPI_MODULE_SEL, (unsigned char *)(spi_slave_rx_buff + 4 + DATA_BYTE_OFFSET), DATA_BYTE_LEN);
 #endif
   }
 }
 PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
-
+#endif
     #endif
 #endif

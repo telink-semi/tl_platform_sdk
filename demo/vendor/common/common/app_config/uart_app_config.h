@@ -163,7 +163,7 @@ extern "C"
     #define UART2_RX_PIN  GPIO_FC_PC5
     #define UART2_CTS_PIN GPIO_FC_PC6
     #define UART2_RTS_PIN GPIO_FC_PC7
-#elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     #define UART0_RTX_PIN GPIO_FC_PC5
     #define UART0_TX_PIN  GPIO_FC_PC4
     #define UART0_RX_PIN  GPIO_FC_PC5
@@ -195,19 +195,19 @@ extern "C"
     #define UART4_RTS_PIN GPIO_FC_PC7
 #endif
 
-#if !defined(MCU_CORE_TL752X)
+
 #include "driver.h"
-#endif
+
 #define UART_DMA  1 //uart use dma
 #define UART_NDMA 2 //uart not use dma
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     #define UART_DMA_LLP 3
 #endif
 
-#if defined(MCU_CORE_TL752X)
+#if defined(MCU_CORE_TL752X)||defined(MCU_CORE_TL651X)
 #define  UART_TXDMA_RXNODMA    3
 #endif
-#define UART_MODE       UART_NDMA
+#define UART_MODE       UART_DMA
 
 #define BASE_TX         0 //just for NDMA
 #define NORMAL          1

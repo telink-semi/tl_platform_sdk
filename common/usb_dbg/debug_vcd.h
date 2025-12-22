@@ -28,7 +28,10 @@
 #include "log_def_stack.h"
 #include "myudb.h"
 
+#ifndef clock_time
 #define clock_time stimer_get_tick
+#endif
+
 #define log_sync(en)      \
     if (en) {             \
         my_irq_disable(); \

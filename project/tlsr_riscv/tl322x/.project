@@ -115,6 +115,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/IR_LEARN_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/Keyscan_Ana_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Keyscan_Ana_Demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/Keyscan_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/Keyscan_Demo</locationURI>

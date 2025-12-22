@@ -109,7 +109,7 @@ void user_init(void)
     timer_set_cap_tick(TIMER1, 500 * sys_clk.pclk * 1000); //500ms
     timer_set_mode(TIMER0, TIMER_MODE_SYSCLK);
     timer_set_mode(TIMER1, TIMER_MODE_SYSCLK);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     timer_set_irq_mask(FLD_TMR0_MODE_IRQ);
     timer_set_irq_mask(FLD_TMR1_MODE_IRQ);
     #endif
@@ -118,9 +118,9 @@ void user_init(void)
 
 #elif (TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
 
-    core_interrupt_enable();
     plic_interrupt_enable(IRQ_TIMER0);
     plic_interrupt_enable(IRQ_TIMER1);
+    core_interrupt_enable();
 
     gpio_function_en(TIMER0_TRIG_PIN | TIMER1_TRIG_PIN);
     gpio_output_en(TIMER0_TRIG_PIN | TIMER1_TRIG_PIN);
@@ -131,7 +131,7 @@ void user_init(void)
     timer_set_init_tick(TIMER0, 0);
     timer_set_cap_tick(TIMER0, TIMER_MODE_GPIO_TRIGGER_TICK);
     timer_set_mode(TIMER0, TIMER_MODE_GPIO_TRIGGER);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     timer_set_irq_mask(FLD_TMR0_MODE_IRQ);
     #endif
     timer_start(TIMER0);
@@ -141,7 +141,7 @@ void user_init(void)
     timer_set_init_tick(TIMER1, 0);
     timer_set_cap_tick(TIMER1, TIMER_MODE_GPIO_TRIGGER_TICK);
     timer_set_mode(TIMER1, TIMER_MODE_GPIO_TRIGGER);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     timer_set_irq_mask(FLD_TMR1_MODE_IRQ);
     #endif
     timer_start(TIMER1);
@@ -162,7 +162,7 @@ void user_init(void)
     timer_set_init_tick(TIMER0, 0);
     timer_set_cap_tick(TIMER0, 0);
     timer_set_mode(TIMER0, TIMER_MODE_GPIO_WIDTH);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     timer_set_irq_mask(FLD_TMR0_MODE_IRQ);
     #endif
     timer_start(TIMER0);
@@ -177,7 +177,7 @@ void user_init(void)
     timer_set_init_tick(TIMER1, 0);
     timer_set_cap_tick(TIMER1, 0);
     timer_set_mode(TIMER1, TIMER_MODE_GPIO_WIDTH);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     timer_set_irq_mask(FLD_TMR1_MODE_IRQ);
     #endif
     timer_start(TIMER1);
@@ -199,36 +199,49 @@ void user_init(void)
 
 #elif (TIMER_MODE == TIMER_WATCHDOG_MODE)
     delay_ms(500);
+    gpio_set_high_level(LED1);
+
     //eagle will enter deep once after reboot, so the watchdog status cannot be read.
-    if (wd_get_status()) {
-        gpio_set_high_level(LED1);
+    if (wd_get_status())
+    {
+        gpio_set_high_level(LED3);
         wd_clear_status();
     }
-    wd_set_interval_ms(1000);
+
     /**
      * Wd_clear() must be executed before each call to wd_start() to avoid abnormal watchdog reset time because the initial count value is not 0.
      * For example, the watchdog is reset soon or a few minutes later.
      */
+    wd_set_interval_ms(1000);
     wd_clear();
     wd_start();
 
 #elif (!defined(MCU_CORE_B91)&&(TIMER_MODE == TIMER_32K_WATCHDOG_MODE))
     delay_ms(500);
+    gpio_set_high_level(LED1);
+
     //Remove the stop 32k watchdog operation in main, otherwise this state cannot be read.
-    if (wd_32k_get_status()) {
-        gpio_set_high_level(LED1);
+    if (wd_32k_get_status())
+    {
+        gpio_set_high_level(LED3);
         wd_32k_clear_status();
+        if (wd_32k_get_status())
+        {
+            gpio_set_high_level(LED4);
+            while(1){}
+        }
     }
 
     #if (WATCHDOG_MODE == WATCHDOG_32K_RC_MODE)
     clock_32k_init(CLK_32K_RC);
     clock_cal_32k_rc(); //6.68ms
-    #elif (WATCHDOG_MODE == WATCHDOG_32K_XTAL_MODE) //The TL7518 A0 version not support 32k xtal.
+    //The TL7518 A0 version not support 32k xtal.
+    #elif (WATCHDOG_MODE == WATCHDOG_32K_XTAL_MODE)
     clock_32k_init(CLK_32K_XTAL);
     clock_kick_32k_xtal(10);
     #endif
 
-    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
     wd_32k_set_interval_ms(1000);
     #else
     wd_32k_stop();
@@ -236,7 +249,7 @@ void user_init(void)
     wd_32k_start();
     #endif
 
-#elif(defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE))
+#elif (defined(MCU_CORE_TL721X) && (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE))
 
 //PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
     pwm0_set_output(PWM_OUTPUT_PIN);
@@ -255,7 +268,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_TIMER1);
     core_interrupt_enable();
 
-#elif(defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA))
+#elif (defined(MCU_CORE_TL721X) && (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA))
 
 //PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
     pwm0_set_output(PWM_OUTPUT_PIN);
@@ -274,8 +287,8 @@ void user_init(void)
     timer_set_input_capture_mode(TIMER1,TMR_CAPT_RISING_EDGE,TIMER1_CAPT_PIN);
     timer_start(TIMER1);
 
-#elif(defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP))
-//PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
+#elif (defined(MCU_CORE_TL721X) && (TIMER_MODE == TIMER_INPUT_CAPTURE_MODE_WITH_DMA_LLP))
+    //PWM_OUTPUT_PIN link to TIMER0_CAPT_PIN and TIMER1_CAPT_PIN, output waveform to timer for trigger capture.
     pwm0_set_output(PWM_OUTPUT_PIN);
 /*Timer0*/
     //timer0 DMA LLP set
@@ -322,19 +335,38 @@ void main_loop(void)
 #endif
 
 #if (TIMER_MODE == TIMER_WATCHDOG_MODE)
-    //900ms<1000ms, watchdog does not overflow and the program continues to run.
-    delay_ms(900);
+    //800ms<1000ms, watchdog does not overflow and the program continues to run.
+    for(int i=0; i<2; i++)
+    {
+        delay_ms(200);
+        gpio_set_high_level(LED2);
+        delay_ms(200);
+        gpio_set_low_level(LED2);
+    }
+
     wd_clear();
-    gpio_set_high_level(LED2);
-    //1100ms>1000ms, watchdog overflows, program restarts.
-    delay_ms(1100);
-    gpio_set_high_level(LED3);
+
+    //1200ms>1000ms, watchdog overflows, program restarts.
+    for(int i=0; i<3; i++)
+    {
+        delay_ms(200);
+        gpio_set_high_level(LED2);
+        delay_ms(200);
+        gpio_set_low_level(LED2);
+    }
+    gpio_set_high_level(LED4);
 
 #elif (!defined(MCU_CORE_B91)&&(TIMER_MODE == TIMER_32K_WATCHDOG_MODE))
-    //900ms<1000ms, watchdog does not overflow and the program continues to run.
-    delay_ms(900);
+    //800ms<1000ms, watchdog does not overflow and the program continues to run.
+    for(int i=0; i<2; i++)
+    {
+        pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 200 * SYSTEM_TIMER_TICK_1MS);
+        gpio_set_high_level(LED2);
+        delay_ms(200);
+        gpio_set_low_level(LED2);
+    }
 
-    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
     wd_32k_feed();
     #else
     wd_32k_stop();
@@ -342,10 +374,17 @@ void main_loop(void)
     wd_32k_start();
     #endif
 
-    gpio_set_high_level(LED2);
-    //1100ms>1000ms, watchdog overflows, program restarts.
-    delay_ms(1100);
-    gpio_set_high_level(LED3);
+    //1200ms>1000ms, watchdog overflows, program restarts.
+    for(int i=0; i<2; i++)
+    {
+        pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 200 * SYSTEM_TIMER_TICK_1MS);
+        gpio_set_high_level(LED2);
+        delay_ms(200);
+        gpio_set_low_level(LED2);
+    }
+    pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 400 * SYSTEM_TIMER_TICK_1MS);
+    gpio_set_high_level(LED4);
+    while(1){}
 #else
 
     delay_ms(500);
@@ -357,13 +396,13 @@ void main_loop(void)
 _attribute_ram_code_sec_ void timer0_irq_handler(void)
 {
 #if (TIMER_MODE == TIMER_SYS_CLOCK_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     if (timer_get_irq_status(FLD_TMR0_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR0))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
         timer_clr_irq_status(FLD_TMR0_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
@@ -372,13 +411,13 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
         timer0_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     if (timer_get_irq_status(FLD_TMR0_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR0))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
         timer_clr_irq_status(FLD_TMR0_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
@@ -387,13 +426,13 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
         timer0_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     if (timer_get_irq_status(FLD_TMR0_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR0))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
         timer_clr_irq_status(FLD_TMR0_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
@@ -402,8 +441,7 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
         timer0_set_tick(0);
         gpio_toggle(LED2);
     }
-#if defined(MCU_CORE_TL721X)
-#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+#elif (defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE))
     if(timer_get_irq_status(FLD_TMR0_CAPT_IRQ))//tmr0_capt_irq
     {
          timer_clr_irq_status(FLD_TMR0_CAPT_IRQ);
@@ -417,20 +455,19 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
          tmr0_capt_cnt++;
     }
 #endif
-#endif
 }
 PLIC_ISR_REGISTER(timer0_irq_handler, IRQ_TIMER0)
 
 _attribute_ram_code_sec_ void timer1_irq_handler(void)
 {
 #if (TIMER_MODE == TIMER_SYS_CLOCK_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     if (timer_get_irq_status(FLD_TMR1_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR1))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
         timer_clr_irq_status(FLD_TMR1_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR1); //clear irq status
@@ -439,13 +476,13 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
         timer1_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     if (timer_get_irq_status(FLD_TMR1_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR1))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
         timer_clr_irq_status(FLD_TMR1_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR1); //clear irq status
@@ -454,13 +491,13 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
         timer1_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     if (timer_get_irq_status(FLD_TMR1_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR1))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
         timer_clr_irq_status(FLD_TMR1_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR1); //clear irq status
@@ -469,8 +506,7 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
         timer1_set_tick(0);
         gpio_toggle(LED3);
     }
-#if defined(MCU_CORE_TL721X)
-#elif(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE)
+#elif (defined(MCU_CORE_TL721X)&&(TIMER_MODE == TIMER_INPUT_CAPTURE_MODE))
     if(timer_get_irq_status(FLD_TMR1_CAPT_IRQ))
     {
          timer_clr_irq_status(FLD_TMR1_CAPT_IRQ);
@@ -483,7 +519,6 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
          timer1_last_capt_val = timer1_curr_capt_val;
          tmr1_capt_cnt++;
     }
-#endif
 #endif
 }
 PLIC_ISR_REGISTER(timer1_irq_handler, IRQ_TIMER1)

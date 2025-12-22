@@ -891,6 +891,7 @@ void spi_set_dummy_cnt(spi_sel_e spi_sel, unsigned char dummy_cnt)
 void spi_set_transmode(spi_sel_e spi_sel, spi_tans_mode_e mode)
 {
     reg_spi_ctrl2(spi_sel)          = ((reg_spi_ctrl2(spi_sel) & (~FLD_SPI_TRANSMODE)) | ((mode & 0x0f) << 4));
+    reg_spi_slv_trans_mode(spi_sel) = ((reg_spi_slv_trans_mode(spi_sel) & (~FLD_SPI_SLV_TRANS_MODE)) | (mode & 0x0f));
 }
 
 
@@ -1710,8 +1711,6 @@ void spi_master_write_read_full_duplex(spi_sel_e spi_sel, unsigned char *write_d
         } else {
             spi_read(spi_sel, read_data + i - 1, chunk_size + 1);
         }
-        spi_rx_fifo_clr(spi_sel);
-        spi_tx_fifo_clr(spi_sel);
     }
 }
 

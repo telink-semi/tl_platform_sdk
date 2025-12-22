@@ -40,6 +40,9 @@ enum
 
 #if defined(MCU_CORE_B91)
     #define PM_TICK_STIMER                  PM_TICK_STIMER_16M
+    #define FLD_PD_ZB_EN                    PM_POWER_BASEBAND
+#elif defined(MCU_CORE_B92)
+    #define FLD_PD_ZB_EN                    PM_POWER_BASEBAND
 #endif
 
 #if (defined(MCU_CORE_B91) || defined(MCU_CORE_TL7518))
@@ -54,6 +57,8 @@ enum
 #define WAKEUP_CORE_PAD                     GPIO_PA1
 #if defined(MCU_CORE_TL751X)
 #define LPC_WAKEUP_PAD                      LPC_INPUT_PG1
+#elif defined(MCU_CORE_TL323X)
+#define LPC_WAKEUP_PAD                      LPC_INPUT_PB5
 #else
 #define LPC_WAKEUP_PAD                      LPC_INPUT_PB1
 #endif
@@ -99,6 +104,9 @@ enum
 #define COMPARATOR_WAKEUP                   (1<<2)
 #define CORE_USB_WAKEUP                     (1<<3)              //only supported suspend
 #define CORE_GPIO_WAKEUP                    (1<<4)              //only supported suspend
+#if defined(MCU_CORE_TL323X)
+#define SHUTDOWN_WAKEUP                     (1<<8)
+#endif
 #if defined(MCU_CORE_B91)
 #define MDEC_WAKEUP                         (1<<5)
 #define ALL_WAKEUP                          (PAD_WAKEUP | TIMER_WAKEUP | COMPARATOR_WAKEUP | CORE_USB_WAKEUP | CORE_GPIO_WAKEUP | MDEC_WAKEUP)
@@ -137,13 +145,21 @@ enum
 #define DEEP_RET256K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW256K
 #define DEEP_RET384K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW384K
 
-#elif (defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL721X))
+#elif defined(MCU_CORE_TL721X)
 #define PM_SUSPEND_MODE                     SUSPEND_MODE
 #define PM_DEEPSLEEP_MODE                   DEEPSLEEP_MODE
 #define DEEP_RET32K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW32K
 #define DEEP_RET64K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW64K
 #define DEEP_RET128K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW128K
 #define DEEP_RET256K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW256K
+
+#elif defined(MCU_CORE_TL323X)
+#define PM_SUSPEND_MODE                     SUSPEND_MODE
+#define PM_DEEPSLEEP_MODE                   DEEPSLEEP_MODE
+#define DEEP_RET32K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW32K
+#define DEEP_RET96K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW96K
+#define DEEP_RET160K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW160K
+#define PM_SHUTDOWN_MODE                    SHUTDOWN_MODE
 
 #elif defined(MCU_CORE_TL751X)
 #define PM_SUSPEND_MODE                     SUSPEND_MODE
@@ -176,7 +192,7 @@ enum
 #define PULL_WAKEUP_SRC_PD2                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PD3                 GPIO_PIN_UP_DOWN_FLOAT
 
-#elif (defined(MCU_CORE_TL321X)) //|| defined(MCU_CORE_TL322X))
+#elif (defined(MCU_CORE_TL321X)) //|| defined(MCU_CORE_TL322X)) || defined(MCU_CORE_TL323X)
 #define PULL_WAKEUP_SRC_PC2                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PC3                 GPIO_PIN_UP_DOWN_FLOAT
 #endif
@@ -199,6 +215,8 @@ enum
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CTB
 #elif (defined(MCU_CORE_TL751X) && (PM_MODE == WT_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_WT
+#elif (defined(MCU_CORE_TL323X) && (PM_MODE == SHUTDOWN_WAKEUP))
+#define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_SHUTDOWN | PM_WAKEUP_PAD
 #elif (PM_MODE == ALL_WAKEUP)
 #if defined(MCU_CORE_B91)
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_PAD | PM_WAKEUP_TIMER | PM_WAKEUP_COMPARATOR | PM_WAKEUP_CORE | PM_WAKEUP_MDEC

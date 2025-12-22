@@ -1,0 +1,2612 @@
+{
+  "name": "TL_PLATFORM_SDK_323X",
+  "language": "c",
+  "toolchain_path": "",
+  "targets": [
+    {
+      "name": "ALG_REG_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/ALG_REG_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   ALG_REG_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   ALG_REG_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "Debug_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/Debug_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   Debug_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   Debug_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "Flash_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/Flash_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   Flash_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   Flash_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "GPIO_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/GPIO_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   GPIO_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   GPIO_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "HASH_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/HASH_Demo/HASH_Demo_Telink_2025Q1-v1.2.3-a/HASH_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   HASH_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   HASH_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "I2C_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/I2C_Demo/I2C_V1.1",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   I2C_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   I2C_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "PKE_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/PKE_Demo/PKE_Demo_Telink_2025Q1-v1.2.3-a/PKE_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PKE_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PKE_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "PM_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/PM_DEMO",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PM_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PM_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "PWM_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/PWM_DEMO",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PWM_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PWM_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "RF_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/RF_DEMO",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   RF_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   RF_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "SD_ADC_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/SD_ADC_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   SD_ADC_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   SD_ADC_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "Secure_Boot_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/Debug_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   Secure_Boot_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   Secure_Boot_Demo   TL_PLATFORM_SDK_323X",
+        "../../../../tools/secure_boot_tool/secure_boot_tool.sh ../../../../tools/secure_boot_tool ../../../../tools/secure_boot_tool/config/TL323X/secure_boot_tool_cfg.ini ./Secure_Boot_Demo.bin ./Secure_Boot_Demo_run_desc.bin"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "SKE_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/SKE_Demo/SKE_Demo_Telink_2025Q1-v1.2.3-a/SKE_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   SKE_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   SKE_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "SPI_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/SPI_Demo/SPI_V1.1/SPI_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   SPI_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   SPI_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "STIMER_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/STimer_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   STIMER_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   STIMER_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "TIMER_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/Timer_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   TIMER_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   TIMER_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "TRAP_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/TRAP_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   TRAP_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   TRAP_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "TRNG_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/TRNG_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   TRNG_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   TRNG_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "UART_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/UART_DEMO",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef",
+        "-g3"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   UART_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   UART_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    }
+  ],
+  "toolchainName": "RISC-V Cross GCC",
+  "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2"
+}
