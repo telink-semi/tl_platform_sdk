@@ -4,7 +4,7 @@
 
 * SDK Version: tl_platform_sdk V3.9.0
 * Chip Version
-  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3),TL322X(A0)
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3),TL322X(A0/A1),TL323X(A0)
 * Hardware EVK Version
   * TLSR951x(B91): C1T213A20
   * TLSR952x(B92): C1T266A20
@@ -12,6 +12,7 @@
   * TL721X: C1T315A20 In the C1T315A20_V1_5 and earlier versions, the PD4 pin used for KEY1 is not available for any functional use.
   * TL321X: C1T335A20
   * TL322X: C1T371A20
+  * TL323X: C1T388A20
 * Hardware AIOT_DK1 Version
   * C1TXA104
 * Demo Platform Requirements
@@ -30,6 +31,7 @@
   - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
   - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
   - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL323x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
 
 <hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
 
@@ -173,7 +175,7 @@
 
 * SDK 版本: tl_platform_sdk V3.9.0
 * 芯片版本
-  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3),TL322X(A0)
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3),TL322X(A0/A1),TL323X(A0)
 * 硬件评估板版本
   * TLSR951x(B91): C1T213A20
   * TLSR952x(B92): C1T266A20
@@ -181,6 +183,7 @@
   * TL721X: C1T315A20 在C1T315A20_V1_5及之前版本中，KEY1所使用的PD4引脚无法作为任何功能使用。
   * TL321X: C1T335A20
   * TL322X: C1T371A20
+  * TL323X: C1T388A20
 * 硬件AIOT_DK1版本
   * C1TXA104
 * Demo平台要求
@@ -199,6 +202,7 @@
   - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
   - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
   - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL323x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
 
 <hr style="border-bottom:2.5px solid rgba(36, 190, 62, 1)">
 
