@@ -1,4 +1,4 @@
-## 3.9.0
+## V3.9.0(ER)
 
 ### Version
 
@@ -169,7 +169,7 @@
 * **rf**
   * (TL322X) Improve the TX sideband performance by increasing the TX ramp-up time for all RF modes and extending the 2M PHY preamble length by 1 byte.(merge_requests/@2199)(merge_requests/@2213)(merge_requests/@2226)
 
-## 3.9.0
+## V3.9.0(ER)
 
 ### 版本
 
