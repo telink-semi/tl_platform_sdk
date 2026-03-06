@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file    driver.h
+ * @file    efuse.h
  *
- * @brief   This is the header file for tl323x
+ * @brief   This is the header file for TL323X
  *
  * @author  Driver Group
  * @date    2025
@@ -21,38 +21,17 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#pragma once
+#ifndef EFUSE_H_
+#define EFUSE_H_
 
+#include "error_handler/error_handler.h"
 
-#include "lib/include/plic.h"
-#include "lib/include/pm/pm.h"
-#include "lib/include/rf/rf_common.h"
-#include "lib/include/sys.h"
-#include "lib/include/trng/trng_algorithm.h"
-#include "lib/include/pke/pke_algorithm.h"
-#include "lib/include/ske/ske_algorithm.h"
-#include "lib/include/hash/hash_algorithm.h"
-#include "lib/include/crypto_common/common_config.h"
-#include "lib/include/analog.h"
-#include "dma.h"
-#include "gpio.h"
-#include "i2c.h"
-#include "spi.h"
-#include "pwm.h"
-#include "timer.h"
-#include "flash.h"
-#include "watchdog.h"
-#include "lib/include/core.h"
-#include "lib/include/efuse.h"
-#include "lpc.h"
-#include "uart.h"
-#include "lib/include/stimer.h"
+/**
+* @brief      This function servers to get chip id from EFUSE.
+* @param[in]  chip_id_buff - store chip id. Chip ID is 16 bytes.
+* @return     DRV_API_SUCCESS: operation successful.
+*             DRV_API_TIMEOUT: operation timeout.
+*/
+drv_api_status_e efuse_get_chip_id(unsigned char *chip_id_buff);
 
-#include "lib/include/clock.h"
-#include "lib/include/mspi.h"
-#include "plic_sw.h"
-#include "plmt.h"
-#include "flash/flash_type.h"
-#include "flash/flash_common.h"
-#include "sd_adc.h"
-
+#endif

@@ -34,6 +34,7 @@
 #include "hal_driver/flash/hal_flash.h"
 #include "gpio.h"
 #else
+#include "calibration.h"
 #include "soc_printf.h"
 #include "tl_log_transport.h"
 #include "tl_log.h"
@@ -149,13 +150,21 @@ void platform_init(void);
         #define PLATFORM_INIT platform_init()
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT
+        #define CLOCK_INIT PLL0_BBPLL_768M_MCLK_192M_D25F_192M_N22_96M_DSP_192M_MSPI_48M
     #endif
 #elif defined (MCU_CORE_TL651X)
 #include "epm_chip.h"
 void platform_init(void);
     #ifndef PLATFORM_INIT
         #define PLATFORM_INIT   platform_init()
+    #endif
+    #ifndef CLOCK_INIT
+        #define CLOCK_INIT
+    #endif
+#elif defined(MCU_CORE_TL711X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en);
+    #ifndef PLATFORM_INIT
+        #define PLATFORM_INIT platform_init(LDO_AVDD_LDO_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6, 0)
     #endif
     #ifndef CLOCK_INIT
         #define CLOCK_INIT

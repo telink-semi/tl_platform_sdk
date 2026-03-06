@@ -23,6 +23,7 @@
  *******************************************************************************************************/
 #include "common.h"
 #include "driver.h"
+#define JTAG_MODE 1
 
 volatile unsigned int g_debug_flag;
 
@@ -33,6 +34,8 @@ void platform_init(void)
     sys_init();
 
     pm_update_status_info(0);
+
+    calibration_func();
 }
 
 #elif defined(MCU_CORE_TL651X)
@@ -196,6 +199,8 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL521X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL711X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
 #else
 void platform_init(unsigned char flash_protect_en)
 #endif
@@ -244,6 +249,8 @@ void platform_init(unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL521X)
 #define INTERNAL_SIMULATION_DEBUG
     sys_init(power_mode, vbat_v, cap);
+#elif defined(MCU_CORE_TL711X)
+    sys_init(power_mode, vbat_v);
 #else
     sys_init();
 #endif
@@ -264,7 +271,13 @@ void platform_init(unsigned char flash_protect_en)
         ===============================================================================
     */
     gpio_shutdown(GPIO_ALL);
+
    #endif
+#if JTAG_MODE
+    #if defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL322X)
+        jtag_set_pin_en();
+    #endif
+#endif
 #endif
 
 /**
@@ -428,7 +441,7 @@ void platform_init(unsigned char flash_protect_en)
 
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
         unsigned char lock_flag = hal_flash_lock();
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X) || defined(MCU_CORE_TL711X)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
         #endif
         if (!(lock_flag == 1)) {

@@ -167,7 +167,7 @@ extern "C"
 #elif defined(MCU_CORE_TL751X)
     #define RF_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL752X)
-    #define RF_POWER RF_POWER_P10p00dBm
+    #define RF_POWER RF_POWER_LEVEL_20
 #elif defined(MCU_CORE_TL753X)
     #define RF_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL521X)

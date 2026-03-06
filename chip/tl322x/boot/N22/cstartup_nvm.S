@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    cstartup_rram.S
+ * @file    cstartup_nvm.S
  *
  * @brief   This is the boot file for tl322x
  *
@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#ifdef N22_MCU_STARTUP_RRAM
+#ifdef N22_MCU_STARTUP_NVM
 
 /* If using Andes toolchain, these two Macro are defined in it's toolchain */
 /* If using std gcc toolchain, these two core registers(not standard risc-v core registers)

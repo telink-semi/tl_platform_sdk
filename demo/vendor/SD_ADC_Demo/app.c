@@ -37,8 +37,6 @@ signed int sd_adc_vol_10x = 0;
 volatile signed int sd_adc_vol = 0;
 volatile signed int temp_value = 0;
 volatile unsigned int sd_adc_rx_done_flag=0;
-volatile unsigned char vbat_low_vol_detect = 0;
-
 
 /*
  *  The length of sd_adc_sample_buffer must be >= SD_ADC_FIFO_DEPTH, otherwise there is a risk of array overflow.
@@ -183,14 +181,10 @@ signed int sd_adc_get_result(sd_adc_result_type_e result_type)
 
     code_average = sd_adc_sort_and_get_average_code(sd_adc_sample_buffer);
 
-    if(result_type == SD_ADC_VOLTAGE_10X_MV)
-    {
-        return sd_adc_result = sd_adc_calculate_voltage(code_average,result_type);
-    }
-    else if(result_type == SD_ADC_VOLTAGE_MV)
-    {
-        return sd_adc_result = sd_adc_calculate_voltage(code_average,result_type);
 
+    if(result_type == SD_ADC_VOLTAGE_10X_MV || result_type == SD_ADC_VOLTAGE_MV)
+    {
+        return sd_adc_result = sd_adc_calculate_voltage(code_average,result_type);
     }
     else if((result_type == TEMP_VALUE))
     {

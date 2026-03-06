@@ -36,6 +36,7 @@ int main(void)
 #if ((defined(MCU_CORE_TL751X_N22)) || (defined(MCU_CORE_TL322X_N22)))
     rf_n22_dig_init();
     rf_clr_irq_mask(FLD_RF_IRQ_ALL);
+#elif(defined (MCU_CORE_TL753X_N22))
 #else
     PLATFORM_INIT;
     CLOCK_INIT;
@@ -124,6 +125,7 @@ int main(void)
 #endif
 
 #if defined(MCU_CORE_TL322X)
+    /* When operating in BLE 4M or 6M modes, the PLL must be configured to a frequency of 192MHz. */
     #if (RF_MODE == RF_BLE_4M)
     rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_4M_mode();//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation

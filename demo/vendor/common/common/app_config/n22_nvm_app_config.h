@@ -1,12 +1,12 @@
 /********************************************************************************************************
- * @file    rram_app_config.h
+ * @file    n22_nvm_app_config.h
  *
  * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2024
+ * @date    2026
  *
- * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -29,25 +29,10 @@ extern "C"
 {
 #endif
 
-#define DSP_FW_DOWNLOAD_FLASH_ADDR 0x20040000
-#define N22_FW_DOWNLOAD_FLASH_ADDR 0x20080000
-#define N22_FW_DOWNLOAD_RRAM_ADDR  0x00540000
-
-#define RRAM_TX_DMA_CHN            DMA0
-#define RRAM_RX_DMA_CHN            DMA1
-
-#define RRAM_COMMON                1
-#define RRAM_LOAD                  2
-#define RRAM_N22_LOAD              3
-#define RRAM_MODE                  RRAM_COMMON
-
-#define RRAM_D25F_TEST             1
-#define RRAM_N22_TEST_D25F         2
-#define RRAM_N22_TEST_N22          3
-#define RRAM_COMMON_MODE           RRAM_D25F_TEST
-
-
 #include "driver.h"
+
+
+
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)
 }

@@ -47,7 +47,7 @@ unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10
     #define RX_FIFO_DEP    128
 
 
-    #define RF_FREQ        40
+    #define RF_FREQ        38
     #define ACCESS_CODE    0xf8118ac9//0x29417671 //0xd6be898e// 0x898e898e//
 
 volatile unsigned int rx_cnt = 0;
@@ -206,11 +206,19 @@ void main_loop(void)
 void user_init(void)
 {
     rf_set_power_level(RF_POWER);
+#if defined(MCU_CORE_TL753X)//TODO this function just used on fpga.
+        #if (RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN)
+    rf_set_chn_fpga(RF_FREQ);
+        #else
+    rf_set_ble_chn_fpga(RF_FREQ);
+        #endif
+#else
         #if (RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN)
     rf_set_chn(RF_FREQ);
         #else
     rf_set_ble_chn(RF_FREQ);
         #endif
+#endif
 
     rf_access_code_comm(ACCESS_CODE);
 

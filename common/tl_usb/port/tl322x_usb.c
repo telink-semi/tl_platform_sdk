@@ -39,6 +39,24 @@ __attribute__((weak)) void usbd_resume_callback(unsigned char bus)
     usb_log("usb0 default resume function %d\r\n", bus);
 }
 
+__attribute__((weak)) void usbd_resetdet_callback(unsigned char bus) 
+{
+    (void)bus;
+    usb_log("usb0 default resetdet function %d\r\n", bus);
+}
+
+__attribute__((weak)) void usbd_sof_callback(unsigned char bus)
+{
+    (void)bus;
+    usb_log("usb0 default sof function %d\r\n", bus);
+}
+
+__attribute__((weak)) void usbd_reset_callback(unsigned char bus)
+{
+    (void)bus;
+    usb_log("usb0 default reset function %d\r\n", bus);
+}
+
 void usbd_ep_open(unsigned char bus, usb_endpoint_descriptor_t *endpoint_desc)
 {
     (void)bus;
@@ -198,10 +216,6 @@ static void usb_irq_handler_reset(void)
     usbd_ep_read(0, 0, ep0_out_data, sizeof(ep0_out_data) / sizeof(ep0_out_data[0]));
 }
 
-volatile unsigned int sof_cnt;
-volatile unsigned int sof_buf[4];
-volatile unsigned int stimer_cnt[4];
-
 _attribute_ram_code_sec_ void usb0_irq_handler(void)
 {
     unsigned int status = usb0hw_get_gintsts() & reg_usb_gintmsk;
@@ -221,25 +235,26 @@ _attribute_ram_code_sec_ void usb0_irq_handler(void)
 
     if (status & FLD_USB_GINTSTS_SOF) {
         usb0hw_clear_gintsts(FLD_USB_GINTSTS_SOF);
-        sof_cnt++;
-        sof_buf[sof_cnt % 4]    = usb0hw_get_sof_fn();
-        stimer_cnt[sof_cnt % 4] = usb0hw_get_timer_stamp();
+        usbd_sof_callback(0);
     }
 
     if (status & FLD_USB_GINTSTS_USBSUSP) {
         usb_log("usb0 suspend irq handler\r\n");
         usb0hw_clear_gintsts(FLD_USB_GINTSTS_USBSUSP);
-        usb0hw_pcgc_clk_dis();
-        usb0hw_phy_pll_dis();
         usbd_suspend_callback(0);
     }
 
     if (status & FLD_USB_GINTSTS_WKUPINT) {
         usb_log("usb0 wakeup irq handler\r\n");
         usb0hw_clear_gintsts(FLD_USB_GINTSTS_WKUPINT);
-        usb0hw_pcgc_clk_en();
-        usb0hw_phy_pll_en();
         usbd_resume_callback(0);
+    }
+
+    if (status & FLD_USB_GINTSTS_RESETDET) {
+        usb0hw_clear_gintsts(FLD_USB_GINTSTS_RESETDET);
+        usb_log("usb0 resetdet irq handler\r\n");
+        usbd_resetdet_callback(0);
+        usb0hw_set_pwronprgdone();
     }
 
     if (status & FLD_USB_GINTSTS_USBRST) {
@@ -247,6 +262,7 @@ _attribute_ram_code_sec_ void usb0_irq_handler(void)
         usb_log("usb0 reset irq handler\r\n");
         usb_irq_handler_reset();
         usbd_bus_reset(0);
+        usbd_reset_callback(0);
     }
 }
 PLIC_ISR_REGISTER(usb0_irq_handler, IRQ_USB0)

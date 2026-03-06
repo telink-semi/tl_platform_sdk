@@ -66,6 +66,9 @@
     #define PARA_BASE_ADDR 0x00000004
 #elif defined(MCU_CORE_TL521X)
     #define PARA_BASE_ADDR 0x00000004
+#elif defined(MCU_CORE_TL711X)
+    #define PARA_BASE_ADDR 0x00020004 // D25
+// #define PARA_BASE_ADDR    0x50020004    // N22
 #endif
 /*
  * Since data conflicts occur on the B85M in the form of fixed addresses,

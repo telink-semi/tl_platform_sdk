@@ -63,8 +63,7 @@ enum
 
 enum
 {
-    FLD_PD_BBPLL_LDO = BIT(0),      //power down bbpll LDO
-                                    //LDO:260uA, DCDC:100uA
+    FLD_PD_BBPLL_LDO      = BIT(0), //power down bbpll LDO  LDO:260uA, DCDC:100uA
     FLD_PD_LC_COMP_3V     = BIT(1), //power down of low current comparator
     FLD_PD_TEMP_SENSOR_3V = BIT(2), //power down of temp sensor
     FLD_PD_VBAT_SW        = BIT(3), //power down of bypass switch(VBAT LDO)

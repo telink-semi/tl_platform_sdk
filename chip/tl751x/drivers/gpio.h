@@ -495,7 +495,11 @@ typedef enum
     GPIO_PIN_UP_DOWN_FLOAT = 0,
     GPIO_PIN_PULLUP_1M     = 1,
     GPIO_PIN_PULLDOWN_100K = 2,
-    GPIO_PIN_PULLUP_10K    = 3,
+    GPIO_PIN_PULLUP_10K    = 3, /**<
+                                    The following scenario prohibits using GPIO_PIN_PULLUP_10K:
+                                    When entering sleep via pm_sleep_wakeup() with PM_WAKEUP_PAD as the wake-up source and low-level wake-up,
+                                    you must configure the GPIO with GPIO_PIN_PULLUP_1M; do not use GPIO_PIN_PULLUP_10K, otherwise the device may fail to wake up.
+                                  */
 } gpio_pull_type_e;
 
 /**

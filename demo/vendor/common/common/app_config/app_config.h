@@ -71,7 +71,7 @@ extern "C"
 #endif
 #endif
 
-#if defined(CURRENT_BUILD_Flash_Demo) || defined(CURRENT_BUILD_Flash_Demo_No_Bootloader)
+#if defined(CURRENT_BUILD_Flash_Demo) || defined(CURRENT_BUILD_N22_Flash_Demo_BY_MCUA)
 #include "app_config/flash_app_config.h"
 #endif
 
@@ -89,11 +89,14 @@ extern "C"
 #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
 #include "app_config/audio_app_config_1v3.h"
 #endif
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518)
+#if (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518))
 #include "app_config/audio_app_config_1v2.h"
 #endif
 #if defined(MCU_CORE_TL752X)
 #include "app_config/audio_app_config_1v4.h"
+#endif
+#if defined(MCU_CORE_TL753X)
+#include "app_config/audio_app_config_1v5.h"
 #endif
 #endif
 
@@ -302,7 +305,7 @@ extern "C"
 #include "app_config/n22_test_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_N22_Test_Demo_Bootloader_by_N22_RRAM_MCU)
+#if defined(CURRENT_BUILD_N22_Test_Demo_Bootloader_by_N22_NVM_MCU)
 #include "app_config/n22_test_app_config.h"
 #endif
 
@@ -317,27 +320,35 @@ extern "C"
 #endif
 #endif
 
+#if defined(CURRENT_BUILD_N22_Test_Demo)
+#include "app_config/test_app_config.h"
+#endif
+
 #if defined(CURRENT_BUILD_Test_N22_Demo)
 #include "app_config/test_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_Test_Rram_Demo)
+#if defined(CURRENT_BUILD_Test_NVM_Demo)
 #include "app_config/test_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_Test_Rram_N22_Demo)
+#if defined(CURRENT_BUILD_Test_NVM_N22_Demo)
 #include "app_config/test_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_RRAM_Demo)
-#include "app_config/rram_app_config.h"
+#if defined(CURRENT_BUILD_NVM_Demo)
+#include "app_config/nvm_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_N22_RRAM_Demo)
-#include "app_config/rram_app_config.h"
+#if defined(CURRENT_BUILD_N22_NVM_Demo)
+#include "app_config/n22_nvm_app_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_PM_Demo)
+#include "app_config/pm_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_PM_D25F)
 #include "app_config/pm_app_config.h"
 #endif
 
@@ -401,9 +412,9 @@ extern "C"
 #endif
 
 
-#if defined(CURRENT_BUILD_SLE_Demo)||defined(CURRENT_BUILD_D25F_SLE_Demo)||defined(CURRENT_BUILD_N22_SLE_Demo)
+#if defined(CURRENT_BUILD_TAHDT_Demo)||defined(CURRENT_BUILD_D25F_TAHDT_Demo)||defined(CURRENT_BUILD_N22_TAHDT_Demo)
 #if defined(MCU_CORE_TL752X)
-#include "app_config/sle_app_config.h"
+#include "app_config/tahdt_app_config.h"
 #endif
 #endif
 

@@ -77,7 +77,7 @@ void user_init(void)
     gpio_function_en(LED4);
     gpio_output_en(LED4);
 
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
     gpio_function_en(INPUT_CAPT_PIN);
     gpio_input_en(INPUT_CAPT_PIN);
     gpio_output_dis(INPUT_CAPT_PIN);
@@ -85,7 +85,7 @@ void user_init(void)
 
 #if (STIMER_MODE == STIMER_IRQ_N22)
     stimer_set_irq_capture_n22(stimer_get_tick() + (500 * SYSTEM_TIMER_TICK_1MS)); //set capture tick
-    #if defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
     stimer_set_irq_mask_n22(FLD_SYSTEM_IRQ_MASK_N22);                              //irq enable
     #else
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_N22); //irq enable
@@ -262,14 +262,14 @@ void main_loop(void)
 #if ((STIMER_MODE == STIMER_IRQ_N22) || (STIMER_MODE == STIMER_IRQ_D25_N22_DSP))
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
-    #if defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
     if (stimer_get_irq_status_n22())
     #else
     if (stimer_get_irq_status(FLD_SYSTEM_IRQ_N22))
     #endif
     {
         gpio_toggle(LED2);
-    #if defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
         stimer_clr_irq_status_n22(); //clr irq
     #else
         stimer_clr_irq_status(FLD_SYSTEM_IRQ_N22); //clr irq

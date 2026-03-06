@@ -57,7 +57,7 @@ enum
 #define WAKEUP_CORE_PAD                     GPIO_PA1
 #if defined(MCU_CORE_TL751X)
 #define LPC_WAKEUP_PAD                      LPC_INPUT_PG1
-#elif defined(MCU_CORE_TL323X)
+#elif (defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X))
 #define LPC_WAKEUP_PAD                      LPC_INPUT_PB5
 #else
 #define LPC_WAKEUP_PAD                      LPC_INPUT_PB1
@@ -104,7 +104,7 @@ enum
 #define COMPARATOR_WAKEUP                   (1<<2)
 #define CORE_USB_WAKEUP                     (1<<3)              //only supported suspend
 #define CORE_GPIO_WAKEUP                    (1<<4)              //only supported suspend
-#if defined(MCU_CORE_TL323X)
+#if (defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X))
 #define SHUTDOWN_WAKEUP                     (1<<8)
 #endif
 #if defined(MCU_CORE_B91)
@@ -153,7 +153,7 @@ enum
 #define DEEP_RET128K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW128K
 #define DEEP_RET256K_MODE                   DEEPSLEEP_MODE_RET_SRAM_LOW256K
 
-#elif defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 #define PM_SUSPEND_MODE                     SUSPEND_MODE
 #define PM_DEEPSLEEP_MODE                   DEEPSLEEP_MODE
 #define DEEP_RET32K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW32K
@@ -192,7 +192,7 @@ enum
 #define PULL_WAKEUP_SRC_PD2                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PD3                 GPIO_PIN_UP_DOWN_FLOAT
 
-#elif (defined(MCU_CORE_TL321X)) //|| defined(MCU_CORE_TL322X)) || defined(MCU_CORE_TL323X)
+#elif (defined(MCU_CORE_TL321X)) //|| defined(MCU_CORE_TL322X)) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 #define PULL_WAKEUP_SRC_PC2                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PC3                 GPIO_PIN_UP_DOWN_FLOAT
 #endif
@@ -215,7 +215,7 @@ enum
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CTB
 #elif (defined(MCU_CORE_TL751X) && (PM_MODE == WT_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_WT
-#elif (defined(MCU_CORE_TL323X) && (PM_MODE == SHUTDOWN_WAKEUP))
+#elif (defined(MCU_CORE_TL323X || defined(MCU_CORE_TL521X)) && (PM_MODE == SHUTDOWN_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_SHUTDOWN | PM_WAKEUP_PAD
 #elif (PM_MODE == ALL_WAKEUP)
 #if defined(MCU_CORE_B91)
@@ -228,6 +228,7 @@ enum
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_PAD | PM_WAKEUP_TIMER | PM_WAKEUP_COMPARATOR | PM_WAKEUP_CORE
 #endif
 #endif
+
 
 #include "driver.h"
 /* Enable C linkage for C++ Compilers: */

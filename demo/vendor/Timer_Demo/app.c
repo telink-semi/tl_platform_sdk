@@ -360,7 +360,11 @@ void main_loop(void)
     //800ms<1000ms, watchdog does not overflow and the program continues to run.
     for(int i=0; i<2; i++)
     {
+#if !defined(MCU_CORE_TL753X)
         pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 200 * SYSTEM_TIMER_TICK_1MS);
+#else
+        delay_ms(200);
+#endif
         gpio_set_high_level(LED2);
         delay_ms(200);
         gpio_set_low_level(LED2);
@@ -377,12 +381,20 @@ void main_loop(void)
     //1200ms>1000ms, watchdog overflows, program restarts.
     for(int i=0; i<2; i++)
     {
+#if !defined(MCU_CORE_TL753X)
         pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 200 * SYSTEM_TIMER_TICK_1MS);
+#else
+        delay_ms(200);
+#endif
         gpio_set_high_level(LED2);
         delay_ms(200);
         gpio_set_low_level(LED2);
     }
-    pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 400 * SYSTEM_TIMER_TICK_1MS);
+#if !defined(MCU_CORE_TL753X)
+        pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 400 * SYSTEM_TIMER_TICK_1MS);
+#else
+        delay_ms(400);
+#endif
     gpio_set_high_level(LED4);
     while(1){}
 #else
