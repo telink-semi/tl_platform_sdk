@@ -145,13 +145,13 @@ extern "C"
 
 #define REBOOT_TEST                 58
 
-#define RRAM_QUALITY_TEST           59
-#define RRAM_WORK_VOLTAGE_TEST      60
-#define RRAM_SLEEP_CURRENT_MODE     61
-#define RRAM_POWER_ONOFF_TEST       62
-#define RRAM_READ_TEST              63
-#define RRAM_LIFE_2_TEST            64
-#define RRAM_LIFE_3_TEST            65
+#define NVM_QUALITY_TEST           59
+#define NVM_WORK_VOLTAGE_TEST      60
+#define NVM_SLEEP_CURRENT_MODE     61
+#define NVM_POWER_ONOFF_TEST       62
+#define NVM_READ_TEST              63
+#define NVM_LIFE_2_TEST            64
+#define NVM_LIFE_3_TEST            65
 
 #define TEST_HTOL_TL322X_CRC_MODE   66
 #define PM_ZB_AUDIO_USB_TEST        67
@@ -167,7 +167,13 @@ extern "C"
 #define TEST_HTOL_TL323X_MODE       71
 #endif
 
-#define TEST_MODE                   RRAM_LIFE_2_TEST
+#if defined(MCU_CORE_TL752X)
+#define TEST_HTOL_TL752X_MODE       72
+#define TEST_PM_ALL_PAD_WAKEUP      73
+#define TEST_N22_MAIL_BOX           74
+#endif
+
+#define TEST_MODE                   TEST_HTOL_TL752X_MODE
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M

@@ -57,6 +57,10 @@ void calibration_func(void)
     unsigned int  ieee_flash_pos = 0, cap_value_addr = 0;
     unsigned char ieee_addr[8];
 
+    /******get sd_adc calibration value from EFUSE********/
+   extern drv_api_status_e efuse_calib_sd_adc_vref(void);
+   efuse_calib_sd_adc_vref();
+
     /******check for flash mid********/
     flash_mid_sure = flash_read_mid_uid_with_check((unsigned int *)flash_mid, flash_uid);
 
@@ -108,6 +112,8 @@ void calibration_func(void)
     } else {
         user_get_ieee_addr(0, ieee_addr);
     }
+
+    pm_efuse_calib_vdd1v8_voltage();
 }
 
 /**

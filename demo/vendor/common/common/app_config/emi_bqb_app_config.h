@@ -30,7 +30,7 @@ extern "C"
 
 #define EMI_DEMO  0
 #define BQB_DEMO  1
-#define SLE_EMI_DEMO  2
+#define TAHDT_EMI_DEMO  2
 #define TEST_DEMO EMI_DEMO
 
 /**

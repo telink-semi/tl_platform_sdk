@@ -99,6 +99,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e g
     #endif
 #elif defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
 #elif defined(MCU_CORE_TL721X)
+#elif defined(MCU_CORE_TL322X)
 #else
 void platform_init(void);
     #ifndef PLATFORM_INIT
@@ -119,6 +120,8 @@ void platform_init(void);
     #define RF_POWER RF_POWER_P4p79dBm
 #elif defined(MCU_CORE_TL321X)
     #define RF_POWER RF_POWER_P4p52dBm
+#elif defined(MCU_CORE_TL322X)
+    #define RF_POWER RF_POWER_P10p00dBm
 #endif
 
 #if defined(MCU_CORE_TL721X)

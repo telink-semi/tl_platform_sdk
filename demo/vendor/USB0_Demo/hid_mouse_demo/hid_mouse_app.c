@@ -30,6 +30,7 @@
 static usbd_driver_t usbd_mouse_driver;
 static volatile char g_send_flag = 0;
 static unsigned char hid_report_data[5];
+static volatile char g_usb_suspend_flag = 0;
 
 static void led_toggle(void);
 
@@ -84,13 +85,19 @@ _attribute_ram_code_sec_ void usbd_hid_int_callback(unsigned char bus, unsigned 
 void usbd_suspend_callback(unsigned char bus)
 {
     if(bus == 0) {
-        pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER, 0);
+        usb0hw_pcgc_clk_dis();
+        usb0hw_phy_pll_dis();
+        g_usb_suspend_flag = 1;
     }
 }
 
 void usbd_resume_callback(unsigned char bus)
 {
     if(bus == 0) {
+        usb0hw_pcgc_clk_en();
+        usb0hw_phy_pll_en();
+        g_usb_suspend_flag = 0;
+
         hid_report_data[0] = 1;
         hid_report_data[1] = 2;
         hid_report_data[2] = 0;
@@ -107,6 +114,25 @@ void usbd_resume_callback(unsigned char bus)
         usb0hw_remote_wakeup();
         usbd_ep_write(0, HID_MOUSE_IN_ENDPOINT_ADDRESS, hid_report_data, 5);
     }
+}
+
+void usbd_resetdet_callback(unsigned char bus)
+{
+    (void)bus;
+    usb0hw_pcgc_clk_en();
+    usb0hw_phy_pll_en();
+    g_usb_suspend_flag = 0;
+}
+
+volatile unsigned int sof_cnt;
+volatile unsigned int sof_buf[4];
+volatile unsigned int stimer_cnt[4];
+void usbd_sof_callback(unsigned char bus)
+{
+    (void)bus;
+    sof_cnt++;
+    sof_buf[sof_cnt % 4]    = usb0hw_get_sof_fn();
+    stimer_cnt[sof_cnt % 4] = usb0hw_get_timer_stamp();
 }
 
 void user_init(void)
@@ -143,6 +169,10 @@ void user_init(void)
 void main_loop(void)
 {
     led_toggle();
+
+    if (g_usb_suspend_flag) {
+        pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER, 0);
+    }
 
 #if USB_MOUSE_DRAW_SQUARE
     if (g_send_flag == 1) {

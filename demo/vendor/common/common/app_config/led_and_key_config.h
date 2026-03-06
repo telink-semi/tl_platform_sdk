@@ -170,6 +170,16 @@
     #define KEY2 GPIO_PG2
     #define KEY3 GPIO_PG1
     #define KEY4 GPIO_PG0
+#elif defined(MCU_CORE_TL711X)
+    #define LED1 GPIO_PD0
+    #define LED2 GPIO_PD1
+    #define LED3 GPIO_PD2
+    #define LED4 GPIO_PD3
+
+    #define KEY1 GPIO_PA3
+    #define KEY2 GPIO_PE3
+    #define KEY3 GPIO_PA0
+    #define KEY4 GPIO_PF0
 #else
     #define LED1 GPIO_PD0
     #define LED2 GPIO_PD1

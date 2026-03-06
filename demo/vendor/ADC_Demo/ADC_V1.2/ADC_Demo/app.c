@@ -286,7 +286,7 @@ short adc_get_result(adc_num_e sar_adc_num,adc_transfer_mode_e transfer_mode,adc
 
 
    if(input_p == ADC_VBAT_P){
-        return adc_result = adc_calculate_voltage(ADC_VBAT_SAMPLE,chn,code_average);
+        return adc_result = adc_calculate_voltage(sar_adc_num,ADC_VBAT_SAMPLE,chn,code_average);
     }
 #if INTERNAL_TEST_FUNC_EN
     else if(input_p == ADC_TEMPSENSORN_P){
@@ -294,7 +294,7 @@ short adc_get_result(adc_num_e sar_adc_num,adc_transfer_mode_e transfer_mode,adc
     }
 #endif
     else{
-        return adc_result = adc_calculate_voltage(ADC_GPIO_SAMPLE,chn,code_average);
+        return adc_result = adc_calculate_voltage(sar_adc_num,ADC_GPIO_SAMPLE,chn,code_average);
     }
 }
 

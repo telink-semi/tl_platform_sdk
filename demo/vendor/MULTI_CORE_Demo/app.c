@@ -77,7 +77,7 @@ volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
  */
     #define N22_BOOTLOADER_BY_MCU 1
 #if defined(MCU_CORE_TL322X)
-    #define N22_BOOTLOADER_BY_RRAM_MCU 2
+    #define N22_BOOTLOADER_BY_NVM_MCU 2
 #endif
 
     #define N22_BOOTLOADER_BY_POINTER   3
@@ -109,7 +109,7 @@ volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
     #define N22_FW_DOWNLOAD_FLASH_ADDR 0x20080000 /* Note:  If modified, please make sure this value is within the address range of Flash. 
                                                             The corresponding link file need to modify in the same time. */
 
-#define N22_FW_DOWNLOAD_RRAM_ADDR   0x00540000
+#define N22_FW_DOWNLOAD_NVM_ADDR   0x00540000
 
     #if (TEST_MAILBOX)
 unsigned int           val_d25f_to_n22_word[2]     = {0x01234567, 0x89abcdef};
@@ -215,10 +215,10 @@ void user_init(void)
     pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
     sys_n22_start();
-#elif(N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_RRAM_MCU)
+#elif(N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_NVM_MCU)
     /* Powers on RF module. Required before any RF operations on N22. */
     pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
-    sys_n22_init(N22_FW_DOWNLOAD_RRAM_ADDR);
+    sys_n22_init(N22_FW_DOWNLOAD_NVM_ADDR);
     sys_n22_start();
     #endif
 

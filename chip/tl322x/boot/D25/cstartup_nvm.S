@@ -1,12 +1,12 @@
 /********************************************************************************************************
- * @file    cstartup_rram.S
+ * @file    cstartup_nvm.S
  *
  * @brief   This is the boot file for tl322x
  *
  * @author  Driver Group
- * @date    2024
+ * @date    2026
  *
- * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#ifdef MCU_STARTUP_RRAM
+#ifdef MCU_STARTUP_NVM
 /**
  * @brief   Set "DP_THROUGH_SWIRE_DIS" as "1" to disable the "dp_through_swire" function. Set "DP_THROUGH_SWIRE_DIS" as "0" to enable the "dp_through_swire" function.
  *          Risk description:
@@ -37,7 +37,7 @@
 #define DP_THROUGH_SWIRE_DIS      1
 #endif
 
-.global     rram_creg_crc_check
+.global     nvm_creg_crc_check
 
 
 /* If using Andes toolchain, these two Macro are defined in it's toolchain */
@@ -397,8 +397,8 @@ _ISTART:
     csrw    mcache_ctl,  t0
     fence.i
 
-    la      t0, rram_creg_crc_check
-    jalr    t0
+//    la      t0, nvm_creg_crc_check
+//    jalr    t0
 
     /* flash wakeup */
     lui     t0, 0xA3FFF

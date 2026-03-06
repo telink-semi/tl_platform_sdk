@@ -3301,6 +3301,16 @@ static inline void audio_i2s_align_config(i2s_align_config_t *align_config)
 void audio_i2s_config_init(audio_i2s_config_t *i2s_config);
 
 /**
+ * @brief     This function configures i2s clk pin for extern codec clk,mclk=PLL1(36.864M)*(div_numerator/div_denominator)
+ * @param[in] i2s_select i2s channel.
+ * @param[in] mclk_pin -mclk output pin.
+ * @param[in] div_numerator   - the dividing factor of div_numerator (15bits valid).
+ * @param[in] div_denominator - the dividing factor of div_denominator(16bits valid).
+ * @return    none.
+ */
+void audio_set_i2s_clk_as_mclk(i2s_select_e i2s_select, gpio_func_pin_e mclk_pin, unsigned short div_numerator, unsigned short div_denominator);
+
+/**
  * @}
  */
 

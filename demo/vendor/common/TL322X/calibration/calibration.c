@@ -26,7 +26,7 @@
 #define SLAVE_N       SLAVE0
 
 extern drv_api_status_e efuse_calib_sar_adc_vref(void);
-
+extern drv_api_status_e efuse_calib_sd_adc_vref(void);
 /**
  * @brief      This function serves to update rf frequency offset.
  * @param[in]  addr - the frequency offset value address of flash.
@@ -65,7 +65,6 @@ void calibration_func(void)
     /******get sar adc calibration value from EFUSE********/
     efuse_calib_sar_adc_vref();
     /******get sd_adc calibration value from EFUSE********/
-    extern drv_api_status_e efuse_calib_sd_adc_vref(void);
     efuse_calib_sd_adc_vref();
 
     /******check for flash mid********/
