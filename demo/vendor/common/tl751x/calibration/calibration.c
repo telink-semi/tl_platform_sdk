@@ -52,56 +52,53 @@ unsigned char user_calib_freq_offset(unsigned int addr)
  */
 void calibration_func(void)
 {
-    unsigned char flash_mid[4];
-    unsigned char flash_uid[16];
-    unsigned char flash_mid_sure = 0;
-    unsigned int  cap_value_addr = 0;
+    unsigned int cap_value_addr = 0;
+    unsigned int adc_value_addr = 0;
 
-    /******check for flash mid********/
-    flash_mid_sure = flash_read_mid_uid_with_check_with_device_num(0, (unsigned int *)flash_mid, flash_uid);
-
-    if (1 == flash_mid_sure)
+    switch (g_flash_size)
     {
-        switch (flash_mid[2])
-        {
         case FLASH_SIZE_64K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_64K;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_64K;
             break;
         case FLASH_SIZE_128K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_128K;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_128K;
             break;
         case FLASH_SIZE_512K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_512K;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_512K;
             break;
         case FLASH_SIZE_1M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_1M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_1M;
             break;
         case FLASH_SIZE_2M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_2M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_2M;
             break;
         case FLASH_SIZE_4M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_4M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_4M;
             break;
         case FLASH_SIZE_8M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_8M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_8M;
             break;
         case FLASH_SIZE_16M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_16M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_16M;
             break;
         default:
             break;
-        }
+    }
 
-        if (cap_value_addr)
-        {
-            user_calib_freq_offset(cap_value_addr);
-            /******get adc calibration value from FLASH********/
-            flash_calib_adc_vref(cap_value_addr);
-
-            if(g_chip_version != CHIP_VERSION_A0)
-            {
-                flash_calib_ldo_dcdc_voltage(cap_value_addr);
-            }
-        }
+    if (cap_value_addr)
+    {
+        user_calib_freq_offset(cap_value_addr);
+    }
+    if (adc_value_addr)
+    {
+        flash_calib_adc_vref(adc_value_addr);
     }
 }

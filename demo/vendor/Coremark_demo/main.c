@@ -33,7 +33,12 @@ extern int  main_coremark(void);
  * @param[in]   none
  * @return      none
  */
-extern float coremark_result;
+ #if HAS_FLOAT
+ extern float coremark_result;
+ #else
+ extern int coremark_result;
+ #endif
+
 
 volatile unsigned int cpu_mhz; /* Note:  This gets the current main frequency of the running cores,
                                 if you find that the score data is not correct you can check this parameter.*/
@@ -110,12 +115,20 @@ int main(void)
     #else
     n22_get_cpu_clk();
     #endif
+#elif defined(MCU_CORE_TL523X)
+    cpu_mhz = 24;
 #else
     cpu_mhz = sys_clk.cclk;
 #endif
     main_coremark();
+#if HAS_FLOAT
     printf("coremark result = %f (%dM)\r\n", coremark_result, cpu_mhz);
     printf("coremark result/clk(Mhz) = %f \r\n", (coremark_result / cpu_mhz));
+#else
+    printf("coremark result = %d \r\n",coremark_result);
+    printf("coremark result/clk(Mhz) = %d \r\n",(coremark_result*1000/(cpu_mhz/1000000)));
+
+#endif
     while (1) {
         main_loop();
     }

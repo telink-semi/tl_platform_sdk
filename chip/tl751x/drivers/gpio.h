@@ -72,6 +72,7 @@ typedef enum
  *  @brief  Define GPIO types
  *  @note   the following one point need to noticed when using GPIOH and GPIOI groups:
  *          Since these GPIOs are used for connecting the flash and have been occupied, they cannot be used as wake-up pins.
+ *          The four I/O pins, PA0, PA1, PA2, and PB0, do not support 3.3V and can only work at 1.8V.
  */
 typedef enum
 {
@@ -88,9 +89,9 @@ typedef enum
     GPIO_GPOUPANA = 0x900,
     GPIO_ALL      = 0xa00,
 
-    GPIO_PA0    = GPIO_GROUPA | BIT(0),
-    GPIO_PA1    = GPIO_GROUPA | BIT(1),
-    GPIO_PA2    = GPIO_GROUPA | BIT(2),
+    GPIO_PA0    = GPIO_GROUPA | BIT(0), // 1.8V only (3.3V not supported).
+    GPIO_PA1    = GPIO_GROUPA | BIT(1), // 1.8V only (3.3V not supported).
+    GPIO_PA2    = GPIO_GROUPA | BIT(2), // 1.8V only (3.3V not supported).
     GPIO_PA3    = GPIO_GROUPA | BIT(3),
     GPIO_USB_DM = GPIO_PA3, // default: SSPI_SI
     GPIO_PA4    = GPIO_GROUPA | BIT(4),
@@ -103,7 +104,7 @@ typedef enum
     GPIO_SWS    = GPIO_PA7, // only support SWS_IO(default)
     GPIOA_ALL   = GPIO_GROUPA | 0x00ff,
 
-    GPIO_PB0  = GPIO_GROUPB | BIT(0),
+    GPIO_PB0  = GPIO_GROUPB | BIT(0), // 1.8V only (3.3V not supported).
     GPIO_PB1  = GPIO_GROUPB | BIT(1), // default: TCK
     GPIO_PB2  = GPIO_GROUPB | BIT(2), // default: TMS
     GPIO_PB3  = GPIO_GROUPB | BIT(3), // default: TDO
@@ -826,7 +827,7 @@ static inline void gpio_clr_irq_status(gpio_irq_e status)
  */
 static inline void gpio_clr_irq_mask(gpio_irq_e mask)
 {
-    BM_CLR(reg_gpio_irq_ctrl, mask);
+    BM_CLR(reg_gpio_irq_src_mask, mask);
 }
 
 /**

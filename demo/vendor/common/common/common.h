@@ -39,6 +39,15 @@
 #include "tl_log_transport.h"
 #include "tl_log.h"
 #endif
+
+#if defined(MCU_CORE_TL752X)
+#include "hal_driver/flash/hal_flash.h"
+#include "calibration.h"
+#include "hal/hal_clock.h"
+#include "hal/hal_gpio.h"
+#include "hal/hal_flash.h"
+#include "hal/clic.h"
+#endif
 /**
     ===============================================================================
                          ##### platform init and clock init #####
@@ -66,7 +75,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
 #elif defined(MCU_CORE_B92)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, gpio_voltage_e gpio_v, cap_typedef_e cap, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
-        #define PLATFORM_INIT platform_init(DCDC_1P4_DCDC_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6, GPIO_VOLTAGE_3V3, INTERNAL_CAP_XTAL24M, 1)
+        #define PLATFORM_INIT platform_init(LDO_1P4_LDO_2P0, VBAT_MAX_VALUE_GREATER_THAN_3V6, GPIO_VOLTAGE_3V3, INTERNAL_CAP_XTAL24M, 1)
     #endif
     #ifndef CLOCK_INIT
         #define CLOCK_INIT CCLK_24M_HCLK_24M_PCLK_24M
@@ -122,7 +131,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
 #elif defined(MCU_CORE_TL323X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
-        #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
+        #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 1)
     #endif
     #ifndef CLOCK_INIT
         #define CLOCK_INIT        PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M
@@ -145,12 +154,12 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
     #endif
 #elif defined (MCU_CORE_TL752X)
 #include "tl_chip.h"
-void platform_init(void);
+void platform_init(unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
-        #define PLATFORM_INIT platform_init()
+        #define PLATFORM_INIT platform_init(0)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT PLL0_BBPLL_768M_MCLK_192M_D25F_192M_N22_96M_DSP_192M_MSPI_48M
+        #define CLOCK_INIT PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M
     #endif
 #elif defined (MCU_CORE_TL651X)
 #include "epm_chip.h"
@@ -165,6 +174,14 @@ void platform_init(void);
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
         #define PLATFORM_INIT platform_init(LDO_AVDD_LDO_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6, 0)
+    #endif
+    #ifndef CLOCK_INIT
+        #define CLOCK_INIT
+    #endif
+#elif defined(MCU_CORE_TL523X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);
+    #ifndef PLATFORM_INIT
+     #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
     #endif
     #ifndef CLOCK_INIT
         #define CLOCK_INIT

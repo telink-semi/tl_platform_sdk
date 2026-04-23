@@ -100,7 +100,11 @@ char *mem_name[3] = {"Static", "Heap", "Stack"};
 */
 #if MAIN_HAS_NOARGC
 
-float                  coremark_result;
+#if HAS_FLOAT
+float                 coremark_result;
+#else
+int                  coremark_result;
+#endif
 extern unsigned int   cpu_mhz;
 extern volatile ee_s32 seed4_volatile;
 
@@ -126,8 +130,9 @@ MAIN_RETURN_TYPE main(int argc, char *argv[])
     ee_u16       seedcrc = 0;
     CORE_TICKS   total_time;
     core_results results[MULTITHREAD];
-
+#if !defined(MCU_CORE_TL523X)
     test_num_func();
+#endif
 #if (MEM_METHOD == MEM_STACK)
     ee_u8 stack_memblock[TOTAL_DATA_SIZE * MULTITHREAD];
 #endif
@@ -375,6 +380,12 @@ for (i = 0; i < MULTITHREAD; i++) {
             printf("CoreMark 1.0 : %f / %s %s", default_num_contexts * results[0].iterations / time_in_secs(total_time), COMPILER_VERSION, COMPILER_FLAGS);
 
             coremark_result = default_num_contexts * results[0].iterations / time_in_secs(total_time);
+#else
+        if (known_id==3) {
+            printf("CoreMark 1.0 : %d / %s %s",(default_num_contexts*results[0].iterations*1000)/(time_in_secs(total_time)*1000),COMPILER_VERSION,COMPILER_FLAGS);
+
+            coremark_result = (default_num_contexts*results[0].iterations*1000)/(time_in_secs(total_time)*1000);
+#endif
     #if defined(MEM_LOCATION) && !defined(MEM_LOCATION_UNSPEC)
             printf(" / %s", MEM_LOCATION);
     #else
@@ -386,7 +397,7 @@ for (i = 0; i < MULTITHREAD; i++) {
     #endif
             printf("\r\n");
         }
-#endif
+
     }
     if (total_errors > 0) {
         printf("Errors detected\r\n");

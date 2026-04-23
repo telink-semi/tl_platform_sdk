@@ -21,6 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+
 #include "printf.h"
 #if (DEBUG_MODE == 1)
 
@@ -109,3 +110,4 @@ __attribute__((used)) int _write(int fd, const unsigned char *buf, int size)
     #endif
 
 #endif
+

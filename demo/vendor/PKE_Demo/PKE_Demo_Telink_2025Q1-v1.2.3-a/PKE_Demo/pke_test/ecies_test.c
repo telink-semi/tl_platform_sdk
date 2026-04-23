@@ -2538,7 +2538,7 @@ unsigned int ecies_std_test_secp160r2(void)
 }
 #endif
 
-#if ((ECCP_MAX_BIT_LEN >= 192) && defined(SUPPORT_SECP192R1))
+#if ((ECCP_MAX_BIT_LEN >= 192) && defined(SUPPORT_SECP192R1) && defined(SUPPORT_HASH_SHA512))
 /**
  * @brief           Test function for ECIES implementation using secp192r1 curve
  * @return          unsigned int 0 if test passes, 1 if test fails
@@ -7580,7 +7580,7 @@ unsigned int ecies_all_std_test(void)
     }
 #endif
 
-#if ((ECCP_MAX_BIT_LEN >= 192) && defined(SUPPORT_SECP192R1))
+#if ((ECCP_MAX_BIT_LEN >= 192) && defined(SUPPORT_SECP192R1) && defined(SUPPORT_HASH_SHA512))
     if (ecies_std_test_secp192r1()) {
         return 1;
     }

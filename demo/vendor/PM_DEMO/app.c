@@ -121,7 +121,7 @@ void user_init(void)
     {
         clock_cal_24m_rc();
         pm_cal_24mrc_counter = stimer_get_tick();
-    
+
         if (PM_CLOCK_SELECT == PM_CLK_32K_RC)
         {
             clock_32k_init(CLK_32K_RC);

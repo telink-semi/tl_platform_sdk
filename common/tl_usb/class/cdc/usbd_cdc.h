@@ -27,8 +27,8 @@
 #include "usb_cdc.h"
 
 unsigned char usbd_cdc_interface_request_handler(unsigned char bus, usb_control_request_t const *setup, unsigned char setup_stage);
-WEAK void     usbd_cdc_get_line_coding(unsigned char bus, unsigned char intf, cdc_line_coding_t *line_coding);
-WEAK void     usbd_cdc_set_line_coding(unsigned char bus, unsigned char intf, cdc_line_coding_t *line_coding);
+WEAK void     usbd_cdc_get_line_coding(unsigned char bus, unsigned char intf, usb_cdc_line_coding_t *line_coding);
+WEAK void     usbd_cdc_set_line_coding(unsigned char bus, unsigned char intf, usb_cdc_line_coding_t *line_coding);
 WEAK void     usbd_cdc_set_line_state(unsigned char bus, unsigned char intf, bool dtr, bool rts);
 
 #endif

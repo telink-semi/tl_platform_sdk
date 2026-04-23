@@ -70,7 +70,7 @@ extern long time();
 unsigned long Begin_Time,
     End_Time,
     User_Time;
-float Microseconds,
+int Microseconds,
     Dhrystones_Per_Second,
     Dhrystone_DMIPS_Per_MHz;
 
@@ -139,6 +139,8 @@ _attribute_ram_code_ void dhry_main(void)
     #else
     cpu_mhz = sys_clk.hclk_n22;
     #endif
+#elif defined(MCU_CORE_TL523X)
+    cpu_mhz = 24;
 #else
     cpu_mhz = sys_clk.cclk;
 #endif
@@ -307,7 +309,8 @@ _attribute_ram_code_ void dhry_main(void)
         Microseconds          = (float)User_Time / (float)Number_Of_Runs;
         Dhrystones_Per_Second = (float)Number_Of_Runs * Micro_secs_Per_Second / (float)User_Time;
 #endif
-        Dhrystone_DMIPS_Per_MHz = Dhrystones_Per_Second / ((float)(1757) * cpu_mhz);
+
+        Dhrystone_DMIPS_Per_MHz = ((Dhrystones_Per_Second *1000) / (1757 * cpu_mhz ));
 
 #if !CURRENT_PER_MHZ_TEST
         printf("%6.1f \r\n", Microseconds);

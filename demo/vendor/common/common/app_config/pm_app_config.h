@@ -174,6 +174,15 @@ enum
 #define DEEP_RET128K_MODE                   D25F_RET_MODE_SRAM_LOW128K
 #define DEEP_RET256K_MODE                   D25F_RET_MODE_SRAM_LOW256K
 #define DEEP_RET384K_MODE                   D25F_RET_MODE_SRAM_LOW384K
+
+#elif defined(MCU_CORE_TL523X)
+#define PM_SUSPEND_MODE                     SUSPEND_MODE
+#define PM_DEEPSLEEP_MODE                   DEEPSLEEP_MODE
+#define DEEP_RET16K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW16K
+#define DEEP_RET32K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW32K
+#define DEEP_RET64K_MODE                    DEEPSLEEP_MODE_RET_SRAM_LOW64K
+#define PM_SHUTDOWN_MODE                    SHUTDOWN_MODE
+
 #endif
 
 #define PM_SLEEP_MODE                       PM_SUSPEND_MODE

@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include "hal_flash.h"
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL752X)
 
 
 extern const flash_hal_handler_t flash_list[];
@@ -57,11 +57,12 @@ unsigned char hal_flash_init(flash_hal_user_handler_t *handler)
             g_flash_handler.unlock    = flash_list[i].unlock;
             g_flash_handler.lock_func = flash_list[i].lock_func;
             g_flash_handler.lock_size = flash_list[i].lock_size;
-
+#if !defined(MCU_CORE_TL523X)
             g_flash_handler.flash_write_status = flash_list[i].flash_write_status;
             g_flash_handler.flash_qe_mask      = flash_list[i].flash_qe_mask;
             g_flash_handler.qe_en              = flash_list[i].qe_en;
             g_flash_handler.qe_dis             = flash_list[i].qe_dis;
+#endif
             break;
         }
     }
@@ -80,6 +81,7 @@ unsigned char hal_flash_init(flash_hal_user_handler_t *handler)
     }
 }
 
+#if !defined(MCU_CORE_TL523X)
 /**
  * @brief       This function is used to enable the 4line function of flash.
  * @return      1: success, 0: error, 2: parameter error, 3: mid is not supported.
@@ -103,7 +105,7 @@ unsigned char hal_flash_4line_dis(void)
     }
     return 3;
 }
-
+#endif
 /**
  * @brief       This function is used to lock a flash through lock_fp,
  *              if the flash is not locked, it is locked, if the flash is locked, it is not executed.
@@ -135,7 +137,7 @@ unsigned char hal_flash_unlock(void)
     }
     return 3;
 }
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X) || defined(MCU_CORE_TL711X)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
 
 
 extern const flash_hal_handler_t flash_list[];

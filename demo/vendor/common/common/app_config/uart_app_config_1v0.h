@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    uart_app_config.h
+ * @file    uart_app_config_1v0.h
  *
  * @brief   This is the header file for Telink RISC-V MCU
  *
@@ -150,7 +150,8 @@ extern "C"
  * To prevent leakage,in gpio_init(), all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS:
  * before using the corresponding io, need to cancel the pull-down or redefine the function as required based on the application scenario.
  */
-#define PULL_WAKEUP_SRC_PC4 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PA0 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PA1 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PC5 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PC6 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PC7 GPIO_PIN_UP_DOWN_FLOAT

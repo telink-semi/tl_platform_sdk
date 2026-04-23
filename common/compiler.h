@@ -88,6 +88,14 @@
 
 #define _attribute_aligned_(s)              __attribute__((aligned(s)))
 
+#if defined(MCU_CORE_TL322X)
+#define _attribute_nvm_code_sec_           __attribute__((section(".nvm_code")))
+#define _attribute_nvm_code_sec_noinline_  __attribute__((section(".nvm_code"))) __attribute__((noinline))
+#define _attribute_nvm_rodata_sec_         __attribute__((section(".nvm_rodata")))
+#define _attribute_nvm_rwdata_nocopy_sec_  __attribute__((section(".nvm_rwdata_nocopy"))) /* Variables stored in NVM, read-write attribute, NO data copy from NVM to RAM at startup. */
+#define _attribute_nvm_rwdata_copy_sec_    __attribute__((section(".nvm_rwdata_copy")))   /* Variables stored in NVM, read-write attribute, copy data from NVM to RAM at startup. */
+#endif
+
 /**
  *  _always_inline needs to be added in the following two cases:
  * 1. The subfunctions in the pm_sleep_wakeup function need to use _always_inline and _attribute_ram_code_sec_noinline_, as detailed in the internal comments of pm_sleep_wakeup.
@@ -96,7 +104,7 @@
  */
 #define _always_inline inline __attribute__((always_inline))
 
-
+#define _attribute_no_inline_               __attribute__((noinline))
 /**
  * No_execit must be added here for the following reasons: When compiling at the optimization level of -Os, link may use exec.it for functions compiled at -O2. To disable this behavior,
  * add -mno-exit to the linking phase (see Andes Programming Guide), or add _attribute_((no_execit)) to functions that don't want to use exec.it.
@@ -114,5 +122,20 @@
 /// Pack a structure field
 #define __PACKED __attribute__((__packed__))
 
+
+
+/**********************************************************************************************************************
+ *   If you need to optimize the code size, you can modify the following configuration according to the situation.
+ *   Note:
+ *   -Before modifying, please confirm whether the function is needed, in case the needed function is deleted by mistake.
+ *   -If you modify the following configuration options, please regenerate the library file
+ *********************************************************************************************************************/
+#ifndef BLC_PM_EN
+#define BLC_PM_EN                           0
+#endif
+#ifndef BLC_PM_DEEP_RETENTION_MODE_EN
+#define BLC_PM_DEEP_RETENTION_MODE_EN       1/**< 0:only Support sleep modes:suspend/deep */
+                                             /**< 1:support all sleep modes:suspend/deep/deep retention */
+#endif
 
 #endif

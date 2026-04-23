@@ -370,7 +370,7 @@ void usb_handle_out_class_intf_req(int data_request)
                     int len     = host_cmd[1] & 3;
                     if (host_cmd[1] == 0xcc && adr == 0x5af0) { //re-enumerate device
                         usb_dp_pullup_en(0);                    //disable device
-                        sleep_us(300000);
+                        delay_ms(300000);
                         reg_ctrl_ep_irq_mode = 0xff;            //hardware mode
                         usb_dp_pullup_en(1);                    //enable device
                     } else {
@@ -391,9 +391,9 @@ void usb_handle_out_class_intf_req(int data_request)
                         }
                     } else { //read core register
                         if (len == 0) {
-                            custom_read_dat = analog_read(host_cmd[2]);
+                            custom_read_dat = analog_read_reg8(host_cmd[2]);
                         } else {
-                            analog_write(host_cmd[2], host_cmd[4]);
+                            analog_write_reg8(host_cmd[2], host_cmd[4]);
                         }
                     }
                 }
@@ -785,7 +785,7 @@ void usb_resume_host(void)
     reg_wakeup_en = FLD_WAKEUP_SRC_USB_RESM;
     reg_wakeup_en = 0;
         #endif
-    sleep_us(6000);
+    delay_ms(6000);
 }
     #endif
 volatile unsigned char edp_toggle[8];

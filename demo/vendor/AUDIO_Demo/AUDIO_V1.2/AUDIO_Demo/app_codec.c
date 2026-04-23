@@ -35,6 +35,7 @@
 
     #if defined(MCU_CORE_TL751X)
         #define DMIC2_INPUT_TO_BUF_TO_LINEOUT (7) //codec1
+        #define AMIC_PLUS_DMIC_INPUT_TO_BUF_TO_LINEOUT (8) // codec0 AMIC_A0 + DMIC_A1 TO buff TO lineout
     #endif
 
     #define CODEC0_MODE_SELECT AMIC_INPUT_TO_BUF_TO_LINEOUT
@@ -242,6 +243,48 @@ void user_init(void)
 
     audio_codec1_set_dmic_a_pin(GPIO_FC_PG6, GPIO_FC_PG4, GPIO_FC_PG5);
     audio_codec1_input_init(&codec1_input_config);
+    /*********************** output config ****************************/
+    audio_codec0_output_config_t codec0_output_config = {
+        .output_dst  = AUDIO_DAC_A1_A2,
+        .data_format = AUDIO_CODEC0_BIT_24_DATA,
+        .sample_rate = AUDIO_48K,
+    };
+    /* matrix output config. */
+    audio_matrix_set_dac_route(codec0_output_config.output_dst, DAC_ROUTE_FIFO, DAC_FIFO_STEREO_24BIT_FIFO0);
+    audio_codec0_output_init(&codec0_output_config);
+
+    /* tx dma init. */
+    audio_tx_dma_chain_init(FIFO0, DMA1, (unsigned short *)AUDIO_BUFF, sizeof(AUDIO_BUFF));
+    audio_tx_dma_en(DMA1);
+    #elif (CODEC0_MODE_SELECT == AMIC_PLUS_DMIC_INPUT_TO_BUF_TO_LINEOUT)
+    audio_codec0_power_on(AUDIO_CODEC0_ADC_AND_DAC, AUDIO_CODEC0_1P8V); /* power on adc and dac. */
+
+    /*********************** input config ****************************/
+    audio_codec0_input_config_t codec0_input_config0 = {
+        .input_src   = AUDIO_AMIC_ADC_A1,
+        .data_format = AUDIO_CODEC0_BIT_24_DATA,
+        .sample_rate = AUDIO_48K,
+    };
+    audio_codec0_input_config_t codec0_input_config1 = {
+        .input_src   = AUDIO_DMIC_ADC_A2,
+        .data_format = AUDIO_CODEC0_BIT_24_DATA,
+        .sample_rate = AUDIO_48K,
+    };
+
+    audio_codec0_input_init(&codec0_input_config0);
+    audio_codec0_input_init(&codec0_input_config1);
+
+    audio_codec0_set_dmic_a_pin(GPIO_FC_PI2, GPIO_NONE_PIN, GPIO_FC_PI5);
+
+    /* matrix input config. */
+    audio_matrix_set_rx_fifo_route(FIFO0, FIFO_RX_ROUTE_CODEC0_ADCA, FIFO_RX_CODEC0_ADCA_A1_A2_32BIT);
+    /* rx dma init. */
+    audio_rx_dma_chain_init(FIFO0, DMA0, (unsigned short *)AUDIO_BUFF, sizeof(AUDIO_BUFF));
+    audio_rx_dma_en(DMA0); /* the rx dma enable must precede the adc enable. */
+
+    audio_codec0_set_input_again(AUDIO_AMIC_ADC_A1, AUDIO_IN_A_GAIN_10_DB);
+    audio_codec0_set_input_dgain(AUDIO_AMIC_ADC_A1_A2, AUDIO_IN_D_GAIN_0_DB);
+
     /*********************** output config ****************************/
     audio_codec0_output_config_t codec0_output_config = {
         .output_dst  = AUDIO_DAC_A1_A2,

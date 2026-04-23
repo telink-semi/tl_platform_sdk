@@ -25,7 +25,7 @@
 
 void bt_dbg_set_pin(btdbg_pin_e pin)
 {
-    unsigned char val, v = 0;
+    unsigned char val = 0, v = 0;
     unsigned char mask = 0;
     unsigned char n    = 0;
     if (pin & 0xf) {

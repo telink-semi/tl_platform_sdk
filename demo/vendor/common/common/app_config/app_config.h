@@ -34,7 +34,11 @@ extern "C"
 #endif
 
 #if defined(CURRENT_BUILD_UART_Demo)
-#include "app_config/uart_app_config.h"
+#if defined(MCU_CORE_TL523X)
+#include "app_config/uart_app_config_1v1.h"
+#else
+#include "app_config/uart_app_config_1v0.h"
+#endif
 #endif
 
 #if defined(CURRENT_BUILD_ADC_Demo)
@@ -188,6 +192,8 @@ extern "C"
 #endif
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
 #include "app_config/spi_app_config_1v1.h"
+#elif defined(MCU_CORE_TL752X)
+#include "app_config/spi_app_config_1v2.h"
 #endif
 #endif
 
@@ -301,10 +307,12 @@ extern "C"
 #include "app_config/n22_test_app_config.h"
 #endif
 
-#if defined(CURRENT_BUILD_N22_Test_Demo)|| defined(CURRENT_BUILD_N22_Test_Demo_BY_MCUA)
+#if defined(CURRENT_BUILD_N22_Test_Demo)
 #include "app_config/n22_test_app_config.h"
 #endif
-
+#if defined(CURRENT_BUILD_N22_Test_Demo_BY_MCUA)
+#include "app_config/test_app_config.h"
+#endif
 #if defined(CURRENT_BUILD_N22_Test_Demo_Bootloader_by_N22_NVM_MCU)
 #include "app_config/n22_test_app_config.h"
 #endif

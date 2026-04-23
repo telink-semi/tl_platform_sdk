@@ -34,7 +34,13 @@ extern "C"
 #ifdef HASH_DMA_FUNCTION
 extern int buf_hash_dma[0x600];
 #define DMA_RAM_BASE (buf_hash_dma) //just for temporary use
-#define HASH_DMA_RAM_BASE (buf_hash_dma) 
+
+#if defined(MCU_CORE_TL523X)
+    #define HASH_DMA_RAM_BASE ((buf_hash_dma) + 1) //just for temporary use, first word for dma len.
+#else
+    #define HASH_DMA_RAM_BASE (buf_hash_dma) //just for temporary use
+#endif
+
 #endif /* HASH_DMA_FUNCTION */
 
 

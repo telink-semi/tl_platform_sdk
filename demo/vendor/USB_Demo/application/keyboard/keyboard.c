@@ -347,7 +347,7 @@ unsigned int kb_scan_row(int drv_ind, unsigned char *gpio)
             }
         }
     }
-    //sleep_us(KB_DRV_DELAY_TIME);
+    //delay_ms(KB_DRV_DELAY_TIME);
     gpio_read_all(gpio);
     /*
      * set as spi mode  if using spi flash pin
@@ -358,7 +358,7 @@ unsigned int kb_scan_row(int drv_ind, unsigned char *gpio)
 
     #if (!KB_LINE_MODE)
     ////////        float drive pin ////////////////////////////
-    //sleep_us(KB_SCAN_DELAY_TIME);
+    //delay_ms(KB_SCAN_DELAY_TIME);
     gpio_set_low_level(drv_pin);
     gpio_output_en(drv_pin, 0);
     #endif
@@ -381,7 +381,7 @@ unsigned int kb_key_pressed(unsigned char *gpio)
         }
         gpio_output_en(drive_pins[i], 1);
     }
-    sleep_us(20);
+    delay_ms(20);
     gpio_read_all(gpio);
 
     unsigned int         ret         = 0;

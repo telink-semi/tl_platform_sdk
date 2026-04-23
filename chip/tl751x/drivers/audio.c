@@ -2821,9 +2821,11 @@ void audio_codec0_set_dmic_a_pin(gpio_func_pin_e dmic0_data, gpio_func_pin_e dmi
     gpio_set_mux_function(dmic0_data, DMIC0_DAT_I);
     gpio_function_dis((gpio_pin_e)dmic0_data);
     /* codec0 dmic0 clock1. */
-    gpio_set_mux_function(dmic0_clk1, DMIC0_CLK0);
-    gpio_function_dis((gpio_pin_e)dmic0_clk1);
-    /* codec0 dmic1 clock2. */
+    if (dmic0_clk1 != GPIO_NONE_PIN) {
+        gpio_set_mux_function(dmic0_clk1, DMIC0_CLK0);
+        gpio_function_dis((gpio_pin_e)dmic0_clk1);
+    }
+    /* codec0 dmic0 clock2. */
     if (dmic0_clk2 != GPIO_NONE_PIN) {
         gpio_set_mux_function(dmic0_clk2, DMIC0_CLK1);
         gpio_function_dis((gpio_pin_e)dmic0_clk2);
@@ -2844,8 +2846,10 @@ void audio_codec0_set_dmic_b_pin(gpio_func_pin_e dmic1_data, gpio_func_pin_e dmi
     gpio_set_mux_function(dmic1_data, DMIC1_DAT_I);
     gpio_function_dis((gpio_pin_e)dmic1_data);
     /* codec0 dmic1 clock1. */
-    gpio_set_mux_function(dmic1_clk1, DMIC1_CLK0);
-    gpio_function_dis((gpio_pin_e)dmic1_clk1);
+    if (dmic1_clk1 != GPIO_NONE_PIN) {
+        gpio_set_mux_function(dmic1_clk1, DMIC1_CLK0);
+        gpio_function_dis((gpio_pin_e)dmic1_clk1);
+    }
     /* codec0 dmic1 clock2. */
     if (dmic1_clk2 != GPIO_NONE_PIN) {
         gpio_set_mux_function(dmic1_clk2, DMIC1_CLK1);
@@ -2867,8 +2871,10 @@ void audio_codec1_set_dmic_a_pin(gpio_func_pin_e dmic2_data, gpio_func_pin_e dmi
     gpio_set_mux_function(dmic2_data, DMIC2_DAT_I);
     gpio_function_dis((gpio_pin_e)dmic2_data);
     /* codec1 dmic2 clock1. */
-    gpio_set_mux_function(dmic2_clk1, DMIC2_CLK0);
-    gpio_function_dis((gpio_pin_e)dmic2_clk1);
+    if (dmic2_clk1 != GPIO_NONE_PIN) {
+        gpio_set_mux_function(dmic2_clk1, DMIC2_CLK0);
+        gpio_function_dis((gpio_pin_e)dmic2_clk1);
+    }
     /* codec1 dmic2 clock2. */
     if (dmic2_clk2 != GPIO_NONE_PIN) {
         gpio_set_mux_function(dmic2_clk2, DMIC2_CLK1);

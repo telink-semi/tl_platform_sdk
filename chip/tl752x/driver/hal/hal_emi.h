@@ -1,0 +1,246 @@
+/********************************************************************************************************
+ * @file    hal_emi.h
+ *
+ * @brief   This is the header file for tl752x
+ *
+ * @author  Driver Group
+ * @date    2025
+ *
+ * @par     Copyright (c) 2025, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
+ *
+ *******************************************************************************************************/
+
+#ifndef __HAL_EMI_H__
+#define __HAL_EMI_H__
+
+#include "hal/hal_rf_common.h"
+//#include "drv_systimer.h"
+#include "hal/hal_drv_tahdt.h"
+#include "hal/hal_rf_tahdt.h"
+#include "hal/hal_tahdt_reg.h"
+#include <stddef.h>
+/**********************************************************************************************************************
+ *                                           global macro                                                             *
+ *********************************************************************************************************************/
+#define EMI_ACCESS_CODE    0x29417671
+#define EMI_TX_PKT_PAYLOAD 37
+
+/**
+ *  @brief  Define emi_config_param_t struct.
+ */
+typedef struct
+{
+    unsigned char    emi_tx_payload_len; /**< Length of the EMI TX payload;Default: 37 */
+    unsigned int     emi_access_code;    /**< Access code for EMI transmission Default:0x29417671*/
+} emi_config_param_t;
+
+extern emi_config_param_t emi_config_param;
+/**********************************************************************************************************************
+ *                                         function declaration                                                    *
+ *********************************************************************************************************************/
+
+/**
+ * @brief      This function serves to set the TX singletone power and channel
+ * @param[in]  power_level - the power level.
+ * @param[in]  rf_chn      - the channel.
+ * @return     none
+ */
+void rf_emi_tx_single_tone(rf_power_level_e power_level, signed char rf_chn);
+
+/**
+ * @brief      This function serves to set rx mode and channel
+ * @param[in]  mode   - mode of RF.
+ * @param[in]  rf_chn - the rx channel.
+ * @return     none
+ */
+void rf_emi_rx_setup(rf_mode_e mode, signed char rf_chn);
+
+/**
+ * @brief    This function serves to update the number of receiving packet and the RSSI
+ * @return   none
+ */
+void rf_emi_rx_loop(void);
+
+/**
+ * @brief    This function serves to stop emi/(close RF)
+ * @return   none
+ */
+void rf_emi_stop(void);
+
+/**
+ * @brief    This function serves to get the number of packets received.
+ * @return   the number of packets received.
+ */
+unsigned int rf_emi_get_rxpkt_cnt(void);
+
+/**
+ * @brief    This function serves to get the RSSI of packets received
+ * @return   the RSSI of packets received
+ */
+char rf_emi_get_rssi_avg(void);
+
+
+/**
+ * @brief      This function serves to set the CD mode correlation register
+ * @return     none
+ */
+void rf_emi_tx_continue_setup(void);
+
+/**
+ * @brief      This function serves to update the CD mode data.
+ * @param[in]  rf_mode     - mode of RF.
+ * @param[in]  power_level - power level of RF.
+ * @param[in]  rf_chn      - channel of RF.
+ * @param[in]  pkt_type    - The type of data sent.
+ *    -#0:random
+ *    -#1:0x0f
+ *    -#2:0x55
+ *    -#3:0xaa
+ *    -#4:0xf0
+ *    -#5:0x00
+ *    -#6:0xff
+ * @return     none
+ */
+void rf_emi_tx_continue_update_data(rf_mode_e rf_mode, rf_power_level_e power_level, signed char rf_chn, unsigned char pkt_type);
+
+/**
+ * @brief      This function serves to continue to run the CD mode
+ * @return     none
+ */
+void rf_continue_mode_run(void);
+
+/**
+ * @brief      This function serves to send packets in the burst mode
+ * @param[in]  rf_mode  - mode of RF.
+ * @param[in]  pkt_type - The type of data sent.
+ *  * -#0:prbs9(random)
+ *    -#1:0x0f
+ *    -#2:0x55
+ *    -#3:0xaa
+ *    -#4:0xf0
+ *    -#5:0x00
+ *    -#6:0xff
+ * @return     none
+ */
+void rf_emi_tx_burst_loop(rf_mode_e rf_mode, unsigned char pkt_type);
+
+/**
+ * @brief      This function serves to set the burst mode
+ * @param[in]  rf_mode     - mode of RF.
+ * @param[in]  power_level - power level of RF.
+ * @param[in]  rf_chn      - channel of RF.
+ * @param[in]  pkt_type    - The type of data sent.
+ *  * -#0:prbs9(random)
+ *    -#1:0x0f
+ *    -#2:0x55
+ *    -#3:0xaa
+ *    -#4:0xf0
+ *    -#5:0x00
+ *    -#6:0xff
+ * @return     none
+ */
+void rf_emi_tx_burst_setup(rf_mode_e rf_mode, rf_power_level_e power_level, signed char rf_chn, unsigned char pkt_type);
+
+/**
+ * @brief      This function serves to generate random packets that need to be sent in burst mode
+ * @param[in] *p - the address of random packets.
+ * @param[in]  n - the number of random packets.
+ * @return     none
+ */
+void rf_phy_test_prbs9(unsigned char *p, int n);
+
+/**
+ * @brief      This function serves to generate random packets that need to be sent in burst mode
+ * @param[in] *p - the address of random packets.
+ * @param[in]  n - the number of random packets.
+ * @return     none
+ */
+void rf_phy_test_prbs11(unsigned char *p, int n);
+
+
+/**
+ * @brief      This function serves to generate random packets that need to be sent in burst mode
+ * @param[in] *p - the address of random packets.
+ * @param[in]  n - the number of random packets.
+ * @return     none
+ */
+void rf_phy_test_prbs15(unsigned char *p, int n);
+
+/**
+ * @brief      This function serves to generate random number.
+ * @param[in]  state - the old random number.
+ * @return     the new random number
+ */
+unsigned int emi_pn_gen(unsigned int state);
+
+
+/**
+ * @brief      This function serves to reset baseband
+ * @return     none
+ * @note       This function is temporarily unavailable.
+ */
+void rf_emi_reset_baseband(void);
+
+/**
+ * @brief    This function serves to stop tahdt emi/(close RF)
+ * @return   none
+ */
+void rf_tahdt_emi_stop(void);
+
+/**
+ * @brief      This function serves to set the burst mode
+ * @param[in]  rf_mode     - mode of RF.
+ * @param[in]  power_level - power level of RF.
+ * @param[in]  rf_chn      - channel of RF.
+ * @param[in]  pkt_type    - The type of data sent.
+ * -#0:prbs9
+ * -#1:0x0F
+ * -#2:0x55
+ * -#3:0xAA
+ * -#4:0xF0
+ * -#5:0x00
+ * -#6:0xFF
+ * @return     none
+ */
+void rf_tahdt_emi_tx_burst_setup_v0(unsigned char rf_mode, unsigned char power_level, signed char rf_chn, unsigned char pkt_type);
+
+/**
+ * @brief Loop function for TAHDT EMI burst transmission (version 0)
+ * @param rf_mode RF mode selection (unused in this implementation)
+ * @param pkt_type Packet data pattern type (unused in this implementation)
+ * @details This function handles the continuous loop for TAHDT (Short Range Low Energy) EMI 
+ *          (Electromagnetic Interference) burst transmissions. It waits for the previous transmission
+ *          to complete, clears interrupts, adds a short delay, and initiates the next transmission.
+ *          Note: The parameters rf_mode and pkt_type are accepted but not used in the current implementation.
+ */
+void rf_tahdt_emi_tx_burst_loop_v0(unsigned char rf_mode, unsigned char pkt_type);
+
+/**
+ * @brief      This function serves to set tahdt rx mode and channel
+ * @param[in]  mode   - mode of RF.
+ * @param[in]  rf_chn - the rx channel.
+ * @return     none
+ */
+void rf_tahdt_emi_rx_setup_v0(unsigned char rf_mode, signed char rf_chn);
+
+/**
+ * @brief      This function serves to handle rx loop for tahdt
+ * @param      none
+ * @return     none
+ */
+void rf_tahdt_emi_rx_loop_v0(void);
+
+
+#endif

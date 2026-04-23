@@ -66,6 +66,10 @@ void calibration_func(void)
     efuse_calib_sar_adc_vref();
     /******get sd_adc calibration value from EFUSE********/
     efuse_calib_sd_adc_vref();
+    /******get ret ldo calibration value from EFUSE********/
+    if(g_pm_status_info.mcu_status != MCU_DEEPRET_BACK) {
+        pm_efuse_calib_ret_ldo_voltage();
+    }
 
     /******check for flash mid********/
     flash_mid_sure = flash_read_mid_uid_with_check_with_device_num(SLAVE_N,(unsigned int *)flash_mid, flash_uid);
@@ -144,7 +148,7 @@ unsigned char user_check_ieee_addr(unsigned char *value)
  */
 ieee_addr_source_e user_get_efuse_ieee_addr(unsigned char *buf)
 {
-    extern void efuse_get_ieee_addr(unsigned char *buf);
+    extern drv_api_status_e efuse_get_ieee_addr(unsigned char *buf);
     //Read IEEE address priority: FLASH > EFUSE
     efuse_get_ieee_addr(buf);
     if (user_check_ieee_addr(buf)) {

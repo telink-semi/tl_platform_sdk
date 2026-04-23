@@ -32,7 +32,13 @@ extern "C"
 
 #ifdef SKE_LP_DMA_FUNCTION
     extern int buf_ske_dma[0xC00];
+
+#if defined(MCU_CORE_TL523X)
+    #define DMA_RAM_BASE ((buf_ske_dma) + 1) //just for temporary use, first word for dma len.
+#else
     #define DMA_RAM_BASE (buf_ske_dma) //just for temporary use
+#endif
+
 #endif                                 /* SKE_LP_DMA_FUNCTION */
 
 

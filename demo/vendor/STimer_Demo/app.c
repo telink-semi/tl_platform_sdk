@@ -34,6 +34,7 @@ volatile unsigned int stimer_tick_low3bit;
 volatile unsigned int cur_32k_track[200];
 volatile unsigned int cur_32k_tick_track_err;
 volatile unsigned int stimer_cnt = 0;
+volatile unsigned int stimer_irq_cnt = 0;
 
 
 #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
@@ -102,6 +103,11 @@ void user_init(void)
     gpio_function_en(LED4);
     gpio_input_dis(LED4);
     gpio_output_en(LED4);
+    gpio_set_low_level(LED1);
+    gpio_set_low_level(LED2);
+    gpio_set_low_level(LED3);
+    gpio_set_low_level(LED4);
+
 
 #if N22_TEST
     sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
@@ -120,15 +126,14 @@ void user_init(void)
 
 #if (!(defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X))) && ((STIMER_MODE == STIMER_IRQ) || (STIMER_MODE == STIMER_TIMEOUT_IRQ))
     stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
-
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL523X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_MASK);                         //irq enable
     #else
     stimer_set_irq_mask(FLD_SYSTEM_IRQ);
     #endif
-
     plic_interrupt_enable(IRQ_SYSTIMER);
     core_interrupt_enable();
+
 #elif ((defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)) && (STIMER_MODE == STIMER_IRQ_D25))
     stimer_set_irq_capture_d25f(stimer_get_tick() + SYSTEM_TIMER_TICK_1S); //set capture tick
     #if defined(MCU_CORE_TL322X)
@@ -156,7 +161,7 @@ void user_init(void)
     clock_32k_init(CLK_32K_RC);
     clock_cal_32k_rc();
 
-#elif (STIMER_MODE == STIMER_SET_32K_TICK)
+#elif (!defined(MCU_CORE_TL523X) && (STIMER_MODE == STIMER_SET_32K_TICK))
     clock_set_32k_tick(clock_get_32k_tick() + 32000); //1s
     #if defined(MCU_CORE_B91)||defined(MCU_CORE_B92)||defined(MCU_CORE_TL322X)
     pm_clr_irq_status(WAKEUP_STATUS_ALL);
@@ -189,15 +194,18 @@ void user_init(void)
     stimer_set_32k_track_cnt(STIMER_TRACK_32KCNT_16);
     stimer_track_32k_value = SYSTEM_TIMER_TICK_1MS / 32 * g_track_32kcnt;
     delay_ms(1000);
-    #if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)|| defined(MCU_CORE_TL523X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_32K_CAL_MASK);
     #elif defined(MCU_CORE_TL322X)
     stimer_set_irq_mask_d25f(FLD_SYSTEM_IRQ_32K_CAL_MASK);
     #else
     stimer_set_irq_mask(FLD_SYSTEM_32K_IRQ);
     #endif
-
+#if !defined(MCU_CORE_TL523X)
     plic_interrupt_enable(IRQ_SYSTIMER);
+#else
+    plic_interrupt_enable(IRQ_SYSTEM_TIMER_OR);
+#endif
     core_interrupt_enable();
 
 #elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE)
@@ -316,7 +324,7 @@ void main_loop(void)
         if ((cur_32k_tick_step[i] < 0xc7f) || (cur_32k_tick_step[i] > 0xc83)) //0xc81,500ppm
         {
             cur_32k_tick_step_err = i;
-            gpio_set_high_level(LED1);
+//            gpio_set_high_level(LED1);
             while (1)
                 ;
         }
@@ -325,7 +333,7 @@ void main_loop(void)
 #elif (STIMER_MODE == STIMER_GET_TICK)
     if ((stimer_get_tick() & (0x07)) != 0x00) {
         stimer_tick_low3bit = 1;
-        gpio_set_high_level(LED1);
+//        gpio_set_high_level(LED1);
         while (1)
             ;
     }
@@ -341,6 +349,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
         stimer_clr_irq_status(FLD_SYSTEM_IRQ); //clr irq
         stimer_set_irq_capture(stimer_get_tick() + SYSTEM_TIMER_TICK_1S);
     }
+
 }
 PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
 
@@ -364,7 +373,7 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
 }
 PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
 
-#elif (STIMER_MODE == STIMER_SET_32K_TICK)
+#elif (!defined(MCU_CORE_TL523X) && (STIMER_MODE == STIMER_SET_32K_TICK))
 _attribute_ram_code_sec_ void pm_irq_handler(void)
 {
     if (analog_read_reg8(0x64) & (BIT(2))) {
@@ -387,6 +396,9 @@ _attribute_ram_code_sec_ void pm_level_irq_handler(void)
         clock_set_32k_tick(clock_get_32k_tick() + 32000); //1s
     }
     analog_write_reg8(0x64, 0xff);
+#if !defined(MCU_CORE_TL523X)
+    reg_irq_edge_clr  = 0xff;
+#endif
 }
 PLIC_ISR_REGISTER(pm_level_irq_handler, IRQ_PM_LVL)
 
@@ -410,14 +422,17 @@ _attribute_ram_code_sec_ void stimer_irq_handler(void)
             if ((cur_32k_track[stimer_cnt] < (stimer_track_32k_value - 0x06)) || (cur_32k_track[stimer_cnt] > (stimer_track_32k_value + 0x06))) //500ppm
             {
                 cur_32k_tick_track_err = stimer_cnt;
-                gpio_set_high_level(LED1);
+//                gpio_set_high_level(LED1);
             }
         }
         stimer_cnt++;
     }
 }
+#if !defined(MCU_CORE_TL523X)
 PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTIMER)
-
+#else
+PLIC_ISR_REGISTER(stimer_irq_handler, IRQ_SYSTEM_TIMER_OR)
+#endif
 #elif (defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)) && (STIMER_MODE == STIMER_INPUT_CAPTURE)
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {

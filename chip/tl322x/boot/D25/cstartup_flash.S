@@ -250,12 +250,25 @@ _DATA_INIT:
     la     t2, _DATA_VMA_START
     la     t3, _DATA_VMA_END
 _DATA_INIT_BEGIN:
-    bleu   t3, t2, _ZERO_BSS
+    bleu   t3, t2, _NVM_RWDATA_INIT
     lw     t0, 0(t1)
     sw     t0, 0(t2)
     addi   t1, t1, 4
     addi   t2, t2, 4
     j      _DATA_INIT_BEGIN
+
+    /* Move NVM RW data from NVM to sram */
+_NVM_RWDATA_INIT:
+    la     t1, __NVM_RWDATA_COPY_LOAD
+    la     t2, __NVM_RWDATA_COPY_START
+    la     t3, __NVM_RWDATA_COPY_END
+_NVM_RWDATA_INIT_BEGIN:
+    bleu   t3, t2, _ZERO_BSS
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _NVM_RWDATA_INIT_BEGIN
 
     /* Zero .bss section in sram */
 _ZERO_BSS:
@@ -485,12 +498,25 @@ _IDATA_INIT:
     la     t2, _DATA_VMA_START
     la     t3, _DATA_VMA_END
 _IDATA_INIT_BEGIN:
-    bleu   t3, t2, _IMAIN_FUNC
+    bleu   t3, t2, _INVM_RWDATA_INIT
     lw     t0, 0(t1)
     sw     t0, 0(t2)
     addi   t1, t1, 4
     addi   t2, t2, 4
     j      _IDATA_INIT_BEGIN
+
+    /* Move NVM RW data from NVM to sram */
+_INVM_RWDATA_INIT:
+    la     t1, __NVM_RWDATA_COPY_LOAD
+    la     t2, __NVM_RWDATA_COPY_START
+    la     t3, __NVM_RWDATA_COPY_END
+_INVM_RWDATA_INIT_BEGIN:
+    bleu   t3, t2, _IMAIN_FUNC
+    lw     t0, 0(t1)
+    sw     t0, 0(t2)
+    addi   t1, t1, 4
+    addi   t2, t2, 4
+    j      _INVM_RWDATA_INIT_BEGIN
 
     /* Jump to the main function */
 _IMAIN_FUNC:

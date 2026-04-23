@@ -208,6 +208,53 @@ _START:
     csrw   mcache_ctl,  t0
     fence.i
 
+/* wakeup flash for nvm bin, bootrom bug fix */
+    /* flash wakeup */
+    lui     t0, 0xA3FFF
+    addi    t0, t0, 0x790
+    li      t1, 0x0e
+    sb      t1, 0x78c(t0)       //xip_stop      :0xA3FFFF1c = 0x0e
+_NVM_MSPI_WAIT_1:
+    lui     t0, 0xA3FFF
+    addi    t0, t0, 0x790
+    lb      t2, 0x798(t0)
+    li      t3, 0x80
+    beq     t3, t2, _NVM_MSPI_WAIT_1//read reg_mspi_status FLD_MSPI_BUSY(0xA3FFFF28[bit7])
+    lui     t0, 0xA3FFF
+    addi    t0, t0, 0x790
+    li      t1, 0x06
+    sb      t1, 0x78c(t0)       //xip_disable       :0xA3FFFF1c = 0x06
+    li      t2, 0x00
+    sb      t2, 0x77c(t0)       //mspi_ctrl1        :0xA3FFFF0c = 0x00
+    li      t2, 0x80
+    sb      t2, 0x778(t0)       //mspi_ctrl1        :0xA3FFFF08 = 0x80
+    li      t2, 0x70
+    sb      t2, 0x779(t0)       //mspi_ctrl1        :0xA3FFFF09 = 0x70
+    li      t2, 0x00
+    sb      t2, 0x77a(t0)       //mspi_ctrl1        :0xA3FFFF0a = 0x00
+    li      t3, 0xab
+    sb      t3, 0x774(t0)       //wakeup_cmd        :0xA3FFFF04 = 0xab
+    li      t3, 0xab
+    sb      t3, 0x776(t0)       //wakeup_cmd        :0xA3FFFF06 = 0xab
+_NVM_MSPI_WAIT_2:
+    lui     t0, 0xA3FFF
+    addi    t0, t0, 0x790
+    lb      t2, 0x798(t0)
+    li      t3, 0x80
+    beq     t3, t2, _NVM_MSPI_WAIT_2//read reg_mspi_status FLD_MSPI_BUSY(0xA3FFFF28[bit7])
+    lui     t0, 0xA3FFF
+    addi    t0, t0, 0x790
+    li      t1, 0x0a
+    sb      t1, 0x78c(t0)       //xip_enable        :0xA3FFFF1c = 0x0a
+
+    /*flash wakeup need delay about 20us */
+    /*efuse load need delay about 6us */
+    li      t0, 0
+    li      t1, EFUSE_LOAD_AND_FLASH_WAKEUP_LOOP_NUM
+_NVM_WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH:
+    addi    t0, t0, 1
+    bgeu    t1, t0, _NVM_WAIT_EFUSE_LOAD_AND_FLASH_WAKEUP_FINISH
+
     /* Move retention reset from flash to sram */
 _RETENTION_RESET_INIT:
     la     t1, _RETENTION_RESET_LMA_START

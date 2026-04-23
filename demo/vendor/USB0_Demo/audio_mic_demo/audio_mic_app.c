@@ -81,9 +81,9 @@ unsigned char usbd_audio_interface_cb(unsigned char bus, usb_control_request_t c
     switch (entity_id) {
     case 5:
     {
-        if (control_selector == AUDIO_FU_CTRL_MUTE) {
+        if (control_selector == USB_AUDIO_FEATURE_UNIT_CTRL_MUTE) {
             usbd_ep_write(bus, 0, &mute, setup->wLength);
-        } else if (control_selector == AUDIO_FU_CTRL_VOLUME) {
+        } else if (control_selector == USB_AUDIO_FEATURE_UNIT_CTRL_VOLUME) {
             /* code */
             switch (setup->bRequest) {
             case 0x81:

@@ -69,7 +69,7 @@ extern "C"
 
 #endif
     extern void  dhry_main(void);
-    extern float Dhrystone_DMIPS_Per_MHz;
+    extern int Dhrystone_DMIPS_Per_MHz;
 
 
 /* Disable C linkage for C++ Compilers: */

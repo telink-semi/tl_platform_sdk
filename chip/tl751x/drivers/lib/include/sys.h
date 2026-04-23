@@ -178,11 +178,48 @@ typedef enum{
     CHIP_VERSION_A1 = 0x01,
 }chip_version_e;
 
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET    (0x1c0)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_64K
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_64K       (0xe000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_128K
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_128K      (0x1e000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_512K
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_512K      (0x7e000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_1M
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_1M        (0xfe000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_2M
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_2M        (0x1fe000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_4M
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_4M        (0x3fe000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_8M
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_8M        (0x7fe000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
+#ifndef FLASH_SYS_VOL_CALI_VALUE_ADDR_16M
+    #define FLASH_SYS_VOL_CALI_VALUE_ADDR_16M (0xffe000 + FLASH_SYS_VOL_CALI_VALUE_ADDR_OFFSET)
+#endif
+
 /**********************************************************************************************************************
  *                                     global variable declaration                                                    *
  *********************************************************************************************************************/
 
 extern unsigned int g_chip_version;
+extern unsigned int g_flash_size;
 
 /**********************************************************************************************************************
  *                                      global function prototype                                                     *

@@ -846,11 +846,20 @@ void audio_tx_data_to_usb(audio_sample_rate_e audio_rate)
         break;
     }
 
-    for (unsigned short i = 0; i < length; i++) {
+    #if (MIC_RESOLUTION_BIT == 24)
+    for (unsigned char i = 0; i < length; i++) {
+        int md          = iso_in_buff[iso_in_r++ & (MIC_BUFFER_SIZE - 1)];
+        reg_usb_ep7_dat = md;
+        reg_usb_ep7_dat = md >> 8;
+        reg_usb_ep7_dat = md >> 16;
+    }
+    #elif (MIC_RESOLUTION_BIT == 16)
+    for (unsigned char i = 0; i < length; i++) {
         short md        = iso_in_buff[iso_in_r++ & (MIC_BUFFER_SIZE - 1)];
         reg_usb_ep7_dat = md;
         reg_usb_ep7_dat = md >> 8;
     }
+    #endif
 
     usbhw_data_ep_ack(USB_EDP_MIC);
 }
@@ -906,12 +915,20 @@ void user_init(void)
 
     /*********************** input config ****************************/
     audio_codec0_input_config_t codec0_input_config = {
-        .input_src   = AUDIO_LINEIN_ADC_A1,
+        .input_src   = AUDIO_LINEIN_ADC_A1_A2,
+#if (MIC_RESOLUTION_BIT == 24)
+        .data_format = AUDIO_CODEC0_BIT_24_DATA,
+#elif (MIC_RESOLUTION_BIT == 16)
         .data_format = AUDIO_CODEC0_BIT_16_DATA,
+#endif
         .sample_rate = MIC_SAMPLING_RATE,
     };
     /* matrix input config. */
-    audio_matrix_set_rx_fifo_route(FIFO0, FIFO_RX_ROUTE_CODEC0_ADCA, FIFO_RX_CODEC0_ADCA_A1_16BIT);
+#if (MIC_RESOLUTION_BIT == 24)
+    audio_matrix_set_rx_fifo_route(FIFO0, FIFO_RX_ROUTE_CODEC0_ADCA, FIFO_RX_CODEC0_ADCA_A1_A2_32BIT);
+#elif (MIC_RESOLUTION_BIT == 16)
+    audio_matrix_set_rx_fifo_route(FIFO0, FIFO_RX_ROUTE_CODEC0_ADCA, FIFO_RX_CODEC0_ADCA_A1_A2_16BIT);
+#endif
     audio_codec0_input_init(&codec0_input_config);
     /* rx dma init. */
     audio_rx_dma_chain_init(FIFO0, DMA0, (unsigned short *)iso_in_buff, sizeof(iso_in_buff));

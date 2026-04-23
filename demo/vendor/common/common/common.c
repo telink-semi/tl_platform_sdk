@@ -27,18 +27,7 @@
 
 volatile unsigned int g_debug_flag;
 
-#if defined(MCU_CORE_TL752X)
-
-void platform_init(void)
-{
-    sys_init();
-
-    pm_update_status_info(0);
-
-    calibration_func();
-}
-
-#elif defined(MCU_CORE_TL651X)
+#if defined(MCU_CORE_TL651X)
 void platform_init(void)
 {
     WRITE_REG(*(unsigned int *)0xa0120008,0x04000000);
@@ -81,12 +70,10 @@ flash_user_defined_list_t flash_init_list[] = {
     //8M
     {0x176085, FLASH_LOCK_LOW_4M_MID176085},
 #elif defined(MCU_CORE_TL752X)
-    //1M
-    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     //4M
+    {0x1640c8, FLASH_LOCK_LOW_2M_MID1640C8},
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
-    //8M
-    {0x176085, FLASH_LOCK_LOW_4M_MID176085},
+    {0x16405e, FLASH_LOCK_LOW_2M_MID16405E},
 #elif defined(MCU_CORE_TL753X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
@@ -145,13 +132,13 @@ flash_user_defined_list_t flash_init_list[] = {
 #endif
 
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL752X)
 
 flash_hal_user_handler_t flash_handler = {
     .list      = list_fp,
     .flash_cnt = (sizeof(flash_init_list) / sizeof(flash_user_defined_list_t)),
 };
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
 flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
     {
      .list       = list_fp,
@@ -201,6 +188,8 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char fl
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL711X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL523X)
+void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
 #else
 void platform_init(unsigned char flash_protect_en)
 #endif
@@ -251,6 +240,8 @@ void platform_init(unsigned char flash_protect_en)
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_TL711X)
     sys_init(power_mode, vbat_v);
+#elif defined(MCU_CORE_TL523X)
+    sys_init(power_mode, vbat_v, cap);
 #else
     sys_init();
 #endif
@@ -290,6 +281,8 @@ void platform_init(unsigned char flash_protect_en)
 */
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
     pm_update_status_info(1);
+#elif defined(MCU_CORE_TL752X)
+    pm_update_status_info(0);
 #endif
 
     /**
@@ -301,8 +294,11 @@ void platform_init(unsigned char flash_protect_en)
     there may be the risk of SWS miswriting the chip registers or sram causing a crash.
     ===============================================================================
 */
+#if defined(MCU_CORE_TL752X)
+    gpio_set_up_down_res(GPIO_SWS, GPIO_PULLUP);
+#else
     gpio_set_up_down_res(GPIO_SWS, GPIO_PIN_PULLUP_1M);
-
+#endif
 /**
     ===============================================================================
                          ##### 32k watchdog stop #####
@@ -313,7 +309,7 @@ void platform_init(unsigned char flash_protect_en)
     you can replace this place with the dog feeder interface.
     ===============================================================================
 */
-#if !defined(MCU_CORE_B91)
+#if !defined(MCU_CORE_B91) && !defined(MCU_CORE_TL752X)
     wd_32k_stop();
 #endif
 
@@ -328,8 +324,9 @@ void platform_init(unsigned char flash_protect_en)
     you can replace this place with the dog feeder interface.
     ===============================================================================
 */
+#if !defined(MCU_CORE_TL752X)
     wd_stop();
-
+#endif    
 /**
     ===============================================================================
                          ##### calibration #####
@@ -340,19 +337,11 @@ void platform_init(unsigned char flash_protect_en)
     some calibration values may not take effect.
     ===============================================================================
 */
-#if defined(MCU_CORE_B91)
+#if defined(MCU_CORE_B91)|| defined(MCU_CORE_TL523X)
     user_read_flash_value_calib();
 #elif defined(MCU_CORE_B92)
     calibration_func(gpio_v);
-#elif defined(MCU_CORE_TL721X)
-    calibration_func();
-#elif defined(MCU_CORE_TL321X)
-    calibration_func();
-#elif defined(MCU_CORE_TL751X)
-    calibration_func();
-#elif defined(MCU_CORE_TL322X)
-    calibration_func();
-#elif defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL752X)
     calibration_func();
 #endif
 
@@ -425,7 +414,7 @@ void platform_init(unsigned char flash_protect_en)
 #if !defined(INTERNAL_SIMULATION_DEBUG)
     #if (!defined(DUT_TEST) && defined(MCU_STARTUP_FLASH))
     if (flash_protect_en) {
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL752X)
         unsigned char flash_init_flag = hal_flash_init(&flash_handler);
         #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X)
         unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t *)flash_handler);
@@ -433,19 +422,18 @@ void platform_init(unsigned char flash_protect_en)
         unsigned char flash_init_flag = 0;
         #endif
         if (flash_init_flag != 0) {
-            gpio_set_high_level(LED1);
+            //gpio_set_high_level(LED1);
             while (1)
                 ;
         }
 
-
-        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)|| defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL752X)
         unsigned char lock_flag = hal_flash_lock();
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X) || defined(MCU_CORE_TL711X)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
         #endif
         if (!(lock_flag == 1)) {
-            gpio_set_high_level(LED1);
+            //gpio_set_high_level(LED1);
             while (1)
                 ;
         }

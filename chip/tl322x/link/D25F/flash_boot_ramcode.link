@@ -64,6 +64,25 @@
 ENTRY(_RESET_ENTRY)
 SECTIONS
 {
+    NVM_LMA = 0x00400000;
+    .nvm_code NVM_LMA :
+    {
+        PROVIDE(NVM_BIN_BEGIN = .);
+        KEEP(*(.nvm_code))
+    }
+
+    . = ALIGN(8);
+    .nvm_rodata :
+    {
+        KEEP(*(.nvm_rodata))
+    }
+
+    . = ALIGN(8);
+    .nvm_rwdata_nocopy :
+    {
+        KEEP(*(.nvm_rwdata_nocopy))
+    }
+
     NDS_SAG_LMA_FLASH = 0x20000000 ;
     . = 0x20000000; 
     PROVIDE (BIN_BEGIN = .);
@@ -113,7 +132,16 @@ SECTIONS
     PROVIDE (_DATA_VMA_END = .);
     PROVIDE (_DATA_VMA_START = ADDR(.data));
     PROVIDE (_DATA_LMA_START = LOADADDR(.data));
-    
+
+    . = ALIGN(8);
+    .nvm_rwdata_copy : AT(ALIGN(LOADADDR(.nvm_rwdata_nocopy) + SIZEOF(.nvm_rwdata_nocopy), ALIGNOF(.nvm_rwdata_copy)))
+    {
+        PROVIDE(__NVM_RWDATA_COPY_START = .);
+        KEEP(*(.nvm_rwdata_copy*))
+        PROVIDE(__NVM_RWDATA_COPY_END = .);
+    }
+    PROVIDE(__NVM_RWDATA_COPY_LOAD = LOADADDR(.nvm_rwdata_copy));
+
     . = ALIGN(8);
     PROVIDE (_BSS_VMA_START = .);
     .sbss   (NOLOAD)    : { *(.dynsbss ) *(.sbss .sbss.* .gnu.linkonce.sb.* ) *(.scommon .scommon.* ) }
@@ -128,7 +156,11 @@ SECTIONS
         { KEEP(*(.sdk_version )) }
 
     PROVIDE (BIN_SIZE = LOADADDR(.sdk_version) + SIZEOF(.sdk_version) - BIN_BEGIN);
-        
+
+    PROVIDE(NVM_BIN_END = LOADADDR(.nvm_rwdata_copy) + SIZEOF(.nvm_rwdata_copy));
+    PROVIDE(NVM_BIN_SIZE = NVM_BIN_END - NVM_BIN_BEGIN);
+    PROVIDE(NVM_SIZE = 512 * 1024);
+
     . = ALIGN(8);
     /* end is the starting address of the heap, the heap grows upward */
     _end = .;
@@ -137,7 +169,7 @@ SECTIONS
     PROVIDE (FLASH_SIZE = 0x0100000);
     PROVIDE (_DLM_USE_SIZE = _BSS_VMA_END);
 }
-
+ASSERT((NVM_BIN_SIZE)<= NVM_SIZE, "NVM BIN FILE OVERFLOW");
 ASSERT((BIN_SIZE)<= FLASH_SIZE, "BIN FILE OVERFLOW");
 ASSERT((_ILM_USE_SIZE)<= 0x8000 * __D25F_IRAM_SIZE, "IRAM OVERFLOW");
 ASSERT((_DLM_USE_SIZE)<= (_STACK_TOP-600), "DRAM OVERFLOW");/*Error: RAM size maybe overflow.(This is determined based on the stack size of 600 bytes. If this does not match the actual usage, the corresponding judgment criteria in the link file can be modified*/

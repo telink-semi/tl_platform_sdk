@@ -22,9 +22,7 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-
 #if (DEMO_MODE == NORMAL_MODE)
-
 void user_init(void)
 {
     delay_ms(1000);
@@ -36,7 +34,6 @@ void user_init(void)
     gpio_output_en(LED2);
     gpio_output_en(LED3);
     gpio_output_en(LED4);
-
     /*
     * Button matrix table:
     *           KEY3    KEY4
@@ -51,6 +48,7 @@ void user_init(void)
     gpio_function_en(IRQ_PIN);
     gpio_output_dis(IRQ_PIN);
     gpio_input_en(IRQ_PIN);
+    gpio_set_low_level(IRQ_PIN);
     /*
      * When IRQ_PIN' interrupt type is set to falling edge, set the IRQ_PIN pull-up   resistor and KEY3 outputs low level.
      * When IRQ_PIN' interrupt type is set to rising  edge, set the IRQ_PIN pull-down resistor and KEY3 outputs high level.
@@ -100,7 +98,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GPIO_SRC0 + BIT_LOW_BIT(IRQ_PIN & 0x00ff));
             #endif
 
-        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
+        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
 
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLDOWN_100K);
 
@@ -114,7 +112,12 @@ void user_init(void)
 
             #elif (GPIO_MODE == GPIO_IRQ_NUM1)
     /****GPIO_IRQ7  POL_FALLING   Trigger an interrupt by externally flooding the IRQ_PIN pin with a falling edge. **/
+                #if defined(MCU_CORE_TL523X)
+    gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLUP_20K);
+                #else
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLUP_10K);
+                #endif
+    
     gpio_set_irq(GPIO_IRQ7, IRQ_PIN, INTR_FALLING_EDGE);
     gpio_set_irq_mask(GPIO_IRQ_IRQ7);
     plic_interrupt_enable(IRQ_GPIO_IRQ7);
@@ -122,6 +125,7 @@ void user_init(void)
             #endif
         #endif
     core_interrupt_enable();
+
 
     #endif
 }
@@ -135,7 +139,7 @@ void main_loop(void)
     gpio_toggle(KEY3);
     #endif
     gpio_toggle(LED1);
-    delay_ms(200);
+    delay_ms(500);
 }
 
     /**
@@ -252,7 +256,7 @@ PLIC_ISR_REGISTER(gpio_src7_irq_handler, IRQ_GPIO_SRC7)
         #endif
     #endif
 
-    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
 volatile unsigned int gpio_irq0_cnt = 0;
 volatile unsigned int gpio_irq7_cnt = 0;
         #if (GPIO_MODE == GPIO_IRQ_NUM0)
@@ -261,9 +265,7 @@ _attribute_ram_code_sec_ void gpio_irq0_handler(void)
     gpio_irq0_cnt++;
     gpio_clr_irq_status(GPIO_IRQ_IRQ0);
 }
-
 PLIC_ISR_REGISTER(gpio_irq0_handler, IRQ_GPIO_IRQ0);
-
         #elif (GPIO_MODE == GPIO_IRQ_NUM1)
 _attribute_ram_code_sec_ void gpio_irq7_handler(void)
 {

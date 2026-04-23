@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "calibration.h"
-
+#include "lib/include/efuse.h"
 /**
  * @brief      This function serves to update rf frequency offset.
  * @param[in]  addr - the frequency offset value address of flash.
@@ -140,7 +140,6 @@ unsigned char user_check_ieee_addr(unsigned char *value)
  */
 ieee_addr_source_e user_get_efuse_ieee_addr(unsigned char *buf)
 {
-    extern void efuse_get_ieee_addr(unsigned char *buf);
     //Read IEEE address priority: FLASH > EFUSE
     efuse_get_ieee_addr(buf);
     if (user_check_ieee_addr(buf)) {

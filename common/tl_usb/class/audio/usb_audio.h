@@ -26,25 +26,7 @@
 
 #include "../../core/usbd_core.h"
 
-typedef enum
-{
-    AUDIO_FU_CTRL_UNDEF             = 0x00,
-    AUDIO_FU_CTRL_MUTE              = 0x01,
-    AUDIO_FU_CTRL_VOLUME            = 0x02,
-    AUDIO_FU_CTRL_BASS              = 0x03,
-    AUDIO_FU_CTRL_MID               = 0x04,
-    AUDIO_FU_CTRL_TREBLE            = 0x05,
-    AUDIO_FU_CTRL_GRAPHIC_EQUALIZER = 0x06,
-    AUDIO_FU_CTRL_AGC               = 0x07,
-    AUDIO_FU_CTRL_DELAY             = 0x08,
-    AUDIO_FU_CTRL_BASS_BOOST        = 0x09,
-    AUDIO_FU_CTRL_LOUDNESS          = 0x0A,
-    AUDIO_FU_CTRL_INPUT_GAIN        = 0x0B,
-    AUDIO_FU_CTRL_GAIN_PAD          = 0x0C,
-    AUDIO_FU_CTRL_INVERTER          = 0x0D,
-    AUDIO_FU_CTRL_UNDERFLOW         = 0x0E,
-    AUDIO_FU_CTRL_OVERVLOW          = 0x0F,
-    AUDIO_FU_CTRL_LATENCY           = 0x10,
-} audio_feature_unit_control_selector_t;
+#define USB_AUDIO_FEATURE_UNIT_CTRL_MUTE   (0x01)
+#define USB_AUDIO_FEATURE_UNIT_CTRL_VOLUME (0x02)
 
 #endif

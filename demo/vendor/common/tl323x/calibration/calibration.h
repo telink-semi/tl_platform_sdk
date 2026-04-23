@@ -26,6 +26,11 @@
 
 #include "driver.h"
 
+/**
+ * Note: If a new storage capacity FLASH is added, in addition to updating this file,
+ * the drivers/lib/include/sys.h file also needs to be updated simultaneously,
+ * because the location of core voltage calibration is recorded in that file.
+ */
 #ifndef FLASH_CAP_VALUE_ADDR_64K
     #define FLASH_CAP_VALUE_ADDR_64K 0xe000
 #endif

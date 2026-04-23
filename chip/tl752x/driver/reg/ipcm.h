@@ -1,0 +1,919 @@
+/*******************************************************************************************************
+ *
+ * @file    ipcm.h
+ *
+ * @brief   This is the source file for tl752x
+ *
+ * @author  ExpanseMicro BSP Team
+ * @par     Copyright (C) 2025-2035 Expanse Microelectronics (Shanghai) Co., Ltd
+ *
+ * @author  Telink Driver Group
+ * @par     Copyright (c) 2025, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ *
+ * @date   2025
+ *
+ *          Licensed under the Apache License, Version 2.0 (the "License");
+ *          you may not use this file except in compliance with the License.
+ *          You may obtain a copy of the License at
+ *
+ *              http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *          Unless required by applicable law or agreed to in writing, software
+ *          distributed under the License is distributed on an "AS IS" BASIS,
+ *          WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *          See the License for the specific language governing permissions and
+ *          limitations under the License.
+ *
+ *******************************************************************************************************/
+#ifndef __IPCM_H__
+#define __IPCM_H__
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+//CPU0_INTR_SET0 offsetaddress : 0x0
+//CPU0_INTR_SET0 RegResetValue : 0x0
+#define IPCM_CPU0_INTR_SET0_POS  (0U)
+#define IPCM_CPU0_INTR_SET0_MSK  (0x1UL << IPCM_CPU0_INTR_SET0_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET0      IPCM_CPU0_INTR_SET0_MSK
+#define IPCM_CPU0_INTR_SET1_POS  (1U)
+#define IPCM_CPU0_INTR_SET1_MSK  (0x1UL << IPCM_CPU0_INTR_SET1_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET1      IPCM_CPU0_INTR_SET1_MSK
+#define IPCM_CPU0_INTR_SET2_POS  (2U)
+#define IPCM_CPU0_INTR_SET2_MSK  (0x1UL << IPCM_CPU0_INTR_SET2_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET2      IPCM_CPU0_INTR_SET2_MSK
+#define IPCM_CPU0_INTR_SET3_POS  (3U)
+#define IPCM_CPU0_INTR_SET3_MSK  (0x1UL << IPCM_CPU0_INTR_SET3_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET3      IPCM_CPU0_INTR_SET3_MSK
+#define IPCM_CPU0_INTR_SET4_POS  (4U)
+#define IPCM_CPU0_INTR_SET4_MSK  (0x1UL << IPCM_CPU0_INTR_SET4_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET4      IPCM_CPU0_INTR_SET4_MSK
+#define IPCM_CPU0_INTR_SET5_POS  (5U)
+#define IPCM_CPU0_INTR_SET5_MSK  (0x1UL << IPCM_CPU0_INTR_SET5_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET5      IPCM_CPU0_INTR_SET5_MSK
+#define IPCM_CPU0_INTR_SET6_POS  (6U)
+#define IPCM_CPU0_INTR_SET6_MSK  (0x1UL << IPCM_CPU0_INTR_SET6_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET6      IPCM_CPU0_INTR_SET6_MSK
+#define IPCM_CPU0_INTR_SET7_POS  (7U)
+#define IPCM_CPU0_INTR_SET7_MSK  (0x1UL << IPCM_CPU0_INTR_SET7_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET7      IPCM_CPU0_INTR_SET7_MSK
+#define IPCM_CPU0_INTR_SET8_POS  (8U)
+#define IPCM_CPU0_INTR_SET8_MSK  (0x1UL << IPCM_CPU0_INTR_SET8_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET8      IPCM_CPU0_INTR_SET8_MSK
+#define IPCM_CPU0_INTR_SET9_POS  (9U)
+#define IPCM_CPU0_INTR_SET9_MSK  (0x1UL << IPCM_CPU0_INTR_SET9_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET9      IPCM_CPU0_INTR_SET9_MSK
+#define IPCM_CPU0_INTR_SET10_POS (10U)
+#define IPCM_CPU0_INTR_SET10_MSK (0x1UL << IPCM_CPU0_INTR_SET10_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET10     IPCM_CPU0_INTR_SET10_MSK
+#define IPCM_CPU0_INTR_SET11_POS (11U)
+#define IPCM_CPU0_INTR_SET11_MSK (0x1UL << IPCM_CPU0_INTR_SET11_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET11     IPCM_CPU0_INTR_SET11_MSK
+#define IPCM_CPU0_INTR_SET12_POS (12U)
+#define IPCM_CPU0_INTR_SET12_MSK (0x1UL << IPCM_CPU0_INTR_SET12_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET12     IPCM_CPU0_INTR_SET12_MSK
+#define IPCM_CPU0_INTR_SET13_POS (13U)
+#define IPCM_CPU0_INTR_SET13_MSK (0x1UL << IPCM_CPU0_INTR_SET13_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET13     IPCM_CPU0_INTR_SET13_MSK
+#define IPCM_CPU0_INTR_SET14_POS (14U)
+#define IPCM_CPU0_INTR_SET14_MSK (0x1UL << IPCM_CPU0_INTR_SET14_POS) /*!<  */
+#define IPCM_CPU0_INTR_SET14     IPCM_CPU0_INTR_SET14_MSK
+#define IPCM_CPU0_INTR_SET15_POS (15U)
+#define IPCM_CPU0_INTR_SET15_MSK (0x1UL << IPCM_CPU0_INTR_SET15_POS) /*!< Interrupt generation bit sent to the CPU*/
+#define IPCM_CPU0_INTR_SET15     IPCM_CPU0_INTR_SET15_MSK
+
+//CPU0_INTR_CLR offsetaddress : 0x8
+//CPU0_INTR_CLR RegResetValue : 0x0
+#define IPCM_CPU0_INTR_CLEAR_POS  (0U)
+#define IPCM_CPU0_INTR_CLEAR_MSK  (0xffffUL << IPCM_CPU0_INTR_CLEAR_POS) /*!< Interrupt clearance sent to the CPU*/
+#define IPCM_CPU0_INTR_CLEAR      IPCM_CPU0_INTR_CLEAR_MSK
+#define IPCM_CPU0_INTR_CLEAR_W(X) ((X) << IPCM_CPU0_INTR_CLEAR_POS)
+
+//CPU0_INTR_EN offsetaddress : 0xc
+//CPU0_INTR_EN RegResetValue : 0x0
+#define IPCM_CPU0_INTR_ALL_EN_POS  (0U)
+#define IPCM_CPU0_INTR_ALL_EN_MSK  (0x1UL << IPCM_CPU0_INTR_ALL_EN_POS) /*!<  */
+#define IPCM_CPU0_INTR_ALL_EN      IPCM_CPU0_INTR_ALL_EN_MSK
+#define IPCM_CPU0_INTR_ALL_EN_W(X) ((X) << IPCM_CPU0_INTR_ALL_EN_POS)
+
+//CPU0_INTR_EN0 offsetaddress : 0x10
+//CPU0_INTR_EN0 RegResetValue : 0x0
+#define IPCM_CPU0_INTR_SRC0_EN_POS   (0U)
+#define IPCM_CPU0_INTR_SRC0_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC0_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC0_EN       IPCM_CPU0_INTR_SRC0_EN_MSK
+#define IPCM_CPU0_INTR_SRC0_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC0_EN_POS)
+#define IPCM_CPU0_INTR_SRC1_EN_POS   (1U)
+#define IPCM_CPU0_INTR_SRC1_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC1_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC1_EN       IPCM_CPU0_INTR_SRC1_EN_MSK
+#define IPCM_CPU0_INTR_SRC1_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC1_EN_POS)
+#define IPCM_CPU0_INTR_SRC2_EN_POS   (2U)
+#define IPCM_CPU0_INTR_SRC2_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC2_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC2_EN       IPCM_CPU0_INTR_SRC2_EN_MSK
+#define IPCM_CPU0_INTR_SRC2_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC2_EN_POS)
+#define IPCM_CPU0_INTR_SRC3_EN_POS   (3U)
+#define IPCM_CPU0_INTR_SRC3_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC3_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC3_EN       IPCM_CPU0_INTR_SRC3_EN_MSK
+#define IPCM_CPU0_INTR_SRC3_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC3_EN_POS)
+#define IPCM_CPU0_INTR_SRC4_EN_POS   (4U)
+#define IPCM_CPU0_INTR_SRC4_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC4_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC4_EN       IPCM_CPU0_INTR_SRC4_EN_MSK
+#define IPCM_CPU0_INTR_SRC4_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC4_EN_POS)
+#define IPCM_CPU0_INTR_SRC5_EN_POS   (5U)
+#define IPCM_CPU0_INTR_SRC5_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC5_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC5_EN       IPCM_CPU0_INTR_SRC5_EN_MSK
+#define IPCM_CPU0_INTR_SRC5_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC5_EN_POS)
+#define IPCM_CPU0_INTR_SRC6_EN_POS   (6U)
+#define IPCM_CPU0_INTR_SRC6_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC6_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC6_EN       IPCM_CPU0_INTR_SRC6_EN_MSK
+#define IPCM_CPU0_INTR_SRC6_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC6_EN_POS)
+#define IPCM_CPU0_INTR_SRC7_EN_POS   (7U)
+#define IPCM_CPU0_INTR_SRC7_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC7_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC7_EN       IPCM_CPU0_INTR_SRC7_EN_MSK
+#define IPCM_CPU0_INTR_SRC7_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC7_EN_POS)
+#define IPCM_CPU0_INTR_SRC8_EN_POS   (8U)
+#define IPCM_CPU0_INTR_SRC8_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC8_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC8_EN       IPCM_CPU0_INTR_SRC8_EN_MSK
+#define IPCM_CPU0_INTR_SRC8_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC8_EN_POS)
+#define IPCM_CPU0_INTR_SRC9_EN_POS   (9U)
+#define IPCM_CPU0_INTR_SRC9_EN_MSK   (0x1UL << IPCM_CPU0_INTR_SRC9_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC9_EN       IPCM_CPU0_INTR_SRC9_EN_MSK
+#define IPCM_CPU0_INTR_SRC9_EN_W(X)  ((X) << IPCM_CPU0_INTR_SRC9_EN_POS)
+#define IPCM_CPU0_INTR_SRC10_EN_POS  (10U)
+#define IPCM_CPU0_INTR_SRC10_EN_MSK  (0x1UL << IPCM_CPU0_INTR_SRC10_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC10_EN      IPCM_CPU0_INTR_SRC10_EN_MSK
+#define IPCM_CPU0_INTR_SRC10_EN_W(X) ((X) << IPCM_CPU0_INTR_SRC10_EN_POS)
+#define IPCM_CPU0_INTR_SRC11_EN_POS  (11U)
+#define IPCM_CPU0_INTR_SRC11_EN_MSK  (0x1UL << IPCM_CPU0_INTR_SRC11_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC11_EN      IPCM_CPU0_INTR_SRC11_EN_MSK
+#define IPCM_CPU0_INTR_SRC11_EN_W(X) ((X) << IPCM_CPU0_INTR_SRC11_EN_POS)
+#define IPCM_CPU0_INTR_SRC12_EN_POS  (12U)
+#define IPCM_CPU0_INTR_SRC12_EN_MSK  (0x1UL << IPCM_CPU0_INTR_SRC12_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC12_EN      IPCM_CPU0_INTR_SRC12_EN_MSK
+#define IPCM_CPU0_INTR_SRC12_EN_W(X) ((X) << IPCM_CPU0_INTR_SRC12_EN_POS)
+#define IPCM_CPU0_INTR_SRC13_EN_POS  (13U)
+#define IPCM_CPU0_INTR_SRC13_EN_MSK  (0x1UL << IPCM_CPU0_INTR_SRC13_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC13_EN      IPCM_CPU0_INTR_SRC13_EN_MSK
+#define IPCM_CPU0_INTR_SRC13_EN_W(X) ((X) << IPCM_CPU0_INTR_SRC13_EN_POS)
+#define IPCM_CPU0_INTR_SRC14_EN_POS  (14U)
+#define IPCM_CPU0_INTR_SRC14_EN_MSK  (0x1UL << IPCM_CPU0_INTR_SRC14_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC14_EN      IPCM_CPU0_INTR_SRC14_EN_MSK
+#define IPCM_CPU0_INTR_SRC14_EN_W(X) ((X) << IPCM_CPU0_INTR_SRC14_EN_POS)
+#define IPCM_CPU0_INTR_SRC15_EN_POS  (15U)
+#define IPCM_CPU0_INTR_SRC15_EN_MSK  (0x1UL << IPCM_CPU0_INTR_SRC15_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU0_INTR_SRC15_EN      IPCM_CPU0_INTR_SRC15_EN_MSK
+#define IPCM_CPU0_INTR_SRC15_EN_W(X) ((X) << IPCM_CPU0_INTR_SRC15_EN_POS)
+
+//CPU0_INTR_STATUS0 offsetaddress : 0x18
+//CPU0_INTR_STATUS0 RegResetValue : 0x0
+#define IPCM_CPU0_INTR_SRC0_STA_POS   (0U)
+#define IPCM_CPU0_INTR_SRC0_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC0_STA_POS) /*!<  */
+#define IPCM_CPU0_INTR_SRC0_STA       IPCM_CPU0_INTR_SRC0_STA_MSK
+#define IPCM_CPU0_INTR_SRC0_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC0_STA_POS)
+#define IPCM_CPU0_INTR_SRC1_STA_POS   (1U)
+#define IPCM_CPU0_INTR_SRC1_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC1_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC1_STA       IPCM_CPU0_INTR_SRC1_STA_MSK
+#define IPCM_CPU0_INTR_SRC1_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC1_STA_POS)
+#define IPCM_CPU0_INTR_SRC2_STA_POS   (2U)
+#define IPCM_CPU0_INTR_SRC2_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC2_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC2_STA       IPCM_CPU0_INTR_SRC2_STA_MSK
+#define IPCM_CPU0_INTR_SRC2_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC2_STA_POS)
+#define IPCM_CPU0_INTR_SRC3_STA_POS   (3U)
+#define IPCM_CPU0_INTR_SRC3_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC3_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC3_STA       IPCM_CPU0_INTR_SRC3_STA_MSK
+#define IPCM_CPU0_INTR_SRC3_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC3_STA_POS)
+#define IPCM_CPU0_INTR_SRC4_STA_POS   (4U)
+#define IPCM_CPU0_INTR_SRC4_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC4_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC4_STA       IPCM_CPU0_INTR_SRC4_STA_MSK
+#define IPCM_CPU0_INTR_SRC4_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC4_STA_POS)
+#define IPCM_CPU0_INTR_SRC5_STA_POS   (5U)
+#define IPCM_CPU0_INTR_SRC5_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC5_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC5_STA       IPCM_CPU0_INTR_SRC5_STA_MSK
+#define IPCM_CPU0_INTR_SRC5_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC5_STA_POS)
+#define IPCM_CPU0_INTR_SRC6_STA_POS   (6U)
+#define IPCM_CPU0_INTR_SRC6_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC6_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC6_STA       IPCM_CPU0_INTR_SRC6_STA_MSK
+#define IPCM_CPU0_INTR_SRC6_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC6_STA_POS)
+#define IPCM_CPU0_INTR_SRC7_STA_POS   (7U)
+#define IPCM_CPU0_INTR_SRC7_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC7_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC7_STA       IPCM_CPU0_INTR_SRC7_STA_MSK
+#define IPCM_CPU0_INTR_SRC7_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC7_STA_POS)
+#define IPCM_CPU0_INTR_SRC8_STA_POS   (8U)
+#define IPCM_CPU0_INTR_SRC8_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC8_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC8_STA       IPCM_CPU0_INTR_SRC8_STA_MSK
+#define IPCM_CPU0_INTR_SRC8_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC8_STA_POS)
+#define IPCM_CPU0_INTR_SRC9_STA_POS   (9U)
+#define IPCM_CPU0_INTR_SRC9_STA_MSK   (0x1UL << IPCM_CPU0_INTR_SRC9_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC9_STA       IPCM_CPU0_INTR_SRC9_STA_MSK
+#define IPCM_CPU0_INTR_SRC9_STA_W(X)  ((X) << IPCM_CPU0_INTR_SRC9_STA_POS)
+#define IPCM_CPU0_INTR_SRC10_STA_POS  (10U)
+#define IPCM_CPU0_INTR_SRC10_STA_MSK  (0x1UL << IPCM_CPU0_INTR_SRC10_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC10_STA      IPCM_CPU0_INTR_SRC10_STA_MSK
+#define IPCM_CPU0_INTR_SRC10_STA_W(X) ((X) << IPCM_CPU0_INTR_SRC10_STA_POS)
+#define IPCM_CPU0_INTR_SRC11_STA_POS  (11U)
+#define IPCM_CPU0_INTR_SRC11_STA_MSK  (0x1UL << IPCM_CPU0_INTR_SRC11_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC11_STA      IPCM_CPU0_INTR_SRC11_STA_MSK
+#define IPCM_CPU0_INTR_SRC11_STA_W(X) ((X) << IPCM_CPU0_INTR_SRC11_STA_POS)
+#define IPCM_CPU0_INTR_SRC12_STA_POS  (12U)
+#define IPCM_CPU0_INTR_SRC12_STA_MSK  (0x1UL << IPCM_CPU0_INTR_SRC12_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC12_STA      IPCM_CPU0_INTR_SRC12_STA_MSK
+#define IPCM_CPU0_INTR_SRC12_STA_W(X) ((X) << IPCM_CPU0_INTR_SRC12_STA_POS)
+#define IPCM_CPU0_INTR_SRC13_STA_POS  (13U)
+#define IPCM_CPU0_INTR_SRC13_STA_MSK  (0x1UL << IPCM_CPU0_INTR_SRC13_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC13_STA      IPCM_CPU0_INTR_SRC13_STA_MSK
+#define IPCM_CPU0_INTR_SRC13_STA_W(X) ((X) << IPCM_CPU0_INTR_SRC13_STA_POS)
+#define IPCM_CPU0_INTR_SRC14_STA_POS  (14U)
+#define IPCM_CPU0_INTR_SRC14_STA_MSK  (0x1UL << IPCM_CPU0_INTR_SRC14_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC14_STA      IPCM_CPU0_INTR_SRC14_STA_MSK
+#define IPCM_CPU0_INTR_SRC14_STA_W(X) ((X) << IPCM_CPU0_INTR_SRC14_STA_POS)
+#define IPCM_CPU0_INTR_SRC15_STA_POS  (15U)
+#define IPCM_CPU0_INTR_SRC15_STA_MSK  (0x1UL << IPCM_CPU0_INTR_SRC15_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU0_INTR_SRC15_STA      IPCM_CPU0_INTR_SRC15_STA_MSK
+#define IPCM_CPU0_INTR_SRC15_STA_W(X) ((X) << IPCM_CPU0_INTR_SRC15_STA_POS)
+
+//CPU0_INTR_RAW offsetaddress : 0x20
+//CPU0_INTR_RAW RegResetValue : 0x0
+#define IPCM_CPU0_INTR_SRC0_RAW_POS   (0U)
+#define IPCM_CPU0_INTR_SRC0_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC0_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC0_RAW       IPCM_CPU0_INTR_SRC0_RAW_MSK
+#define IPCM_CPU0_INTR_SRC0_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC0_RAW_POS)
+#define IPCM_CPU0_INTR_SRC1_RAW_POS   (2U)
+#define IPCM_CPU0_INTR_SRC1_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC1_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC1_RAW       IPCM_CPU0_INTR_SRC1_RAW_MSK
+#define IPCM_CPU0_INTR_SRC1_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC1_RAW_POS)
+#define IPCM_CPU0_INTR_SRC2_RAW_POS   (4U)
+#define IPCM_CPU0_INTR_SRC2_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC2_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC2_RAW       IPCM_CPU0_INTR_SRC2_RAW_MSK
+#define IPCM_CPU0_INTR_SRC2_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC2_RAW_POS)
+#define IPCM_CPU0_INTR_SRC3_RAW_POS   (6U)
+#define IPCM_CPU0_INTR_SRC3_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC3_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC3_RAW       IPCM_CPU0_INTR_SRC3_RAW_MSK
+#define IPCM_CPU0_INTR_SRC3_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC3_RAW_POS)
+#define IPCM_CPU0_INTR_SRC4_RAW_POS   (8U)
+#define IPCM_CPU0_INTR_SRC4_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC4_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC4_RAW       IPCM_CPU0_INTR_SRC4_RAW_MSK
+#define IPCM_CPU0_INTR_SRC4_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC4_RAW_POS)
+#define IPCM_CPU0_INTR_SRC5_RAW_POS   (10U)
+#define IPCM_CPU0_INTR_SRC5_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC5_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC5_RAW       IPCM_CPU0_INTR_SRC5_RAW_MSK
+#define IPCM_CPU0_INTR_SRC5_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC5_RAW_POS)
+#define IPCM_CPU0_INTR_SRC6_RAW_POS   (12U)
+#define IPCM_CPU0_INTR_SRC6_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC6_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC6_RAW       IPCM_CPU0_INTR_SRC6_RAW_MSK
+#define IPCM_CPU0_INTR_SRC6_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC6_RAW_POS)
+#define IPCM_CPU0_INTR_SRC7_RAW_POS   (14U)
+#define IPCM_CPU0_INTR_SRC7_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC7_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC7_RAW       IPCM_CPU0_INTR_SRC7_RAW_MSK
+#define IPCM_CPU0_INTR_SRC7_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC7_RAW_POS)
+#define IPCM_CPU0_INTR_SRC8_RAW_POS   (16U)
+#define IPCM_CPU0_INTR_SRC8_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC8_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC8_RAW       IPCM_CPU0_INTR_SRC8_RAW_MSK
+#define IPCM_CPU0_INTR_SRC8_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC8_RAW_POS)
+#define IPCM_CPU0_INTR_SRC9_RAW_POS   (18U)
+#define IPCM_CPU0_INTR_SRC9_RAW_MSK   (0x3UL << IPCM_CPU0_INTR_SRC9_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC9_RAW       IPCM_CPU0_INTR_SRC9_RAW_MSK
+#define IPCM_CPU0_INTR_SRC9_RAW_W(X)  ((X) << IPCM_CPU0_INTR_SRC9_RAW_POS)
+#define IPCM_CPU0_INTR_SRC10_RAW_POS  (20U)
+#define IPCM_CPU0_INTR_SRC10_RAW_MSK  (0x3UL << IPCM_CPU0_INTR_SRC10_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC10_RAW      IPCM_CPU0_INTR_SRC10_RAW_MSK
+#define IPCM_CPU0_INTR_SRC10_RAW_W(X) ((X) << IPCM_CPU0_INTR_SRC10_RAW_POS)
+#define IPCM_CPU0_INTR_SRC11_RAW_POS  (22U)
+#define IPCM_CPU0_INTR_SRC11_RAW_MSK  (0x3UL << IPCM_CPU0_INTR_SRC11_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC11_RAW      IPCM_CPU0_INTR_SRC11_RAW_MSK
+#define IPCM_CPU0_INTR_SRC11_RAW_W(X) ((X) << IPCM_CPU0_INTR_SRC11_RAW_POS)
+#define IPCM_CPU0_INTR_SRC12_RAW_POS  (24U)
+#define IPCM_CPU0_INTR_SRC12_RAW_MSK  (0x3UL << IPCM_CPU0_INTR_SRC12_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC12_RAW      IPCM_CPU0_INTR_SRC12_RAW_MSK
+#define IPCM_CPU0_INTR_SRC12_RAW_W(X) ((X) << IPCM_CPU0_INTR_SRC12_RAW_POS)
+#define IPCM_CPU0_INTR_SRC13_RAW_POS  (26U)
+#define IPCM_CPU0_INTR_SRC13_RAW_MSK  (0x3UL << IPCM_CPU0_INTR_SRC13_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC13_RAW      IPCM_CPU0_INTR_SRC13_RAW_MSK
+#define IPCM_CPU0_INTR_SRC13_RAW_W(X) ((X) << IPCM_CPU0_INTR_SRC13_RAW_POS)
+#define IPCM_CPU0_INTR_SRC14_RAW_POS  (28U)
+#define IPCM_CPU0_INTR_SRC14_RAW_MSK  (0x3UL << IPCM_CPU0_INTR_SRC14_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC14_RAW      IPCM_CPU0_INTR_SRC14_RAW_MSK
+#define IPCM_CPU0_INTR_SRC14_RAW_W(X) ((X) << IPCM_CPU0_INTR_SRC14_RAW_POS)
+#define IPCM_CPU0_INTR_SRC15_RAW_POS  (30U)
+#define IPCM_CPU0_INTR_SRC15_RAW_MSK  (0x3UL << IPCM_CPU0_INTR_SRC15_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU0_INTR_SRC15_RAW      IPCM_CPU0_INTR_SRC15_RAW_MSK
+#define IPCM_CPU0_INTR_SRC15_RAW_W(X) ((X) << IPCM_CPU0_INTR_SRC15_RAW_POS)
+
+//CPU2_INTR_SET0 offsetaddress : 0x40
+//CPU2_INTR_SET0 RegResetValue : 0x0
+#define IPCM_CPU2_INTR_SET0_POS  (0U)
+#define IPCM_CPU2_INTR_SET0_MSK  (0x1UL << IPCM_CPU2_INTR_SET0_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET0      IPCM_CPU2_INTR_SET0_MSK
+#define IPCM_CPU2_INTR_SET1_POS  (1U)
+#define IPCM_CPU2_INTR_SET1_MSK  (0x1UL << IPCM_CPU2_INTR_SET1_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET1      IPCM_CPU2_INTR_SET1_MSK
+#define IPCM_CPU2_INTR_SET2_POS  (2U)
+#define IPCM_CPU2_INTR_SET2_MSK  (0x1UL << IPCM_CPU2_INTR_SET2_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET2      IPCM_CPU2_INTR_SET2_MSK
+#define IPCM_CPU2_INTR_SET3_POS  (3U)
+#define IPCM_CPU2_INTR_SET3_MSK  (0x1UL << IPCM_CPU2_INTR_SET3_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET3      IPCM_CPU2_INTR_SET3_MSK
+#define IPCM_CPU2_INTR_SET4_POS  (4U)
+#define IPCM_CPU2_INTR_SET4_MSK  (0x1UL << IPCM_CPU2_INTR_SET4_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET4      IPCM_CPU2_INTR_SET4_MSK
+#define IPCM_CPU2_INTR_SET5_POS  (5U)
+#define IPCM_CPU2_INTR_SET5_MSK  (0x1UL << IPCM_CPU2_INTR_SET5_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET5      IPCM_CPU2_INTR_SET5_MSK
+#define IPCM_CPU2_INTR_SET6_POS  (6U)
+#define IPCM_CPU2_INTR_SET6_MSK  (0x1UL << IPCM_CPU2_INTR_SET6_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET6      IPCM_CPU2_INTR_SET6_MSK
+#define IPCM_CPU2_INTR_SET7_POS  (7U)
+#define IPCM_CPU2_INTR_SET7_MSK  (0x1UL << IPCM_CPU2_INTR_SET7_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET7      IPCM_CPU2_INTR_SET7_MSK
+#define IPCM_CPU2_INTR_SET8_POS  (8U)
+#define IPCM_CPU2_INTR_SET8_MSK  (0x1UL << IPCM_CPU2_INTR_SET8_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET8      IPCM_CPU2_INTR_SET8_MSK
+#define IPCM_CPU2_INTR_SET9_POS  (9U)
+#define IPCM_CPU2_INTR_SET9_MSK  (0x1UL << IPCM_CPU2_INTR_SET9_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET9      IPCM_CPU2_INTR_SET9_MSK
+#define IPCM_CPU2_INTR_SET10_POS (10U)
+#define IPCM_CPU2_INTR_SET10_MSK (0x1UL << IPCM_CPU2_INTR_SET10_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET10     IPCM_CPU2_INTR_SET10_MSK
+#define IPCM_CPU2_INTR_SET11_POS (11U)
+#define IPCM_CPU2_INTR_SET11_MSK (0x1UL << IPCM_CPU2_INTR_SET11_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET11     IPCM_CPU2_INTR_SET11_MSK
+#define IPCM_CPU2_INTR_SET12_POS (12U)
+#define IPCM_CPU2_INTR_SET12_MSK (0x1UL << IPCM_CPU2_INTR_SET12_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET12     IPCM_CPU2_INTR_SET12_MSK
+#define IPCM_CPU2_INTR_SET13_POS (13U)
+#define IPCM_CPU2_INTR_SET13_MSK (0x1UL << IPCM_CPU2_INTR_SET13_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET13     IPCM_CPU2_INTR_SET13_MSK
+#define IPCM_CPU2_INTR_SET14_POS (14U)
+#define IPCM_CPU2_INTR_SET14_MSK (0x1UL << IPCM_CPU2_INTR_SET14_POS) /*!<  */
+#define IPCM_CPU2_INTR_SET14     IPCM_CPU2_INTR_SET14_MSK
+#define IPCM_CPU2_INTR_SET15_POS (15U)
+#define IPCM_CPU2_INTR_SET15_MSK (0x1UL << IPCM_CPU2_INTR_SET15_POS) /*!< Interrupt generation bit sent to DSP*/
+#define IPCM_CPU2_INTR_SET15     IPCM_CPU2_INTR_SET15_MSK
+
+//CPU2_INTR_CLR offsetaddress : 0x48
+//CPU2_INTR_CLR RegResetValue : 0x0
+#define IPCM_CPU2_INTR_CLEAR_POS  (0U)
+#define IPCM_CPU2_INTR_CLEAR_MSK  (0xffffUL << IPCM_CPU2_INTR_CLEAR_POS) /*!< Interrupt clearance sent to DSP*/
+#define IPCM_CPU2_INTR_CLEAR      IPCM_CPU2_INTR_CLEAR_MSK
+#define IPCM_CPU2_INTR_CLEAR_W(X) ((X) << IPCM_CPU2_INTR_CLEAR_POS)
+
+//CPU2_INTR_EN offsetaddress : 0x4c
+//CPU2_INTR_EN RegResetValue : 0x0
+#define IPCM_CPU2_INTR_EN_ALL_POS  (0U)
+#define IPCM_CPU2_INTR_EN_ALL_MSK  (0x1UL << IPCM_CPU2_INTR_EN_ALL_POS) /*!<  */
+#define IPCM_CPU2_INTR_EN_ALL      IPCM_CPU2_INTR_EN_ALL_MSK
+#define IPCM_CPU2_INTR_EN_ALL_W(X) ((X) << IPCM_CPU2_INTR_EN_ALL_POS)
+
+//CPU2_INTR_EN0 offsetaddress : 0x50
+//CPU2_INTR_EN0 RegResetValue : 0x0
+#define IPCM_CPU2_INTR_SRC0_EN_POS   (0U)
+#define IPCM_CPU2_INTR_SRC0_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC0_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC0_EN       IPCM_CPU2_INTR_SRC0_EN_MSK
+#define IPCM_CPU2_INTR_SRC0_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC0_EN_POS)
+#define IPCM_CPU2_INTR_SRC1_EN_POS   (1U)
+#define IPCM_CPU2_INTR_SRC1_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC1_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC1_EN       IPCM_CPU2_INTR_SRC1_EN_MSK
+#define IPCM_CPU2_INTR_SRC1_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC1_EN_POS)
+#define IPCM_CPU2_INTR_SRC2_EN_POS   (2U)
+#define IPCM_CPU2_INTR_SRC2_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC2_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC2_EN       IPCM_CPU2_INTR_SRC2_EN_MSK
+#define IPCM_CPU2_INTR_SRC2_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC2_EN_POS)
+#define IPCM_CPU2_INTR_SRC3_EN_POS   (3U)
+#define IPCM_CPU2_INTR_SRC3_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC3_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC3_EN       IPCM_CPU2_INTR_SRC3_EN_MSK
+#define IPCM_CPU2_INTR_SRC3_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC3_EN_POS)
+#define IPCM_CPU2_INTR_SRC4_EN_POS   (4U)
+#define IPCM_CPU2_INTR_SRC4_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC4_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC4_EN       IPCM_CPU2_INTR_SRC4_EN_MSK
+#define IPCM_CPU2_INTR_SRC4_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC4_EN_POS)
+#define IPCM_CPU2_INTR_SRC5_EN_POS   (5U)
+#define IPCM_CPU2_INTR_SRC5_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC5_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC5_EN       IPCM_CPU2_INTR_SRC5_EN_MSK
+#define IPCM_CPU2_INTR_SRC5_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC5_EN_POS)
+#define IPCM_CPU2_INTR_SRC6_EN_POS   (6U)
+#define IPCM_CPU2_INTR_SRC6_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC6_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC6_EN       IPCM_CPU2_INTR_SRC6_EN_MSK
+#define IPCM_CPU2_INTR_SRC6_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC6_EN_POS)
+#define IPCM_CPU2_INTR_SRC7_EN_POS   (7U)
+#define IPCM_CPU2_INTR_SRC7_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC7_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC7_EN       IPCM_CPU2_INTR_SRC7_EN_MSK
+#define IPCM_CPU2_INTR_SRC7_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC7_EN_POS)
+#define IPCM_CPU2_INTR_SRC8_EN_POS   (8U)
+#define IPCM_CPU2_INTR_SRC8_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC8_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC8_EN       IPCM_CPU2_INTR_SRC8_EN_MSK
+#define IPCM_CPU2_INTR_SRC8_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC8_EN_POS)
+#define IPCM_CPU2_INTR_SRC9_EN_POS   (9U)
+#define IPCM_CPU2_INTR_SRC9_EN_MSK   (0x1UL << IPCM_CPU2_INTR_SRC9_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC9_EN       IPCM_CPU2_INTR_SRC9_EN_MSK
+#define IPCM_CPU2_INTR_SRC9_EN_W(X)  ((X) << IPCM_CPU2_INTR_SRC9_EN_POS)
+#define IPCM_CPU2_INTR_SRC10_EN_POS  (10U)
+#define IPCM_CPU2_INTR_SRC10_EN_MSK  (0x1UL << IPCM_CPU2_INTR_SRC10_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC10_EN      IPCM_CPU2_INTR_SRC10_EN_MSK
+#define IPCM_CPU2_INTR_SRC10_EN_W(X) ((X) << IPCM_CPU2_INTR_SRC10_EN_POS)
+#define IPCM_CPU2_INTR_SRC11_EN_POS  (11U)
+#define IPCM_CPU2_INTR_SRC11_EN_MSK  (0x1UL << IPCM_CPU2_INTR_SRC11_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC11_EN      IPCM_CPU2_INTR_SRC11_EN_MSK
+#define IPCM_CPU2_INTR_SRC11_EN_W(X) ((X) << IPCM_CPU2_INTR_SRC11_EN_POS)
+#define IPCM_CPU2_INTR_SRC12_EN_POS  (12U)
+#define IPCM_CPU2_INTR_SRC12_EN_MSK  (0x1UL << IPCM_CPU2_INTR_SRC12_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC12_EN      IPCM_CPU2_INTR_SRC12_EN_MSK
+#define IPCM_CPU2_INTR_SRC12_EN_W(X) ((X) << IPCM_CPU2_INTR_SRC12_EN_POS)
+#define IPCM_CPU2_INTR_SRC13_EN_POS  (13U)
+#define IPCM_CPU2_INTR_SRC13_EN_MSK  (0x1UL << IPCM_CPU2_INTR_SRC13_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC13_EN      IPCM_CPU2_INTR_SRC13_EN_MSK
+#define IPCM_CPU2_INTR_SRC13_EN_W(X) ((X) << IPCM_CPU2_INTR_SRC13_EN_POS)
+#define IPCM_CPU2_INTR_SRC14_EN_POS  (14U)
+#define IPCM_CPU2_INTR_SRC14_EN_MSK  (0x1UL << IPCM_CPU2_INTR_SRC14_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC14_EN      IPCM_CPU2_INTR_SRC14_EN_MSK
+#define IPCM_CPU2_INTR_SRC14_EN_W(X) ((X) << IPCM_CPU2_INTR_SRC14_EN_POS)
+#define IPCM_CPU2_INTR_SRC15_EN_POS  (15U)
+#define IPCM_CPU2_INTR_SRC15_EN_MSK  (0x1UL << IPCM_CPU2_INTR_SRC15_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU2_INTR_SRC15_EN      IPCM_CPU2_INTR_SRC15_EN_MSK
+#define IPCM_CPU2_INTR_SRC15_EN_W(X) ((X) << IPCM_CPU2_INTR_SRC15_EN_POS)
+
+//CPU2_INTR_STATUS0 offsetaddress : 0x58
+//CPU2_INTR_STATUS0 RegResetValue : 0x0
+#define IPCM_CPU2_INTR_SRC0_STA_POS   (0U)
+#define IPCM_CPU2_INTR_SRC0_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC0_STA_POS) /*!< When the interrupt counter of the interrupt source is not 0 and intr_srcx_en and intr_en are both 1, the interrupt status is 1. Writing 1 to this register will cause the interrupt counter to be reduced by 1*/
+#define IPCM_CPU2_INTR_SRC0_STA       IPCM_CPU2_INTR_SRC0_STA_MSK
+#define IPCM_CPU2_INTR_SRC0_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC0_STA_POS)
+#define IPCM_CPU2_INTR_SRC1_STA_POS   (1U)
+#define IPCM_CPU2_INTR_SRC1_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC1_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC1_STA       IPCM_CPU2_INTR_SRC1_STA_MSK
+#define IPCM_CPU2_INTR_SRC1_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC1_STA_POS)
+#define IPCM_CPU2_INTR_SRC2_STA_POS   (2U)
+#define IPCM_CPU2_INTR_SRC2_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC2_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC2_STA       IPCM_CPU2_INTR_SRC2_STA_MSK
+#define IPCM_CPU2_INTR_SRC2_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC2_STA_POS)
+#define IPCM_CPU2_INTR_SRC3_STA_POS   (3U)
+#define IPCM_CPU2_INTR_SRC3_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC3_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC3_STA       IPCM_CPU2_INTR_SRC3_STA_MSK
+#define IPCM_CPU2_INTR_SRC3_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC3_STA_POS)
+#define IPCM_CPU2_INTR_SRC4_STA_POS   (4U)
+#define IPCM_CPU2_INTR_SRC4_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC4_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC4_STA       IPCM_CPU2_INTR_SRC4_STA_MSK
+#define IPCM_CPU2_INTR_SRC4_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC4_STA_POS)
+#define IPCM_CPU2_INTR_SRC5_STA_POS   (5U)
+#define IPCM_CPU2_INTR_SRC5_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC5_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC5_STA       IPCM_CPU2_INTR_SRC5_STA_MSK
+#define IPCM_CPU2_INTR_SRC5_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC5_STA_POS)
+#define IPCM_CPU2_INTR_SRC6_STA_POS   (6U)
+#define IPCM_CPU2_INTR_SRC6_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC6_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC6_STA       IPCM_CPU2_INTR_SRC6_STA_MSK
+#define IPCM_CPU2_INTR_SRC6_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC6_STA_POS)
+#define IPCM_CPU2_INTR_SRC7_STA_POS   (7U)
+#define IPCM_CPU2_INTR_SRC7_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC7_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC7_STA       IPCM_CPU2_INTR_SRC7_STA_MSK
+#define IPCM_CPU2_INTR_SRC7_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC7_STA_POS)
+#define IPCM_CPU2_INTR_SRC8_STA_POS   (8U)
+#define IPCM_CPU2_INTR_SRC8_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC8_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC8_STA       IPCM_CPU2_INTR_SRC8_STA_MSK
+#define IPCM_CPU2_INTR_SRC8_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC8_STA_POS)
+#define IPCM_CPU2_INTR_SRC9_STA_POS   (9U)
+#define IPCM_CPU2_INTR_SRC9_STA_MSK   (0x1UL << IPCM_CPU2_INTR_SRC9_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC9_STA       IPCM_CPU2_INTR_SRC9_STA_MSK
+#define IPCM_CPU2_INTR_SRC9_STA_W(X)  ((X) << IPCM_CPU2_INTR_SRC9_STA_POS)
+#define IPCM_CPU2_INTR_SRC10_STA_POS  (10U)
+#define IPCM_CPU2_INTR_SRC10_STA_MSK  (0x1UL << IPCM_CPU2_INTR_SRC10_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC10_STA      IPCM_CPU2_INTR_SRC10_STA_MSK
+#define IPCM_CPU2_INTR_SRC10_STA_W(X) ((X) << IPCM_CPU2_INTR_SRC10_STA_POS)
+#define IPCM_CPU2_INTR_SRC11_STA_POS  (11U)
+#define IPCM_CPU2_INTR_SRC11_STA_MSK  (0x1UL << IPCM_CPU2_INTR_SRC11_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC11_STA      IPCM_CPU2_INTR_SRC11_STA_MSK
+#define IPCM_CPU2_INTR_SRC11_STA_W(X) ((X) << IPCM_CPU2_INTR_SRC11_STA_POS)
+#define IPCM_CPU2_INTR_SRC12_STA_POS  (12U)
+#define IPCM_CPU2_INTR_SRC12_STA_MSK  (0x1UL << IPCM_CPU2_INTR_SRC12_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC12_STA      IPCM_CPU2_INTR_SRC12_STA_MSK
+#define IPCM_CPU2_INTR_SRC12_STA_W(X) ((X) << IPCM_CPU2_INTR_SRC12_STA_POS)
+#define IPCM_CPU2_INTR_SRC13_STA_POS  (13U)
+#define IPCM_CPU2_INTR_SRC13_STA_MSK  (0x1UL << IPCM_CPU2_INTR_SRC13_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC13_STA      IPCM_CPU2_INTR_SRC13_STA_MSK
+#define IPCM_CPU2_INTR_SRC13_STA_W(X) ((X) << IPCM_CPU2_INTR_SRC13_STA_POS)
+#define IPCM_CPU2_INTR_SRC14_STA_POS  (14U)
+#define IPCM_CPU2_INTR_SRC14_STA_MSK  (0x1UL << IPCM_CPU2_INTR_SRC14_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC14_STA      IPCM_CPU2_INTR_SRC14_STA_MSK
+#define IPCM_CPU2_INTR_SRC14_STA_W(X) ((X) << IPCM_CPU2_INTR_SRC14_STA_POS)
+#define IPCM_CPU2_INTR_SRC15_STA_POS  (15U)
+#define IPCM_CPU2_INTR_SRC15_STA_MSK  (0x1UL << IPCM_CPU2_INTR_SRC15_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU2_INTR_SRC15_STA      IPCM_CPU2_INTR_SRC15_STA_MSK
+#define IPCM_CPU2_INTR_SRC15_STA_W(X) ((X) << IPCM_CPU2_INTR_SRC15_STA_POS)
+
+//CPU2_INTR_RAW0 offsetaddress : 0x60
+//CPU2_INTR_RAW0 RegResetValue : 0x0
+#define IPCM_CPU2_INTR_SRC0_RAW_POS   (0U)
+#define IPCM_CPU2_INTR_SRC0_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC0_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC0_RAW       IPCM_CPU2_INTR_SRC0_RAW_MSK
+#define IPCM_CPU2_INTR_SRC0_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC0_RAW_POS)
+#define IPCM_CPU2_INTR_SRC1_RAW_POS   (2U)
+#define IPCM_CPU2_INTR_SRC1_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC1_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC1_RAW       IPCM_CPU2_INTR_SRC1_RAW_MSK
+#define IPCM_CPU2_INTR_SRC1_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC1_RAW_POS)
+#define IPCM_CPU2_INTR_SRC2_RAW_POS   (4U)
+#define IPCM_CPU2_INTR_SRC2_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC2_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC2_RAW       IPCM_CPU2_INTR_SRC2_RAW_MSK
+#define IPCM_CPU2_INTR_SRC2_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC2_RAW_POS)
+#define IPCM_CPU2_INTR_SRC3_RAW_POS   (6U)
+#define IPCM_CPU2_INTR_SRC3_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC3_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC3_RAW       IPCM_CPU2_INTR_SRC3_RAW_MSK
+#define IPCM_CPU2_INTR_SRC3_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC3_RAW_POS)
+#define IPCM_CPU2_INTR_SRC4_RAW_POS   (8U)
+#define IPCM_CPU2_INTR_SRC4_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC4_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC4_RAW       IPCM_CPU2_INTR_SRC4_RAW_MSK
+#define IPCM_CPU2_INTR_SRC4_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC4_RAW_POS)
+#define IPCM_CPU2_INTR_SRC5_RAW_POS   (10U)
+#define IPCM_CPU2_INTR_SRC5_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC5_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC5_RAW       IPCM_CPU2_INTR_SRC5_RAW_MSK
+#define IPCM_CPU2_INTR_SRC5_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC5_RAW_POS)
+#define IPCM_CPU2_INTR_SRC6_RAW_POS   (12U)
+#define IPCM_CPU2_INTR_SRC6_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC6_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC6_RAW       IPCM_CPU2_INTR_SRC6_RAW_MSK
+#define IPCM_CPU2_INTR_SRC6_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC6_RAW_POS)
+#define IPCM_CPU2_INTR_SRC7_RAW_POS   (14U)
+#define IPCM_CPU2_INTR_SRC7_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC7_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC7_RAW       IPCM_CPU2_INTR_SRC7_RAW_MSK
+#define IPCM_CPU2_INTR_SRC7_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC7_RAW_POS)
+#define IPCM_CPU2_INTR_SRC8_RAW_POS   (16U)
+#define IPCM_CPU2_INTR_SRC8_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC8_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC8_RAW       IPCM_CPU2_INTR_SRC8_RAW_MSK
+#define IPCM_CPU2_INTR_SRC8_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC8_RAW_POS)
+#define IPCM_CPU2_INTR_SRC9_RAW_POS   (18U)
+#define IPCM_CPU2_INTR_SRC9_RAW_MSK   (0x3UL << IPCM_CPU2_INTR_SRC9_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC9_RAW       IPCM_CPU2_INTR_SRC9_RAW_MSK
+#define IPCM_CPU2_INTR_SRC9_RAW_W(X)  ((X) << IPCM_CPU2_INTR_SRC9_RAW_POS)
+#define IPCM_CPU2_INTR_SRC10_RAW_POS  (20U)
+#define IPCM_CPU2_INTR_SRC10_RAW_MSK  (0x3UL << IPCM_CPU2_INTR_SRC10_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC10_RAW      IPCM_CPU2_INTR_SRC10_RAW_MSK
+#define IPCM_CPU2_INTR_SRC10_RAW_W(X) ((X) << IPCM_CPU2_INTR_SRC10_RAW_POS)
+#define IPCM_CPU2_INTR_SRC11_RAW_POS  (22U)
+#define IPCM_CPU2_INTR_SRC11_RAW_MSK  (0x3UL << IPCM_CPU2_INTR_SRC11_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC11_RAW      IPCM_CPU2_INTR_SRC11_RAW_MSK
+#define IPCM_CPU2_INTR_SRC11_RAW_W(X) ((X) << IPCM_CPU2_INTR_SRC11_RAW_POS)
+#define IPCM_CPU2_INTR_SRC12_RAW_POS  (24U)
+#define IPCM_CPU2_INTR_SRC12_RAW_MSK  (0x3UL << IPCM_CPU2_INTR_SRC12_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC12_RAW      IPCM_CPU2_INTR_SRC12_RAW_MSK
+#define IPCM_CPU2_INTR_SRC12_RAW_W(X) ((X) << IPCM_CPU2_INTR_SRC12_RAW_POS)
+#define IPCM_CPU2_INTR_SRC13_RAW_POS  (26U)
+#define IPCM_CPU2_INTR_SRC13_RAW_MSK  (0x3UL << IPCM_CPU2_INTR_SRC13_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC13_RAW      IPCM_CPU2_INTR_SRC13_RAW_MSK
+#define IPCM_CPU2_INTR_SRC13_RAW_W(X) ((X) << IPCM_CPU2_INTR_SRC13_RAW_POS)
+#define IPCM_CPU2_INTR_SRC14_RAW_POS  (28U)
+#define IPCM_CPU2_INTR_SRC14_RAW_MSK  (0x3UL << IPCM_CPU2_INTR_SRC14_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC14_RAW      IPCM_CPU2_INTR_SRC14_RAW_MSK
+#define IPCM_CPU2_INTR_SRC14_RAW_W(X) ((X) << IPCM_CPU2_INTR_SRC14_RAW_POS)
+#define IPCM_CPU2_INTR_SRC15_RAW_POS  (30U)
+#define IPCM_CPU2_INTR_SRC15_RAW_MSK  (0x3UL << IPCM_CPU2_INTR_SRC15_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU2_INTR_SRC15_RAW      IPCM_CPU2_INTR_SRC15_RAW_MSK
+#define IPCM_CPU2_INTR_SRC15_RAW_W(X) ((X) << IPCM_CPU2_INTR_SRC15_RAW_POS)
+
+//CPU1_INTR_SET0 offsetaddress : 0x80
+//CPU1_INTR_SET0 RegResetValue : 0x0
+#define IPCM_CPU1_INTR_SET0_POS  (0U)
+#define IPCM_CPU1_INTR_SET0_MSK  (0x1UL << IPCM_CPU1_INTR_SET0_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET0      IPCM_CPU1_INTR_SET0_MSK
+#define IPCM_CPU1_INTR_SET1_POS  (1U)
+#define IPCM_CPU1_INTR_SET1_MSK  (0x1UL << IPCM_CPU1_INTR_SET1_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET1      IPCM_CPU1_INTR_SET1_MSK
+#define IPCM_CPU1_INTR_SET2_POS  (2U)
+#define IPCM_CPU1_INTR_SET2_MSK  (0x1UL << IPCM_CPU1_INTR_SET2_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET2      IPCM_CPU1_INTR_SET2_MSK
+#define IPCM_CPU1_INTR_SET3_POS  (3U)
+#define IPCM_CPU1_INTR_SET3_MSK  (0x1UL << IPCM_CPU1_INTR_SET3_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET3      IPCM_CPU1_INTR_SET3_MSK
+#define IPCM_CPU1_INTR_SET4_POS  (4U)
+#define IPCM_CPU1_INTR_SET4_MSK  (0x1UL << IPCM_CPU1_INTR_SET4_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET4      IPCM_CPU1_INTR_SET4_MSK
+#define IPCM_CPU1_INTR_SET5_POS  (5U)
+#define IPCM_CPU1_INTR_SET5_MSK  (0x1UL << IPCM_CPU1_INTR_SET5_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET5      IPCM_CPU1_INTR_SET5_MSK
+#define IPCM_CPU1_INTR_SET6_POS  (6U)
+#define IPCM_CPU1_INTR_SET6_MSK  (0x1UL << IPCM_CPU1_INTR_SET6_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET6      IPCM_CPU1_INTR_SET6_MSK
+#define IPCM_CPU1_INTR_SET7_POS  (7U)
+#define IPCM_CPU1_INTR_SET7_MSK  (0x1UL << IPCM_CPU1_INTR_SET7_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET7      IPCM_CPU1_INTR_SET7_MSK
+#define IPCM_CPU1_INTR_SET8_POS  (8U)
+#define IPCM_CPU1_INTR_SET8_MSK  (0x1UL << IPCM_CPU1_INTR_SET8_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET8      IPCM_CPU1_INTR_SET8_MSK
+#define IPCM_CPU1_INTR_SET9_POS  (9U)
+#define IPCM_CPU1_INTR_SET9_MSK  (0x1UL << IPCM_CPU1_INTR_SET9_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET9      IPCM_CPU1_INTR_SET9_MSK
+#define IPCM_CPU1_INTR_SET10_POS (10U)
+#define IPCM_CPU1_INTR_SET10_MSK (0x1UL << IPCM_CPU1_INTR_SET10_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET10     IPCM_CPU1_INTR_SET10_MSK
+#define IPCM_CPU1_INTR_SET11_POS (11U)
+#define IPCM_CPU1_INTR_SET11_MSK (0x1UL << IPCM_CPU1_INTR_SET11_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET11     IPCM_CPU1_INTR_SET11_MSK
+#define IPCM_CPU1_INTR_SET12_POS (12U)
+#define IPCM_CPU1_INTR_SET12_MSK (0x1UL << IPCM_CPU1_INTR_SET12_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET12     IPCM_CPU1_INTR_SET12_MSK
+#define IPCM_CPU1_INTR_SET13_POS (13U)
+#define IPCM_CPU1_INTR_SET13_MSK (0x1UL << IPCM_CPU1_INTR_SET13_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET13     IPCM_CPU1_INTR_SET13_MSK
+#define IPCM_CPU1_INTR_SET14_POS (14U)
+#define IPCM_CPU1_INTR_SET14_MSK (0x1UL << IPCM_CPU1_INTR_SET14_POS) /*!<  */
+#define IPCM_CPU1_INTR_SET14     IPCM_CPU1_INTR_SET14_MSK
+#define IPCM_CPU1_INTR_SET15_POS (15U)
+#define IPCM_CPU1_INTR_SET15_MSK (0x1UL << IPCM_CPU1_INTR_SET15_POS) /*!< Interrupt generation bit sent to AP*/
+#define IPCM_CPU1_INTR_SET15     IPCM_CPU1_INTR_SET15_MSK
+
+//cpu1_intr_clr offsetaddress : 0x88
+//cpu1_intr_clr RegResetValue : 0x0
+#define IPCM_CPU1_INTR_CLR_POS  (0U)
+#define IPCM_CPU1_INTR_CLR_MSK  (0xffffUL << IPCM_CPU1_INTR_CLR_POS) /*!< Interrupt clearance sent to the CPU*/
+#define IPCM_CPU1_INTR_CLR      IPCM_CPU1_INTR_CLR_MSK
+#define IPCM_CPU1_INTR_CLR_W(X) ((X) << IPCM_CPU1_INTR_CLR_POS)
+
+//CPU1_INTR_EN offsetaddress : 0x8c
+//CPU1_INTR_EN RegResetValue : 0x0
+#define IPCM_CPU1_INTR_ALL_EN_POS  (0U)
+#define IPCM_CPU1_INTR_ALL_EN_MSK  (0x1UL << IPCM_CPU1_INTR_ALL_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_ALL_EN      IPCM_CPU1_INTR_ALL_EN_MSK
+#define IPCM_CPU1_INTR_ALL_EN_W(X) ((X) << IPCM_CPU1_INTR_ALL_EN_POS)
+
+//CPU1_INTR_EN0 offsetaddress : 0x90
+//CPU1_INTR_EN0 RegResetValue : 0x0
+#define IPCM_CPU1_INTR_SRC0_EN_POS   (0U)
+#define IPCM_CPU1_INTR_SRC0_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC0_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC0_EN       IPCM_CPU1_INTR_SRC0_EN_MSK
+#define IPCM_CPU1_INTR_SRC0_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC0_EN_POS)
+#define IPCM_CPU1_INTR_SRC1_EN_POS   (1U)
+#define IPCM_CPU1_INTR_SRC1_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC1_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC1_EN       IPCM_CPU1_INTR_SRC1_EN_MSK
+#define IPCM_CPU1_INTR_SRC1_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC1_EN_POS)
+#define IPCM_CPU1_INTR_SRC2_EN_POS   (2U)
+#define IPCM_CPU1_INTR_SRC2_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC2_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC2_EN       IPCM_CPU1_INTR_SRC2_EN_MSK
+#define IPCM_CPU1_INTR_SRC2_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC2_EN_POS)
+#define IPCM_CPU1_INTR_SRC3_EN_POS   (3U)
+#define IPCM_CPU1_INTR_SRC3_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC3_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC3_EN       IPCM_CPU1_INTR_SRC3_EN_MSK
+#define IPCM_CPU1_INTR_SRC3_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC3_EN_POS)
+#define IPCM_CPU1_INTR_SRC4_EN_POS   (4U)
+#define IPCM_CPU1_INTR_SRC4_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC4_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC4_EN       IPCM_CPU1_INTR_SRC4_EN_MSK
+#define IPCM_CPU1_INTR_SRC4_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC4_EN_POS)
+#define IPCM_CPU1_INTR_SRC5_EN_POS   (5U)
+#define IPCM_CPU1_INTR_SRC5_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC5_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC5_EN       IPCM_CPU1_INTR_SRC5_EN_MSK
+#define IPCM_CPU1_INTR_SRC5_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC5_EN_POS)
+#define IPCM_CPU1_INTR_SRC6_EN_POS   (6U)
+#define IPCM_CPU1_INTR_SRC6_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC6_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC6_EN       IPCM_CPU1_INTR_SRC6_EN_MSK
+#define IPCM_CPU1_INTR_SRC6_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC6_EN_POS)
+#define IPCM_CPU1_INTR_SRC7_EN_POS   (7U)
+#define IPCM_CPU1_INTR_SRC7_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC7_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC7_EN       IPCM_CPU1_INTR_SRC7_EN_MSK
+#define IPCM_CPU1_INTR_SRC7_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC7_EN_POS)
+#define IPCM_CPU1_INTR_SRC8_EN_POS   (8U)
+#define IPCM_CPU1_INTR_SRC8_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC8_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC8_EN       IPCM_CPU1_INTR_SRC8_EN_MSK
+#define IPCM_CPU1_INTR_SRC8_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC8_EN_POS)
+#define IPCM_CPU1_INTR_SRC9_EN_POS   (9U)
+#define IPCM_CPU1_INTR_SRC9_EN_MSK   (0x1UL << IPCM_CPU1_INTR_SRC9_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC9_EN       IPCM_CPU1_INTR_SRC9_EN_MSK
+#define IPCM_CPU1_INTR_SRC9_EN_W(X)  ((X) << IPCM_CPU1_INTR_SRC9_EN_POS)
+#define IPCM_CPU1_INTR_SRC10_EN_POS  (10U)
+#define IPCM_CPU1_INTR_SRC10_EN_MSK  (0x1UL << IPCM_CPU1_INTR_SRC10_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC10_EN      IPCM_CPU1_INTR_SRC10_EN_MSK
+#define IPCM_CPU1_INTR_SRC10_EN_W(X) ((X) << IPCM_CPU1_INTR_SRC10_EN_POS)
+#define IPCM_CPU1_INTR_SRC11_EN_POS  (11U)
+#define IPCM_CPU1_INTR_SRC11_EN_MSK  (0x1UL << IPCM_CPU1_INTR_SRC11_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC11_EN      IPCM_CPU1_INTR_SRC11_EN_MSK
+#define IPCM_CPU1_INTR_SRC11_EN_W(X) ((X) << IPCM_CPU1_INTR_SRC11_EN_POS)
+#define IPCM_CPU1_INTR_SRC12_EN_POS  (12U)
+#define IPCM_CPU1_INTR_SRC12_EN_MSK  (0x1UL << IPCM_CPU1_INTR_SRC12_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC12_EN      IPCM_CPU1_INTR_SRC12_EN_MSK
+#define IPCM_CPU1_INTR_SRC12_EN_W(X) ((X) << IPCM_CPU1_INTR_SRC12_EN_POS)
+#define IPCM_CPU1_INTR_SRC13_EN_POS  (13U)
+#define IPCM_CPU1_INTR_SRC13_EN_MSK  (0x1UL << IPCM_CPU1_INTR_SRC13_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC13_EN      IPCM_CPU1_INTR_SRC13_EN_MSK
+#define IPCM_CPU1_INTR_SRC13_EN_W(X) ((X) << IPCM_CPU1_INTR_SRC13_EN_POS)
+#define IPCM_CPU1_INTR_SRC14_EN_POS  (14U)
+#define IPCM_CPU1_INTR_SRC14_EN_MSK  (0x1UL << IPCM_CPU1_INTR_SRC14_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC14_EN      IPCM_CPU1_INTR_SRC14_EN_MSK
+#define IPCM_CPU1_INTR_SRC14_EN_W(X) ((X) << IPCM_CPU1_INTR_SRC14_EN_POS)
+#define IPCM_CPU1_INTR_SRC15_EN_POS  (15U)
+#define IPCM_CPU1_INTR_SRC15_EN_MSK  (0x1UL << IPCM_CPU1_INTR_SRC15_EN_POS) /*!< 0: Not enabled; 1: Enable*/
+#define IPCM_CPU1_INTR_SRC15_EN      IPCM_CPU1_INTR_SRC15_EN_MSK
+#define IPCM_CPU1_INTR_SRC15_EN_W(X) ((X) << IPCM_CPU1_INTR_SRC15_EN_POS)
+
+//CPU1_INTR_STATUS0 offsetaddress : 0x98
+//CPU1_INTR_STATUS0 RegResetValue : 0x0
+#define IPCM_CPU1_INTR_SRC0_STA_POS   (0U)
+#define IPCM_CPU1_INTR_SRC0_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC0_STA_POS) /*!< When the interrupt counter of the interrupt source is not 0, and intr_srcx_en and intr_en are both 1, the interrupt status is 1*/
+#define IPCM_CPU1_INTR_SRC0_STA       IPCM_CPU1_INTR_SRC0_STA_MSK
+#define IPCM_CPU1_INTR_SRC0_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC0_STA_POS)
+#define IPCM_CPU1_INTR_SRC1_STA_POS   (1U)
+#define IPCM_CPU1_INTR_SRC1_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC1_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC1_STA       IPCM_CPU1_INTR_SRC1_STA_MSK
+#define IPCM_CPU1_INTR_SRC1_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC1_STA_POS)
+#define IPCM_CPU1_INTR_SRC2_STA_POS   (2U)
+#define IPCM_CPU1_INTR_SRC2_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC2_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC2_STA       IPCM_CPU1_INTR_SRC2_STA_MSK
+#define IPCM_CPU1_INTR_SRC2_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC2_STA_POS)
+#define IPCM_CPU1_INTR_SRC3_STA_POS   (3U)
+#define IPCM_CPU1_INTR_SRC3_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC3_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC3_STA       IPCM_CPU1_INTR_SRC3_STA_MSK
+#define IPCM_CPU1_INTR_SRC3_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC3_STA_POS)
+#define IPCM_CPU1_INTR_SRC4_STA_POS   (4U)
+#define IPCM_CPU1_INTR_SRC4_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC4_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC4_STA       IPCM_CPU1_INTR_SRC4_STA_MSK
+#define IPCM_CPU1_INTR_SRC4_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC4_STA_POS)
+#define IPCM_CPU1_INTR_SRC5_STA_POS   (5U)
+#define IPCM_CPU1_INTR_SRC5_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC5_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC5_STA       IPCM_CPU1_INTR_SRC5_STA_MSK
+#define IPCM_CPU1_INTR_SRC5_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC5_STA_POS)
+#define IPCM_CPU1_INTR_SRC6_STA_POS   (6U)
+#define IPCM_CPU1_INTR_SRC6_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC6_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC6_STA       IPCM_CPU1_INTR_SRC6_STA_MSK
+#define IPCM_CPU1_INTR_SRC6_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC6_STA_POS)
+#define IPCM_CPU1_INTR_SRC7_STA_POS   (7U)
+#define IPCM_CPU1_INTR_SRC7_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC7_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC7_STA       IPCM_CPU1_INTR_SRC7_STA_MSK
+#define IPCM_CPU1_INTR_SRC7_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC7_STA_POS)
+#define IPCM_CPU1_INTR_SRC8_STA_POS   (8U)
+#define IPCM_CPU1_INTR_SRC8_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC8_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC8_STA       IPCM_CPU1_INTR_SRC8_STA_MSK
+#define IPCM_CPU1_INTR_SRC8_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC8_STA_POS)
+#define IPCM_CPU1_INTR_SRC9_STA_POS   (9U)
+#define IPCM_CPU1_INTR_SRC9_STA_MSK   (0x1UL << IPCM_CPU1_INTR_SRC9_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC9_STA       IPCM_CPU1_INTR_SRC9_STA_MSK
+#define IPCM_CPU1_INTR_SRC9_STA_W(X)  ((X) << IPCM_CPU1_INTR_SRC9_STA_POS)
+#define IPCM_CPU1_INTR_SRC10_STA_POS  (10U)
+#define IPCM_CPU1_INTR_SRC10_STA_MSK  (0x1UL << IPCM_CPU1_INTR_SRC10_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC10_STA      IPCM_CPU1_INTR_SRC10_STA_MSK
+#define IPCM_CPU1_INTR_SRC10_STA_W(X) ((X) << IPCM_CPU1_INTR_SRC10_STA_POS)
+#define IPCM_CPU1_INTR_SRC11_STA_POS  (11U)
+#define IPCM_CPU1_INTR_SRC11_STA_MSK  (0x1UL << IPCM_CPU1_INTR_SRC11_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC11_STA      IPCM_CPU1_INTR_SRC11_STA_MSK
+#define IPCM_CPU1_INTR_SRC11_STA_W(X) ((X) << IPCM_CPU1_INTR_SRC11_STA_POS)
+#define IPCM_CPU1_INTR_SRC12_STA_POS  (12U)
+#define IPCM_CPU1_INTR_SRC12_STA_MSK  (0x1UL << IPCM_CPU1_INTR_SRC12_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC12_STA      IPCM_CPU1_INTR_SRC12_STA_MSK
+#define IPCM_CPU1_INTR_SRC12_STA_W(X) ((X) << IPCM_CPU1_INTR_SRC12_STA_POS)
+#define IPCM_CPU1_INTR_SRC13_STA_POS  (13U)
+#define IPCM_CPU1_INTR_SRC13_STA_MSK  (0x1UL << IPCM_CPU1_INTR_SRC13_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC13_STA      IPCM_CPU1_INTR_SRC13_STA_MSK
+#define IPCM_CPU1_INTR_SRC13_STA_W(X) ((X) << IPCM_CPU1_INTR_SRC13_STA_POS)
+#define IPCM_CPU1_INTR_SRC14_STA_POS  (14U)
+#define IPCM_CPU1_INTR_SRC14_STA_MSK  (0x1UL << IPCM_CPU1_INTR_SRC14_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC14_STA      IPCM_CPU1_INTR_SRC14_STA_MSK
+#define IPCM_CPU1_INTR_SRC14_STA_W(X) ((X) << IPCM_CPU1_INTR_SRC14_STA_POS)
+#define IPCM_CPU1_INTR_SRC15_STA_POS  (15U)
+#define IPCM_CPU1_INTR_SRC15_STA_MSK  (0x1UL << IPCM_CPU1_INTR_SRC15_STA_POS) /*!< Description same as bit 0*/
+#define IPCM_CPU1_INTR_SRC15_STA      IPCM_CPU1_INTR_SRC15_STA_MSK
+#define IPCM_CPU1_INTR_SRC15_STA_W(X) ((X) << IPCM_CPU1_INTR_SRC15_STA_POS)
+
+//CPU1_INTR_RAW offsetaddress : 0xa0
+//CPU1_INTR_RAW RegResetValue : 0x0
+#define IPCM_CPU1_INTR_SRC0_RAW_POS   (0U)
+#define IPCM_CPU1_INTR_SRC0_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC0_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC0_RAW       IPCM_CPU1_INTR_SRC0_RAW_MSK
+#define IPCM_CPU1_INTR_SRC0_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC0_RAW_POS)
+#define IPCM_CPU1_INTR_SRC1_RAW_POS   (2U)
+#define IPCM_CPU1_INTR_SRC1_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC1_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC1_RAW       IPCM_CPU1_INTR_SRC1_RAW_MSK
+#define IPCM_CPU1_INTR_SRC1_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC1_RAW_POS)
+#define IPCM_CPU1_INTR_SRC2_RAW_POS   (4U)
+#define IPCM_CPU1_INTR_SRC2_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC2_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC2_RAW       IPCM_CPU1_INTR_SRC2_RAW_MSK
+#define IPCM_CPU1_INTR_SRC2_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC2_RAW_POS)
+#define IPCM_CPU1_INTR_SRC3_RAW_POS   (6U)
+#define IPCM_CPU1_INTR_SRC3_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC3_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC3_RAW       IPCM_CPU1_INTR_SRC3_RAW_MSK
+#define IPCM_CPU1_INTR_SRC3_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC3_RAW_POS)
+#define IPCM_CPU1_INTR_SRC4_RAW_POS   (8U)
+#define IPCM_CPU1_INTR_SRC4_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC4_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC4_RAW       IPCM_CPU1_INTR_SRC4_RAW_MSK
+#define IPCM_CPU1_INTR_SRC4_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC4_RAW_POS)
+#define IPCM_CPU1_INTR_SRC5_RAW_POS   (10U)
+#define IPCM_CPU1_INTR_SRC5_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC5_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC5_RAW       IPCM_CPU1_INTR_SRC5_RAW_MSK
+#define IPCM_CPU1_INTR_SRC5_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC5_RAW_POS)
+#define IPCM_CPU1_INTR_SRC6_RAW_POS   (12U)
+#define IPCM_CPU1_INTR_SRC6_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC6_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC6_RAW       IPCM_CPU1_INTR_SRC6_RAW_MSK
+#define IPCM_CPU1_INTR_SRC6_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC6_RAW_POS)
+#define IPCM_CPU1_INTR_SRC7_RAW_POS   (14U)
+#define IPCM_CPU1_INTR_SRC7_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC7_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC7_RAW       IPCM_CPU1_INTR_SRC7_RAW_MSK
+#define IPCM_CPU1_INTR_SRC7_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC7_RAW_POS)
+#define IPCM_CPU1_INTR_SRC8_RAW_POS   (16U)
+#define IPCM_CPU1_INTR_SRC8_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC8_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC8_RAW       IPCM_CPU1_INTR_SRC8_RAW_MSK
+#define IPCM_CPU1_INTR_SRC8_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC8_RAW_POS)
+#define IPCM_CPU1_INTR_SRC9_RAW_POS   (18U)
+#define IPCM_CPU1_INTR_SRC9_RAW_MSK   (0x3UL << IPCM_CPU1_INTR_SRC9_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC9_RAW       IPCM_CPU1_INTR_SRC9_RAW_MSK
+#define IPCM_CPU1_INTR_SRC9_RAW_W(X)  ((X) << IPCM_CPU1_INTR_SRC9_RAW_POS)
+#define IPCM_CPU1_INTR_SRC10_RAW_POS  (20U)
+#define IPCM_CPU1_INTR_SRC10_RAW_MSK  (0x3UL << IPCM_CPU1_INTR_SRC10_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC10_RAW      IPCM_CPU1_INTR_SRC10_RAW_MSK
+#define IPCM_CPU1_INTR_SRC10_RAW_W(X) ((X) << IPCM_CPU1_INTR_SRC10_RAW_POS)
+#define IPCM_CPU1_INTR_SRC11_RAW_POS  (22U)
+#define IPCM_CPU1_INTR_SRC11_RAW_MSK  (0x3UL << IPCM_CPU1_INTR_SRC11_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC11_RAW      IPCM_CPU1_INTR_SRC11_RAW_MSK
+#define IPCM_CPU1_INTR_SRC11_RAW_W(X) ((X) << IPCM_CPU1_INTR_SRC11_RAW_POS)
+#define IPCM_CPU1_INTR_SRC12_RAW_POS  (24U)
+#define IPCM_CPU1_INTR_SRC12_RAW_MSK  (0x3UL << IPCM_CPU1_INTR_SRC12_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC12_RAW      IPCM_CPU1_INTR_SRC12_RAW_MSK
+#define IPCM_CPU1_INTR_SRC12_RAW_W(X) ((X) << IPCM_CPU1_INTR_SRC12_RAW_POS)
+#define IPCM_CPU1_INTR_SRC13_RAW_POS  (26U)
+#define IPCM_CPU1_INTR_SRC13_RAW_MSK  (0x3UL << IPCM_CPU1_INTR_SRC13_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC13_RAW      IPCM_CPU1_INTR_SRC13_RAW_MSK
+#define IPCM_CPU1_INTR_SRC13_RAW_W(X) ((X) << IPCM_CPU1_INTR_SRC13_RAW_POS)
+#define IPCM_CPU1_INTR_SRC14_RAW_POS  (28U)
+#define IPCM_CPU1_INTR_SRC14_RAW_MSK  (0x3UL << IPCM_CPU1_INTR_SRC14_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC14_RAW      IPCM_CPU1_INTR_SRC14_RAW_MSK
+#define IPCM_CPU1_INTR_SRC14_RAW_W(X) ((X) << IPCM_CPU1_INTR_SRC14_RAW_POS)
+#define IPCM_CPU1_INTR_SRC15_RAW_POS  (30U)
+#define IPCM_CPU1_INTR_SRC15_RAW_MSK  (0x3UL << IPCM_CPU1_INTR_SRC15_RAW_POS) /*!< When the interrupt counter of the interrupt source is not 0, the interrupt original state is 1*/
+#define IPCM_CPU1_INTR_SRC15_RAW      IPCM_CPU1_INTR_SRC15_RAW_MSK
+#define IPCM_CPU1_INTR_SRC15_RAW_W(X) ((X) << IPCM_CPU1_INTR_SRC15_RAW_POS)
+
+//CPU0_IPCM_VECTOR_0 offsetaddress : 0xc0
+//CPU0_IPCM_VECTOR_0 RegResetValue : 0x0
+#define IPCM_CPU0_IPCM_VEC0_POS  (0U)
+#define IPCM_CPU0_IPCM_VEC0_MSK  (0xffffffffUL << IPCM_CPU0_IPCM_VEC0_POS) /*!< cpu0 ipcm vector 0 */
+#define IPCM_CPU0_IPCM_VEC0      IPCM_CPU0_IPCM_VEC0_MSK
+#define IPCM_CPU0_IPCM_VEC0_W(X) ((X) << IPCM_CPU0_IPCM_VEC0_POS)
+
+//CPU0_IPCM_VECTOR_1 offsetaddress : 0x4
+//CPU0_IPCM_VECTOR_1 RegResetValue : 0x0
+#define IPCM_CPU0_IPCM_VEC1_POS  (0U)
+#define IPCM_CPU0_IPCM_VEC1_MSK  (0xffffffffUL << IPCM_CPU0_IPCM_VEC1_POS) /*!< cpu0 ipcm vector 1 */
+#define IPCM_CPU0_IPCM_VEC1      IPCM_CPU0_IPCM_VEC1_MSK
+#define IPCM_CPU0_IPCM_VEC1_W(X) ((X) << IPCM_CPU0_IPCM_VEC1_POS)
+
+//CPU1_IPCM_VECTOR_0 offsetaddress : 0xc8
+//CPU1_IPCM_VECTOR_0 RegResetValue : 0x0
+#define IPCM_CPU1_IPCM_VEC0_POS  (0U)
+#define IPCM_CPU1_IPCM_VEC0_MSK  (0xffffffffUL << IPCM_CPU1_IPCM_VEC0_POS) /*!< cpu1 ipcm vector 0 */
+#define IPCM_CPU1_IPCM_VEC0      IPCM_CPU1_IPCM_VEC0_MSK
+#define IPCM_CPU1_IPCM_VEC0_W(X) ((X) << IPCM_CPU1_IPCM_VEC0_POS)
+
+//CPU1_IPCM_VECTOR_1 offsetaddress : 0xcc
+//CPU1_IPCM_VECTOR_1 RegResetValue : 0x0
+#define IPCM_CPU1_IPCM_VEC1_POS  (0U)
+#define IPCM_CPU1_IPCM_VEC1_MSK  (0xffffffffUL << IPCM_CPU1_IPCM_VEC1_POS) /*!< cpu1 ipcm vector 1 */
+#define IPCM_CPU1_IPCM_VEC1      IPCM_CPU1_IPCM_VEC1_MSK
+#define IPCM_CPU1_IPCM_VEC1_W(X) ((X) << IPCM_CPU1_IPCM_VEC1_POS)
+
+//CPU2_IPCM_VECTOR_0 offsetaddress : 0xd0
+//CPU2_IPCM_VECTOR_0 RegResetValue : 0x0
+#define IPCM_CPU2_IPCM_VEC0_POS  (0U)
+#define IPCM_CPU2_IPCM_VEC0_MSK  (0xffffffffUL << IPCM_CPU2_IPCM_VEC0_POS) /*!< cpu2 ipcm vector 0 */
+#define IPCM_CPU2_IPCM_VEC0      IPCM_CPU2_IPCM_VEC0_MSK
+#define IPCM_CPU2_IPCM_VEC0_W(X) ((X) << IPCM_CPU2_IPCM_VEC0_POS)
+
+//CPU2_IPCM_VECTOR_1 offsetaddress : 0xd4
+//CPU2_IPCM_VECTOR_1 RegResetValue : 0x0
+#define IPCM_CPU2_IPCM_VEC1_POS  (0U)
+#define IPCM_CPU2_IPCM_VEC1_MSK  (0xffffffffUL << IPCM_CPU2_IPCM_VEC1_POS) /*!< cpu2 ipcm vector 1 */
+#define IPCM_CPU2_IPCM_VEC1      IPCM_CPU2_IPCM_VEC1_MSK
+#define IPCM_CPU2_IPCM_VEC1_W(X) ((X) << IPCM_CPU2_IPCM_VEC1_POS)
+
+typedef struct {
+    volatile uint32_t CPU0_INTR_SET0; //offsetaddress : 0x0
+    volatile uint32_t rev_0[(0x8 - 0x0) / 4 - 1];
+    volatile uint32_t CPU0_INTR_CLR; //offsetaddress : 0x8
+    volatile uint32_t CPU0_INTR_EN;  //offsetaddress : 0xc
+    volatile uint32_t CPU0_INTR_EN0; //offsetaddress : 0x10
+    volatile uint32_t rev_1[(0x18 - 0x10) / 4 - 1];
+    volatile uint32_t CPU0_INTR_STATUS0; //offsetaddress : 0x18
+    volatile uint32_t rev_2[(0x20 - 0x18) / 4 - 1];
+    volatile uint32_t CPU0_INTR_RAW; //offsetaddress : 0x20
+    volatile uint32_t rev_3[(0x40 - 0x20) / 4 - 1];
+    volatile uint32_t CPU2_INTR_SET0; //offsetaddress : 0x40
+    volatile uint32_t rev_4[(0x48 - 0x40) / 4 - 1];
+    volatile uint32_t CPU2_INTR_CLR; //offsetaddress : 0x48
+    volatile uint32_t CPU2_INTR_EN;  //offsetaddress : 0x4c
+    volatile uint32_t CPU2_INTR_EN0; //offsetaddress : 0x50
+    volatile uint32_t rev_5[(0x58 - 0x50) / 4 - 1];
+    volatile uint32_t CPU2_INTR_STATUS0; //offsetaddress : 0x58
+    volatile uint32_t rev_6[(0x60 - 0x58) / 4 - 1];
+    volatile uint32_t CPU2_INTR_RAW0; //offsetaddress : 0x60
+    volatile uint32_t rev_7[(0x80 - 0x60) / 4 - 1];
+    volatile uint32_t CPU1_INTR_SET0; //offsetaddress : 0x80
+    volatile uint32_t rev_8[(0x88 - 0x80) / 4 - 1];
+    volatile uint32_t CPU1_INTR_CLR; //offsetaddress : 0x88
+    volatile uint32_t CPU1_INTR_EN;  //offsetaddress : 0x8c
+    volatile uint32_t CPU1_INTR_EN0; //offsetaddress : 0x90
+    volatile uint32_t rev_9[(0x98 - 0x90) / 4 - 1];
+    volatile uint32_t CPU1_INTR_STATUS0; //offsetaddress : 0x98
+    volatile uint32_t rev_10[(0xa0 - 0x98) / 4 - 1];
+    volatile uint32_t CPU1_INTR_RAW; //offsetaddress : 0xa0
+    volatile uint32_t rev_11[(0xc0 - 0xa0) / 4 - 1];
+    volatile uint32_t CPU0_IPCM_VECTOR_0; //offsetaddress : 0xc0
+    volatile uint32_t CPU0_IPCM_VECTOR_1; //offsetaddress : 0xc4
+    volatile uint32_t CPU1_IPCM_VECTOR_0; //offsetaddress : 0xc8
+    volatile uint32_t CPU1_IPCM_VECTOR_1; //offsetaddress : 0xcc
+    volatile uint32_t CPU2_IPCM_VECTOR_0; //offsetaddress : 0xd0
+    volatile uint32_t CPU2_IPCM_VECTOR_1; //offsetaddress : 0xd4
+} ipcm_reg_t;
+
+#ifdef __cplusplus
+}
+#endif
+#endif

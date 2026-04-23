@@ -21,6 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#if !defined(MCU_CORE_TL523X)
 #include "pc_interface.h"
 #include "printf.h"
 #if COMMUNICATION_PROTOCOL == TEST_COMMUNICATION_PROTOCOL
@@ -215,3 +216,4 @@ int result_buff_write(unsigned char *data, unsigned char length)
         return i;
     }
 }
+#endif

@@ -83,30 +83,30 @@ void user_init(void)
 void main_loop(void)
 {
 #if(SAMPLE_MODE == NDMA_POLLING_MODE)
-#if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
+    #if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
+    /* Directly get voltage, internal loop handles range switching */
     sd_adc_vol_10x = sd_adc_get_result(SD_ADC_VOLTAGE_10X_MV);
     sd_adc_vol = sd_adc_vol_10x / 10;
-    printf("vol = %d.%d mv \n",(sd_adc_vol_10x / 10),((unsigned int)sd_adc_vol_10x % 10));
-#elif(SD_ADC_MODE==SD_ADC_TEMP_MODE )
-        temp_value = sd_adc_get_result(TEMP_VALUE);
-        printf("temp = %d \n",temp_value);
-#endif
-#elif(SAMPLE_MODE == DMA_INTERRUPT_MODE)
+    printf("vol = %d.%d mv \n", (sd_adc_vol_10x / 10), ((unsigned int)sd_adc_vol_10x % 10));
+    #elif(SD_ADC_MODE==SD_ADC_TEMP_MODE )
+    temp_value = sd_adc_get_result(TEMP_VALUE);
+    printf("temp = %d \n", temp_value);
+    #endif
 
+#elif(SAMPLE_MODE == DMA_INTERRUPT_MODE)
     if(sd_adc_rx_done_flag == 1)
     {
-#if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
+        #if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
         sd_adc_vol_10x = sd_adc_get_result(SD_ADC_VOLTAGE_10X_MV);
         sd_adc_vol = sd_adc_vol_10x / 10;
-        printf("vol = %d.%d mv\n",(sd_adc_vol_10x / 10),((unsigned int)sd_adc_vol_10x % 10));
-#elif(SD_ADC_MODE==SD_ADC_TEMP_MODE)
+        printf("vol = %d.%d mv\n", (sd_adc_vol_10x / 10), ((unsigned int)sd_adc_vol_10x % 10));
+        #elif(SD_ADC_MODE==SD_ADC_TEMP_MODE)
         temp_value = sd_adc_get_result(TEMP_VALUE);
-        printf("temp = %d \n",temp_value);
-#endif
+        printf("temp = %d \n", temp_value);
+        #endif
+
         sd_adc_rx_done_flag = 0;
-#if(SAMPLE_MODE == DMA_INTERRUPT_MODE)
         sd_adc_start_sample_dma((signed int *)sd_adc_sample_buffer, SD_ADC_SAMPLE_CNT<<2);
-#endif
         sd_adc_sample_start();
     }
 #endif
@@ -117,7 +117,6 @@ _attribute_ram_code_sec_ void dma_irq_handler(void)
 {
     if (dma_get_tc_irq_status(BIT(SD_ADC_DMA_CHN))) {
         sd_adc_sample_stop();
-        sd_adc_irq_cnt++;
         sd_adc_rx_done_flag = 1;
         sd_adc_clr_irq_status_dma();
     }
@@ -168,30 +167,43 @@ signed int sd_adc_get_result(sd_adc_result_type_e result_type)
     signed int code_average;
     signed int sd_adc_result;
 
+    while(1)
+    {
 #if(SAMPLE_MODE == NDMA_POLLING_MODE)
-    int cnt = 0;
-    while (cnt < SD_ADC_SAMPLE_CNT) {
-        int sample_cnt = sd_adc_get_rxfifo_cnt();
-        if (sample_cnt > 0) {
-            sd_adc_sample_buffer[cnt] = sd_adc_get_raw_code();
-            cnt++;
+        int cnt = 0;
+        while (cnt < SD_ADC_SAMPLE_CNT) {
+            int sample_cnt = sd_adc_get_rxfifo_cnt();
+            if (sample_cnt > 0) {
+                sd_adc_sample_buffer[cnt] = sd_adc_get_raw_code();
+                cnt++;
+            }
         }
-    }
+#elif(SAMPLE_MODE == DMA_INTERRUPT_MODE)
+        /* Wait for DMA to finish if it was restarted by rescaling */
+        while(sd_adc_rx_done_flag == 0);
 #endif
 
-    code_average = sd_adc_sort_and_get_average_code(sd_adc_sample_buffer);
+        code_average = sd_adc_sort_and_get_average_code(sd_adc_sample_buffer);
 
-
-    if(result_type == SD_ADC_VOLTAGE_10X_MV || result_type == SD_ADC_VOLTAGE_MV)
-    {
-        return sd_adc_result = sd_adc_calculate_voltage(code_average,result_type);
-    }
-    else if((result_type == TEMP_VALUE))
-    {
-        return sd_adc_result = sd_adc_calculate_temperature(code_average);
-    }
-    else
-    {
-        return 0;
+        if(result_type == SD_ADC_VOLTAGE_10X_MV || result_type == SD_ADC_VOLTAGE_MV)
+        {
+            sd_adc_result = sd_adc_calculate_voltage(code_average, result_type);
+#if(defined(MCU_CORE_TL323X))
+            if (sd_adc_div_switch_adjust_rescale(sd_adc_result, result_type, &sd_adc_gpio_cfg.gpio_div))
+            {
+#if(SAMPLE_MODE == DMA_INTERRUPT_MODE)
+                sd_adc_rx_done_flag = 0; /* Reset flag for new range data */
+                sd_adc_start_sample_dma((signed int *)sd_adc_sample_buffer, SD_ADC_SAMPLE_CNT << 2);
+#endif
+                sd_adc_sample_start();
+                continue; 
+            }
+#endif
+            return sd_adc_result;
+        }
+        else if(result_type == TEMP_VALUE)
+        {
+            return sd_adc_calculate_temperature(code_average);
+        }
     }
 }

@@ -42,7 +42,7 @@ extern "C"
 
 #define STIMER_DELAY                          1
 
-#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
+#if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
     #define STIMER_IRQ                        2
 #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL752X)
     #define STIMER_IRQ_D25                    3
@@ -51,8 +51,9 @@ extern "C"
 
 #if !defined(MCU_CORE_TL752X)
 #define STIMER_GET_32K_TICK                   5
+#if !defined(MCU_CORE_TL523X)
 #define STIMER_SET_32K_TICK                   6
-
+#endif
 #if !defined(MCU_CORE_B91)
     #define STIMER_SET_32K_TICK_LVL           7
 #endif

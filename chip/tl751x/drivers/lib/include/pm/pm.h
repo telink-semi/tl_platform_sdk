@@ -541,7 +541,7 @@ _attribute_ram_code_sec_noinline_ void pm_set_power_mode(power_mode_e power_mode
 
 /**
  * @brief      This function serves to do voltage calibration
- * @param[in]  addr - the frequency offset value address of flash.
+ * @param[in]  addr - the voltage calibration value address of flash.
  * @return     1 - voltage calibration update, 0 - voltage calibration is not update.
  */
 unsigned char flash_calib_ldo_dcdc_voltage(unsigned int addr);

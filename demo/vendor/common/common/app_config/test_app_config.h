@@ -140,7 +140,6 @@ extern "C"
 #if defined(MCU_CORE_TL322X)
 #define TEST_HTOL_TL322X_MODE       56
 #define TEST_HTOL_TL322X_N22_MODE   57
-
 #endif
 
 #define REBOOT_TEST                 58
@@ -173,7 +172,11 @@ extern "C"
 #define TEST_N22_MAIL_BOX           74
 #endif
 
-#define TEST_MODE                   TEST_HTOL_TL752X_MODE
+#if defined(MCU_CORE_TL322X)
+#define NVM_LIFE_ATE_TEST           75
+#endif
+
+#define TEST_MODE                   NVM_LIFE_ATE_TEST
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M

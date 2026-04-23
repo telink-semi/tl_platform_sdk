@@ -29,9 +29,9 @@
 
 typedef struct usbd_cdc
 {
-    bool              dtr;
-    bool              rts;
-    cdc_line_coding_t line_coding;
+    bool                  dtr;
+    bool                  rts;
+    usb_cdc_line_coding_t line_coding;
 } usbd_cdc_interface_t;
 
 static usbd_cdc_interface_t usbd_cdc[USBD_CDC_INTERFACE_NUM];
@@ -53,7 +53,7 @@ unsigned char usbd_cdc_interface_request_handler(unsigned char bus, usb_control_
     {
         /* class request. */
         switch (setup->bRequest) {
-        case CDC_REQUEST_SET_LINE_CODING:
+        case CDC_REQ_SET_LINE_CODING:
         {
             if (setup_stage) {
                 /* setup stage. */
@@ -63,14 +63,14 @@ unsigned char usbd_cdc_interface_request_handler(unsigned char bus, usb_control_
             }
             break;
         }
-        case CDC_REQUEST_GET_LINE_CODING:
+        case CDC_REQ_GET_LINE_CODING:
         {
             usb_log("cdc get line coding = %d\r\n", cdc_itf);
             usbd_cdc_get_line_coding(bus, cdc_itf, &usbd_cdc[cdc_itf].line_coding);
-            usbd_ep_write(bus, 0, (unsigned char *)&usbd_cdc[cdc_itf].line_coding, sizeof(cdc_line_coding_t));
+            usbd_ep_write(bus, 0, (unsigned char *)&usbd_cdc[cdc_itf].line_coding, sizeof(usb_cdc_line_coding_t));
             break;
         }
-        case CDC_REQUEST_SET_CONTROL_LINE_STATE:
+        case CDC_REQ_SET_CONTROL_LINE_STATE:
         {
             usbd_cdc[cdc_itf].dtr = (setup->wValue & 0x0001);
             usbd_cdc[cdc_itf].rts = (setup->wValue & 0x0002);
@@ -78,7 +78,7 @@ unsigned char usbd_cdc_interface_request_handler(unsigned char bus, usb_control_
             usbd_ep_write(bus, 0, 0, 0);
             break;
         }
-        case CDC_REQUEST_SEND_BREAK:
+        case CDC_REQ_SEND_BREAK:
             return false;
             break;
         default:
@@ -99,20 +99,20 @@ unsigned char usbd_cdc_interface_request_handler(unsigned char bus, usb_control_
     return true;
 }
 
-WEAK void usbd_cdc_get_line_coding(unsigned char bus, unsigned char intf, cdc_line_coding_t *line_coding)
+WEAK void usbd_cdc_get_line_coding(unsigned char bus, unsigned char intf, usb_cdc_line_coding_t *line_coding)
 {
     (void)bus;
 
-    if (usbd_cdc[intf].line_coding.bit_rate == 0) {
+    if (usbd_cdc[intf].line_coding.cdc_bit_rate == 0) {
         /* default line coding. */
-        line_coding->bit_rate  = 115200;
-        line_coding->data_bits = 8;
-        line_coding->parity    = 0;
-        line_coding->stop_bits = 0;
+        line_coding->cdc_bit_rate  = 115200;
+        line_coding->cdc_data_bits = 8;
+        line_coding->cdc_parity    = 0;
+        line_coding->cdc_stop_bits = 0;
     }
 }
 
-WEAK void usbd_cdc_set_line_coding(unsigned char bus, unsigned char intf, cdc_line_coding_t *line_coding)
+WEAK void usbd_cdc_set_line_coding(unsigned char bus, unsigned char intf, usb_cdc_line_coding_t *line_coding)
 {
     (void)bus;
     (void)intf;

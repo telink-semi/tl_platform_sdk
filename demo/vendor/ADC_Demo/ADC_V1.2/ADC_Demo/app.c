@@ -162,14 +162,12 @@ void user_init(void)
 void main_loop (void)
 {
     adc_power_on(ADC_MODULE_SEL);
-
 #if(ADC_MODE == ADC_DMA_MODE)
-
+    adc_dma_rx_done_flag = 0;
     adc_start_sample_dma(ADC_MODULE_SEL,(short *)adc_sample_buffer, (ADC_SAMPLE_GROUP_CNT*ADC_SAMPLE_CHN_CNT)<<1);
 #if (INTERNAL_TEST_FUNC_EN && (ADC_FEATURE_MODE == ADC_TRIGGER_FEATURE || ADC_FEATURE_MODE == ADC_TRIGGER_AND_OVERSAMPLE_FEATURE))
     adc_trigger_start();
 #endif
-    adc_dma_rx_done_flag = 0;
     while(!adc_dma_rx_done_flag);
     adc_code_split_dma((short *)adc_sample_buffer , ADC_SAMPLE_GROUP_CNT,ADC_SAMPLE_CHN_CNT,channel_buffers);
 

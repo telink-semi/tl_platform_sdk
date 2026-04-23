@@ -57,8 +57,8 @@ _attribute_ram_code_sec_ void pwm_irq_handler(void)
     if (pwm_get_irq_status(FLD_PWM0_FRAME_DONE_IRQ)) {
         pwm_clr_irq_status(FLD_PWM0_FRAME_DONE_IRQ);
 #else
-    if (pwm_get_irq_status(PWM_ID, FLD_PWM0_FRAME_DONE_IRQ)) {
-        pwm_clr_irq_status(PWM_ID, FLD_PWM0_FRAME_DONE_IRQ);
+    if (pwm_get_irq_status(PWM_ID, FLD_PWM_FRAME_DONE_IRQ)) {
+        pwm_clr_irq_status(PWM_ID, FLD_PWM_FRAME_DONE_IRQ);
 #endif
         gpio_toggle(LED2);
     }
@@ -87,8 +87,8 @@ void user_init(void)
     pwm_set_irq_mask(FLD_PWM0_FRAME_DONE_IRQ);
     pwm_clr_irq_status(FLD_PWM0_FRAME_DONE_IRQ);
 #else
-    pwm_set_irq_mask(PWM_ID, FLD_PWM0_FRAME_DONE_IRQ);
-    pwm_clr_irq_status(PWM_ID, FLD_PWM0_FRAME_DONE_IRQ);
+    pwm_set_irq_mask(PWM_ID, FLD_PWM_FRAME_DONE_IRQ);
+    pwm_clr_irq_status(PWM_ID, FLD_PWM_FRAME_DONE_IRQ);
 #endif
     
 
