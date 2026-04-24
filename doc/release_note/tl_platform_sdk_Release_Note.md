@@ -1,3 +1,108 @@
+## 3.11.1
+
+### Version
+
+* SDK Version: tl_platform_sdk V3.11.1
+* Chip Version
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3),TL322X(A1),TL323X(A0), TL752X(A0)
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20
+  * TL721X: C1T315A20 In the C1T315A20_V1_5 and earlier versions, the PD4 pin used for KEY1 is not available for any functional use.
+  * TL321X: C1T335A20
+  * TL322X: C1T371A20
+  * TL323X: C1T388A20
+  * TL752X: C1T387A20
+* Hardware AIOT_DK1 Version
+  * C1TXA104
+* Demo Platform Requirements
+
+  | Demo Name       | Main Board | Sub-Board            |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC1/AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* Toolchain Version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL323x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL752x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+* N/A
+### Features
+* N/A
+### Bug Fixes
+* N/A
+### Refactoring
+* **pm**
+  * (TL323X/TL751X) Deleting some unnecessary files will not affect functionality. (merge_requests/@2635)
+### BREAKING CHANGES
+* N/A
+### Performance Improvements
+* N/A
+
+## 3.11.1
+
+### 版本
+
+* SDK 版本: tl_platform_sdk V3.11.1
+* 芯片版本
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3),TL322X(A1),TL323X(A0), TL752X(A0)
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20
+  * TL721X: C1T315A20 在C1T315A20_V1_5及之前版本中，KEY1所使用的PD4引脚无法作为任何功能使用。
+  * TL321X: C1T335A20
+  * TL322X: C1T371A20
+  * TL323X: C1T388A20
+  * TL323X: C1T387A20
+* 硬件AIOT_DK1版本
+  * C1TXA104
+* Demo平台要求
+
+  | 示例名称        | 主板       | 子板                 |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TLSR922x/TLSR952x(B92): gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL751x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL721x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL322x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL323x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+  - TL752x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc)) ( IDE:[Telink IoT Studio](https://www.telink-semi.com/development-tools) )
+
+<hr style="border-bottom:2.5px solid rgba(36, 190, 62, 1)">
+
+* N/A
+### Features
+* N/A
+### Bug Fixes
+* N/A
+### Refactoring
+* **pm**
+  * (TL323X/TL751X) 删除一些无用文件 对功能无影响。 (merge_requests/@2635)
+### BREAKING CHANGES
+* N/A
+### Performance Improvements
+* N/A
+
 ## 3.11.0
 
 ### Version
