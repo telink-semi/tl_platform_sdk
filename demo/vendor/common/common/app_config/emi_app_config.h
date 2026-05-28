@@ -41,7 +41,14 @@ extern "C"
 #define EMI_TX_PACKET_CNT        0    /**< Tx send packet quantity mode selection. (0:Unlimit,1:1000)*/
 #define EMI_RUN_STATE            1    /**< Current operational state. */
 #define EMI_TEST_CMD_NOW         1    /**< Current test command being executed. */
+
+#if defined(MCU_CORE_TL721X)
+//default:10dBm
+#define EMI_POWER_LEVEL          5    /**< If POWER_SLICE_EN is 0:tx power level;If POWER_SLICE_EN is 1: tx power slice. */
+#else
 #define EMI_POWER_LEVEL          0    /**< If POWER_SLICE_EN is 0:tx power level;If POWER_SLICE_EN is 1: tx power slice. */
+#endif
+
 #define EMI_RF_CHN               2    /**< RF channel number.Default: 2 (Frequency channel 2402 MHz) */
 #define EMI_RF_MODE              0    /**< RF mode setting.(0:BLE2M  1:BLE1M  2:ZIGBEE 250K  3:BLE500K  4:BLE125K  5:Private 1M  6:Private 2M) */
 #define EMI_HOPPING_EN           0    /**< Frequency hopping enable flag. (0:disable, 1:enable) */

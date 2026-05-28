@@ -147,10 +147,10 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char fl
 #elif defined(MCU_CORE_TL521X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
-     #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
+     #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 1)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT
+        #define CLOCK_INIT PLL_144M_CCLK_72M_HCLK_36M_PCLK_18M_MSPI_36M
     #endif
 #elif defined (MCU_CORE_TL752X)
 #include "tl_chip.h"
@@ -159,7 +159,7 @@ void platform_init(unsigned char flash_protect_en);
         #define PLATFORM_INIT platform_init(0)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M
+        #define CLOCK_INIT PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_32M
     #endif
 #elif defined (MCU_CORE_TL651X)
 #include "epm_chip.h"

@@ -24,7 +24,7 @@
 #include "common.h"
 #include "compiler.h"
 
-#if ((!PM_SET_DVDD_MODE) && (CORE_MODE == CORE_MULTI))
+#if ((defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X))&&(PM_DEMO_MODE == PM_CORE_MULTI))
 
 unsigned char dat[5] = {0};
 unsigned char result = 0;
@@ -144,6 +144,9 @@ void user_init(void)
         clock_cal_24m_rc();
         pm_cal_24mrc_counter = stimer_get_tick();
 
+#if defined(MCU_CORE_TL523X)
+        clock_cal_32k_rc();
+#else
         if (PM_CLOCK_SELECT == PM_CLK_32K_RC)
         {
             clock_32k_init(CLK_32K_RC);
@@ -156,6 +159,7 @@ void user_init(void)
             clock_kick_32k_xtal(10);
         } //32k xtal not support now
         #endif
+#endif
     }
 
     #if (PM_MODE & PAD_WAKEUP) //Caution: if wake-up source is only pad, 32K clock source MUST be 32K RC.

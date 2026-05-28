@@ -110,7 +110,7 @@ int main(void)
     #endif
 #endif
 
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
     //TODO:TL721X,TL322X  Currently only validated in FPGA, not in chip; available after subsequent validation
     #if (RF_MODE == RF_PRI_GENERIC_1M)
     rf_set_pri_generic_1M_mode();
@@ -124,20 +124,22 @@ int main(void)
     #endif
 #endif
 
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
     /* When operating in BLE 4M or 6M modes, the PLL must be configured to a frequency of 192MHz. */
     #if (RF_MODE == RF_BLE_4M)
     rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_4M_mode();//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
-    #elif (RF_MODE == RF_BLE_6M)
-    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
-    rf_set_ble_6M_mode();
     #elif (RF_MODE == RF_BLE_4M_NO_PN)
     rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_4M_NO_PN_mode();//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
+        #if defined(MCU_CORE_TL322X)
+    #elif (RF_MODE == RF_BLE_6M)
+    rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
+    rf_set_ble_6M_mode();
     #elif (RF_MODE == RF_BLE_6M_NO_PN)
     rf_modem_rate_mode(RF_48M_MODEM_RATE);//When using 4 Mbps or 6 Mbps data rates, the 48 MHz modem rate must be applied.
     rf_set_ble_6M_NO_PN_mode();
+        #endif
     #endif
 #endif
 

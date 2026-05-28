@@ -236,7 +236,6 @@ void platform_init(unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL753X)
     sys_init(power_mode, vbat_v);
 #elif defined(MCU_CORE_TL521X)
-#define INTERNAL_SIMULATION_DEBUG
     sys_init(power_mode, vbat_v, cap);
 #elif defined(MCU_CORE_TL711X)
     sys_init(power_mode, vbat_v);
@@ -279,7 +278,7 @@ void platform_init(unsigned char flash_protect_en)
     Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
     ===============================================================================
 */
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL523X)
     pm_update_status_info(1);
 #elif defined(MCU_CORE_TL752X)
     pm_update_status_info(0);

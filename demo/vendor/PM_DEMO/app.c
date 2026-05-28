@@ -24,7 +24,7 @@
 #include "common.h"
 #include "compiler.h"
 
-#if ((!PM_SET_DVDD_MODE) && (CORE_MODE == CORE_SINGLE))
+#if (PM_DEMO_MODE == PM_CORE_SINGLE)
 
 unsigned char dat[5] = {0};
 unsigned char result = 0;
@@ -122,16 +122,22 @@ void user_init(void)
         clock_cal_24m_rc();
         pm_cal_24mrc_counter = stimer_get_tick();
 
-        if (PM_CLOCK_SELECT == PM_CLK_32K_RC)
-        {
-            clock_32k_init(CLK_32K_RC);
-            clock_cal_32k_rc(); //6.68ms
-        }
-        else if (PM_CLOCK_SELECT == PM_CLK_32K_XTAL)
-        {
-            clock_32k_init(CLK_32K_XTAL);
-            clock_kick_32k_xtal(10);
-        }
+        #if defined(MCU_CORE_TL523X)
+            clock_cal_32k_rc();
+        #else
+            if (PM_CLOCK_SELECT == PM_CLK_32K_RC)
+            {
+                clock_32k_init(CLK_32K_RC);
+                clock_cal_32k_rc(); //6.68ms
+            }
+#if !defined(MCU_CORE_TL322X)
+            else if (PM_CLOCK_SELECT == PM_CLK_32K_XTAL)
+            {
+                clock_32k_init(CLK_32K_XTAL);
+                clock_kick_32k_xtal(10);
+            }
+#endif
+        #endif
     }
 
     #if (PM_MODE & PAD_WAKEUP) //Caution: if wake-up source is only pad, 32K clock source MUST be 32K RC.
@@ -171,6 +177,23 @@ void user_init(void)
     reg_wakeup_en |= 0x02;
     pm_set_gpio_wakeup(WAKEUP_CORE_PAD, WAKEUP_LEVEL_HIGH, 1);
     gpio_set_up_down_res(WAKEUP_CORE_PAD, GPIO_PIN_PULLDOWN_100K);
+    #endif
+
+    #if (defined(MCU_CORE_TL523X) && (PM_MODE & CORE_QDEC_WAKEUP))
+    gpio_function_en(GPIO_PB6);
+    gpio_output_dis(GPIO_PB6);
+    gpio_input_en(GPIO_PB6);
+    gpio_function_en(GPIO_PB7);
+    gpio_output_dis(GPIO_PB7);
+    gpio_input_en(GPIO_PB7);
+
+    qdec_clk_en();
+    qdec_set_mode(DOUBLE_ACCURACY_MODE);
+    qdec_set_pin(PB6A, PB7B);
+    qdec_set_debouncing(1); //set debouncing
+
+    reg_wakeup_en &= ~FLD_WAKEUP_SRC_USB;       /* disable others core wakeup source */
+    reg_wakeup_en |= FLD_WAKEUP_SRC_QDEC;
     #endif
 
     // CTB mode : For internal testing only, this function is not available externally

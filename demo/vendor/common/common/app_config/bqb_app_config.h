@@ -54,6 +54,8 @@ extern "C"
     #define BQB_TX_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL322X)
     #define BQB_TX_POWER RF_POWER_P10p00dBm
+#elif defined(MCU_CORE_TL521X)
+    #define BQB_TX_POWER RF_POWER_P7p49dBm
 #else
     #define BQB_TX_POWER RF_POWER_P7p00dBm
 #endif
@@ -81,6 +83,9 @@ extern "C"
     #define BQB_UART_TX_PORT GPIO_FC_PD6
     #define BQB_UART_RX_PORT GPIO_FC_PD7
 #elif defined(MCU_CORE_TL323X)
+    #define BQB_UART_TX_PORT GPIO_FC_PD1
+    #define BQB_UART_RX_PORT GPIO_FC_PA1
+#elif defined(MCU_CORE_TL521X)
     #define BQB_UART_TX_PORT GPIO_FC_PD1
     #define BQB_UART_RX_PORT GPIO_FC_PA1
 #endif

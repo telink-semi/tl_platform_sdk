@@ -1274,9 +1274,7 @@ extern void drv_cpr_spis_mclk_set(uint32_t div);
 #define __DRV_CPR_GPADC_CLK_ENABLE()                                                                                             \
     do {                                                                                                                         \
         SET_BIT(PMU->LDO_ANA, PMU_ENP_LDO_ANA_MSK);                                                                              \
-        SET_PROTECT_BIT(CPR->RST_SET_CPU_SYSTEM, CPR_RSTN_CPU1_CORE_MSK | CPR_RSTN_CPU1_CORE_PULSE_MSK | CPR_RSTN_CPU1_BUS_MSK); \
-        SET_BIT(PMU->CLK_EN_M_AO, PMU_CPU1_SYSTEM_CLK_EN_MSK | PMU_CPU1_CORE_CLK_EN_MSK | PMU_CPU1_CORE_AON_CLK_EN_MSK);         \
-        SET_PROTECT_BIT(CPR->CLK_EN_APB3, CPR_GP_ADC_PCLK_EN_MSK | CPR_CPU1_APB_HCLK_EN_MSK);                                    \
+        SET_PROTECT_BIT(CPR->CLK_EN_APB3, CPR_GP_ADC_PCLK_EN_MSK);                                                               \
         SET_PROTECT_BIT(CPR->RST_SET_MAIN_APB, CPR_RSTN_GP_ADC_MSK);                                                             \
     } while (0U)
 
@@ -1287,10 +1285,7 @@ extern void drv_cpr_spis_mclk_set(uint32_t div);
 
 #define __DRV_CPR_GPADC_DEINIT()                                                                                                 \
     do {                                                                                                                         \
-        SET_BIT(PMU->LDO_ANA, PMU_ENP_LDO_ANA_MSK);                                                                              \
-        SET_PROTECT_BIT(CPR->RST_SET_CPU_SYSTEM, CPR_RSTN_CPU1_CORE_MSK | CPR_RSTN_CPU1_CORE_PULSE_MSK | CPR_RSTN_CPU1_BUS_MSK); \
-        SET_BIT(PMU->CLK_EN_M_AO, PMU_CPU1_SYSTEM_CLK_EN_MSK | PMU_CPU1_CORE_CLK_EN_MSK | PMU_CPU1_CORE_AON_CLK_EN_MSK);         \
-        SET_PROTECT_BIT(CPR->CLK_EN_APB3, CPR_GP_ADC_PCLK_EN_MSK | CPR_CPU1_APB_HCLK_EN_MSK);                                    \
+        CLEAR_PROTECT_BIT(CPR->CLK_EN_APB3, CPR_GP_ADC_PCLK_EN_MSK);                                                             \
         CLEAR_PROTECT_BIT(CPR->RST_SET_MAIN_APB, CPR_RSTN_GP_ADC_MSK);                                                           \
         SET_PROTECT_BIT(CPR->RST_SET_MAIN_APB, CPR_RSTN_GP_ADC_MSK);                                                             \
     } while (0U)

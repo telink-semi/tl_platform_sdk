@@ -190,6 +190,16 @@
     #define KEY2 GPIO_PB1
     #define KEY3 GPIO_PB2
     #define KEY4 GPIO_PB3
+#elif defined(MCU_CORE_TL521X)
+    #define LED1 GPIO_PA0
+    #define LED2 GPIO_PA2
+    #define LED3 GPIO_PA3
+    #define LED4 GPIO_PA4
+
+    #define KEY1 GPIO_PB0
+    #define KEY2 GPIO_PB1
+    #define KEY3 GPIO_PB2
+    #define KEY4 GPIO_PB3
 #elif defined(MCU_CORE_TL752X)
     #define LED1 GPIO_PA7
     #define LED2 GPIO_PA9

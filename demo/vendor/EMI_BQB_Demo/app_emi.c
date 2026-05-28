@@ -351,7 +351,7 @@ void emicarrieronly(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
     }
     rf_emi_stop();
     rf_set_tx_rx_off();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL521X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else
@@ -391,7 +391,7 @@ void emi_con_prbs9(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
     rf_emi_stop();
 
     rf_set_tx_rx_off();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL521X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else
@@ -625,7 +625,7 @@ void emi_con_tx55(rf_mode_e rf_mode, unsigned char pwr, signed char rf_chn)
         }
     }
     rf_emi_stop();
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL521X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
     #else

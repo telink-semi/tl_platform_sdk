@@ -25,7 +25,7 @@
 #if (SET_PWM_MODE == PWM_CENTER_ALIGNED)
     #define PWM_ID  PWM1_ID
     #define PWM_ID1 PWM2_ID
-    #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
         #define PWM_PIN   GPIO_FC_PB4
         #define PWM_PIN1  GPIO_FC_PB5
         #define PWM_FUNC  PWM1
