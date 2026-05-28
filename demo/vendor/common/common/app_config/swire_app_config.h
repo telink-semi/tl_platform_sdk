@@ -40,6 +40,8 @@ extern "C"
     #define GPIO_SWM GPIO_FC_PA1
 #elif defined(MCU_CORE_TL321X)
     #define GPIO_SWM GPIO_FC_PA1
+#elif defined(MCU_CORE_TL523X)
+    #define GPIO_SWM GPIO_FC_PA1
 #endif
 #include "driver.h"
 

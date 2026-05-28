@@ -78,14 +78,6 @@ _attribute_ram_code_sec_noinline_ void uart1_irq_handler(void)
         uart_clr_tx_done(UART_MODULE_SEL);
     }
 
-#if(UART_DMA_INT_TYPE == UART_RXDONE_IRQ)
-    if(reg_uart_status1(UART_MODULE_SEL)&FLD_UART_RXDONE_IRQ)
-    {
-        uart_send_dma(UART_MODULE_SEL,(unsigned char *)rec_buff);
-         reg_uart_status0(UART_MODULE_SEL) =FLD_URAT_CLEAR_RXDONE_FLAG;
-        uart_dmairq_rx_cnt++;
-    }
-#endif
     if(uart_is_parity_error(UART_MODULE_SEL))//when stop bit error or parity error.
     {
         uart_clear_parity_error(UART_MODULE_SEL);
@@ -131,43 +123,10 @@ _attribute_ram_code_sec_noinline_ void uart1_irq_handler(void)
          }
 
      }
-     if(reg_uart_status1(UART_MODULE_SEL)&FLD_UART_RXDONE_IRQ)
-     {
-         unsigned char uart_rxbuff_cnt=0;
-         uart_rxbuff_cnt= reg_uart_buf_cnt(UART_MODULE_SEL)&FLD_UART_RX_BUF_CNT;
-         if(uart_rxbuff_cnt>0)
-         {
-             for(int j=0;j<uart_rxbuff_cnt;j++)
-            {
-                 if(uart_rx_flag==0)
-                 {
-                     rec_buff[uart_ndmairq_cnt++] = uart_ndma_read_byte(UART_MODULE_SEL);
-                     if((uart_ndmairq_cnt%trans_buff_Len==0)&&(uart_ndmairq_cnt!=0))
-                     {
-                         uart_rx_flag=1;
-                         uart_rx_done_flag=1;
-                         break;
-                     }
-                 }
-
-            }
-
-
-         }
-         if(uart_rx_flag==1)
-         {
-             uart_rx_done_flag=1;
-
-         }
-         reg_uart_status0(UART_MODULE_SEL) =FLD_URAT_CLEAR_RXDONE_FLAG;
-         uart_reset(UART_MODULE_SEL);//clearing the rx_buff does not clear the rx_fifo and requires uart_reset.
-         uart_ndma_clear_rx_index(UART_MODULE_SEL);
-         reg_uart_status0(UART_MODULE_SEL)=FLD_UART_CLEAR_RX_FLAG;
-     }
-
      if(uart_is_parity_error(UART_MODULE_SEL))
      {
          uart_reset(UART_MODULE_SEL);
+         uart_ndma_clear_tx_index(UART_MODULE_SEL);
          uart_ndma_clear_rx_index(UART_MODULE_SEL);
          uart_ndmairq_cnt=0;
          uart_rx_flag=0;

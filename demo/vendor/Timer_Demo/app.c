@@ -212,7 +212,11 @@ void user_init(void)
      * Wd_clear() must be executed before each call to wd_start() to avoid abnormal watchdog reset time because the initial count value is not 0.
      * For example, the watchdog is reset soon or a few minutes later.
      */
+    #if !defined(MCU_CORE_TL523X)
     wd_set_interval_ms(1000);
+    #else
+    wd_set_interval_ms(1000, sys_clk.pclk*1000);
+    #endif
     wd_clear();
     wd_start();
 
@@ -233,7 +237,9 @@ void user_init(void)
     }
 
     #if (WATCHDOG_MODE == WATCHDOG_32K_RC_MODE)
+#if !defined(MCU_CORE_TL523X)
     clock_32k_init(CLK_32K_RC);
+#endif
     clock_cal_32k_rc(); //6.68ms
     //The TL7518 A0 version not support 32k xtal.
     #elif (WATCHDOG_MODE == WATCHDOG_32K_XTAL_MODE)
@@ -241,7 +247,7 @@ void user_init(void)
     clock_kick_32k_xtal(10);
     #endif
 
-    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
     wd_32k_set_interval_ms(1000);
     #else
     wd_32k_stop();
@@ -370,7 +376,7 @@ void main_loop(void)
         gpio_set_low_level(LED2);
     }
 
-    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
     wd_32k_feed();
     #else
     wd_32k_stop();

@@ -51,7 +51,7 @@ typedef struct
  *
  * Each gain is derived from a two-point linear regression between adjacent
  * calibration points. Note: Only three gains are stored, as they correspond to
- * the slopes between (2.200Vâ€?.225V), (2.225Vâ€?.250V), and (2.250Vâ€?.275V).
+ * the slopes between (2.200Vâ€“2.225V), (2.225Vâ€“2.250V), and (2.250Vâ€“2.275V).
  */
 typedef struct
 {

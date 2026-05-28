@@ -24,7 +24,8 @@
 #include "common.h"
 #include "compiler.h"
 
-#if PM_SET_DVDD_MODE
+#if (PM_DEMO_MODE == PM_SET_DVDD_MODE)
+
 volatile unsigned long                               pm_cal_24mrc_counter = 0;
 
 void user_init(void)

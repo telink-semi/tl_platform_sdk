@@ -48,7 +48,8 @@ volatile unsigned char uart_dma_send_flag = 1;
 
 void user_init(void)
 {
-    delay_ms(2000);  //leave enough time for SWS_reset when power on
+    uart_set_tx_dma_config(UART_MODULE_SEL, UART_DMA_CHANNEL_TX);
+    uart_set_rx_dma_config(UART_MODULE_SEL, UART_DMA_CHANNEL_RX);
 
     //note: dma addr must be set first before any other uart initialization! (confirmed by sihui)
     uart_recbuff_init(UART_MODULE_SEL,(unsigned char *)rec_buff, sizeof(rec_buff));
@@ -65,8 +66,6 @@ void user_init(void)
     //baud rate: 115200
     uart_init_baudrate(UART_MODULE_SEL,115200,CLOCK_SYS_CLOCK_HZ,PARITY_NONE, STOP_BIT_ONE);
     uart_dma_enable(UART_MODULE_SEL,1, 1);     //uart data in hardware buffer moved by dma, so we need enable them first
-    uart_set_tx_dma_config(UART_MODULE_SEL, UART_DMA_CHANNEL_TX);
-    uart_set_rx_dma_config(UART_MODULE_SEL, UART_DMA_CHANNEL_RX);
 
 #if(UART_DMA_INT_TYPE == UART_RXDMA_IRQ)
     plic_interrupt_enable(IRQ_DMA);// uart_rx use dma_rx irq
@@ -77,8 +76,6 @@ void user_init(void)
     dma_chn_irq_enable(UART_DMA_CHANNEL_RX, 1);      //uart Rx dma irq enable
 #endif
 
-#elif((UART_DMA_INT_TYPE == UART_RXDONE_IRQ))
-    uart_rxdone_irq_en(UART_MODULE_SEL);  //mask rx_done irq
 #endif
     uart_mask_tx_done_irq_enable(UART_MODULE_SEL);
 

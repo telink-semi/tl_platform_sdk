@@ -230,7 +230,7 @@ static uint8_t Everest_set_dai_sysclk(uint32_t rate, uint32_t mclk)
         regmap_write(Everest.regmap, Everest_Reg0x06, coeff_div[match].Reg0x06);
         regmap_write(Everest.regmap, Everest_Reg0x07, coeff_div[match].Reg0x07);
         regmap_write(Everest.regmap, Everest_Reg0x08, coeff_div[match].Reg0x08);
-        regmap_write(Everest.regmap, Everest_Reg0x09, coeff_div[match].Reg0x09); //？？�?
+        regmap_write(Everest.regmap, Everest_Reg0x09, coeff_div[match].Reg0x09); //？？？
         regmap_write(Everest.regmap, Everest_Reg0x0A, coeff_div[match].Reg0x0A);
         regmap_update_bits(Everest.regmap, Everest_Reg0x0F, 0xC0, coeff_div[match].Reg0x0F); //
         regmap_write(Everest.regmap, Everest_Reg0x11, coeff_div[match].Reg0x11);

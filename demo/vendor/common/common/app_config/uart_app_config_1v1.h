@@ -73,8 +73,8 @@ extern "C" {
 #define UART_DMA_NONE         0  // UART not support mode
 #define UART_DMA_MODE         1  // UART support mode
 
-#if MCU_CORE_TL523X/* TL523X only UART0 support DMA. */
-#if (UART_MODULE_SEL == UART0_MODULE)
+#if MCU_CORE_TL523X
+#if (UART_MODULE_SEL == UART0_MODULE || UART_MODULE_SEL == UART1_MODULE)
 #define UART_DMA         UART_DMA_MODE     //uart use dma
 #else
 #define UART_DMA         UART_DMA_NONE      //uart not support dma
@@ -86,7 +86,6 @@ extern "C" {
 
 /***********set uart_dma interrupt type*************/
 #define UART_RXDMA_IRQ   1
-#define UART_RXDONE_IRQ  2
 
 #define UART_DMA_INT_TYPE UART_RXDMA_IRQ
 

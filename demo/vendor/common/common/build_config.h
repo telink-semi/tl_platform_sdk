@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * @file    build_config.h
  *
- * @brief   This is the source file for Telink RISC-V MCU
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2025
@@ -26,5 +26,5 @@
 #ifndef BUILD_CONFIG_H
 #define BUILD_CONFIG_H
 
-#define CURRENT_BUILD_UART_Demo       1//Compile option name
+#define CURRENT_BUILD_Debug_Demo       1//Compile option name
 #endif

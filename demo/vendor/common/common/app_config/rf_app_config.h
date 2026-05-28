@@ -58,7 +58,7 @@ extern "C"
     #define RF_BLE_1M_HYPER_LENGTH 18 //TODO:TL721X  Currently only validated in FPGA, not in chip; available after subsequent validation
 #endif
 
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #define RF_PRI_GENERIC_1M   22
     #define RF_PRI_GENERIC_2M   23
@@ -66,11 +66,13 @@ extern "C"
     #define RF_PRI_GENERIC_500K 25
 #endif
 
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
     #define RF_BLE_4M   26//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
-    #define RF_BLE_6M   27
     #define RF_BLE_4M_NO_PN 28//TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
+        #if defined(MCU_CORE_TL322X)
+    #define RF_BLE_6M   27
     #define RF_BLE_6M_NO_PN 29
+        #endif
 #endif
 
 #define RF_FAST_SETTLE_TEST 41

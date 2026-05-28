@@ -26,7 +26,7 @@
     #if defined(MCU_CORE_B91)
         #define PWM_PIN (PWM_PWM0_PB4)
         #define PWM_ID  (get_pwmid(PWM_PIN))
-    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)
+    #elif defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB4
         #define PWM_FUNC PWM0
@@ -111,8 +111,10 @@ void user_init(void)
 
     //there are two 32K clock sources, 32K_RC and 32K_Crystal.
     //if want higher 32K clock source accuracy, need to calibrate it.
-    clock_32k_init(CLK_32K_RC);
 
+#if !defined(MCU_CORE_TL523X)
+    clock_32k_init(CLK_32K_RC);
+#endif
     clock_cal_32k_rc();
 
 #if !defined(MCU_CORE_TL322X)

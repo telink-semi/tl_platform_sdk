@@ -66,8 +66,6 @@ enum
 #define MDEC_MATCH_VALUE                    0x02
 
 
-#define PM_SET_DVDD_MODE                    0                 // Switch voltage for crash test
-
 /* PM_CLOCK_SELECT */
 #define PM_CLK_32K_RC                       00
 #if !defined(MCU_CORE_TL322X)
@@ -75,23 +73,28 @@ enum
 #endif
 #define PM_CLOCK_SELECT                     PM_CLK_32K_RC
 
+
 /* PM_WAKEUP_TICK_TYPE */
 #define PM_WAKEUP_SLEEP_TYPE                00
 #define PM_WAKEUP_LONG_SLEEP_TYPE           01
 #define PM_WAKEUP_TICK_TYPE                 PM_WAKEUP_SLEEP_TYPE
 
-#define CORE_SINGLE                         1
-#define CORE_MULTI                          2
+
+#define PM_CORE_SINGLE                      1
 #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
-    #define CORE_MODE                       CORE_MULTI
-#else
-    #define CORE_MODE                       CORE_SINGLE
+#define PM_CORE_MULTI                       2
 #endif
+#define PM_SET_DVDD_MODE                    3 // Switch voltage for crash test
+#if defined(MCU_CORE_TL322X)
+#define PM_2M_WFI_MODE                      4 // Set PM_WFI_OPTIMIZATION = 1
+#endif
+#define PM_DEMO_MODE                        PM_CORE_SINGLE
 
 #define N22_TEST                            0
 #define DSP_TEST                            0
 #define DSP_FW_DOWNLOAD_FLASH_ADDR          0x20040000
 #define N22_FW_DOWNLOAD_FLASH_ADDR          0x20080000
+
 
 /**
  * @note To enter sleep using COMPARATOR Wake mode, the voltage difference between the input level and the configured wake level
@@ -116,11 +119,14 @@ enum
 #elif defined(MCU_CORE_TL751X)
 #define WT_WAKEUP                           (1<<7) 
 #define ALL_WAKEUP                          (PAD_WAKEUP | TIMER_WAKEUP | COMPARATOR_WAKEUP | CORE_USB_WAKEUP | CORE_GPIO_WAKEUP | WT_WAKEUP)
+#elif defined(MCU_CORE_TL523X)
+#define CORE_QDEC_WAKEUP                    (1<<5)
+#define ALL_WAKEUP                          (PAD_WAKEUP | TIMER_WAKEUP | COMPARATOR_WAKEUP | CORE_USB_WAKEUP | CORE_GPIO_WAKEUP | CORE_QDEC_WAKEUP)
 #else
 #define ALL_WAKEUP                          (PAD_WAKEUP | TIMER_WAKEUP | COMPARATOR_WAKEUP | CORE_USB_WAKEUP | CORE_GPIO_WAKEUP)
 #endif
 
-#define PM_MODE                             PAD_WAKEUP
+#define PM_MODE                             TIMER_WAKEUP
 
 /* PM_SLEEP_MODE */
 #if defined(MCU_CORE_B91)
@@ -185,7 +191,7 @@ enum
 
 #endif
 
-#define PM_SLEEP_MODE                       PM_SUSPEND_MODE
+#define PM_SLEEP_MODE                       PM_DEEPSLEEP_MODE
 
 
 
@@ -217,6 +223,8 @@ enum
 #elif (PM_MODE == CORE_USB_WAKEUP)
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CORE
 #elif (PM_MODE == CORE_GPIO_WAKEUP)
+#define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CORE
+#elif (defined(MCU_CORE_TL523X) && (PM_MODE == CORE_QDEC_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CORE
 #elif (defined(MCU_CORE_B91) && (PM_MODE == MDEC_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_MDEC

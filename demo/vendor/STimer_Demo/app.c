@@ -158,7 +158,9 @@ void user_init(void)
     core_interrupt_enable();
 
 #elif (STIMER_MODE == STIMER_GET_32K_TICK)
+#if !defined(MCU_CORE_TL523X)
     clock_32k_init(CLK_32K_RC);
+#endif
     clock_cal_32k_rc();
 
 #elif (!defined(MCU_CORE_TL523X) && (STIMER_MODE == STIMER_SET_32K_TICK))
@@ -189,7 +191,9 @@ void user_init(void)
     core_interrupt_enable();
 
 #elif (STIMER_MODE == STIMER_TRACK_32K_TICK)
+#if !defined(MCU_CORE_TL523X)
     clock_32k_init(CLK_32K_RC);
+#endif
     clock_cal_32k_rc();
     stimer_set_32k_track_cnt(STIMER_TRACK_32KCNT_16);
     stimer_track_32k_value = SYSTEM_TIMER_TICK_1MS / 32 * g_track_32kcnt;
@@ -396,9 +400,6 @@ _attribute_ram_code_sec_ void pm_level_irq_handler(void)
         clock_set_32k_tick(clock_get_32k_tick() + 32000); //1s
     }
     analog_write_reg8(0x64, 0xff);
-#if !defined(MCU_CORE_TL523X)
-    reg_irq_edge_clr  = 0xff;
-#endif
 }
 PLIC_ISR_REGISTER(pm_level_irq_handler, IRQ_PM_LVL)
 

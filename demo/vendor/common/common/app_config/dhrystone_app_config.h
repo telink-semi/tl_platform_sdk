@@ -49,7 +49,7 @@ extern "C"
 
 #endif
 
-#if defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
     #define MANUAL_TEST_MODE           1 // For internal testing, users need not care
     #define AUTO_TEST_MODE             2 // For internal testing, users need not care
     #define GPIO_TEST_MODE             MANUAL_TEST_MODE
