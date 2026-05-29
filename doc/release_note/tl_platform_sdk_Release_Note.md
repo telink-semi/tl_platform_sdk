@@ -57,10 +57,6 @@
     * After Fix: Remove the original PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M configuration, and add the new PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_32M configuration as a replacement.
     * Update recommendation: The configuration of PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M must be updated.
 * **flash** 
-  * (TL752X) flash xip init_power_up: Fixes the issue where the program malfunctions after calling this interface to initialize XIP when returned from deepret.(merge_requests/@2679)
-    * Detailed description: The "flash_xip_init_power_up" function needs to call "drv_nor_set_wrap" otherwise, after returning from deepret, the xip access instructions will have abnormalities.
-    * After Fix: After the repair, this problem has been resolved.
-    * Update recommendation: The driver must be updated.
   * (TL752X) Clean up the places where the flash interface calls memcpy to avoid conflicts between XIP and the interface.(merge_requests/@2679)
     * Detailed description: memcpy is located in the text segment. At the places where memcpy is called in the flash interface for cleaning purposes, this is done to prevent conflicts that could cause abnormal program behavior.
     * After Fix: After the repair, this problem has been resolved.
@@ -147,10 +143,6 @@
     * 修复效果: 移除原 PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M 配置，新增 PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_32M 配置作为替代。
     * 更新建议：使用 PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M 配置必须更新。
 * **flash** 
-  *（TL752X）: flash xip init_power_up:修复deepret回来调用该接口初始化xip后程序异常问题。(merge_requests/@2679)
-    * 详细描述：flash_xip_init_power_up需要调用drv_nor_set_wrap，否则deepret回来之后，xip访问指令存在异常
-    * 修复效果：修复后无该问题
-    * 更新建议：必须更新驱动
   *（TL752X）: 清理flash接口调用memcpy的地方，避免xip和接口冲突问题(merge_requests/@2679)
     * 详细描述： memcpy在text段中，清理flash接口中调用memcpy的地方，避免冲突导致程序异常问题
     * 修复效果：修复后无该问题
