@@ -143,7 +143,7 @@
     * 修复效果: 移除原 PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M 配置，新增 PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_32M 配置作为替代。
     * 更新建议：使用 PLL0_BBPLL_768M_MCLK_128M_D25F_128M_N22_64M_DSP_128M_MSPI_64M 配置必须更新。
 * **flash** 
-  *（TL752X）: 清理flash接口调用memcpy的地方，避免xip和接口冲突问题(merge_requests/@2679)
+  * (TL752X): 清理flash接口调用memcpy的地方，避免xip和接口冲突问题(merge_requests/@2679)
     * 详细描述： memcpy在text段中，清理flash接口中调用memcpy的地方，避免冲突导致程序异常问题
     * 修复效果：修复后无该问题
     * 更新建议：必须更新驱动
