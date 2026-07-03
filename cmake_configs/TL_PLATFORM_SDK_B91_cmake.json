@@ -2610,6 +2610,162 @@
       "sub_directories": []
     },
     {
+      "name": "PMP_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC7.4",
+      "directories": [
+        "chip/B91/boot",
+        "chip/B91/drivers",
+        "chip/B91/link",
+        "common",
+        "demo/vendor/PMP_Demo",
+        "demo/vendor/common/B91/calibration",
+        "demo/vendor/common/B91/exception.c",
+        "demo/vendor/common/B91/flash_internal_private_func",
+        "demo/vendor/common/common"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Wall",
+        "-Werror",
+        "-Wextra",
+        "-Wshadow"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_B91=1",
+        "-mext-dsp",
+        "-mabi=ilp32f",
+        "-c",
+        "-fmessage-length=0",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-fuse-ld=bfd",
+        "-Wno-nonnull-compare",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Werror",
+        "-std=c99",
+        "-fpack-struct",
+        "-fshort-enums",
+        "-fno-jump-tables",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/B91/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common/flash",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/B91/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_B91=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/B91/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common/flash",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/B91/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mext-dsp",
+        "-mabi=ilp32f",
+        "-c",
+        "-fmessage-length=0",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-fuse-ld=bfd",
+        "-std=c99",
+        "-fpack-struct",
+        "-fshort-enums",
+        "-fno-jump-tables",
+        "-mcmodel=medium",
+        "-Wno-nonnull-compare",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Werror"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/B91/link/flash_boot.link",
+        "-nostartfiles",
+        "-fpack-struct",
+        "-fshort-enums",
+        "-g3",
+        "-mcpu=d25f",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-mext-dsp",
+        "-mabi=ilp32f",
+        "-fmessage-length=0",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-fuse-ld=bfd",
+        "-Wno-gnu-zero-variadic-macro-arguments",
+        "-O2"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/B91/drivers/lib"
+      ],
+      "linker_libraries": [
+        "axon_driver_lib",
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/B91/link/flash_boot.link",
+        "-fpack-struct",
+        "-fshort-enums",
+        "-g3",
+        "-mcpu=d25f",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-mext-dsp",
+        "-mabi=ilp32f",
+        "-fmessage-length=0",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-fuse-ld=bfd",
+        "-Wno-gnu-zero-variadic-macro-arguments",
+        "-O2"
+      ],
+      "cpp_linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/B91/drivers/lib"
+      ],
+      "cpp_linker_libraries": [
+        "driver",
+        "axon_driver_lib"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/B91/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PMP_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/B91/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PMP_Demo   TL_PLATFORM_SDK_B91"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
       "name": "PWM_Demo",
       "path": "./",
       "toolchain": "RISC-V Cross GCC",
