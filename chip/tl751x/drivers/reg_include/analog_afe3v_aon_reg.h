@@ -99,15 +99,15 @@ enum
     FLD_BBPLL_ATB              = BIT(0),          //connect bbpll_atb_o to GPIO for test
     FLD_AVDD0P8_TRIM3P3V       = BIT_RNG(1, 3),   //trim bandgap's internal 0.8V voltage
     FLD_BG_TRIM_3V             = BIT_RNG(4, 6),   //trim bandgap's 1.2V voltage REFERENCE
-    FLD_EN_BYPASS_AVDD2_3V     = BIT_RNG(7, 9),   //bypass avdd2(short to vbat)
+    FLD_EN_BYPASS_AVDD2_3V     = BIT(7),          //bypass avdd2(short to vbat)
 };
 
 #define areg_aon_0x2a 0x2a
 
 enum
 {
-    FLD_AUTO_PD_32K_RC   = BIT(0),
-    FLD_AUTO_PD_32K_XTAL = BIT(1),
+    FLD_AUTO_PD_32K_RC         = BIT(0),
+    FLD_AUTO_PD_32K_XTAL       = BIT(1),
     //RSVD
     FLD_AUTO_PD_48M_XTAL       = BIT(3),
     FLD_AUTO_PD_PL_ALL         = BIT(4),
@@ -115,7 +115,7 @@ enum
     FLD_AUTO_PD_PL_VBAT_LDO_3V = BIT(6),
     FLD_AUTO_PD_ANA_LDO        = BIT(7),
 
-    FLD_AUTO_EN_CURLIMT = BIT(8),
+    FLD_AUTO_EN_CURLIMT    = BIT(8),
     //RSVD
     FLD_AUTO_PD_LC_COMP_3V = BIT(10),
     FLD_AUTO_PD_VBAT_SW    = BIT(11),
@@ -133,11 +133,11 @@ enum
     FLD_AUTO_DCDC_EN_BK4_BIAS_B = BIT(22),
     FLD_AUTO_DCDC_EN_BK4_CNTR_B = BIT(23),
 
-    FLD_AUTO_PD_LDO_AVDD1 = BIT(24),
-    FLD_AUTO_PD_LDO_AVDD2 = BIT(25),
-    FLD_AUTO_PD_LDO_DVDD1 = BIT(26),
-    FLD_AUTO_PD_LDO_DVDD2 = BIT(27),
-    FLD_AUTO_AVDD2_BYPASS = BIT(28),
+    FLD_AUTO_PD_LDO_AVDD1   = BIT(24),
+    FLD_AUTO_PD_LDO_AVDD2   = BIT(25),
+    FLD_AUTO_PD_LDO_DVDD1   = BIT(26),
+    FLD_AUTO_PD_LDO_DVDD2   = BIT(27),
+    FLD_AUTO_AVDD2_BYPASS   = BIT(28),
     //RSVD
     FLD_AUTO_ISO_EN         = BIT(30),
     FLD_AUTO_PD_SEQUENCE_EN = BIT(31),
@@ -229,27 +229,24 @@ enum
 
 typedef enum
 {
-    FLD_WAKEUP_STATUS_PAD        = BIT(0),
-    FLD_WAKEUP_STATUS_CORE       = BIT(1),
-    FLD_WAKEUP_STATUS_TIMER      = BIT(2),
-    FLD_WAKEUP_STATUS_COMPARATOR = BIT(3),
+    FLD_WAKEUP_STATUS_PAD         = BIT(0),
+    FLD_WAKEUP_STATUS_CORE        = BIT(1),
+    FLD_WAKEUP_STATUS_TIMER       = BIT(2),
+    FLD_WAKEUP_STATUS_COMPARATOR  = BIT(3),
+    FLD_WAKEUP_STATUS_CTB         = BIT(5),
+    FLD_WAKEUP_STATUS_VBUS        = BIT(7),
 
     //To clear all wake sources, the parameter of this interface is usually FLD_WAKEUP_STATUS_ALL
     //instead of FLD_WAKEUP_STATUS_INUSE_ALL.
-    FLD_WAKEUP_STATUS_ALL = 0xff,
+    FLD_WAKEUP_STATUS_ALL         = 0xff,
 
     //After the wake source is obtained, &WAKEUP_STATUS_INUSE_ALL is needed to determine
     //whether the wake source in use has been cleared, because some of the wake sources
     //that are not in use may have been set up.
-    FLD_WAKEUP_STATUS_INUSE_ALL = 0x0f,
+    FLD_WAKEUP_STATUS_INUSE_ALL   = 0x2f,
 } pm_wakeup_status_e;
 
 #define areg_aon_0x65                0x65
-enum {
-    //RSVD
-    FLD_RESET_XTAL_QICK_START        = BIT(6),
-    FLD_RESET_32K_TIMER_CNT          = BIT(7),
-};
 
 #define areg_aon_0x69                0x69
 enum
@@ -267,14 +264,14 @@ enum
 
 typedef enum
 {
-    FLD_PD_ZB_EN    = BIT(0), //baseband, for both RF and N22. //weather to power on the BASEBAND before suspend.
-    FLD_PD_USB_EN   = BIT(1), //weather to power on the USB before suspend.
-    FLD_PD_AUDIO_EN = BIT(2), //weather to power on the NPE before suspend.
+    FLD_PD_ZB_EN      = BIT(0), //baseband, for both RF and N22. //weather to power on the BASEBAND before suspend.
+    FLD_PD_USB_EN     = BIT(1), //weather to power on the USB before suspend.
+    FLD_PD_AUDIO_EN   = BIT(2), //weather to power on the NPE before suspend.
     //RSVD
-    FLD_PD_DSP_EN = BIT(4),
-    FLD_PD_WT_EN  = BIT(5),
+    FLD_PD_DSP_EN     = BIT(4),
+    FLD_PD_WT_EN      = BIT(5),
     //RSVD
-    FLD_PG_CLK_EN = BIT(7), //1:enable change power sequence clk
+    FLD_PG_CLK_EN     = BIT(7), //1:enable change power sequence clk
 } pm_pd_module_e;
 
 #define areg_aon_0x7e 0x7e

@@ -40,7 +40,7 @@ extern "C" {
 #define STRING_SERIAL  "Mouse demo"
 
 #define HID_MOUSE_IN_ENDPOINT_ADDRESS  0x82
-#define HID_MOUDE_IN_ENDPOINT_SIZE     0x08
+#define HID_MOUSE_IN_ENDPOINT_SIZE     0x08
 #define HID_MOUSE_IN_ENDPOINT_INTERVAL 0x01
 
 /* Disable C linkage for C++ Compilers: */

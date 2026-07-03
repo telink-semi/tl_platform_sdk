@@ -1052,11 +1052,6 @@ unsigned char rf_check_tp_mode(void);
 signed char rf_get_real_time_rssi(void);
 
 
-void sub_wr(unsigned int address, unsigned char value, unsigned char end, unsigned char start);
-void wr_reg(unsigned int address, unsigned char value, int number);
-void sub_wr32(unsigned int address, unsigned int value, unsigned char end, unsigned char start);
-void wr_reg32(unsigned int address, unsigned int value);
-
 // Initialization and Configuration Function Declaration
 void one_time_setup(void);
 void aura_1m(void);

@@ -176,7 +176,9 @@ extern "C"
 #define NVM_LIFE_ATE_TEST           75
 #endif
 
-#define TEST_MODE                   NVM_LIFE_ATE_TEST
+#define TEST_INIT_CUR               77
+
+#define TEST_MODE                   TEST_INIT_CUR
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M

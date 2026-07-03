@@ -212,6 +212,8 @@ unsigned short audio_i2s_16k_config[5][5] =
         {27, 211, 12, 64, 64}, //AUDIO_RATE_LT_L0  15995.26
 };
 
+unsigned short audio_i2s_24k_config[5] = {1,  125, 0,  64, 64}; //24000
+
 unsigned short audio_i2s_32k_config[5] = {8, 125, 3, 64, 64}; //32000
 
 unsigned short audio_i2s_48k_config[5][5] =
@@ -303,19 +305,26 @@ unsigned short audio_i2s_tdm_44k1_config[0x06][0x05] =
         {441,  20000, 0, 96,  96 }, //TDM MODE 24bit 4Channel
 };
 
-unsigned short audio_i2s_tdm_48k_config[0x07][0x05] =
+unsigned short audio_i2s_tdm_48k_config[0x10][0x05] =
     {
         {4,  125, 0, 128, 128}, //TDM MODE 16bit 8Channel
         {3,  125, 0, 96,  96 }, //TDM MODE 16bit 6Channel
         {2,  125, 0, 64,  64 }, //TDM MODE 16bit 4Channel
+        {1,  125, 0, 32,  32 }, //TDM MODE 16bit 2Channel
 
-        {5,  104, 0, 192, 192}, //TDM MODE 24bit 8Channel
+        {6,  125, 0, 192, 192}, //TDM MODE 24bit 8Channel
         {9,  250, 0, 144, 144}, //TDM MODE 24bit 6Channel
         {3,  125, 0, 96,  96 }, //TDM MODE 24bit 4Channel
+        {3,  250, 0, 48,  48 }, //TDM MODE 24bit 2Channel
         {16, 250, 0, 256, 256}, //TDM MODE 24bit/slot:32bit 8Channel
+
+        {8,  125, 0, 256, 256 }, //TDM MODE 32bit 8Channel
+        {6,  125, 0, 192, 192 }, //TDM MODE 32bit 6Channel
+        {4,  125, 0, 128, 128 }, //TDM MODE 32bit 4Channel
+        {2,  125, 0, 64,   64 }, //TDM MODE 32bit 2Channel
 };
 
-#elif defined(MCU_CORE_TL322X)
+#elif defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL521X)
 
 /**
  *                                          i2s_clk_config[2]   i2s_clk_config[3]-->lrclk_adc(sampling rate)
@@ -500,7 +509,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -519,7 +528,7 @@ void user_init(void)
     audio_i2s_output_init(&audio_i2s_output);
     /**** setting the codec clock of audio as the current mclk clock****/
     audio_set_codec_clk_as_mclk(GPIO_FC_PC6); //only set i2s as master mclk=24*/2=12M
-#if !defined(MCU_CORE_TL322X)
+#if !(defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X))
     /**** configuring external codec-related registers via i2c***/
     audio_i2c_init_wm(GPIO_FC_PF7, GPIO_FC_PF6, (unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * 100000))); //set i2c frequency 100K
 #endif
@@ -560,7 +569,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO0,
 #else
             .fifo_chn      = FIFO1,
@@ -575,7 +584,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -656,7 +665,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2, //i2s2 input tdm mode only support FIFO2.
@@ -720,7 +729,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -768,7 +777,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -826,7 +835,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -891,7 +900,7 @@ void user_init(void)
             .data_width    = audio_i2s_config.data_width,
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 //Refer to the note at the start of the page to determine the corresponding FIFO channel.
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -909,7 +918,7 @@ void user_init(void)
     /**** i2s ascl config ****/
     audio_set_i2s_ascl_en(audio_i2s_config.i2s_select);
 
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
     audio_set_ascl_gain(ASCL1, ASCL_OUT_D_GAIN_0_DB);
     audio_ascl_set_conversion_sample_rate(ASCL1, AUDIO_ASCL_48K, AUDIO_ASCL_96K, AUDIO_STEREO);
 #else
@@ -923,7 +932,7 @@ void user_init(void)
     audio_i2s_clk_en(audio_i2s_config.i2s_select);
     #elif (AUDIO_MODE == AUDIO_FIFO_IRQ_TEST)
         #define FIFO0_NUM  FIFO0
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
         #define FIFO2_NUM  FIFO1
 #else
         #define FIFO2_NUM  FIFO2
@@ -1173,7 +1182,7 @@ _attribute_ram_code_sec_ void audio_irq_handler(void)
         gpio_toggle(LED2);
         irq_cnt[0]++;
     }
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
     if (audio_get_irq_status(AUDIO_TX_FIFO1_IRQ)) //tx0
     {
         audio_clr_irq_status(AUDIO_TX_FIFO1_IRQ);

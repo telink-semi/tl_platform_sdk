@@ -99,9 +99,6 @@ void user_init(void)
             #endif
 
         #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
-
-    gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLDOWN_100K);
-
             //if disable irq0~7 interrupt,choose disable irq0~7 mask , use interface gpio_clr_irq_mask() instead of gpio_irq_dis(),if use gpio_irq0_dis,may generate a false interrupt.
             #if (GPIO_MODE == GPIO_IRQ_NUM0)
     /****GPIO_IRQ0  POL_RISING   Trigger an interrupt by externally flooding the IRQ_PIN pin with a rising edge. **/
@@ -112,7 +109,7 @@ void user_init(void)
 
             #elif (GPIO_MODE == GPIO_IRQ_NUM1)
     /****GPIO_IRQ7  POL_FALLING   Trigger an interrupt by externally flooding the IRQ_PIN pin with a falling edge. **/
-                #if defined(MCU_CORE_TL523X)
+                #if defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL521X)
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLUP_20K);
                 #else
     gpio_set_up_down_res(IRQ_PIN, GPIO_PIN_PULLUP_10K);

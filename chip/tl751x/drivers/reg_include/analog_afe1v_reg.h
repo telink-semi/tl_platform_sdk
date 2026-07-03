@@ -6,7 +6,7 @@
  * @author  Driver Group
  * @date    2024
  *
- * @par     Copyright (c) 2023, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2024, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -89,30 +89,18 @@ enum
 #define areg_0x126 0x126 /**< NFI_SYNC value read back */
 #define areg_0x127 0x127 /**< read status: 0x55  successful, 0x00 failed */
 
-#define areg_0x147 0x147
-
-enum
-{
-    FLD_CAL_24M_RC_DISABLE = 0x0e,
-    FLD_CAL_24M_RC_ENABLE  = 0x0f,
-};
-
 #define areg_0x146 0x146
-
-enum
-{
-    FLD_CAL_32K_EN       = BIT(0),
-    FLD_CAL_32K_LEN      = BIT(1),
-    FLD_CAL_32K_NEW      = BIT(2),
-    FLD_CAL_32K_TEST     = BIT(3),
-    FLD_CAL_32K_WAIT_LEN = BIT_RNG(4, 6),
-    FLD_CAL_32K_FINE     = BIT(7),
-};
-
 enum
 {
     FLD_CAL_32K_RC_DISABLE = 0xf6,
     FLD_CAL_32K_RC_ENABLE  = 0xf7,
+};
+
+#define areg_0x147 0x147
+enum
+{
+    FLD_CAL_24M_RC_DISABLE = 0x0e,
+    FLD_CAL_24M_RC_ENABLE  = 0x0f,
 };
 
 #define areg_0x148 0x148

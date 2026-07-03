@@ -2226,4 +2226,69 @@ enum
     FLD_RST1_RST_SPL         = BIT(5),
 };
 
+
+/**
+ * @brief       Write a bit-field within a byte-width register (read-modify-write).
+ * @param[in]   address - Register address.
+ * @param[in]   value   - Bit-field value to write.
+ * @param[in]   end     - End bit position (inclusive, MSB side).
+ * @param[in]   start   - Start bit position (LSB side).
+ * @note        Uses fence w,o to ensure the write reaches the peripheral.
+ */
+static inline void sub_wr(unsigned int address, unsigned char value, unsigned char end, unsigned char start)
+{
+    unsigned char mask;
+    mask  = (0xFF << start) & (0xFF >> (7 - end));
+    value = (value << start) & mask;
+    mask  = ~mask;
+    *(volatile unsigned char *)address = ((*(volatile unsigned char *)address) & mask) | value;
+    __asm__ volatile("fence w,o" ::: "memory");
+}
+
+/**
+ * @brief       Write sequential bytes to consecutive registers.
+ * @param[in]   address - Starting register address.
+ * @param[in]   value   - Byte value to write.
+ * @param[in]   number  - Number of consecutive bytes to write.
+ * @note        Uses fence w,o after the sequence to ensure all writes reach the peripheral.
+ */
+static inline void wr_reg(unsigned int address, unsigned char value, int number)
+{
+    for (int i = 0; i < number; i++) {
+        *(volatile unsigned char *)(address + i) = value;
+    }
+    __asm__ volatile("fence w,o" ::: "memory");
+}
+
+/**
+ * @brief       Write a bit-field within a 32-bit register (read-modify-write).
+ * @param[in]   address - Register address.
+ * @param[in]   value   - Bit-field value to write.
+ * @param[in]   end     - End bit position (inclusive, MSB side).
+ * @param[in]   start   - Start bit position (LSB side).
+ * @note        Uses fence w,o to ensure the write reaches the peripheral.
+ */
+static inline void sub_wr32(unsigned int address, unsigned int value, unsigned char end, unsigned char start)
+{
+    unsigned int mask;
+    mask  = (0xFFFFFFFFUL << start) & (0xFFFFFFFFUL >> (31 - end));
+    value = (value << start) & mask;
+    mask  = ~mask;
+    *(volatile unsigned int *)address = ((*(volatile unsigned int *)address) & mask) | value;
+    __asm__ volatile("fence w,o" ::: "memory");
+}
+
+/**
+ * @brief       Write a 32-bit value directly to an register (no read-modify-write).
+ * @param[in]   address - Register address.
+ * @param[in]   value   - Value to write.
+ * @note        Uses fence w,o to ensure the write reaches the peripheral.
+ */
+static inline void wr_reg32(unsigned int address, unsigned int value)
+{
+    *(volatile unsigned int *)address = value;
+    __asm__ volatile("fence w,o" ::: "memory");
+}
+
+
 #endif

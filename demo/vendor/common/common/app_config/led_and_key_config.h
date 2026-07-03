@@ -195,11 +195,11 @@
     #define LED2 GPIO_PA2
     #define LED3 GPIO_PA3
     #define LED4 GPIO_PA4
-
-    #define KEY1 GPIO_PB0
-    #define KEY2 GPIO_PB1
-    #define KEY3 GPIO_PB2
-    #define KEY4 GPIO_PB3
+/*the key defined according to the hardware design, row0, row1,col0 col1*/
+    #define KEY1 GPIO_PC2
+    #define KEY2 GPIO_PC3
+    #define KEY3 GPIO_PA1
+    #define KEY4 GPIO_PB2
 #elif defined(MCU_CORE_TL752X)
     #define LED1 GPIO_PA7
     #define LED2 GPIO_PA9
@@ -210,6 +210,25 @@
     #define KEY2 GPIO_PA8
     #define KEY3 GPIO_PB1
     #define KEY4 GPIO_PB0
+
+#elif defined(MCU_CORE_TL753X)
+    #define LED1 GPIO_PG5
+    #define LED2 GPIO_PG6
+    #define LED3 GPIO_PG7
+    #define LED4 GPIO_PG4
+
+    #define PULL_WAKEUP_SRC_PG5 GPIO_PIN_UP_DOWN_FLOAT
+    #define PULL_WAKEUP_SRC_PG6 GPIO_PIN_UP_DOWN_FLOAT
+    #define PULL_WAKEUP_SRC_PG7 GPIO_PIN_UP_DOWN_FLOAT
+    #define PULL_WAKEUP_SRC_PG4 GPIO_PIN_UP_DOWN_FLOAT
+
+    #define DEBUG_INFO_TX_PIN   GPIO_PA0 //uart tx pin
+    #define PULL_WAKEUP_SRC_PA0 GPIO_PIN_UP_DOWN_FLOAT
+    #define PA0_FUNC            AS_GPIO
+    #define PA0_INPUT_ENABLE    0
+    #define PA0_OUTPUT_ENABLE   1
+    #define PA0_DATA_OUT        0
+
 #else
     #define LED1 GPIO_PD0
     #define LED2 GPIO_PD1

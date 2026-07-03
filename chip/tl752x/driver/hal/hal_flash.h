@@ -49,11 +49,11 @@ extern flash_handler_t flash_write_page;
  */
 typedef enum
 {
-    FLASH_ETOX_ZB    = 0x0100325E, // 325E     bit[24]:ETOX: Byte Program Time != Page Programming Time
+    FLASH_ETOX_ZB    = 0x0100325E, // 325E          bit[24]:ETOX: Byte Program Time != Page Programming Time
     FLASH_ETOX_GD    = 0x010060C8, // 60C8/4051
-    FLASH_SONOS_PUYA = 0x02006085, // 6085     bit[25]:SONOS:Byte Program Time == Page Programming Time
+    FLASH_SONOS_PUYA = 0x02006085, // 6085          bit[25]:SONOS:Byte Program Time == Page Programming Time
     FLASH_SONOS_TH   = 0x020060EB, // 60EB
-    FLASH_SST_TH     = 0x040060CD, // 60CD     bit[26]:SST:  Byte Program Time != Page Programming Time
+    FLASH_SST_TH     = 0x040060CD, // 60CD/71CD     bit[26]:SST:  Byte Program Time != Page Programming Time
 } flash_vendor_e;
 
 /**

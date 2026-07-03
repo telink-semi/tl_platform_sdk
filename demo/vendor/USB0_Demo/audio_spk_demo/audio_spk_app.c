@@ -129,9 +129,14 @@ void user_init(void)
     usbd_driver_register(0, &usbd_spk_driver, 1, AUDIO_SPK_OUT_ENDPOINT_ADDRESS);
     usbd_endpoint_register(0, AUDIO_SPK_OUT_ENDPOINT_ADDRESS, usbd_audio_epout_callback);
 
+#if defined(MCU_CORE_TL322X)
     /* USB0 digital voltage must be 1.1V and HCLK min's 48M. */
     pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
     PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_48M;
+#elif defined(MCU_CORE_TL753X)
+    //TODO
+    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M;
+#endif
 
 #if USB_HIGH_SPEED_EN
     usb0hw_init(USB0_SPEED_HIGH);

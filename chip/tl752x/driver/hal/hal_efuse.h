@@ -49,6 +49,10 @@ typedef struct
     unsigned short ft_vbat_gain;
 } adc_ft_cp_calib_t;
 
+/**
+ * @note This rs variable (cp_rs or ft_rs) has bit 0-3 representing the rs trim value, 
+ *       and bits 4-6 representing the offset value of chg_cc_sel.
+ */
 typedef struct
 {
     unsigned char cp_vref;

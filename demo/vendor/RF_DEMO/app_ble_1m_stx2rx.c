@@ -47,6 +47,17 @@ unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10
         #define BLE_ACTIVE_PIN   PTA_BLE_ACTIVE_PE3
         #define BLE_STATUS_PIN   PTA_BLE_STATUS_PE4
         #define WLAN_DENY_PIN    PTA_WLAN_DENY_PE5
+    #elif defined(MCU_CORE_TL322X)
+        #define PTA_NONE         0
+        #define PTA_2WIRE        1
+        #define PTA_3WIRE        2
+        #define PTA_MODE         PTA_3WIRE
+        #define WLAN_ACTIVE_PIN  GPIO_FC_PB0
+
+        #define BLE_PRIORITY_PIN GPIO_FC_PB1
+        #define BLE_ACTIVE_PIN   GPIO_FC_PB1
+        #define BLE_STATUS_PIN   GPIO_FC_PB2
+        #define WLAN_DENY_PIN    GPIO_FC_PB3
     #endif
 
     #define TX_PKT_PAYLOAD 15
@@ -143,7 +154,7 @@ void user_init(void)
     ble_tx_packet[0]           = rf_tx_dma_len & 0xff;
     rf_set_rx_dma(rx_packet, RX_FIFO_NUM - 1, RX_FIFO_DEP);
     rf_set_tx_dma(2, 128);
-    #if defined(MCU_CORE_B91)
+    #if defined(MCU_CORE_B91) || defined(MCU_CORE_TL322X)
         #if (PTA_MODE == PTA_2WIRE)
     rf_2wire_pta_init(BLE_PRIORITY_PIN, WLAN_ACTIVE_PIN, PTA_BLE_PRIORITY_TRX);
         #elif (PTA_MODE == PTA_3WIRE)
@@ -197,9 +208,9 @@ void main_loop(void)
     //  reg_rf_rx_timeout = SRX_WAITTIME_US;
     rf_set_rx_timeout(0xffff);
     while (1) {
-        #if defined(MCU_CORE_B91)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_TL322X)
             #if (PTA_MODE == PTA_2WIRE)
-        while (gpio_get_level(WLAN_ACTIVE_PIN))
+        while (gpio_get_level((gpio_pin_e)WLAN_ACTIVE_PIN))
             ;
             #endif
         #endif
@@ -226,7 +237,7 @@ void main_loop(void)
                 timeout_cnt++;
                 break;
             }
-        #if defined(MCU_CORE_B91)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_TL322X)
             #if (PTA_MODE == PTA_3WIRE)
             else if (rf_get_irq_status(FLD_RF_IRQ_WIFI_DENY)) {
                 rf_clr_irq_status(FLD_RF_IRQ_WIFI_DENY);
@@ -241,7 +252,7 @@ void main_loop(void)
     #elif (RF_STRX_MODE == RX_FIRST)
 
     while (1) {
-        #if defined(MCU_CORE_B91)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_TL322X)
             #if (PTA_MODE == PTA_2WIRE)
         while (gpio_get_level(WLAN_ACTIVE_PIN))
             ;
@@ -269,7 +280,7 @@ void main_loop(void)
                 timeout_cnt++;
                 break;
             }
-        #if defined(MCU_CORE_B91)
+        #if defined(MCU_CORE_B91) || defined(MCU_CORE_TL322X)
             #if (PTA_MODE == PTA_3WIRE)
             else if (rf_get_irq_status(FLD_RF_IRQ_WIFI_DENY)) {
                 rf_clr_irq_status(FLD_RF_IRQ_WIFI_DENY);

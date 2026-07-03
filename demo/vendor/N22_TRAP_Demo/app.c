@@ -118,16 +118,17 @@ void user_init(void)
 
     gpio_function_en(LED4);
     gpio_output_en(LED4);
-
+#if !defined(MCU_CORE_TL753X)
     gpio_function_en(KEY2);
     gpio_output_en(KEY2);
-
+#endif
 
     gpio_set_low_level(LED1);
     gpio_set_low_level(LED2);
     gpio_set_low_level(LED4);
+#if !defined(MCU_CORE_TL753X)
     gpio_set_low_level(KEY2);
-
+#endif
     /* machine timer belongs to the CLIC, so need to initialize the CLIC. */
     clic_init();
 

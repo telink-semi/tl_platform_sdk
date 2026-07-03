@@ -36,6 +36,11 @@
 #include <string.h>
 #include "inc/drv_delay.h"
 #include "hal/hal_timer.h"
+
+/**
+ * Note:pwm_pin_mux() only initialize PB1/6/7/8/9 for PWM function, to use other gpio,
+ *      please modify the gpio configuration in pwm_pin_mux().
+ */
 /********************************************************************************
     Timer1 - PWM1   :  PA10_FUNC_2.   PB0_FUNC_9.     PB9_FUNC_9.
     Timer2 - PWM2   :  PA0_FUNC_9.    PA23_FUNC_4.    PB6_FUNC_9.    PB10_FUNC_1.
@@ -46,7 +51,9 @@
 
 #define TIMER1_EN      1
 #define TIMER2_EN      2
+#define TIMER3_EN      3
 #define TIMER4_EN      4
+#define TIMER5_EN      5
 #define TIMER_ENABLE   TIMER1_EN
 
 timer_handle_t timer0_1;
@@ -101,12 +108,12 @@ void user_init(void)
     pwm_pin_mux();
 
     soc_printf(" timer pwm mode sample\r\n");
-    soc_printf("NOTE:only TIMER1~TIMER5 has pwm mode\r\n");
+    soc_printf("NOTE:only TIMER1~TIMER5 has pwm mode,Timer0/6/7 does not have a PWM mode\r\n");
 
 #if TIMER_ENABLE == TIMER1_EN//PWM1->PB9
     timer_init(TIMER1);
     timer0_1.instance = TIMER0_3;
-    timer0_1.init.timer_num = TIMER1;
+    timer0_1.init.timer_num = TIMER1;//timer0_1
     timer0_1.init.period = 500 * sys_clk.pclk * TIMER_TICK_CLOCK_1MS;
     timer0_1.init.duty_cycle = 10;//duty_clycle = 500ms*10%
     timer0_1.init.function = TIMER_PWM;
@@ -118,8 +125,8 @@ void user_init(void)
 #elif TIMER_ENABLE == TIMER2_EN//PWM2->PB6
     timer_init(TIMER2);
     timer0_2.instance = TIMER0_3;
-    timer0_2.init.timer_num = TIMER2;
-    timer0_2.init.period = 500*TIMER_TICK_CLOCK_1MS;
+    timer0_2.init.timer_num = TIMER2;//timer0_2
+    timer0_2.init.period = 500 * sys_clk.pclk * TIMER_TICK_CLOCK_1MS;
     timer0_2.init.duty_cycle = 20;//duty_clycle = 500ms*20%
     timer0_2.init.function = TIMER_PWM;
     timer0_2.init.mode = TIMER_USER_DEF;
@@ -127,18 +134,40 @@ void user_init(void)
     drv_timer_init(&timer0_2);
     drv_timer_control(&timer0_2, TIMER_START);
 
+#elif TIMER_ENABLE == TIMER3_EN//PWM3->PB1
+    timer_init(TIMER3);
+    timer0_3.instance = TIMER0_3;
+    timer0_3.init.timer_num = TIMER3;//Timer0_3
+    timer0_3.init.period = 500 * sys_clk.pclk * TIMER_TICK_CLOCK_1MS;
+    timer0_3.init.duty_cycle = 30;//duty_clycle = 500ms*30%
+    timer0_3.init.function = TIMER_PWM;
+    timer0_3.init.mode = TIMER_USER_DEF;
+    drv_timer_set_duty_cycle(&timer0_3);
+    drv_timer_init(&timer0_3);
+    drv_timer_control(&timer0_3, TIMER_START);
+
 #elif TIMER_ENABLE == TIMER4_EN//PWM4->PB7
     timer_init(TIMER4);
     timer1_0.instance = TIMER4_7;
-    timer1_0.init.timer_num = TIMER0;
-    timer1_0.init.period = 500*TIMER_TICK_CLOCK_1MS;
+    timer1_0.init.timer_num = TIMER0;//Timer1_0
+    timer1_0.init.period = 500 * sys_clk.pclk * TIMER_TICK_CLOCK_1MS;
     timer1_0.init.duty_cycle = 40;//duty_clycle = 500ms*40%
     timer1_0.init.function = TIMER_PWM;
     timer1_0.init.mode = TIMER_USER_DEF;
     drv_timer_set_duty_cycle(&timer1_0);
     drv_timer_init(&timer1_0);
     drv_timer_control(&timer1_0, TIMER_START);
-
+#elif TIMER_ENABLE == TIMER5_EN//PWM5->PB3
+    timer_init(TIMER5);
+    timer1_1.instance = TIMER4_7;
+    timer1_1.init.timer_num = TIMER1;//Timer1_1
+    timer1_1.init.period = 500 * sys_clk.pclk * TIMER_TICK_CLOCK_1MS;
+    timer1_1.init.duty_cycle = 50;//duty_clycle = 500ms*50%
+    timer1_1.init.function = TIMER_PWM;
+    timer1_1.init.mode = TIMER_USER_DEF;
+    drv_timer_set_duty_cycle(&timer1_1);
+    drv_timer_init(&timer1_1);
+    drv_timer_control(&timer1_1, TIMER_START);
 #endif
     soc_printf("please test pwm waveform using a oscilloscopes\r\n");
 }

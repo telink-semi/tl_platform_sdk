@@ -127,7 +127,7 @@ _attribute_ram_code_ void dhry_main(void)
     #else
     cpu_mhz = sys_clk.n22_clk;
     #endif
-#elif defined(MCU_CORE_TL751X)
+#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL753X)
     #if !defined(MCU_CORE_TL751X_N22)
     cpu_mhz = sys_clk.cclk_d25f_dsp;
     #else

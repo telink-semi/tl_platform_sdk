@@ -41,6 +41,8 @@
 #include "inc/drv_pmu.h"
 #include "compiler.h"
 
+#define  INTERNAL_SIMULATION_DEBUG    0
+
 typedef enum
 {
     SYS_RESET_SRC_BOR        =   0,

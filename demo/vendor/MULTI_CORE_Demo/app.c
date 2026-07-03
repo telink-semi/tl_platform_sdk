@@ -59,6 +59,7 @@
 unsigned int           val_d25f_to_dsp_word[2]     = {0x01234567, 0x89abcdef};
 unsigned int           val_dsp_to_d25f_word[2]     = {0};
 volatile unsigned char mailbox_dsp_to_d25_irq_flag = 0;
+volatile unsigned char mailbox_dsp_to_d25_cnt      = 0;
     #endif
 #endif
 
@@ -206,16 +207,20 @@ void user_init(void)
     n22_ilm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x08);
     n22_dlm_bin_size  = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x0c);
     n22_dlm_lma_start = REG_ADDR32(N22_FW_DOWNLOAD_FLASH_ADDR + 0x10) + N22_FW_DOWNLOAD_FLASH_ADDR;
-
+        #if defined(MCU_CORE_TL753X)
+    memcpy((unsigned int*)(N22_IRAM_STARTUP_ADDR + 0x80000000), (unsigned int*)N22_FW_DOWNLOAD_FLASH_ADDR, n22_ilm_bin_size);
+    memcpy((unsigned int*)(N22_DRAM_ADDR + 0x80000000), (unsigned int*)n22_dlm_lma_start, n22_dlm_bin_size);
+        #else
     memcpy((unsigned int*)N22_IRAM_STARTUP_ADDR, (unsigned int*)N22_FW_DOWNLOAD_FLASH_ADDR, n22_ilm_bin_size);
     memcpy((unsigned int*)N22_DRAM_ADDR, (unsigned int*)n22_dlm_lma_start, n22_dlm_bin_size);
+        #endif
     sys_n22_start();
     #elif (N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_MCU)
     /* Powers on RF module. Required before any RF operations on N22. */
     pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
     sys_n22_start();
-#elif(N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_NVM_MCU)
+    #elif(N22_BOOTLOADER_MODE == N22_BOOTLOADER_BY_NVM_MCU)
     /* Powers on RF module. Required before any RF operations on N22. */
     pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     sys_n22_init(N22_FW_DOWNLOAD_NVM_ADDR);
@@ -326,6 +331,7 @@ _attribute_ram_code_sec_noinline_ void mailbox_dsp_to_d25_irq_handler(void)
         mailbox_clr_irq_status(FLD_MAILBOX_DSP_TO_D25F_IRQ);
         mailbox_d25f_get_dsp_msg(val_dsp_to_d25f_word);
         mailbox_dsp_to_d25_irq_flag = 1;
+        mailbox_dsp_to_d25_cnt++;
     }
 }
 PLIC_ISR_REGISTER(mailbox_dsp_to_d25_irq_handler, IRQ_MAILBOX_DSP_TO_D25)

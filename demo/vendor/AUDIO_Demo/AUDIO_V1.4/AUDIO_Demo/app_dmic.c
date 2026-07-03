@@ -129,14 +129,15 @@ void user_init(void)
 #else
 #define ANC_CHANNEL_SELECT                      ANC0
     //anc config
-    audio_anc_clk_en(ANC_CHANNEL_SELECT);
     audio_anc_set_mode(ANC_CHANNEL_SELECT, ANC_MODE_FF_REF0);
+    audio_anc_clk_en(ANC_CHANNEL_SELECT);
+
     audio_anc_set_adder3_mode(ANC_CHANNEL_SELECT, ANC_WZ_CZ_TO_HEADPHONE);
     audio_anc_set_adder3_priority(ANC_CHANNEL_SELECT, ANC_WZ_CZ_FIRST);
     audio_anc_set_ref_mic_gain(ANC_CHANNEL_SELECT, ANC0_REF0, 0x4000, 0x0e);
     audio_anc_set_wz_gain(ANC_CHANNEL_SELECT, ANC0_WZ0, 0x4000, 0x0e);
-    audio_anc_update_wcz_iir_coef(ANC_CHANNEL_SELECT, ANC0_WCZ0, wz_iir_bypass);  //wz0
-    audio_anc_update_wcz_fir_coef(ANC_CHANNEL_SELECT, ANC0_WCZ0, wz_fir_bypass); //wz0
+    audio_anc_update_wcz_iir_coef(ANC_CHANNEL_SELECT, ANC0_WCZ0, iir_bypass);  //wz0
+    audio_anc_update_wcz_fir_coef(ANC_CHANNEL_SELECT, ANC0_WCZ0, fir_bypass); //wz0
 
     audio_matrix_set_anc_ref_route(ANC_CHANNEL_SELECT, ANC0_REF0, ANC_REF_ROUTE_DMIC_384K_LL, ANC_REF_CODEC_OR_DMIC_A1_32_BIT);
 

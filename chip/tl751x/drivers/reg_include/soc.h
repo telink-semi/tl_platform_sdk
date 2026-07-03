@@ -316,7 +316,7 @@ enum
 #define reg_clk_en6  REG_ADDR8(SC_BASE_ADDR + 0x46)
 #define reg_clk_en7  REG_ADDR8(SC_BASE_ADDR + 0x47)
 
-#define reg_hclk_set REG_ADDR8(SC_BASE_ADDR + 0x28)
+#define reg_cclk_sel REG_ADDR8(SC_BASE_ADDR + 0x28)
 
 enum
 {

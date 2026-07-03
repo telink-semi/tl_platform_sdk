@@ -90,7 +90,7 @@ extern "C"
 #if defined(MCU_CORE_B92)
 #include "app_config/audio_app_config_1v1.h"
 #endif
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
 #include "app_config/audio_app_config_1v3.h"
 #endif
 #if (defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL7518))
@@ -190,7 +190,7 @@ extern "C"
 #if defined(MCU_CORE_B91)
 #include "app_config/spi_app_config_1v0.h"
 #endif
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL753X)
 #include "app_config/spi_app_config_1v1.h"
 #elif defined(MCU_CORE_TL752X)
 #include "app_config/spi_app_config_1v2.h"
@@ -329,7 +329,9 @@ extern "C"
 #endif
 
 #if defined(CURRENT_BUILD_N22_Test_Demo)
+#if defined(MCU_CORE_TL322X)
 #include "app_config/test_app_config.h"
+#endif
 #endif
 
 #if defined(CURRENT_BUILD_Test_N22_Demo)
@@ -395,7 +397,7 @@ extern "C"
 #endif
 
 #if defined(CURRENT_BUILD_SD_ADC_Demo)
-#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 #include "app_config/sd_adc_app_config.h"
 #endif
 #endif
@@ -430,6 +432,10 @@ extern "C"
 #if defined(MCU_CORE_TL752X)
 #include "app_config/dma_app_config.h"
 #endif
+#endif
+
+#if defined(CURRENT_BUILD_PMP_Demo)
+#include "app_config/pmp_app_config.h"
 #endif
 
 #if defined(__cplusplus)

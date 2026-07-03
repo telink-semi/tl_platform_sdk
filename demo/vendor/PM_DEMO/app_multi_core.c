@@ -24,7 +24,7 @@
 #include "common.h"
 #include "compiler.h"
 
-#if ((defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X))&&(PM_DEMO_MODE == PM_CORE_MULTI))
+#if ((defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X))&&(PM_DEMO_MODE == PM_CORE_MULTI))
 
 unsigned char dat[5] = {0};
 unsigned char result = 0;
@@ -119,7 +119,11 @@ void user_init(void)
     pm_set_dig_module_power_switch(FLD_PD_ZB_EN, PM_POWER_UP);
     sys_n22_init(N22_FW_DOWNLOAD_FLASH_ADDR);
     sys_n22_start();
+#if defined(MCU_CORE_TL322X)
     mailbox_set_irq_mask_d25f();
+#else
+    mailbox_set_irq_mask(FLD_MAILBOX_N22_TO_D25F_IRQ);
+#endif
     #endif
     plic_interrupt_enable(IRQ_MAILBOX_N22_TO_D25);
     core_interrupt_enable();
@@ -330,9 +334,15 @@ PLIC_ISR_REGISTER(mailbox_n22_to_d25_irq_handler, IRQ_MAILBOX_N22_TO_D25)
 #if (N22_TEST)
 _attribute_ram_code_sec_noinline_ void mailbox_n22_to_d25_irq_handler(void)
 {
+#if defined(MCU_CORE_TL322X)
     if (mailbox_get_irq_status_d25f())
     {
         mailbox_clr_irq_status_d25f();
+#else
+    if (mailbox_get_irq_status() & FLD_MAILBOX_N22_TO_D25F_IRQ)
+    {
+        mailbox_clr_irq_status(FLD_MAILBOX_N22_TO_D25F_IRQ);
+#endif
         mailbox_d25f_get_n22_msg(val_n22_to_d25f_word);
         mailbox_n22_to_d25_irq_flag = 1;
         mailbox_n22_to_d25_cnt++;

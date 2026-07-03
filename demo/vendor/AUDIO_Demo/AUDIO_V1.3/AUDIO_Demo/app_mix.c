@@ -53,7 +53,7 @@ unsigned short audio_i2s_32k_config[5] = {16, 125, 6, 64, 64}; //192M * 16 / 125
 unsigned short audio_i2s_24k_config[5] = {1,  125, 0, 64, 64}; //192M * 1  / 125 / 64 = 24K
 unsigned short audio_i2s_16k_config[5] = {8,  125, 6, 64, 64}; //192M * 8  / 125 / (2*6) / 64 = 16K
 unsigned short audio_i2s_12k_config[5] = {1,  125, 1, 64, 64}; //192M * 1  / 125 / (2*1) /64 = 12K
-    #elif defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
 unsigned short audio_i2s_48k_config[5] = {16, 125, 3, 64, 64}; //144M * 16 / 125 / (2*3) / 64 = 48K
 unsigned short audio_i2s_32k_config[5] = {32, 125, 9, 64, 64}; //144M * 32 / 125 / (2*9) / 64 = 32K
 unsigned short audio_i2s_24k_config[5] = {8,  125, 3, 64, 64}; //144M * 8  / 125 / (2*3) / 64 = 24K
@@ -113,7 +113,7 @@ void user_init(void)
 #elif (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_I2S)
             .i2s_ch_sel    = I2S_CHANNEL_STEREO,
 #endif
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
             .fifo_chn      = FIFO1,
 #else
             .fifo_chn      = FIFO2,
@@ -138,6 +138,7 @@ void user_init(void)
     audio_rx_dma_chain_init(audio_codec_stream0_input.fifo_chn, audio_codec_stream0_input.dma_num, (unsigned short *)audio_codec_stream0_input.data_buf, audio_codec_stream0_input.data_buf_size);
     audio_codec_stream0_input_en(audio_codec_stream0_input.dma_num);
     audio_codec_input_path_en(audio_codec_stream0_input.fifo_chn);
+
     /**** i2s config init ****/
     audio_i2s_config_init(&audio_i2s_config);
     /**** i2s output init ****/
