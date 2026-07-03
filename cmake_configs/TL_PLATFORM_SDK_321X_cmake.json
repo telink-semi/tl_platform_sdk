@@ -1986,6 +1986,142 @@
       "sub_directories": []
     },
     {
+      "name": "PEM_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5 GCC12.2",
+      "directories": [
+        "chip/TL321X/boot",
+        "chip/TL321X/drivers",
+        "chip/TL321X/link",
+        "common",
+        "demo/vendor/PEM_Demo",
+        "demo/vendor/common/TL321X/calibration",
+        "demo/vendor/common/TL321X/exception.c",
+        "demo/vendor/common/common",
+        "tools/secure_boot_tool/config/TL321X/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL321X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL321X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_CORE_TL321X=1",
+        "-DMCU_STARTUP_FLASH=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL321X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL321X/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PEM_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL321X/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PEM_Demo   TL_PLATFORM_SDK_321X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
       "name": "PKE_Demo",
       "path": "./",
       "toolchain": "RISC-V Cross GCC",
@@ -2241,6 +2377,142 @@
       ],
       "post_build": [
         "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL321X/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PM_Demo   TL_PLATFORM_SDK_321X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
+      "name": "PMP_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5 GCC12.2",
+      "directories": [
+        "chip/TL321X/boot",
+        "chip/TL321X/drivers",
+        "chip/TL321X/link",
+        "common",
+        "demo/vendor/PMP_Demo",
+        "demo/vendor/common/TL321X/calibration",
+        "demo/vendor/common/TL321X/exception.c",
+        "demo/vendor/common/common",
+        "tools/secure_boot_tool/config/TL321X/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL321X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL321X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_CORE_TL321X=1",
+        "-DMCU_STARTUP_FLASH=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL321X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL321X/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL321X/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PMP_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL321X/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PMP_Demo   TL_PLATFORM_SDK_321X"
       ],
       "print_size": [
         "-t"

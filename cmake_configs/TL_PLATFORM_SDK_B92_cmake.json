@@ -2258,6 +2258,166 @@
       "sub_directories": []
     },
     {
+      "name": "PMP_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/B92/boot",
+        "chip/B92/drivers/adc.c",
+        "chip/B92/drivers/aes.c",
+        "chip/B92/drivers/audio.c",
+        "chip/B92/drivers/clock.c",
+        "chip/B92/drivers/compatibility_pack",
+        "chip/B92/drivers/core.c",
+        "chip/B92/drivers/error_handler",
+        "chip/B92/drivers/flash",
+        "chip/B92/drivers/flash.c",
+        "chip/B92/drivers/gpio.c",
+        "chip/B92/drivers/i2c.c",
+        "chip/B92/drivers/lib",
+        "chip/B92/drivers/lpc.c",
+        "chip/B92/drivers/mspi.c",
+        "chip/B92/drivers/plmt.c",
+        "chip/B92/drivers/pwm.c",
+        "chip/B92/drivers/qdec.c",
+        "chip/B92/drivers/reg_include",
+        "chip/B92/drivers/s7816.c",
+        "chip/B92/drivers/spi.c",
+        "chip/B92/drivers/stimer.c",
+        "chip/B92/drivers/timer.c",
+        "chip/B92/drivers/uart.c",
+        "chip/B92/drivers/usbhw.c",
+        "chip/B92/drivers/watchdog.c",
+        "chip/B92/link",
+        "common",
+        "demo/vendor/PMP_Demo",
+        "demo/vendor/common/B92/calibration",
+        "demo/vendor/common/B92/exception.c",
+        "demo/vendor/common/common",
+        "tools/secure_boot_tool/config/B92/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_B92=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/B92/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/B92/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_B92=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/B92/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/B92/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/B92/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/B92/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/B92/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/B92/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PMP_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/B92/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PMP_Demo   TL_PLATFORM_SDK_B92"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
       "name": "PWM_Demo",
       "path": "./",
       "toolchain": "RISC-V Cross GCC",

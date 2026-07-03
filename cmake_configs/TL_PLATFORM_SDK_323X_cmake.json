@@ -18,7 +18,8 @@
         "demo/vendor/ALG_REG_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -155,7 +156,8 @@
         "demo/vendor/Debug_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -292,7 +294,8 @@
         "demo/vendor/Flash_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -429,7 +432,8 @@
         "demo/vendor/GPIO_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -566,7 +570,8 @@
         "demo/vendor/HASH_Demo/HASH_Demo_Telink_2025Q1-v1.2.3-a/HASH_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -703,7 +708,8 @@
         "demo/vendor/I2C_Demo/I2C_V1.1",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -826,6 +832,144 @@
       "sub_directories": []
     },
     {
+      "name": "PEM_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/PEM_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PEM_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PEM_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
       "name": "PKE_Demo",
       "path": "./",
       "toolchain": "RISC-V Cross GCC",
@@ -840,7 +984,8 @@
         "demo/vendor/PKE_Demo/PKE_Demo_Telink_2025Q1-v1.2.3-a/PKE_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -977,7 +1122,8 @@
         "demo/vendor/PM_DEMO",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1100,6 +1246,144 @@
       "sub_directories": []
     },
     {
+      "name": "PMP_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl323x/boot",
+        "chip/tl323x/drivers",
+        "chip/tl323x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/tl_usb",
+        "demo/vendor/PMP_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl323x/calibration",
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL323X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl323x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl323x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   PMP_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl323x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   PMP_Demo   TL_PLATFORM_SDK_323X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": []
+    },
+    {
       "name": "PWM_Demo",
       "path": "./",
       "toolchain": "RISC-V Cross GCC",
@@ -1114,7 +1398,8 @@
         "demo/vendor/PWM_DEMO",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1251,7 +1536,8 @@
         "demo/vendor/RF_DEMO",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1388,7 +1674,8 @@
         "demo/vendor/SD_ADC_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1525,7 +1812,8 @@
         "demo/vendor/Debug_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1663,7 +1951,8 @@
         "demo/vendor/SKE_Demo/SKE_Demo_Telink_2025Q1-v1.2.3-a/SKE_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1799,7 +2088,8 @@
         "demo/vendor/SPI_Demo/SPI_V1.1/SPI_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1936,7 +2226,8 @@
         "demo/vendor/STimer_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2073,7 +2364,8 @@
         "demo/vendor/Timer_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2210,7 +2502,8 @@
         "demo/vendor/TRAP_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2347,7 +2640,8 @@
         "demo/vendor/TRNG_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2484,7 +2778,8 @@
         "demo/vendor/UART_DEMO/UART_V1.0",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c"
+        "demo/vendor/common/tl323x/exception.c",
+        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
       ],
       "global_options": [
         "-mcmodel=medium",
