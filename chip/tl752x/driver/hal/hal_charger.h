@@ -67,7 +67,8 @@ typedef enum
     CC_190mA,
     CC_195mA,
     CC_200mA,
-
+    CC_MIN = CC_5mA,
+    CC_MAX = CC_200mA,
 } charger_cc_cur_e;
 
 typedef enum
@@ -83,25 +84,67 @@ typedef enum
 
 } charger_cv_vol_e;
 
-
+/**
+ * @brief       Set the charger constant current (CC) level with offset compensation.
+ *
+ * @param[in]   cc_cur  - target constant current level, see @ref charger_cc_cur_e.
+ * @return      none
+ * @note        The actual register value is computed as: target value + offset from the
+ *              pre-configured lookup table (based on RS trim). The result is clamped to
+ *              the valid range [CC_MIN, CC_MAX].
+ */
 void charger_set_cc(charger_cc_cur_e cc_cur);
 
+/**
+ * @brief       Set the charger voltage (CV) level.
+ *
+ * @param[in]   cv_vol  - target voltage level, see @ref charger_cv_vol_e.
+ * @return      none
+ */
 void charger_set_cv(charger_cv_vol_e cv_vol);
 
+/**
+ * @brief       Enable the charger.
+ *
+ * @param[in]   none
+ * @return      none
+ */
 void charger_enable(void);
 
+/**
+ * @brief       Disable the charger.
+ *
+ * @param[in]   none
+ * @return      none
+ */
 void charger_disable(void);
 
+/**
+ * @brief       Trim the charger VREF value.
+ *
+ * @param[in]   trim_val  - trim value for the VREF control bits.
+ * @return      none
+ */
 void charger_vref_trim(unsigned short trim_val);
 
+/**
+ * @brief       Trim the charger RS (current-sense resistor) value.
+ *
+ * @param[in]   trim_val  - trim value for the RS control bits.
+ * @return      none
+ */
 void charger_rs_trim(unsigned short trim_val);
 
 /**
- * @brief       This function is used to Write the vref and rs values into the vref and rs control bits
+ * @brief       Write both VREF and RS trim values and update the CC level offset index.
  *
- * @param[in]   vref - the trim value of vref
- *              rs - the trim value of rs
+ * @param[in]   vref  - 4-bit trim value for VREF.
+ *              rs    - 8-bit value where bits [6:4] encode the 3-bit CC offset index,
+ *                      and bits [3:0] are the 4-bit RS trim value.
  * @return      none
+ * @note        The upper nibble of `rs` (bits [6:4]) selects the CC level offset from the
+ *              lookup table. The selected offset will be applied in subsequent calls to
+ *              charger_set_cc().
  */
 void charger_vref_rs_trim(unsigned char vref, unsigned char rs);
 #endif

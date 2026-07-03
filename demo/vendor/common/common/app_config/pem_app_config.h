@@ -46,7 +46,7 @@ extern "C"
 #define PEM_SAR_ADC      10
 #define PEM_AUDIO        11
 #define PEM_IR_LEARN     12
-#define PEM_PWM_0        13
+#define PEM_PWM          13
 #define PEM_PWM_1        14
 #define PEM_RZ           15
 #define PEM_ALGM         16
@@ -57,10 +57,11 @@ extern "C"
 #define PEM_KS           21
 #define PEM_USB          22
 #define PEM_ZB           23
+#define PEM_MISC         24
 #define PEM_NONE         50
 
-#define PEM_EVENT_MODE   PEM_PWM_0
-#define PEM_TASK_MODE    PEM_STIMER
+#define PEM_EVENT_MODE   PEM_STIMER
+#define PEM_TASK_MODE    PEM_GPIO
 
 #define TL_TEST_RESP_OK  1
 #define TL_TEST_RESP_ERR 0
@@ -99,21 +100,6 @@ typedef struct
 
 #define STIMER_CAPT_PIN     GPIO_PC5
 
-typedef enum
-{
-    STIMER_EVENT_TRIG_POS = 0,
-    STIMER_EVENT_CAL_TGL_PUL,
-    STIMER_EVENT_CAPT,
-    STIMER_EVENT_OV,
-} stimer_event_e;
-
-typedef enum
-{
-    STIMER_TASK_EN = 0,
-    STIMER_TASK_DIS,
-    STIMER_TASK_CAPT,
-} stimer_task_e;
-
 extern void pem_task_stimer_init(unsigned char pem_id, unsigned char stimer_sel);
 extern int  pem_task_stimer_mainloop(unsigned char stimer_sel);
 extern void pem_event_stimer_init(unsigned char pem_id, unsigned char stimer_sel);
@@ -122,16 +108,15 @@ extern int  pem_event_stimer_start(unsigned char stimer_sel);
 /********************************************************************************************************
  *                                 PWM
  *******************************************************************************************************/
-#define PULL_WAKEUP_SRC_PA1 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PB0 GPIO_PIN_UP_DOWN_FLOAT
+#define PULL_WAKEUP_SRC_PA1 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PA2 GPIO_PIN_UP_DOWN_FLOAT
 
-#define PWM0_PIN            GPIO_FC_PA1
-#define PWM1_PIN            GPIO_FC_PB0
+#define PWM0_PIN            GPIO_FC_PB0
+#define PWM1_PIN            GPIO_FC_PA1
 #define PWM2_PIN            GPIO_FC_PA2
 
-#define PWM_PCLK_SPEED      30000000
-
+#define PWM_PCLK_SPEED      10000000
 enum
 {
     CLOCK_PWM_CLOCK_1S  = PWM_PCLK_SPEED,
@@ -139,36 +124,79 @@ enum
     CLOCK_PWM_CLOCK_1US = (CLOCK_PWM_CLOCK_1S / 1000000),
 };
 
-typedef enum
-{
-    PWM0_EVENT_PWM0_START = 0,
-    PWM0_EVENT_PWM1_START,
-    PWM0_EVENT_PWM2_START,
-    PWM0_EVENT_PWM3_START,
-    PWM0_EVENT_PWM4_START,
-    PWM0_EVENT_PWM5_START,
-    PWM0_EVENT_PWM6_START,
-} pwm0_event_e;
-
-typedef enum
-{
-    PWM0_TASK_PWM0_EN = 0,
-    PWM0_TASK_PWM1_EN,
-    PWM0_TASK_PWM2_EN,
-    PWM0_TASK_PWM3_EN,
-    PWM0_TASK_PWM4_EN,
-    PWM0_TASK_PWM5_EN,
-    PWM0_TASK_PWM6_EN,
-} pwm0_task_e;
-
 #include "gpio.h"
 extern void pwm0_init(gpio_func_pin_e pin);
 extern void pwm1_init(gpio_func_pin_e pin);
 extern void pwm2_init(gpio_func_pin_e pin);
-extern void pem_task_pwm_0_init(unsigned char pem_id, unsigned char pwm_sel);
-extern int  pem_task_pwm_0_mainloop(unsigned char stimer_sel);
-extern void pem_event_pwm_0_init(unsigned char pem_id, unsigned char pwm_sel);
-extern int  pem_event_pwm_0_start(unsigned char pwm_sel);
+extern void pem_task_pwm_init(unsigned char pem_id, unsigned char pwm_sel);
+extern int  pem_task_pwm_mainloop(unsigned char pwm_sel);
+extern void pem_event_pwm_init(unsigned char pem_id, unsigned char pwm_sel);
+extern int  pem_event_pwm_start(unsigned char pwm_sel);
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)
+extern void pem_task_pwm_1_init(unsigned char pem_id, unsigned char pwm_sel);
+extern int  pem_task_pwm_1_mainloop(unsigned char pwm_sel);
+extern void pem_event_pwm_1_init(unsigned char pem_id, unsigned char pwm_sel);
+extern int  pem_event_pwm_1_start(unsigned char pwm_sel);
+#endif
+
+/********************************************************************************************************
+ *                                 ADC
+ *******************************************************************************************************/
+extern void pem_task_adc_init(unsigned char pem_id, unsigned char adc_sel);
+extern int  pem_task_adc_mainloop(unsigned char adc_sel);
+extern void pem_event_adc_init(unsigned char pem_id, unsigned char adc_sel);
+extern int  pem_event_adc_start(unsigned char adc_sel);
+
+/********************************************************************************************************
+ *                                 GPIO
+ *******************************************************************************************************/
+#if defined(MCU_CORE_TL721X)
+    #define LED1_TOGGLE    PC3_TOGGLE
+    #define LED2_TOGGLE    PC2_TOGGLE
+    #define LED3_TOGGLE    PC1_TOGGLE
+    #define LED4_TOGGLE    PC0_TOGGLE
+#elif defined(MCU_CORE_TL321X)
+    #define LED1_TOGGLE    PD0_TOGGLE
+    #define LED2_TOGGLE    PB0_TOGGLE
+    #define LED3_TOGGLE    PB1_TOGGLE
+    #define LED4_TOGGLE    PB2_TOGGLE
+#elif defined(MCU_CORE_TL323X)
+    #define LED1_TOGGLE    PC0_TOGGLE
+    #define LED2_TOGGLE    PC1_TOGGLE
+    #define LED3_TOGGLE    PC2_TOGGLE
+    #define LED4_TOGGLE    PC3_TOGGLE
+#elif defined(MCU_CORE_TL322X)
+    #define LED1_TOGGLE    PC4_TOGGLE
+    #define LED2_TOGGLE    PC5_TOGGLE
+    #define LED3_TOGGLE    PC6_TOGGLE
+    #define LED4_TOGGLE    PC7_TOGGLE
+#elif defined(MCU_CORE_TL521X)
+    #define LED1_TOGGLE     PA0_TOGGLE
+    #define LED2_TOGGLE     PA2_TOGGLE
+    #define LED3_TOGGLE     PA3_TOGGLE
+    #define LED4_TOGGLE     PA4_TOGGLE
+#endif
+
+extern void pem_task_gpio_init(unsigned char pem_id, unsigned int gpio_sel);
+extern int  pem_task_gpio_mainloop(unsigned int gpio_sel);
+extern void pem_event_gpio_init(unsigned char pem_id, unsigned int gpio_sel, pem_event_pol_e gpio_pol);
+extern int  pem_event_gpio_start(unsigned int gpio_sel);
+
+/********************************************************************************************************
+ *                                 MISC
+ *******************************************************************************************************/
+typedef enum
+{
+    MISC_EVENT_QDEC_INT_POS = 0,
+    MISC_EVENT_QDEC_WAKEUP,
+    MISC_EVENT_LPC,
+    MISC_EVENT_PM_IRQ,
+} misc_event_e;
+
+extern void pem_event_misc_init(unsigned char pem_id, unsigned int misc_sel);
+extern int  pem_event_misc_start(unsigned int misc_sel);
+
+
 
 #include "driver.h"
 /* Disable C linkage for C++ Compilers: */

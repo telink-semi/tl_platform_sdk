@@ -440,7 +440,7 @@ extern drv_status_t drv_cpr_set_cpu_freq(cpr_cpu_freq_init_t *cpu_freq);
 #define __DRV_CPR_TIMER6_CLK_SOURCR(SOURCE)                 \
     do {                                                    \
         CLEAR_BIT(CPR->CLK_MUX1, CPR_TIMER1_3_SEL);         \
-        SET_BIT(CPR->CLK_MUX1, CPR_TIMER1_4_SEL_W(SOURCE)); \
+        SET_BIT(CPR->CLK_MUX1, CPR_TIMER1_3_SEL_W(SOURCE)); \
     } while (0U)
 #define __DRV_CPR_TIMER7_CLK_SOURCR(SOURCE)                 \
     do {                                                    \

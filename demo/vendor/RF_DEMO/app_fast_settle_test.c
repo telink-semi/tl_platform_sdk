@@ -103,7 +103,7 @@ void main_loop(void)
     rf_set_rx_settle_time(15);
 
     rf_set_chn(RF_FREQ);
-    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
 
         rf_fast_settle_get_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
         rf_fast_settle_set_val(TX_SETTLE_TIME_15US, RX_SETTLE_TIME_15US, &fs_cv_1m);
@@ -193,7 +193,7 @@ void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_sett
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -238,7 +238,7 @@ void rf_fast_settle_setup(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_sett
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     rf_set_rx_settle_time(93); //adjust RX settle time
     for (unsigned char f_chn = 0; f_chn <= 80; f_chn++) {
         rf_set_chn(f_chn);
@@ -290,7 +290,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL721X)|| defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X)
     rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
     rf_clr_irq_status(FLD_RF_IRQ_ALL);
     rf_set_tx_settle_time(113);        //adjust TX settle time
@@ -336,7 +336,7 @@ void rf_fast_settle_get_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_set_tx_rx_off(); //STOP_RF_STATE_MACHINE;
         rf_clr_irq_status(FLD_RF_IRQ_ALL);
     }
-#elif defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     rf_set_rx_settle_time(93); //adjust RX settle time
     for (unsigned char f_chn = 0; f_chn <= 80; f_chn++) {
         rf_set_chn(f_chn);
@@ -373,7 +373,7 @@ void rf_fast_settle_set_val(rf_tx_fast_settle_time_e tx_settle_us, rf_rx_fast_se
         rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
         rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);
     }
-#elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     for (unsigned char f_chn = 4; f_chn <= 80; f_chn += 10) {
         rf_tx_fast_settle_set_cal_val(tx_settle_us, f_chn, fs_cv);
         rf_rx_fast_settle_set_cal_val(rx_settle_us, f_chn, fs_cv);

@@ -96,21 +96,21 @@ _attribute_ram_code_sec_noinline_ void main_loop(void)
     {
         if(last_ks_scanning_buff[i]!=now_ks_scanning_buff[i])
         {
-              for(int k=0;k<31;k++)
-              {
-                  unsigned int now_bit=now_ks_scanning_buff[i]&(1<<k);
-                    if((last_ks_scanning_buff[i]&(1<<k))!=now_bit)
+            for(int k = 0; k < COL_CNT; k++)
+            {
+                unsigned int now_bit = now_ks_scanning_buff[i]&(1<<g_ks_col[k]);
+                if((last_ks_scanning_buff[i]&(1<<g_ks_col[k]))!=now_bit)
+                {
+                    if(now_bit)
                     {
-                        if(now_bit)
-                        {
-                            printf("row=%d ,col=%d, is press\r\n", i, k);
-                        }
-                        else
-                        {
-                            printf("row=%d ,col=%d is release \r\n", i, k);
-                        }
+                        printf("row=%d ,col=%d, is press\r\n", i, k);
                     }
-              }
+                    else
+                    {
+                        printf("row=%d ,col=%d is release \r\n", i, k);
+                    }
+                }
+            }
             last_ks_scanning_buff[i]=now_ks_scanning_buff[i];
         }
     }

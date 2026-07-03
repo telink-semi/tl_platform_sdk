@@ -38,7 +38,7 @@ extern "C"
 
 #define KEYSCAN_ROW_COL_MODE     KEYSCAN_ROW_COL_6X20
 
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
 
     #define KEYSCAN_TEST_SUSPEND 0
 
@@ -56,7 +56,7 @@ extern "C"
 
 #define KEYSCAN_AUTO_MODE      0
 #define KEYSCAN_MANUAL_MODE    1
-#define KEYCAN_MODE_TEST        KEYSCAN_MANUAL_MODE
+#define KEYCAN_MODE_TEST        KEYSCAN_AUTO_MODE
 #include "driver.h"
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

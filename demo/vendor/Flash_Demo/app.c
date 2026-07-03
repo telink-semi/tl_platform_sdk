@@ -289,6 +289,79 @@ void flash_mid182085_test(void)
     #endif
 }
 #endif
+
+#if defined(MCU_CORE_B91)
+void flash_mid14345e_test(void)
+{
+    int i;
+
+    status1 = flash_read_status_mid14345e();
+    flash_lock_mid14345e(FLASH_LOCK_LOW_64K_MID14345E);
+    status2 = flash_read_status_mid14345e();
+    flash_erase_sector(FLASH_ADDR);
+    flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.lock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.lock_check = 1;
+
+    flash_unlock_mid14345e();
+    status3 = flash_read_status_mid14345e();
+    flash_erase_sector(FLASH_ADDR);
+    flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != 0xff) {
+            err_status.unlock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.unlock_check = 1;
+
+    flash_erase_otp_mid14345e(FLASH_SECURITY_ADDR);
+    flash_read_otp_mid14345e(FLASH_SECURITY_ADDR, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != 0xff) {
+            err_status.otp_erase_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_erase_check = 1;
+
+    flash_write_otp_mid14345e(FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Write_Buff);
+    flash_read_otp_mid14345e(FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.otp_write_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_write_check = 1;
+
+    #if FLASH_OTP_LOCK
+    status4 = flash_read_status_mid14345e();
+    flash_lock_otp_mid14345e(FLASH_LOCK_OTP_0x001000_1024B_MID14345E);
+    status5 = flash_read_status_mid14345e();
+    flash_erase_otp_mid14345e(FLASH_SECURITY_ADDR);
+    flash_read_otp_mid14345e(FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.otp_lock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_lock_check = 1;
+    #endif
+}
+#endif
+
 #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
 void flash_mid146085_test(void)
 {
@@ -1236,6 +1309,10 @@ void user_init(void)
     //and it is necessary to unprotect the address when erasing it
     //(the principle of bin code protection is that it is generally not recommended to put the data area in the protected area).
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
+    flash_hal_user_handler_t flash_handler = {0};
+    flash_handler.list = NULL;
+    flash_handler.flash_cnt = 0;
+    hal_flash_init(&flash_handler);
     hal_flash_unlock();
     g_flash_mid = flash_read_mid();
     #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
@@ -1345,6 +1422,9 @@ void user_init(void)
         break;
     case MID182085:
         flash_mid182085_test();
+        break;
+    case MID14345E:
+        flash_mid14345e_test();
         break;
     default:
         break;

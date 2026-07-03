@@ -90,9 +90,14 @@ void user_init(void)
         cdc_in_buffer[i] = i & 0xff;
     }
 
+#if defined(MCU_CORE_TL322X)
     /* USB0 digital voltage must be 1.1V and HCLK min's 48M. */
     pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
     PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_48M;
+#elif defined(MCU_CORE_TL753X)
+    //TODO
+    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M;
+#endif
 
 #if USB_HIGH_SPEED_EN
     usb0hw_init(USB0_SPEED_HIGH);

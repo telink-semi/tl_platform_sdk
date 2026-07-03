@@ -30,7 +30,7 @@ extern "C"
 
     /* Enable C linkage for C++ Compilers: */
 
-#if defined(MCU_CORE_TL751X)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
 #define PULL_WAKEUP_SRC_PA0 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PA1 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PA2 GPIO_PIN_UP_DOWN_FLOAT
@@ -50,7 +50,12 @@ extern "C"
     #define SPI_DMA_LLP_MODE 3 //spi rx with DMA chain transmission
 #endif
 
+#if defined(MCU_CORE_TL753X)
+#define SPI_XIP_MODE 4       //spi xip mode
+#endif
+
 #define SPI_MODE SPI_DMA_MODE
+
 
 #include "driver.h"
 

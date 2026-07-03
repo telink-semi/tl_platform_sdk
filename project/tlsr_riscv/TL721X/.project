@@ -155,9 +155,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/LPC_Demo</locationURI>
 		</link>
 		<link>
+			<name>vendor/PEM_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PEM_Demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/PKE_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PKE_Demo/PKE_Demo_v1.0.2/PKE_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/PMP_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/PMP_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/PM_DEMO</name>

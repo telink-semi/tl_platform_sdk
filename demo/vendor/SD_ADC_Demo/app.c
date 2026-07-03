@@ -37,7 +37,6 @@ signed int sd_adc_vol_10x = 0;
 volatile signed int sd_adc_vol = 0;
 volatile signed int temp_value = 0;
 volatile unsigned int sd_adc_rx_done_flag=0;
-
 /*
  *  The length of sd_adc_sample_buffer must be >= SD_ADC_FIFO_DEPTH, otherwise there is a risk of array overflow.
  */
@@ -50,14 +49,12 @@ void user_init(void)
     gpio_function_en(LED2);
     gpio_output_en(LED2);
     gpio_input_dis(LED2);
-
     sd_adc_init(SD_ADC_SINGLE_DC_MODE);
-
 #if(SD_ADC_MODE==SD_ADC_GPIO_MODE )
     sd_adc_gpio_sample_init(&sd_adc_gpio_cfg);
-#elif(SD_ADC_MODE==SD_ADC_VBAT_MODE )
+#elif(SD_ADC_MODE==SD_ADC_VBAT_MODE)
     sd_adc_vbat_sample_init(SD_ADC_SAPMPLE_CLK_2M, SD_ADC_VBAT_DIV_1F4, SD_ADC_DOWNSAMPLE_RATE_128);
-#elif(SD_ADC_MODE==SD_ADC_TEMP_MODE)
+#elif(SD_ADC_MODE==SD_ADC_TEMP_MODE && !defined(MCU_CORE_TL521X)) || (defined(MCU_CORE_TL521X) && SD_ADC_INTERNAL_TEST_FUNC_EN)
     sd_adc_temp_init(SD_ADC_SAPMPLE_CLK_2M, SD_ADC_DOWNSAMPLE_RATE_128);
 #endif
 
@@ -84,26 +81,25 @@ void main_loop(void)
 {
 #if(SAMPLE_MODE == NDMA_POLLING_MODE)
     #if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
-    /* Directly get voltage, internal loop handles range switching */
     sd_adc_vol_10x = sd_adc_get_result(SD_ADC_VOLTAGE_10X_MV);
     sd_adc_vol = sd_adc_vol_10x / 10;
-    printf("vol = %d.%d mv \n", (sd_adc_vol_10x / 10), ((unsigned int)sd_adc_vol_10x % 10));
-    #elif(SD_ADC_MODE==SD_ADC_TEMP_MODE )
+    printf("vol = %d.%d mv \n",(sd_adc_vol_10x / 10),((unsigned int)sd_adc_vol_10x % 10));
+    #elif(SD_ADC_MODE==SD_ADC_TEMP_MODE && !defined(MCU_CORE_TL521X)) || (defined(MCU_CORE_TL521X) && SD_ADC_INTERNAL_TEST_FUNC_EN)
     temp_value = sd_adc_get_result(TEMP_VALUE);
-    printf("temp = %d \n", temp_value);
+    printf("temp = %d \n",temp_value);
     #endif
-
 #elif(SAMPLE_MODE == DMA_INTERRUPT_MODE)
     if(sd_adc_rx_done_flag == 1)
     {
-        #if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
+
+    #if(SD_ADC_MODE==SD_ADC_GPIO_MODE || SD_ADC_MODE==SD_ADC_VBAT_MODE)
         sd_adc_vol_10x = sd_adc_get_result(SD_ADC_VOLTAGE_10X_MV);
         sd_adc_vol = sd_adc_vol_10x / 10;
         printf("vol = %d.%d mv\n", (sd_adc_vol_10x / 10), ((unsigned int)sd_adc_vol_10x % 10));
-        #elif(SD_ADC_MODE==SD_ADC_TEMP_MODE)
-        temp_value = sd_adc_get_result(TEMP_VALUE);
-        printf("temp = %d \n", temp_value);
-        #endif
+    #elif(SD_ADC_MODE==SD_ADC_TEMP_MODE && !defined(MCU_CORE_TL521X)) || (defined(MCU_CORE_TL521X) && SD_ADC_INTERNAL_TEST_FUNC_EN)
+            temp_value = sd_adc_get_result(TEMP_VALUE);
+            printf("temp = %d \n", temp_value);
+    #endif
 
         sd_adc_rx_done_flag = 0;
         sd_adc_start_sample_dma((signed int *)sd_adc_sample_buffer, SD_ADC_SAMPLE_CNT<<2);
@@ -164,9 +160,8 @@ signed int sd_adc_sort_and_get_average_code(signed int *sample_buffer)
  */
 signed int sd_adc_get_result(sd_adc_result_type_e result_type)
 {
-    signed int code_average;
     signed int sd_adc_result;
-
+    signed int code_average;
     while(1)
     {
 #if(SAMPLE_MODE == NDMA_POLLING_MODE)
@@ -201,9 +196,11 @@ signed int sd_adc_get_result(sd_adc_result_type_e result_type)
 #endif
             return sd_adc_result;
         }
+#if !defined(MCU_CORE_TL521X) || (defined(MCU_CORE_TL521X) && SD_ADC_INTERNAL_TEST_FUNC_EN)
         else if(result_type == TEMP_VALUE)
         {
             return sd_adc_calculate_temperature(code_average);
         }
+#endif
     }
 }

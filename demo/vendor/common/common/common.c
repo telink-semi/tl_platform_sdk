@@ -42,6 +42,7 @@ flash_user_defined_list_t flash_init_list[] = {
 #if defined(MCU_CORE_B91)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    {0x14345e, FLASH_LOCK_LOW_512K_MID14345E},
     //2M
     {0x156085, FLASH_LOCK_LOW_1M_MID156085  },
     //4M
@@ -74,6 +75,8 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x1640c8, FLASH_LOCK_LOW_2M_MID1640C8},
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
     {0x16405e, FLASH_LOCK_LOW_2M_MID16405E},
+    //2M
+    {0x1571cd, FLASH_LOCK_LOW_1M_MID1571CD},
 #elif defined(MCU_CORE_TL753X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
@@ -196,22 +199,6 @@ void platform_init(unsigned char flash_protect_en)
 {
 /**
     ===============================================================================
-                         ##### 24M RC ENABLE #####
-    ===============================================================================
-    If it cannot be guaranteed that the clock is 24 MHz RC before sys_init,
-    then this piece of code needs to be enabled.
-    ===============================================================================
-*/
-#if (defined(DUT_TEST))
-    reg_rst    |= 0x00000800;
-    reg_clk_en |= 0x00000800;
-
-    analog_write_reg8(areg_aon_0x05, analog_read_reg8(areg_aon_0x05) & ~(FLD_24M_RC_PD)); //power on 24M RC
-    clock_set_all_clock_to_default();
-#endif
-
-/**
-    ===============================================================================
                          ##### sys_init #####
     ===============================================================================
 */
@@ -247,7 +234,7 @@ void platform_init(unsigned char flash_protect_en)
 
 
 #if (!defined(DUT_TEST))
-   #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X)
+   #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
     /**
         ===============================================================================
         To prevent leakage, all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS.
@@ -375,6 +362,21 @@ void platform_init(unsigned char flash_protect_en)
 //    }
 //#endif
 
+// The current DCDC voltage config is based on only two boards and hasn't been tested in large quantities. The actual power supply situation may vary with different chips, user needs to adjust the voltage levels based on their own board tests.
+// When setting the voltage levels, you need to pay attention that in the circuit design, the highest bits of BK3 and BK4 are shared. If one is set to 1, both are considered 1.
+#if defined(MCU_CORE_TL753X)
+    if (power_mode == LDO_AVDD_LDO_DVDD)
+    {
+        // No test data
+    } else {
+        pm_set_avdd1(PM_AVDD1_VOLTAGE_1V053);                            // test result 1.142 / target 1.15
+        pm_set_avdd2(PM_AVDD2_VOLTAGE_2V083);                            // test result 2.334 / target 2.0
+        pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V800);                            // test result 0.802 / target 0.8
+        pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V756);                            // test result 0.788 / target 0.8
+        // pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V867);                            // test result 0.895 / target 0.9
+        // pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V917);                            // test result 0.898 / target 0.9
+    }
+#endif
     /*
     * For the current A0 version, it is important to focus on whether the following voltage outputs meet expectations before testing, 
     * especially before conducting performance or stability tests.
@@ -410,7 +412,7 @@ void platform_init(unsigned char flash_protect_en)
     @note if flash protection fails, LED1 lights up long, and keeps while.
     ===============================================================================
 */
-#if !defined(INTERNAL_SIMULATION_DEBUG)
+#if !INTERNAL_SIMULATION_DEBUG
     #if (!defined(DUT_TEST) && defined(MCU_STARTUP_FLASH))
     if (flash_protect_en) {
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL752X)

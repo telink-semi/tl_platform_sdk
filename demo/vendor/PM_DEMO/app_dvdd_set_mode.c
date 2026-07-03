@@ -46,6 +46,11 @@ void user_init(void)
     pm_set_dvdd(DVDD1_DVDD2_VOL_0P9V, 1000);
     PLL_192M_D25F_DSP_192M_HCLK_96M_PCLK_48M_MSPI_48M_WT_12M;
 
+    #elif defined(MCU_CORE_TL753X)
+    //Upward Voltage
+    pm_set_dvdd(DVDD1_DVDD2_VOL_0P9V, 1000);
+    PLL_192M_D25F_DSP_192M_HCLK_96M_PCLK_48M_MSPI_48M_WT_12M;
+
     #elif defined(MCU_CORE_TL322X)
     //Upward Voltage
     pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
@@ -85,6 +90,11 @@ void main_loop(void)
     pm_set_dvdd(CORE_0P8V_SRAM_0P8V_BB_0P8V, DMA1, 1000);
 
     #elif defined(MCU_CORE_TL751X)
+    //Downward Voltage
+    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M;
+    pm_set_dvdd(DVDD1_DVDD2_VOL_0P8V, 1000);
+
+    #elif defined(MCU_CORE_TL753X)
     //Downward Voltage
     PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M;
     pm_set_dvdd(DVDD1_DVDD2_VOL_0P8V, 1000);

@@ -55,7 +55,9 @@ extern "C"
 #elif defined(MCU_CORE_TL322X)
     #define BQB_TX_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL521X)
-    #define BQB_TX_POWER RF_POWER_P7p49dBm
+    #define BQB_TX_POWER RF_POWER_P7p91dBm
+#elif defined(MCU_CORE_TL753X)
+    #define BQB_TX_POWER RF_POWER_P10p00dBm
 #else
     #define BQB_TX_POWER RF_POWER_P7p00dBm
 #endif
@@ -86,8 +88,14 @@ extern "C"
     #define BQB_UART_TX_PORT GPIO_FC_PD1
     #define BQB_UART_RX_PORT GPIO_FC_PA1
 #elif defined(MCU_CORE_TL521X)
-    #define BQB_UART_TX_PORT GPIO_FC_PD1
-    #define BQB_UART_RX_PORT GPIO_FC_PA1
+    #define BQB_UART_TX_PORT GPIO_FC_PB2
+    #define BQB_UART_RX_PORT GPIO_FC_PB3
+#elif defined(MCU_CORE_TL753X)
+    #define PULL_WAKEUP_SRC_PB5 GPIO_PIN_UP_DOWN_FLOAT
+    #define PULL_WAKEUP_SRC_PB6 GPIO_PIN_UP_DOWN_FLOAT
+
+    #define BQB_UART_TX_PORT GPIO_FC_PF3
+    #define BQB_UART_RX_PORT GPIO_FC_PF4
 #endif
 
 

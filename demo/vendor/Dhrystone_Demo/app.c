@@ -124,6 +124,35 @@ void user_init(void)
     for (int i = 0; i < 10; i++) {
        dhry_main();
     }
+#elif defined(MCU_CORE_TL753X) && (CURRENT_PER_MHZ_TEST)
+    #if (CLOCK_FREQUENCY == CCLK_24M_HCLK_12M_PCLK_12M)
+    PLL_192M_D25F_DSP_24M_HCLK_12M_PCLK_12M_MSPI_48M_WT_12M;
+    #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_12M)
+    PLL_192M_CCLK_48M_HCLK_24M_PCLK_12M_MSPI_48M;
+    #elif (CLOCK_FREQUENCY == CCLK_24M_HCLK_24M_PCLK_24M)
+    PLL_192M_CCLK_24M_HCLK_24M_PCLK_24M_MSPI_48M;
+    #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_24M_PCLK_24M)
+    PLL_192M_CCLK_48M_HCLK_24M_PCLK_24M_MSPI_48M;
+    #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_24M)
+    PLL_192M_CCLK_48M_HCLK_48M_PCLK_24M_MSPI_48M;
+    #elif (CLOCK_FREQUENCY == CCLK_96M_HCLK_48M_PCLK_48M)
+    PLL_192M_CCLK_96M_HCLK_48M_PCLK_48M_MSPI_48M;
+    #elif (CLOCK_FREQUENCY == CCLK_96M_HCLK_96M_PCLK_48M)
+    PLL_192M_CCLK_96M_HCLK_96M_PCLK_48M_MSPI_48M;
+    #elif (CLOCK_FREQUENCY == CCLK_48M_HCLK_48M_PCLK_48M)
+    PLL_192M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M;
+    #endif
+
+     gpio_shutdown(GPIO_ALL);
+
+    reg_rst      = 0x82380880;
+    reg_clk_en   = 0x02300880;
+    reg_rst_1    = 0x00000000;
+    reg_clk_en_1 = 0x00000040;
+
+    for (int i = 0; i < 10; i++) {
+        dhry_main();
+    }
 
     #else
     CLOCK_INIT;
@@ -136,6 +165,7 @@ void user_init(void)
 
     gpio_function_en(LED2);
     gpio_output_en(LED2);
+    gpio_input_dis(LED2);
 }
 
 void main_loop(void)

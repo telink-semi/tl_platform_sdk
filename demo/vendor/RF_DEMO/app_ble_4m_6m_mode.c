@@ -22,7 +22,8 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-#if  defined(MCU_CORE_TL322X)&&(RF_MODE == RF_BLE_4M || RF_MODE == RF_BLE_6M ||  RF_MODE == RF_BLE_4M_NO_PN || RF_MODE == RF_BLE_6M_NO_PN)
+#if (defined(MCU_CORE_TL322X) && (RF_MODE == RF_BLE_4M || RF_MODE == RF_BLE_4M_NO_PN || RF_MODE == RF_BLE_6M || RF_MODE == RF_BLE_6M_NO_PN)) || \
+    (defined(MCU_CORE_TL521X) && (RF_MODE == RF_BLE_4M || RF_MODE == RF_BLE_4M_NO_PN))
 
 
 unsigned char rx_packet[128 * 4] __attribute__((aligned(4)));
@@ -89,7 +90,7 @@ PLIC_ISR_REGISTER(rf_irq_handler, IRQ_ZB_RT)
 void user_init(void)
 {
     rf_set_power_level(RF_POWER);
-        #if (RF_MODE == RF_BLE_4M_NO_PN || RF_MODE == RF_BLE_6M_NO_PN)
+        #if (defined(MCU_CORE_TL521X) && (RF_MODE == RF_BLE_4M_NO_PN)) || (defined(MCU_CORE_TL322X) && (RF_MODE == RF_BLE_4M_NO_PN || RF_MODE == RF_BLE_6M_NO_PN))
     rf_set_chn(RF_FREQ);
         #else
     rf_set_ble_chn(RF_FREQ);
@@ -155,18 +156,16 @@ void main_loop(void)
             #if (!RF_RX_IRQ_EN)
 
     rf_start_srx(rf_stimer_get_tick());
-    gpio_toggle(LED1);
     while (1) {
         if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
             unsigned char *raw_pkt = rf_get_rx_packet_addr(RX_FIFO_NUM, RX_FIFO_DEP, rx_packet);
             if (rf_ble_packet_crc_ok(raw_pkt)) {
-                gpio_toggle(LED2);
+                gpio_toggle(LED1);
                 rx_cnt++;
                 //delay_ms(100);
             }
             rf_clr_irq_status(FLD_RF_IRQ_RX);
             rf_start_srx(rf_stimer_get_tick());
-            gpio_toggle(LED2);
         }
     }
             #endif

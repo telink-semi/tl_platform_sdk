@@ -27,8 +27,8 @@
 #include "hal/hal_flash.h"
 #include "flash_mid166085.h" // P25Q32SU(untest)
 #include "flash_mid1640c8.h" // GD25Q32E
-#include "flash_mid16405e.h" // ZB25VQ32E(untest)
-
+#include "flash_mid16405e.h" // ZB25VQ32E
+#include "flash_mid1571cd.h" // TH25Q16U
 /**
  * @brief       This function reads the status of flash.
  * @param[in]   cmd     - the cmd of flash_command_e to read status.

@@ -50,6 +50,13 @@ sdm_pin_config_t sdm_pin_config = {
     .sdm1_p_pin = GPIO_FC_PC2,
     .sdm1_n_pin = GPIO_FC_PC3,
 };
+    #elif defined(MCU_CORE_TL521X)
+    sdm_pin_config_t sdm_pin_config = {
+    .sdm0_p_pin = GPIO_FC_PC7,
+    .sdm0_n_pin = GPIO_FC_PC6,
+    .sdm1_p_pin = GPIO_FC_PC5,
+    .sdm1_n_pin = GPIO_FC_PC4,
+};
     #endif
 
     #if ((AUDIO_MODE == LINE_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == AMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT) || (AUDIO_MODE == DMA_IRQ_TEST))
@@ -127,10 +134,16 @@ void user_init(void)
     audio_set_amic_bias_pin(GPIO_PB4);
             #elif defined(MCU_CORE_TL322X)
     audio_set_amic_bias_pin(GPIO_PA2);
+            #elif defined(MCU_CORE_TL521X)
+    audio_set_amic_bias_pin(GPIO_PB1);
             #endif
         #elif (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT)
     /****setting up the dmic's multiplexed pins****/
+#if defined(MCU_CORE_TL521X)
+    audio_set_stream0_dmic_pin(GPIO_FC_PD3, GPIO_FC_PD2, GPIO_FC_PD1);
+#else
     audio_set_stream0_dmic_pin(GPIO_FC_PA2, GPIO_FC_PA3, GPIO_FC_PA4);
+#endif
         #endif
         #if (AUDIO_MODE == DMA_IRQ_TEST)
     /***enable dma interrupt***/

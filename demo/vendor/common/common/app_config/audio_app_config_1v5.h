@@ -63,7 +63,7 @@ extern "C"
 #define AUDIO_MIX_DEMO     (7)
 #define DMIC_DEMO          (8)
 #define SPDIF_DEMO         (9)
-#define AUDIO_MODE          EQ_DEMO
+#define AUDIO_MODE          AUDIO_MIX_DEMO
 
 #if defined(__cplusplus)
 }

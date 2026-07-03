@@ -219,7 +219,7 @@ void main_loop(void)
 
     if(PM_SLEEP_MODE == PM_SUSPEND_MODE)
     {
-        pm_set_suspend_power_cfg(FLD_PD_ZB_EN, 1);
+        pm_set_suspend_power_cfg(FLD_PD_ZB_EN, 0);
     }
 
     //When entering sleep, keep the input voltage and reference voltage difference must be greater than 30mV,

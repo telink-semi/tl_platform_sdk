@@ -108,7 +108,7 @@ int wz_iir[12][5] = {
     },
 };
 
-int wz_iir_bypass[12][5] = { //only wz_iir_bypass[i][0] = 2097152 i[0-11],other value is 0
+int iir_bypass[12][5] = { //only iir_bypass[i][0] = 2097152 i[0-11],other value is 0
     {
         2097152,
     },
@@ -539,7 +539,7 @@ short wz2_fir[128] = {
 18 ,
 16 ,
 };
-short wz_fir_bypass[128] = { //only wz_fir_bypass[0] = 16384,other value is 0
+short fir_bypass[128] = { //only fir_bypass[0] = 16384,other value is 0
         16384,
 };
 
