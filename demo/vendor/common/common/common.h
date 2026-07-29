@@ -27,7 +27,7 @@
 
 #if !(defined(MCU_CORE_TL752X)||defined(MCU_CORE_TL651X))
 #include "auto_test/dut_cmd.h"
-#include "auto_test/pc_interface.h"
+//#include "auto_test/pc_interface.h"
 #include "calibration.h"
 #include "printf.h"
 #include <string.h>
@@ -128,6 +128,14 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
     #ifndef CLOCK_INIT
         #define CLOCK_INIT        PLL_144M_D25F_72M_HCLK_N22_36M_PCLK_36M_MSPI_48M
     #endif
+#elif defined(MCU_CORE_TL522X)
+void platform_init(unsigned char flash_protect_en);
+    #ifndef PLATFORM_INIT
+        #define PLATFORM_INIT platform_init(1)
+    #endif
+    #ifndef CLOCK_INIT
+        #define CLOCK_INIT
+    #endif
 #elif defined(MCU_CORE_TL323X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);
     #ifndef PLATFORM_INIT
@@ -142,7 +150,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char fl
         #define PLATFORM_INIT platform_init(LDO_AVDD_LDO_DVDD, VBAT_MAX_VALUE_GREATER_THAN_3V6, 0)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT        PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M
+        #define CLOCK_INIT        PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_N22_64M
     #endif
 #elif defined(MCU_CORE_TL521X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en);

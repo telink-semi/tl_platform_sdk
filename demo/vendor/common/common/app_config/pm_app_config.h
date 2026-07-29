@@ -64,9 +64,13 @@ enum
 #define CRC_OK                              1
 #define MDEC_MATCH_VALUE                    0x02
 
+#define QDEC_WAKEUP_PAD_CHAN_A              QDEC_CHN_PB6
+#define QDEC_WAKEUP_PAD_CHAN_B              QDEC_CHN_PB7
+
+
 /* PM_CLOCK_SELECT */
 #define PM_CLK_32K_RC                       00
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL521X)
 #define PM_CLK_32K_XTAL                     01
 #endif
 #define PM_CLOCK_SELECT                     PM_CLK_32K_RC
@@ -116,7 +120,7 @@ enum
 #elif defined(MCU_CORE_TL751X)
 #define WT_WAKEUP                           (1<<7) 
 #define ALL_WAKEUP                          (PAD_WAKEUP | TIMER_WAKEUP | COMPARATOR_WAKEUP | CORE_USB_WAKEUP | CORE_GPIO_WAKEUP | WT_WAKEUP)
-#elif defined(MCU_CORE_TL523X)
+#elif (defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL322X))
 #define CORE_QDEC_WAKEUP                    (1<<5)
 #define ALL_WAKEUP                          (PAD_WAKEUP | TIMER_WAKEUP | COMPARATOR_WAKEUP | CORE_USB_WAKEUP | CORE_GPIO_WAKEUP | CORE_QDEC_WAKEUP)
 #else
@@ -194,14 +198,14 @@ enum
 
 #endif
 
-#define PM_SLEEP_MODE                       DEEP_RET64K_MODE
+#define PM_SLEEP_MODE                       PM_SUSPEND_MODE
 
 
 
 /********************************************************************************************************
  *                                          user don't change                                           * 
  *******************************************************************************************************/
-#if ((PM_MODE & TIMER_WAKEUP) || (!defined(MCU_CORE_TL322X) && PM_CLOCK_SELECT == PM_CLK_32K_XTAL))
+#if (!defined(MCU_CORE_TL521X) && (PM_CLOCK_SELECT == PM_CLK_32K_XTAL))
 #if (defined(MCU_CORE_B91) || defined(MCU_CORE_B92))
 #define PULL_WAKEUP_SRC_PD0                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PD1                 GPIO_PIN_UP_DOWN_FLOAT
@@ -210,7 +214,7 @@ enum
 #define PULL_WAKEUP_SRC_PD2                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PD3                 GPIO_PIN_UP_DOWN_FLOAT
 
-#elif (defined(MCU_CORE_TL321X)) //|| defined(MCU_CORE_TL322X)) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
+#elif (defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)) //|| defined(MCU_CORE_TL521X)
 #define PULL_WAKEUP_SRC_PC2                 GPIO_PIN_UP_DOWN_FLOAT
 #define PULL_WAKEUP_SRC_PC3                 GPIO_PIN_UP_DOWN_FLOAT
 #endif
@@ -227,7 +231,7 @@ enum
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CORE
 #elif (PM_MODE == CORE_GPIO_WAKEUP)
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CORE
-#elif (defined(MCU_CORE_TL523X) && (PM_MODE == CORE_QDEC_WAKEUP))
+#elif ((defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL322X)) && (PM_MODE == CORE_QDEC_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CORE
 #elif (defined(MCU_CORE_B91) && (PM_MODE == MDEC_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_MDEC
@@ -235,7 +239,7 @@ enum
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_CTB
 #elif (defined(MCU_CORE_TL751X) && (PM_MODE == WT_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_WT
-#elif (defined(MCU_CORE_TL323X || defined(MCU_CORE_TL521X)) && (PM_MODE == SHUTDOWN_WAKEUP))
+#elif ((defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)) && (PM_MODE == SHUTDOWN_WAKEUP))
 #define PM_SLEEP_WAKEUP_SRC                 PM_WAKEUP_SHUTDOWN | PM_WAKEUP_PAD
 #elif (PM_MODE == ALL_WAKEUP)
 #if defined(MCU_CORE_B91)

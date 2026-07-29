@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file    pmp.h
+ * @file    pmp_config.h
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2023

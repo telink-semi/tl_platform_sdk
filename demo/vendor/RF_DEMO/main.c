@@ -45,8 +45,6 @@ int main(void)
 #if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X)||(defined(MCU_CORE_TL753X)))
     #if (defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL753X))
     sys_n22_init(0x20080000);
-    #elif(defined(MCU_CORE_TL322X))
-    pm_set_dig_module_power_switch(FLD_PD_ZB_EN,PM_POWER_UP);
     #endif
     rf_n22_dig_init();
     rf_clr_irq_mask(FLD_RF_IRQ_ALL);
@@ -55,7 +53,7 @@ int main(void)
 
     rf_mode_init();
 
-#if (defined(MCU_CORE_TL322X))
+#if (defined(MCU_CORE_TL322X))||(defined(MCU_CORE_TL753X))
 #if RF_HIGH_PER_MODE
     rf_modem_hp_path(1);
 #endif

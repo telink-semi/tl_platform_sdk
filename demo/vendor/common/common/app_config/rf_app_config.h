@@ -79,7 +79,7 @@ extern "C"
 
 #define RF_MODE             RF_BLE_1M
 
-#if defined(MCU_CORE_TL322X)
+#if (defined(MCU_CORE_TL322X))||(defined(MCU_CORE_TL753X))
 #define RF_HIGH_PER_MODE     1
 #endif
 

@@ -23,6 +23,7 @@
  *******************************************************************************************************/
 #include "common.h"
 
+
 #define QDEC_CHA GPIO_PB6
 #define QDEC_CHB GPIO_PB7
 
@@ -49,17 +50,28 @@ void user_init(void)
     gpio_function_en(QDEC_CHB);
     gpio_output_dis(QDEC_CHB);
     gpio_input_en(QDEC_CHB);
+#if defined(MCU_CORE_TL521X)
+    qdec_clk_en(QDEC_MODULE);
+    qdec_set_mode(QDEC_MODULE, COMMON_MODE);
+    qdec_set_pin(QDEC_MODULE, QDEC_CHN_PB6, QDEC_CHN_PB7);
 
+    qdec_set_debouncing(QDEC_MODULE,1); //set debouncing
+#else
     qdec_clk_en();
     qdec_set_mode(DOUBLE_ACCURACY_MODE);
     qdec_set_pin(QDEC_CHN_PB6, QDEC_CHN_PB7);
 
     qdec_set_debouncing(1); //set debouncing
+#endif
 }
 
 void main_loop(void)
 {
+#if defined(MCU_CORE_TL521X)
+    qdec_count = qdec_get_count_value(QDEC_MODULE);
+#else
     qdec_count = qdec_get_count_value();
+#endif
     total_count += qdec_count;
     printf("  \n"); // caution: The first byte will be error
     printf("total_count: %d \t", total_count);

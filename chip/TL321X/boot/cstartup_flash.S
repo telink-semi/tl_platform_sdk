@@ -226,6 +226,7 @@ _RAMCODE_INIT_BEGIN:
     j      _RAMCODE_INIT_BEGIN
 
 #ifndef SKIP_RF_DRV   // BQB_EMI_Demo, RF_Demo, rf_sw_config must be used. 
+    //note:RF initialization uses large stack space; invoke it here upfront to avoid stack overflow crashes.
     //All applications that use RF peripherals must call this function. 
     //If this function is called without using RF peripherals, it will increase the FLASH usage by 4040 bytes.
     //Calling this function takes approximately 7.7 ms.

@@ -82,15 +82,11 @@ unsigned short audio_i2s_192k_config_fpga[5] = {2, 7, 1, 64, 64};  // sampling r
 unsigned short audio_i2s_384k_config[5]      = {4, 14, 1, 64, 64}; // sampling rate = pll1_clk(default 172.032MHz) * (4 / 14) / (2 * 1) / (64)  = 192KHz
 unsigned short audio_i2s_384k_config_fpga[5] = {2, 7, 0, 64, 64};  // sampling rate = pll1_clk(default 86.016MHz) * (2 / 7) / (1 * 1) / (64)  = 192KHz
 
-volatile int AAAAA_DEBUG;
 volatile unsigned long gap0 = 0;
 volatile unsigned long gap1 = 0;
 
 volatile int ANC_PASS = 0;
 volatile int offset = 0;
-
-volatile int AAAAA_DEBUG1;
-volatile int AAAAA_DEBUG2;
 
 
 #define I2S_SEL                                 1//I2S0
@@ -137,8 +133,8 @@ int SaturateSigned(int iDataIn, int iBW)
 
 void user_init(void)
 {
-    clock_pll_audio_init(PLL_AUDIO_CLK_172P032M);
-    audio_init(PLL_AUDIO_CLK_172P032M);  //must configured first.
+    clock_pll_audio_init(PLL1_AUDIO_CLK_172P032M);
+    audio_init(PLL1_AUDIO_CLK_172P032M);  //must configured first.
 
 #if (ANC_MODE == ANC_FF_REF0_MODE)
     unsigned short in_data_rate = 0;

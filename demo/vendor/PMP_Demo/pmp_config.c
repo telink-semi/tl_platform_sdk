@@ -1,7 +1,7 @@
 /********************************************************************************************************
- * @file    pmp.c
+ * @file    pmp_config.c
  *
- * @brief   This is the source file for B91m
+ * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
  * @date    2023
@@ -22,10 +22,6 @@
  *
  *******************************************************************************************************/
 #include "pmp_config.h"
-
-#if (defined(MCU_CORE_B92))
-#include "lib/include/pmp.h"
-#endif
 
 /**
  * @brief The value of the mtval register when the exception is entered.

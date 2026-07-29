@@ -4,9 +4,9 @@
  * @brief   This is the header file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2026
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -32,6 +32,9 @@ extern "C"
 #define PULL_WAKEUP_SRC_PB7 GPIO_PIN_UP_DOWN_FLOAT
 #endif
 
+#if defined(MCU_CORE_TL521X)
+#define QDEC_MODULE QDEC0 // QDEC0 or QDEC1 for tl521x
+#endif
 #include "driver.h"
 
 

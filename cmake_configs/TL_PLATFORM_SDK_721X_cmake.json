@@ -137,7 +137,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "ALG_REG_Demo",
@@ -273,7 +274,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "AUDIO_Demo",
@@ -409,7 +411,150 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
+    },
+    {
+      "name": "BQB_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/TL721X/boot",
+        "chip/TL721X/drivers",
+        "chip/TL721X/link",
+        "common",
+        "demo/vendor/RF_Certification/BQB_Demo",
+        "demo/vendor/RF_Certification/common",
+        "demo/vendor/common/TL721X/calibration",
+        "demo/vendor/common/TL721X/exception.c",
+        "demo/vendor/common/common",
+        "tools/secure_boot_tool/config/TL721X/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
+        "-DGREATER_TX_POWER_EN=1",
+        "-DMCU_CORE_TL721X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL721X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DGREATER_TX_POWER_EN=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
+        "-DMCU_CORE_TL721X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL721X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL721X/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   BQB_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL721X/../../../tools/tl_check_fw_tool/tl_check_fw.sh   BQB_Demo   TL_PLATFORM_SDK_721X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Camera_Demo",
@@ -546,7 +691,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "CHACHA20_POLY1305_Demo",
@@ -682,7 +828,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Codec_Demo",
@@ -818,7 +965,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "COREMARK",
@@ -939,7 +1087,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Debug_Demo",
@@ -1075,7 +1224,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "DHRYSTONE",
@@ -1191,7 +1341,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "DUT_Demo",
@@ -1329,7 +1480,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "EMI_BQB_Demo",
@@ -1467,7 +1619,150 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
+    },
+    {
+      "name": "EMI_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/TL721X/boot",
+        "chip/TL721X/drivers",
+        "chip/TL721X/link",
+        "common",
+        "demo/vendor/RF_Certification/EMI_Demo",
+        "demo/vendor/RF_Certification/common",
+        "demo/vendor/common/TL721X/calibration",
+        "demo/vendor/common/TL721X/exception.c",
+        "demo/vendor/common/common",
+        "tools/secure_boot_tool/config/TL721X/secure_boot_tool_cfg.ini"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DGREATER_TX_POWER_EN=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
+        "-DMCU_CORE_TL721X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL721X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DGREATER_TX_POWER_EN=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
+        "-DMCU_CORE_TL721X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/TL721X/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/TL721X/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL721X/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   EMI_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/TL721X/../../../tools/tl_check_fw_tool/tl_check_fw.sh   EMI_Demo   TL_PLATFORM_SDK_721X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Flash_Demo",
@@ -1603,7 +1898,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "GPIO_Demo",
@@ -1739,7 +2035,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "HASH_Demo",
@@ -1875,7 +2172,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "I2C_Demo",
@@ -2011,7 +2309,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "IR_LEARN_Demo",
@@ -2147,7 +2446,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "LPC_Demo",
@@ -2283,7 +2583,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PEM_Demo",
@@ -2419,7 +2720,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PKE_Demo",
@@ -2555,7 +2857,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PM_Demo",
@@ -2691,7 +2994,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PMP_Demo",
@@ -2827,7 +3131,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PWM_Demo",
@@ -2963,7 +3268,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "QDEC_Demo",
@@ -3099,7 +3405,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "RF_Demo",
@@ -3235,7 +3542,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Secure_Boot_Demo",
@@ -3372,7 +3680,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Sensor_Lcd_Demo",
@@ -3508,7 +3817,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "SKE_Demo",
@@ -3644,7 +3954,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "SPI_Demo",
@@ -3780,7 +4091,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "STIMER_Demo",
@@ -3916,7 +4228,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TIMER_Demo",
@@ -4052,7 +4365,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TRAP_Demo",
@@ -4188,7 +4502,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TRNG_Demo",
@@ -4324,7 +4639,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "UART_Demo",
@@ -4460,7 +4776,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "USB_Demo",
@@ -4596,7 +4913,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     }
   ],
   "toolchainName": "RISC-V Cross GCC",

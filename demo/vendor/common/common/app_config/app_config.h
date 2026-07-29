@@ -190,7 +190,7 @@ extern "C"
 #if defined(MCU_CORE_B91)
 #include "app_config/spi_app_config_1v0.h"
 #endif
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL753X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL521X)
 #include "app_config/spi_app_config_1v1.h"
 #elif defined(MCU_CORE_TL752X)
 #include "app_config/spi_app_config_1v2.h"
@@ -360,6 +360,10 @@ extern "C"
 
 #if defined(CURRENT_BUILD_PM_D25F)
 #include "app_config/pm_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_PM_Test_Demo)
+#include "app_config/pm_test_config.h"
 #endif
 
 #if defined(CURRENT_BUILD_EMI_Demo)

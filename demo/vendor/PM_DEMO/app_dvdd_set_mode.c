@@ -55,6 +55,11 @@ void user_init(void)
     //Upward Voltage
     pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
     PLL_192M_D25F_192M_HCLK_N22_96M_PCLK_96M_MSPI_48M;
+
+    #elif defined(MCU_CORE_TL521X)
+    //Upward Voltage
+    pm_set_dvdd(DIG_VOL_1V1_MODE, 1000);
+    PLL_144M_CCLK_144M_HCLK_72M_PCLK_72M_MSPI_48M;
     #endif    
 
     clock_cal_24m_rc();
@@ -72,11 +77,11 @@ void main_loop(void)
     gpio_set_low_level(LED1);
     delay_ms(500);
 
+    /* both high and low level is available for suspend sleep */
     pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 1000 * SYSTEM_TIMER_TICK_1MS);
 
     gpio_set_high_level(LED1);
-    delay_ms(500);
-
+    
     //(note: enter deep or deep_ret front, must Downward Voltage)
     #if defined(MCU_CORE_TL7518)
     //Downward Voltage
@@ -103,10 +108,17 @@ void main_loop(void)
     //Downward Voltage
     PLL_144M_D25F_72M_HCLK_N22_36M_PCLK_36M_MSPI_48M;
     pm_set_dig_ldo(DIG_VOL_1V_MODE, 1000);
+
+    #elif defined(MCU_CORE_TL521X)
+    //Upward Voltage
+    PLL_144M_CCLK_48M_HCLK_48M_PCLK_48M_MSPI_48M;
+    pm_set_dvdd(DIG_VOL_1V_MODE, 1000);
     #endif
 
+    delay_ms(1500);
     gpio_set_low_level(LED1);
 
+    /* must set core voltage to low level before deep sleep */
     pm_sleep_wakeup(DEEPSLEEP_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 1000 * SYSTEM_TIMER_TICK_1MS);
 }
 
