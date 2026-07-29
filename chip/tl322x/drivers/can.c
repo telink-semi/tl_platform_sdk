@@ -1013,7 +1013,14 @@ void can_set_pn_config(can_chn_e chn, can_pn_config_t* pn_cfg){
     pn_ctrl = (pn_cfg->match_num >1) ? (0x02|pn_cfg->match_src) : (pn_cfg->match_src);
     pn_ctrl = pn_ctrl|(pn_cfg->id_match_mode<<2) | (pn_cfg->data_match_mode<<4)|(pn_cfg->match_num<<8);
     reg_can_ctrl1_pn(chn) = pn_ctrl;
-    reg_can_ctrl2_pn_0(chn) = pn_cfg->timeout_value;
+    if(pn_cfg->timeout_is_en)
+    {
+        reg_can_ctrl2_pn_0(chn) = pn_cfg->timeout_value;
+    }
+    else
+    {
+        reg_can_ctrl2_pn_0(chn) = 0;
+    }
     reg_can_flt_id1(chn) = pn_cfg->id_lower;
     reg_can_flt_id2_idmask(chn) = pn_cfg->id_upper;
     reg_can_flt_dlc_0(chn) = pn_cfg->length_upper;
@@ -1183,7 +1190,7 @@ unsigned char can_read_rx_mb(can_chn_e chn,unsigned char mb_index,can_frame_t* f
  *            0           - Rx Message Buffer is already overflowed and has been read successfully.
  */
 unsigned char canfd_read_rx_mb(can_chn_e chn,unsigned char mb_index,can_fd_frame_t* frame){
-    unsigned char status;
+    unsigned char status = 0xff;
     unsigned int cs_temp;
     unsigned int can_id;
     unsigned char rx_code;

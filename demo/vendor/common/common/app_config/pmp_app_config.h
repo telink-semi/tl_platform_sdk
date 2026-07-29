@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    debug_app_config.h
+ * @file    pmp_app_config.h
  *
  * @brief   This is the header file for Telink RISC-V MCU
  *

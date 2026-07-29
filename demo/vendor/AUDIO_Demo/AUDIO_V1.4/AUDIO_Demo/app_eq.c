@@ -35,11 +35,8 @@
     #define AUDIO_DMA_CHANNEL_RX     DMA1
     #define AUDIO_FIFO_CHANNEL       FIFO0
     #define EQ_ASRC_FS               48000
-    #define PPM                      0
 
-    #define EQ_SINGLE_CH_LENGTH      1024
-
-    #define DMA_EN                   1
+    #define EQ_SINGLE_CH_LENGTH      128
 
 signed int biq[HAC_BIQUAD_CNT][5] =
 {
@@ -54,20 +51,6 @@ signed int biq[HAC_BIQUAD_CNT][5] =
     {84990913, -168967346, 83977982, -534321664, 265891104},
     {82787407, -163199524, 80478398, -516082208, 247856352},
 };
-//
-//signed int biq[HAC_BIQUAD_CNT][5] =
-//{
-//  { 0x100506c0,0xe026e600,0xfd42660,0xe026e600,0xfd92d20},
-//  { 0xf9ab3a0,0xe13d35e0,0xf2b4940,0xe13d35e0,0xec5fce0},
-//  { 0xfe82b30,0xe1d29880,0xe618cb0,0xe1d29880,0xe49b7e0},
-//  { 0x101f6500,0xe2506020,0xdde05a0,0xe2506020,0xdfd6a90},
-//  { 0xf2deb40,0xea241520,0x8d73420,0xea241520,0x8051f60},
-//  { 0xa995730,0xf473f660,0x4a89548,0xf473f660,0xff41ec76},
-//  { 0xc2191c0,0xf6176ef0,0x45b4778,0xf6176ef0,0x7cd93a},
-//  { 0xb7037f0,0xf8f6ba40,0x5676b10,0xf8f6ba40,0xd7a30a},
-//  { 0xd7a30a,0x100506c0,0xe026e600,0xfd42660,0xe026e600},
-//  { 0xfd92d20,0xf9ab3a0,0xe13d35e0,0xf2b4940,0xe13d35e0},
-//};
 
 int audio_buff_input[EQ_SINGLE_CH_LENGTH] =
 {
@@ -110,32 +93,26 @@ int audio_buff_output_check[EQ_SINGLE_CH_LENGTH] =
 };
 
 volatile unsigned short in_data_rate = 0;
+volatile unsigned short rd_cn = 0;
 void user_init(void)
 {
-    gpio_function_en(LED1);
+    gpio_function_en(LED1); //yellow
     gpio_output_en(LED1);
     gpio_input_dis(LED1);
 
-    gpio_function_en(LED2);
+    gpio_function_en(LED2); ///blue
     gpio_output_en(LED2);
     gpio_input_dis(LED2);
 
-    audio_init(PLL_AUDIO_CLK_86P016M); /* must configured first. */
+    clock_pll_audio_init(PLL1_AUDIO_CLK_172P032M);
+    audio_init(PLL1_AUDIO_CLK_172P032M); /* must configured first. */
+
     audio_hac_clk_en(HAC_CHANNEL_SELECT);
 
-    audio_hac_set_input_num(HAC_CHANNEL_SELECT,128);
+    audio_hac_set_input_num(HAC_CHANNEL_SELECT,EQ_SINGLE_CH_LENGTH);
 
     in_data_rate = (43008000 / EQ_ASRC_FS )-1;
     audio_hac_set_in_data_rate(HAC_CHANNEL_SELECT, in_data_rate);  /* 36.864MHz/FS_IN/CH_NUM. */
-
-    ///FOR TEST
-//    for(int i=0;i<96;i++) {
-//      audio_buff_input[i] = sin_48k_stereo_24bit[i];
-//    }
-    audio_hac_set_out_data_addr(HAC_CHANNEL_SELECT,(unsigned int)audio_buff_output);
-    audio_hac_set_in_data_addr(HAC_CHANNEL_SELECT,(unsigned int)audio_buff_input);
-
-//    audio_hac_bypass_eq_asrc(HAC_CHANNEL_SELECT,1);
 
     for (int i = 0; i < HAC_BIQUAD_CNT; i++) {
         audio_hac_update_biquad_coef(HAC_EQ_CHANNEL_SELECT, i, biq[i]);
@@ -150,8 +127,8 @@ void user_init(void)
 
     delay_ms(10);
 
-    audio_hac_set_out_data_addr(HAC_CHANNEL_SELECT,(unsigned int)(&audio_buff_output[128]));
-    audio_hac_set_in_data_addr(HAC_CHANNEL_SELECT,(unsigned int)(&audio_buff_input[128]));
+    audio_hac_set_out_data_addr(HAC_CHANNEL_SELECT,(unsigned int)audio_buff_output);
+    audio_hac_set_in_data_addr(HAC_CHANNEL_SELECT,(unsigned int)audio_buff_input);
 
     audio_hac_input_afifo_clr(HAC_CHANNEL_SELECT);
 
@@ -159,16 +136,17 @@ void user_init(void)
     reg_audio_hac_ahb_master_read_en = 1;
     audio_hac_set_data_src(HAC_CHANNEL_SELECT, HAC_INPUT_DATA_MCU);
 
-//  delay_ms(200);
-//    for(int i=0;i<128;i++) {
-//      if(audio_buff_output[i] != audio_buff_output_check[i])
-//      {
-//          while(1) {
-//              gpio_toggle(LED2);
-//              delay_ms(200);
-//          }
-//      }
-//    }
+    delay_ms(200);
+    for(int i=0;i<EQ_SINGLE_CH_LENGTH;i++) {
+      if(audio_buff_output[i] != audio_buff_output_check[i])
+      {
+          rd_cn = i;
+          while(1) {
+              gpio_toggle(LED2);
+              delay_ms(200);
+          }
+      }
+    }
 
 }
 
@@ -177,7 +155,7 @@ void main_loop(void)
 {
 
     gpio_toggle(LED1);
-    delay_ms(200);
+    delay_ms(1000);
 
 }
 #endif

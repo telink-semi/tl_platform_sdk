@@ -92,6 +92,10 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
     {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
 #elif defined(MCU_CORE_TL321X)
+    //128K
+    {0x1151CD, FLASH_LOCK_LOW_64K_MID1151CD},
+    //256K
+    {0x1271CD, FLASH_LOCK_LOW_128K_MID1271CD},
     //512K
     {0x136085, FLASH_LOCK_LOW_256K_MID136085},
     //1M
@@ -115,15 +119,26 @@ flash_user_defined_list_t flash_init_list[] = {
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     {0x1460c8, FLASH_LOCK_LOW_512K_MID1460C8},
+    {0x1471cd, FLASH_LOCK_LOW_512K_MID1471CD},
     //2M
     {0x156085, FLASH_LOCK_LOW_1M_MID156085},
     {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
+    {0x1571cd, FLASH_LOCK_LOW_1M_MID1571CD},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    {0x1660cd, FLASH_LOCK_LOW_2M_MID1660CD},
 #elif defined(MCU_CORE_W92)
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085}
-
+#elif defined(MCU_CORE_TL521X)
+    //1m
+    {0x1460c8, FLASH_LOCK_LOW_512K_MID1460C8},
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //2M
+    {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    //4M
+    {0x1660cd, FLASH_LOCK_LOW_2M_MID1660CD},
 #else
     {0, 0}
 #endif
@@ -141,7 +156,7 @@ flash_hal_user_handler_t flash_handler = {
     .list      = list_fp,
     .flash_cnt = (sizeof(flash_init_list) / sizeof(flash_user_defined_list_t)),
 };
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92)|| defined(MCU_CORE_TL522X)
 flash_hal_user_handler_t flash_handler[SLAVE_CNT] = {
     {
      .list       = list_fp,
@@ -193,6 +208,8 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, unsigned char flash_protect_en)
 #elif defined(MCU_CORE_TL523X)
 void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e cap, unsigned char flash_protect_en)
+#elif defined(MCU_CORE_TL522X)
+void platform_init(unsigned char flash_protect_en)
 #else
 void platform_init(unsigned char flash_protect_en)
 #endif
@@ -228,6 +245,8 @@ void platform_init(unsigned char flash_protect_en)
     sys_init(power_mode, vbat_v);
 #elif defined(MCU_CORE_TL523X)
     sys_init(power_mode, vbat_v, cap);
+#elif defined(MCU_CORE_TL522X)
+    sys_init();
 #else
     sys_init();
 #endif
@@ -251,7 +270,7 @@ void platform_init(unsigned char flash_protect_en)
 
    #endif
 #if JTAG_MODE
-    #if defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         jtag_set_pin_en();
     #endif
 #endif
@@ -265,7 +284,7 @@ void platform_init(unsigned char flash_protect_en)
     Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
     ===============================================================================
 */
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL523X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL523X)|| defined(MCU_CORE_TL522X)
     pm_update_status_info(1);
 #elif defined(MCU_CORE_TL752X)
     pm_update_status_info(0);
@@ -369,12 +388,13 @@ void platform_init(unsigned char flash_protect_en)
     {
         // No test data
     } else {
-        pm_set_avdd1(PM_AVDD1_VOLTAGE_1V053);                            // test result 1.142 / target 1.15
-        pm_set_avdd2(PM_AVDD2_VOLTAGE_2V083);                            // test result 2.334 / target 2.0
-        pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V800);                            // test result 0.802 / target 0.8
-        pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V756);                            // test result 0.788 / target 0.8
-        // pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V867);                            // test result 0.895 / target 0.9
-        // pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V917);                            // test result 0.898 / target 0.9
+        analog_write_reg8(0xb5, 0x87);
+        pm_set_avdd1(PM_AVDD1_VOLTAGE_1V216);                            // test result 1.186 / target 1.2
+        pm_set_avdd2(PM_AVDD2_VOLTAGE_2V083);                            // test result 2.138 / target 2.05
+        pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V884);                            // test result 0.844 / target 0.85
+        pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V858);                            // test result 0.841 / target 0.85
+        // pm_set_dvdd1(PM_DVDD1_VOLTAGE_1V019);                            // test result 0.957 / target 0.95
+        // pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V992);                            // test result 0.952 / target 0.95
     }
 #endif
     /*
@@ -417,7 +437,7 @@ void platform_init(unsigned char flash_protect_en)
     if (flash_protect_en) {
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL752X)
         unsigned char flash_init_flag = hal_flash_init(&flash_handler);
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
         unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t *)flash_handler);
         #else
         unsigned char flash_init_flag = 0;
@@ -430,7 +450,7 @@ void platform_init(unsigned char flash_protect_en)
 
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)|| defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL752X)
         unsigned char lock_flag = hal_flash_lock();
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
         unsigned char lock_flag = hal_flash_lock_with_device_num(SLAVE0);
         #endif
         if (!(lock_flag == 1)) {

@@ -29,7 +29,7 @@ extern "C"
 {
 #endif
 
-#if defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
 
 /*
  * Attention: PC0 and PC1 are used as amic/line-in input Data IO, IO state must be set float,

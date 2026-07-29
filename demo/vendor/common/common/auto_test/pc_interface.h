@@ -60,7 +60,7 @@
     #define PARA_BASE_ADDR 0x00068004
 #elif defined(MCU_CORE_W92)
     #define PARA_BASE_ADDR 0x00020004 // D25
-#elif defined(MCU_CORE_TL322X)
+#elif defined(MCU_CORE_TL322X)|| defined(MCU_CORE_TL522X)
     #define PARA_BASE_ADDR 0x00000004
 #elif defined(MCU_CORE_TL323X)
     #define PARA_BASE_ADDR 0x00000004

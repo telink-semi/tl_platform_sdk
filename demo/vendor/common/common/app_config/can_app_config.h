@@ -27,10 +27,17 @@
 extern "C" {
 #endif
 
-#define   CAN0_GPIO_TX_PIN             GPIO_FC_PB3
-#define   CAN0_GPIO_RX_PIN             GPIO_FC_PB2
-#define   CAN1_GPIO_TX_PIN             GPIO_FC_PB5
-#define   CAN1_GPIO_RX_PIN             GPIO_FC_PB4
+#if defined(MCU_CORE_TL322X)
+    #define   CAN0_GPIO_TX_PIN             GPIO_FC_PB3
+    #define   CAN0_GPIO_RX_PIN             GPIO_FC_PB2
+    #define   CAN1_GPIO_TX_PIN             GPIO_FC_PB5
+    #define   CAN1_GPIO_RX_PIN             GPIO_FC_PB4
+#elif defined(MCU_CORE_TL521X)
+    #define   CAN0_GPIO_TX_PIN             GPIO_FC_PB6
+    #define   CAN0_GPIO_RX_PIN             GPIO_FC_PB7
+#else
+#endif
+
 #define   PULL_WAKEUP_SRC_PB2   GPIO_PIN_UP_DOWN_FLOAT
 #define   PULL_WAKEUP_SRC_PB3   GPIO_PIN_UP_DOWN_FLOAT
 #define   PULL_WAKEUP_SRC_PB4   GPIO_PIN_UP_DOWN_FLOAT
@@ -44,6 +51,7 @@ extern "C" {
 #define   CAN_PN_MODE                         5
 #define   CAN_TX_MODE                         6
 #define   CAN_TX_FD_MODE                      7
+#define   CAN_LOOPBACK_MODE                   8
 
 #define   CAN_TEST                             CAN_TX_FD_MODE
 

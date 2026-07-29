@@ -148,7 +148,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "ADC_Demo",
@@ -293,7 +294,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "AES_Demo",
@@ -440,7 +442,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "AUDIO_Demo",
@@ -587,7 +590,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Bootloader_Demo",
@@ -735,7 +739,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Charger_Demo",
@@ -880,7 +885,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "D25F_RF_Demo",
@@ -1027,7 +1033,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Debug_Demo",
@@ -1176,7 +1183,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Debug_RAM_Demo",
@@ -1325,7 +1333,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "DMA_Demo",
@@ -1472,7 +1481,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Flash_Demo",
@@ -1619,7 +1629,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "GPIO_Demo",
@@ -1764,7 +1775,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "I2C_Demo",
@@ -1911,7 +1923,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "MULTI_CORE_Demo",
@@ -2058,7 +2071,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_Flash_Demo_BY_MCUA",
@@ -2205,7 +2219,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_RF_Demo",
@@ -2352,7 +2367,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_STimer_Demo",
@@ -2498,7 +2514,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_TRAP_Demo",
@@ -2645,7 +2662,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PM_D25F",
@@ -2791,7 +2809,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PM_N22",
@@ -2937,7 +2956,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "SPI_Demo",
@@ -3086,7 +3106,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "STIMER_Demo",
@@ -3235,7 +3256,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TIMER_Demo",
@@ -3384,7 +3406,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TRAP_Demo",
@@ -3531,7 +3554,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TRNG_Demo",
@@ -3678,7 +3702,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "UART_Demo",
@@ -3825,7 +3850,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "USB0_Demo",
@@ -3983,7 +4009,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     }
   ],
   "toolchainName": "RISC-V Cross GCC",

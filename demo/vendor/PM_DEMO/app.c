@@ -130,7 +130,7 @@ void user_init(void)
                 clock_32k_init(CLK_32K_RC);
                 clock_cal_32k_rc(); //6.68ms
             }
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL521X)
             else if (PM_CLOCK_SELECT == PM_CLK_32K_XTAL)
             {
                 clock_32k_init(CLK_32K_XTAL);
@@ -179,7 +179,7 @@ void user_init(void)
     gpio_set_up_down_res(WAKEUP_CORE_PAD, GPIO_PIN_PULLDOWN_100K);
     #endif
 
-    #if (defined(MCU_CORE_TL523X) && (PM_MODE & CORE_QDEC_WAKEUP))
+    #if ((defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL322X)) && (PM_MODE & CORE_QDEC_WAKEUP))
     gpio_function_en(GPIO_PB6);
     gpio_output_dis(GPIO_PB6);
     gpio_input_en(GPIO_PB6);
@@ -187,13 +187,25 @@ void user_init(void)
     gpio_output_dis(GPIO_PB7);
     gpio_input_en(GPIO_PB7);
 
-    qdec_clk_en();
-    qdec_set_mode(DOUBLE_ACCURACY_MODE);
-    qdec_set_pin(PB6A, PB7B);
-    qdec_set_debouncing(1); //set debouncing
+    #if defined(MCU_CORE_TL521X)
+        qdec_clk_en(QDEC0);
+        qdec_set_mode(QDEC0, DOUBLE_ACCURACY_MODE);
+        qdec_set_pin(QDEC0, QDEC_WAKEUP_PAD_CHAN_A, QDEC_WAKEUP_PAD_CHAN_B);
+        qdec_set_debouncing(QDEC0,1); //set debouncing
+    #else
+        qdec_clk_en();
+        qdec_set_mode(DOUBLE_ACCURACY_MODE);
+        qdec_set_pin(QDEC_WAKEUP_PAD_CHAN_A, QDEC_WAKEUP_PAD_CHAN_B);
+        qdec_set_debouncing(1); //set debouncing
+    #endif
 
-    reg_wakeup_en &= ~FLD_WAKEUP_SRC_USB;       /* disable others core wakeup source */
-    reg_wakeup_en |= FLD_WAKEUP_SRC_QDEC;
+    #if defined(MCU_CORE_TL523X)
+    pm_clr_core_wakeup_mask(FLD_WAKEUP_SRC_USB);  /* disable others core wakeup source */
+    pm_set_core_wakeup_mask(FLD_WAKEUP_SRC_QDEC);
+    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X)
+    pm_set_core_wakeup_mask(FLD_QDEC_RESUME);
+    #endif
+
     #endif
 
     // CTB mode : For internal testing only, this function is not available externally

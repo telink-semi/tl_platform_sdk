@@ -156,13 +156,11 @@ void user_init(void)
             clock_32k_init(CLK_32K_RC);
             clock_cal_32k_rc(); //6.68ms
         }
-        #if !defined(MCU_CORE_TL322X)
         else if (PM_CLOCK_SELECT == PM_CLK_32K_XTAL)
         {
             clock_32k_init(CLK_32K_XTAL);
             clock_kick_32k_xtal(10);
         } //32k xtal not support now
-        #endif
 #endif
     }
 

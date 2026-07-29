@@ -139,7 +139,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "ALG_REG_Demo",
@@ -277,7 +278,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "AUDIO_Demo",
@@ -419,7 +421,150 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
+    },
+    {
+      "name": "BQB_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl322x/boot",
+        "chip/tl322x/drivers",
+        "chip/tl322x/link",
+        "common/bt_debug",
+        "common/sdk_version.c",
+        "common/usb_dbg",
+        "demo/vendor/RF_Certification/BQB_Demo",
+        "demo/vendor/RF_Certification/common",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl322x/calibration",
+        "demo/vendor/common/tl322x/exception.c",
+        "demo/vendor/common/tl322x/exception_n22.c"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
+        "-DMCU_CORE_TL322X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl322x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl322x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
+        "-DMCU_CORE_TL322X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl322x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl322x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl322x/link/D25F/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl322x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver_d25f"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl322x/link/D25F/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl322x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   BQB_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl322x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   BQB_Demo   TL_PLATFORM_SDK_322X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "CAN_Demo",
@@ -557,7 +702,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "D25F_COREMARK",
@@ -672,7 +818,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "D25F_DHRYSTONE",
@@ -777,7 +924,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "D25F_RF_Demo",
@@ -915,7 +1063,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Debug_Demo",
@@ -1053,10 +1202,11 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
-      "name": "EMI_BQB_Demo",
+      "name": "EMI_Demo",
       "path": "./",
       "toolchain": "RISC-V Cross GCC",
       "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
@@ -1067,7 +1217,8 @@
         "common/bt_debug",
         "common/sdk_version.c",
         "common/usb_dbg",
-        "demo/vendor/EMI_BQB_Demo",
+        "demo/vendor/RF_Certification/EMI_Demo",
+        "demo/vendor/RF_Certification/common",
         "demo/vendor/common/common",
         "demo/vendor/common/tl322x/calibration",
         "demo/vendor/common/tl322x/exception.c",
@@ -1104,6 +1255,7 @@
       "asm_compile_options": [
         "-x assembler-with-cpp",
         "-DMCU_STARTUP_FLASH=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
         "-DMCU_CORE_TL322X=1",
         "-mcpu=d25f",
         "-mext-dsp",
@@ -1121,6 +1273,7 @@
       "cpp_compile_options": [],
       "c_compile_options": [
         "-DMCU_STARTUP_FLASH=1",
+        "-DRF_CERTIFICATION_CGF_EN=1",
         "-DMCU_CORE_TL322X=1",
         "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl322x/drivers",
         "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl322x/calibration",
@@ -1173,10 +1326,10 @@
         "driver"
       ],
       "pre_build": [
-        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl322x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   EMI_BQB_Demo"
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl322x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   EMI_Demo"
       ],
       "post_build": [
-        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl322x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   EMI_BQB_Demo   TL_PLATFORM_SDK_322X"
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl322x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   EMI_Demo   TL_PLATFORM_SDK_322X"
       ],
       "print_size": [
         "-t"
@@ -1191,7 +1344,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Flash_Demo",
@@ -1329,7 +1483,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Flash_NVM_Demo",
@@ -1472,7 +1627,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "GPIO_Demo",
@@ -1610,7 +1766,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "HASH_Demo",
@@ -1748,7 +1905,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "I2C_Demo",
@@ -1886,7 +2044,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "IR_LEARN_Demo",
@@ -2024,7 +2183,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Keyscan_Ana_Demo",
@@ -2162,7 +2322,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "Keyscan_Demo",
@@ -2300,7 +2461,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "LIN_Demo",
@@ -2438,7 +2600,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "MULTI_CORE_Demo",
@@ -2576,7 +2739,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_COREMARK",
@@ -2690,7 +2854,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_DHRYSTONE",
@@ -2796,7 +2961,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_NVM_Demo",
@@ -2936,7 +3102,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_RF_Demo",
@@ -3076,7 +3243,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_STimer_Demo",
@@ -3216,7 +3384,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_Test_Demo_Booloader_By_DMA",
@@ -3356,7 +3525,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_Test_Demo_Booloader_By_N22_MCU",
@@ -3496,7 +3666,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_Timer_BB_Demo",
@@ -3636,7 +3807,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "N22_TRAP_Demo",
@@ -3776,7 +3948,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "NVM_Demo",
@@ -3914,7 +4087,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PEM_Demo",
@@ -4052,7 +4226,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PKE_Demo",
@@ -4190,7 +4365,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PM_Demo",
@@ -4328,7 +4504,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PMP_Demo",
@@ -4466,7 +4643,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "PWM_Demo",
@@ -4604,7 +4782,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "RZ_Demo",
@@ -4742,7 +4921,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "SD_ADC_Demo",
@@ -4880,7 +5060,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "SKE_Demo",
@@ -5018,7 +5199,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "SPI_Demo",
@@ -5156,7 +5338,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "STIMER_Demo",
@@ -5294,7 +5477,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TIMER_Demo",
@@ -5432,7 +5616,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TRAP_Demo",
@@ -5570,7 +5755,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "TRNG_Demo",
@@ -5708,7 +5894,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "UART_Demo",
@@ -5846,7 +6033,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     },
     {
       "name": "USB0_Demo",
@@ -5982,7 +6170,8 @@
         "--line-numbers",
         "--wide"
       ],
-      "sub_directories": []
+      "sub_directories": [],
+      "compiler": "gcc"
     }
   ],
   "toolchainName": "RISC-V Cross GCC",

@@ -1,5 +1,5 @@
 /********************************************************************************************************
- * @file    app_pwm.c
+ * @file    app_pwm_0.c
  *
  * @brief   This is the source file for Telink RISC-V MCU
  *

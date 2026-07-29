@@ -50,15 +50,16 @@ void user_init(void)
     gpio_input_dis(LED1);
 #if SPDIF_RX_SAMPLE_44100
     {
-        clock_pll_audio_init(PLL_AUDIO_CLK_169P344M);
-        audio_init(PLL_AUDIO_CLK_169P344M); /* must configured first. */
-        audio_spdif_set_rx_fs(PLL_AUDIO_CLK_169P344M);
+        clock_pll_audio_init(PLL1_AUDIO_CLK_169P344M);
+        audio_init(PLL1_AUDIO_CLK_169P344M); /* must configured first. */
+        audio_spdif_set_rx_fs(PLL1_AUDIO_CLK_169P344M);
         audio_spdif_set_tx_clk(SPDIF_TX_CLK_44P1K);
     }
 #else
-    //clock_pll_audio_init(PLL_AUDIO_CLK_147P456M);
-    audio_init(PLL_AUDIO_CLK_86P016M); /* must configured first. */
-    audio_spdif_set_rx_fs(PLL_AUDIO_CLK_86P016M);
+    clock_pll_audio_init(PLL1_AUDIO_CLK_172P032M);
+    audio_init(PLL1_AUDIO_CLK_172P032M); /* must configured first. */
+
+    audio_spdif_set_rx_fs(PLL1_AUDIO_CLK_172P032M);
     audio_spdif_set_tx_clk(SPDIF_TX_CLK_48K);
 #endif
 

@@ -575,7 +575,7 @@ _attribute_ram_code_sec_noinline_ int myudb_mem_cmd(unsigned char *p, int nbyte)
     //              flash_erase_chip ();
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
                 unsigned int flash_mid = flash_read_mid();
-    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X)
+    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL752X) || defined(MCU_CORE_TL522X)
                 unsigned int flash_mid = flash_read_mid_with_device_num(0);
     #endif
                 flash_mid >>= 16;

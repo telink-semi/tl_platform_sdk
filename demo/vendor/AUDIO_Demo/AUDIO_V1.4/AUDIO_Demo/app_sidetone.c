@@ -68,7 +68,8 @@ void user_init(void)
     gpio_output_en(LED1);
     gpio_input_dis(LED1);
 
-    audio_init(PLL_AUDIO_CLK_86P016M); /* must configured first. */
+    clock_pll_audio_init(PLL1_AUDIO_CLK_172P032M);
+    audio_init(PLL1_AUDIO_CLK_172P032M); /* must configured first. */
     i2s_pin_config_t i2s_pin_config = {
         .bclk_pin       = GPIO_FC_PG2,
         .adc_lr_clk_pin = GPIO_FC_PG3,

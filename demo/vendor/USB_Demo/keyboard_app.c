@@ -71,12 +71,22 @@ void user_init(void)
     gpio_function_en(KEY1);
     gpio_input_en(KEY1);
     gpio_output_dis(KEY1);
+
+#if defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL521X)
+    gpio_set_up_down_res(KEY1, GPIO_PIN_PULLUP_20K);
+#else
     gpio_set_up_down_res(KEY1, GPIO_PIN_PULLUP_10K);
+#endif
 
     gpio_function_en(KEY2);
     gpio_input_en(KEY2);
     gpio_output_dis(KEY2);
+
+#if defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL521X)
+    gpio_set_up_down_res(KEY2, GPIO_PIN_PULLUP_20K);
+#else
     gpio_set_up_down_res(KEY2, GPIO_PIN_PULLUP_10K);
+#endif
 
     gpio_function_en(KEY3);
     gpio_input_dis(KEY3);

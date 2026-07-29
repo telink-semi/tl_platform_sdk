@@ -53,8 +53,8 @@
     /**********************************************************************************************************************
 *                                         SPI module selection                                                       *
 *********************************************************************************************************************/
-/* Note:TL321X/TL323X only supports gspi!!!*/
-    #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
+/* Note:TL321X/TL323X/TL521X only supports gspi!!!*/
+    #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X) && !defined(MCU_CORE_TL521X)
         #define LSPI_MODULE 0
     #endif
     #define GSPI_MODULE 1
@@ -69,7 +69,11 @@
         #define GSPI4_MODULE 5
     #endif
 
-    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
+    #if defined(MCU_CORE_TL521X)
+        #define GSPI1_MODULE 2
+    #endif
+
+    #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
         #define SPI_MODULE_SEL GSPI_MODULE
     #else
         #define SPI_MODULE_SEL GSPI_MODULE
@@ -266,6 +270,29 @@ gspi_pin_config_t gspi4_pin_config = {
         #endif
     #endif
 
+    #if defined(MCU_CORE_TL521X)
+        #if (SPI_MODULE_SEL == GSPI_MODULE)
+gspi_pin_config_t gspi_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PE7,
+    .spi_clk_pin      = GPIO_FC_PE2,
+    .spi_mosi_io0_pin = GPIO_FC_PE6,
+    .spi_miso_io1_pin = GPIO_FC_PE5,
+    .spi_io2_pin      = GPIO_FC_PE4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PE3, //quad  mode is required, otherwise it is NONE_PIN.
+};
+        #endif
+        #if (SPI_MODULE_SEL == GSPI1_MODULE)
+gspi_pin_config_t gspi1_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PE7,
+    .spi_clk_pin      = GPIO_FC_PE2,
+    .spi_mosi_io0_pin = GPIO_FC_PE6,
+    .spi_miso_io1_pin = GPIO_FC_PE5,
+    .spi_io2_pin      = GPIO_FC_PE4, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PE3, //quad  mode is required, otherwise it is NONE_PIN.
+};
+        #endif
+    #endif
+
     #if (SPI_SLAVE_NUM == MULTI_SLAVE)
         #if defined(MCU_CORE_B92)
             //39 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
@@ -277,7 +304,7 @@ gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, GPIO_FC_PA4, GP
             #define SLAVE_CSN_PIN_NUM 4
 gspi_pin_def_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GSPI_CSN0_PA0_PIN, GSPI_CSN0_PB7_PIN, GSPI_CSN0_PG1_PIN, GSPI_CSN0_PJ2_PIN};
         #endif
-        #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL323X)
+        #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
             // MCU_CORE_TL321X have 37 GPIOs,MCU_CORE_TL322X have 60 GPIOs and MCU_CORE_TL721X have 42 GPIOs can be multiplexed as PIN for GSPI_CSN0_IO function.Only a part of IO is listed here.
             #define SLAVE_CSN_PIN_NUM 8
 gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {
@@ -297,7 +324,7 @@ gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {
 gpio_func_pin_e slave_csn_pin[SLAVE_CSN_PIN_NUM] = {GPIO_FC_PA0, GPIO_FC_PA1, GPIO_FC_PA2, GPIO_FC_PA3, GPIO_FC_PA4, GPIO_FC_PA5, GPIO_FC_PA6, GPIO_FC_PB0};
         #endif
     #endif
-    #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
+    #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X) && !defined(MCU_CORE_TL521X)
         #if (SPI_MODULE_SEL == LSPI_MODULE)
             #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X)
 lspi_pin_config_t lspi_pin_config = {
@@ -487,7 +514,12 @@ void user_init(void)
     gspi4_set_pin(&gspi4_pin_config);
             #endif
         #endif
-        #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
+        #if defined(MCU_CORE_TL521X)
+            #if (SPI_MODULE_SEL == GSPI1_MODULE)
+    gspi1_set_pin(&gspi1_pin_config);
+            #endif
+        #endif
+        #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X) && !defined(MCU_CORE_TL521X)
             #if (SPI_MODULE_SEL == LSPI_MODULE)
     lspi_set_pin(&lspi_pin_config);
             #endif
@@ -605,7 +637,7 @@ void main_loop(void)
     spi_tx_buff.data[0]++;
         #endif
         #if (SPI_SLAVE_NUM == MULTI_SLAVE)
-            #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)
+            #if defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
                 #if (SPI_MODULE_SEL == TL321X_GSPI_MODULE)
     for (unsigned char i = 0; i < SLAVE_CSN_PIN_NUM - 1; i++) {
         if (gspi_pin_config.spi_csn_pin == slave_csn_pin[i]) {
@@ -666,7 +698,7 @@ void user_init(void)
         #if (SPI_PROTOCOL == B91M_SLAVE_PROTOCOL)
             #if defined(MCU_CORE_TL751X)
     spi_slave_init(SPI_MODULE_SEL, SRC_CLK_XTAL_48M, SPI_MODE0);
-            #elif (MCU_CORE_TL753X)
+            #elif defined(MCU_CORE_TL753X)
     spi_slave_init(SPI_MODULE_SEL, SRC_CLK_XTAL_24M, SPI_MODE0);
             #else
     spi_slave_init(SPI_MODULE_SEL, SPI_MODE0);
@@ -724,7 +756,13 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GSPI4);
                 #endif
             #endif
-            #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
+            #if defined(MCU_CORE_TL521X)
+                #if (SPI_MODULE_SEL == GSPI1_MODULE)
+    gspi1_set_pin(&gspi1_pin_config);
+    plic_interrupt_enable(IRQ_GSPI1);
+                #endif
+            #endif
+            #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X) && !defined(MCU_CORE_TL521X)
                 #if (SPI_MODULE_SEL == LSPI_MODULE)
     lspi_set_pin(&lspi_pin_config);
     plic_interrupt_enable(IRQ_LSPI);
@@ -844,7 +882,12 @@ _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
                 _attribute_ram_code_sec_noinline_ void gspi4_irq_handler(void)
                     #endif
                 #endif
-                #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X)
+                #if defined(MCU_CORE_TL521X)
+                    #if (SPI_MODULE_SEL == GSPI1_MODULE)
+    _attribute_ram_code_sec_noinline_ void gspi1_irq_handler(void)
+                    #endif
+                #endif
+                #if !defined(MCU_CORE_TL323X) && !defined(MCU_CORE_TL321X) && !defined(MCU_CORE_TL521X)
                     #if (SPI_MODULE_SEL == LSPI_MODULE)
                     _attribute_ram_code_sec_noinline_ void lspi_irq_handler(void)
                     #endif
@@ -903,6 +946,11 @@ PLIC_ISR_REGISTER(gspi3_irq_handler, IRQ_GSPI3)
                     #endif
                     #if (SPI_MODULE_SEL == GSPI4_MODULE)
 PLIC_ISR_REGISTER(gspi4_irq_handler, IRQ_GSPI4)
+                    #endif
+                #endif
+                #if defined(MCU_CORE_TL521X)
+                    #if (SPI_MODULE_SEL == GSPI1_MODULE)
+PLIC_ISR_REGISTER(gspi1_irq_handler, IRQ_GSPI1)
                     #endif
                 #endif
                 #if defined(MCU_CORE_TL322X)
