@@ -1,8 +1,10 @@
 # tl_platform_sdk README
 
+* [中文](./README_CN.md)
+
 ## SDK Introduction
 
-tl_platform_sdk is a software development kit for Telink IoT and audio chips, providing unified abstract interfaces and underlying software support for chips. It serves as the core software layer connecting hardware platforms with upper-layer application SDKs.
+tl_platform_sdk is a software development kit for Telink IoT and audio chips, designed for RISC-V series chips. It provides unified abstract interfaces and underlying software support for chips. It serves as the core software layer connecting hardware platforms with upper-layer application SDKs.
 
 The SDK mainly includes the following software components:
 
@@ -13,7 +15,7 @@ The SDK mainly includes the following software components:
 
 **Supported Chip Series**
 
-Supported chip series, as well as the modules, EVBs, development platforms, toolchain versions, and SDK download methods currently supported by the SDK, refer to the [ Release Notes](https://github.com/telink-semi/tl_platform_sdk/tree/master/doc/release_note).
+tl_platform_sdk applies to chips based on the RISC-V architecture. For the supported chip series, as well as the modules, EVBs, development platforms, toolchain versions, and SDK download methods currently supported by the SDK, refer to the [ Release Notes](https://github.com/telink-semi/tl_platform_sdk/tree/master/doc/release_note).
 
 ## Related Documents and Resources
 
