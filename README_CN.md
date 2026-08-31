@@ -1,8 +1,10 @@
 # tl_platform_sdk README
 
+* [English](./README.md)
+
 ## SDK介绍
 
-tl_platform_sdk 是面向泰凌微电子无线物联网（IoT）和音频芯片平台的软件开发基础套件，为芯片提供统一的抽象接口和底层软件支持，是连接硬件平台与上层应用 SDK 的核心软件层。
+tl_platform_sdk 是面向泰凌微电子无线物联网（IoT）和音频芯片平台的软件开发基础套件，适用于RISC-V系列芯片。该套件为芯片提供统一的抽象接口和底层软件支持，是连接硬件平台与上层应用 SDK 的核心软件层。
 
 SDK 主要包括以下软件组件：
 
@@ -13,7 +15,7 @@ SDK 主要包括以下软件组件：
 
 **支持信息**
 
-支持的芯片系列，以及当前 SDK 支持的模组、开发板（EVB）、开发平台、工具链版本和 SDK 下载方式，请参考[ Release Notes](https://gitee.com/telink-semi/tl_platform_sdk/tree/master/doc/release_note)。
+tl_platform_sdk 适用于基于 RISC-V 架构的芯片。支持的芯片系列，以及当前 SDK 支持的模组、开发板（EVB）、开发平台、工具链版本和 SDK 下载方式，请参考[ Release Notes](https://gitee.com/telink-semi/tl_platform_sdk/tree/master/doc/release_note)。
 
 ## 相关文档和资源
 
