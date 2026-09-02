@@ -29,6 +29,10 @@ extern "C"
 #endif
 #include "driver.h"
 
+#define MANUAL_MODE           1 // For internal testing, users need not care
+#define AUTO_MODE             2
+#define DHRYSTONE_TEST_MODE   MANUAL_MODE
+
 #if defined(MCU_CORE_TL321X)
     #define MANUAL_TEST_MODE           1 // For internal testing, users need not care
     #define AUTO_TEST_MODE             2 // For internal testing, users need not care

@@ -27,14 +27,14 @@
 
 __attribute__((unused)) static uint8_t hts221_iic_read(uint8_t reg_addr, uint8_t *pData, uint32_t Size)
 {
-    i2c_master_write(HTS221_I2C_ADDR, &reg_addr, 1);
-    return i2c_master_read(HTS221_I2C_ADDR, pData, Size) ? 0 : ENXIO;
+    _i2c_master_write(HTS221_I2C_ADDR, &reg_addr, 1);
+    return _i2c_master_read(HTS221_I2C_ADDR, pData, Size) ? 0 : ENXIO;
 }
 
 __attribute__((unused)) static uint8_t hts221_iic_write(uint8_t reg_addr, uint8_t pData)
 {
     uint8_t write_buff[2] = {reg_addr, pData};
-    return i2c_master_write(HTS221_I2C_ADDR, write_buff, 2) ? 0 : ENXIO;
+    return _i2c_master_write(HTS221_I2C_ADDR, write_buff, 2) ? 0 : ENXIO;
 }
 
 uint8_t H0_rH_x2;

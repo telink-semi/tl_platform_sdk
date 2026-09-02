@@ -1131,6 +1131,16 @@ void audio_codec0_set_input_filter_mode(audio_codec0_input_select_e input, audio
 }
 
 /**
+ * @brief      This function serves to set codec1 dmic filter mode.
+ * @param[in]  fmode - filter mode.
+ * @return     none
+ */
+void audio_codec1_set_input_filter_mode(audio_filter_mode_e fmode)
+{
+    reg_audio_codec1_cr_adca_freq_sel = (reg_audio_codec1_cr_adca_freq_sel & (~FLD_CODEC1_ADCA_FLT_CFG_SEL)) | MASK_VAL(FLD_CODEC1_ADCA_FLT_CFG_SEL, fmode);
+}
+
+/**
  * @brief      This function serves to set codec0 input sample rate.
  * @param[in]  input - input channel.
  * @param[in]  fs    - input sample rate.

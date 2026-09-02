@@ -98,7 +98,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_GPIO_SRC0 + BIT_LOW_BIT(IRQ_PIN & 0x00ff));
             #endif
 
-        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
+        #elif defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL522X)
             //if disable irq0~7 interrupt,choose disable irq0~7 mask , use interface gpio_clr_irq_mask() instead of gpio_irq_dis(),if use gpio_irq0_dis,may generate a false interrupt.
             #if (GPIO_MODE == GPIO_IRQ_NUM0)
     /****GPIO_IRQ0  POL_RISING   Trigger an interrupt by externally flooding the IRQ_PIN pin with a rising edge. **/
@@ -253,7 +253,7 @@ PLIC_ISR_REGISTER(gpio_src7_irq_handler, IRQ_GPIO_SRC7)
         #endif
     #endif
 
-    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X)
+    #if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL523X) || defined(MCU_CORE_TL522X)
 volatile unsigned int gpio_irq0_cnt = 0;
 volatile unsigned int gpio_irq7_cnt = 0;
         #if (GPIO_MODE == GPIO_IRQ_NUM0)

@@ -21,7 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#include "../../usb_default.h"
+#if !defined(MCU_CORE_TL322X)
+#include "../usb_default.h"
 #include "common.h"
 #include "usbaud.h"
 
@@ -329,3 +330,4 @@ void usb_audio_irq_data_process(void)
         usbhw_clr_eps_irq(FLD_USB_EDP6_IRQ);
     }
 }
+#endif // !defined(MCU_CORE_TL322X)

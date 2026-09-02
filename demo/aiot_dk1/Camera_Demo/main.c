@@ -21,7 +21,9 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#if !defined(MCU_CORE_TL322X)
 #include "gpio_default.h"
+#endif
 #include "common.h"
 
 

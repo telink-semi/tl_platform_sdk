@@ -51,7 +51,7 @@ void user_init(void)
     /* stimer init. */
     clic_interrupt_enable(IRQ_SYSTIMER);
     stimer_set_irq_capture_n22(stimer_get_tick() + (SYSTEM_TIMER_TICK_1MS));
-    #if defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL522X)
     stimer_set_irq_mask_n22(FLD_SYSTEM_IRQ_MASK_N22);
     #elif defined(MCU_CORE_TL751X)
     stimer_set_irq_mask(FLD_SYSTEM_IRQ_N22);
@@ -76,7 +76,7 @@ void main_loop(void)
 
 _attribute_ram_code_sec_ void stimer_irq_handler(void)
 {
-    #if defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL522X)
     if (stimer_get_irq_status_n22()) {
         stimer_clr_irq_status_n22();
     #elif defined(MCU_CORE_TL751X)

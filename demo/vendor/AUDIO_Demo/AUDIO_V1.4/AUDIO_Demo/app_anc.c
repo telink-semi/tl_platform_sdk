@@ -1107,8 +1107,8 @@ void user_init(void)
     delay_us(1);
     audio_anc_update_droop_coef(ANC0, resample_droop_coff);
     delay_us(1);
-    audio_resample_rst_dis();
-    audio_resample_rst_en();
+    audio_resample_rst_dis(ANC_CHANNEL_SELECT);
+    audio_resample_rst_en(ANC_CHANNEL_SELECT);
     audio_anc_set_resample_in_out_fs(ANC0, ANC_RESAMPLE_OTHERS_DECISION_FS, ANC_RESAMPLE_IN_FS_48K, ANC_RESAMPLE_OUT_FS_192K);
 #if (RZ_DATA_SHIFT == 0)
     audio_anc_set_rz_gain(ANC_CHANNEL_SELECT, ANC0_RZ0, 0x4000, 0x0e);     //rz0
@@ -1557,10 +1557,10 @@ void user_init(void)
 
  //   int count = 1000;
     //anc config
-    audio_anc_rst_dis();
-    audio_resample_rst_dis();
-    audio_anc_rst_en();
-    audio_resample_rst_en();
+    audio_anc_rst_dis(ANC_CHANNEL_SELECT);
+    audio_resample_rst_dis(ANC_CHANNEL_SELECT);
+    audio_anc_rst_en(ANC_CHANNEL_SELECT);
+    audio_resample_rst_en(ANC_CHANNEL_SELECT);
     audio_anc_clk_dis(ANC_CHANNEL_SELECT);
     audio_anc_set_mode(ANC_CHANNEL_SELECT, ANC_MODE_HB_REF0WZ384ERR0CZ256);
     audio_anc_clk_en(ANC_CHANNEL_SELECT);
@@ -4038,7 +4038,7 @@ gap0 = t2 - t1;
     audio_anc_update_hb3_coef(ANC0, resample_hb3_coff);
     audio_anc_update_droop_coef(ANC0, resample_droop_coff);
     audio_anc_set_resample_in_out_fs(ANC0, ANC_RESAMPLE_OTHERS_DECISION_FS, ANC_RESAMPLE_IN_FS_48K, ANC_RESAMPLE_OUT_FS_192K);
-    audio_resample_rst_dis();
+    audio_resample_rst_dis(ANC_CHANNEL_SELECT);
     reg_audio_anc_config1(ANC_CHANNEL_SELECT) |= FLD_ANC_SOFT_RST_EN;
 
 
@@ -4062,7 +4062,7 @@ gap0 = t2 - t1;
     audio_matrix_set_rx_fifo_route(FIFO1, FIFO_RX_ROUTE_ANC0, FIFO_RX_ANC_SPEAKER_OUT);
     audio_rx_dma_chain_init(FIFO1, DMA1, (unsigned short *)AUDIO_BUFFER_OUT0, sizeof(AUDIO_BUFFER_OUT0));
     dma_llp_dis(DMA1); /* dis llp */
-    audio_resample_rst_en();
+    audio_resample_rst_en(ANC_CHANNEL_SELECT);
     reg_audio_anc_config1(ANC_CHANNEL_SELECT) &= ~FLD_ANC_SOFT_RST_EN;
     audio_rx_dma_en(DMA0);
     audio_rx_dma_en(DMA1);
@@ -4372,7 +4372,7 @@ REG_ADDR16(REG_AUDIO_ANC_BASE(ANC_CHANNEL_SELECT) + 0x9e) = BIT(ANC0_WCZ0) | BIT
     audio_anc_update_hb3_coef(ANC0, resample_hb3_coff);
     audio_anc_update_droop_coef(ANC0, resample_droop_coff);
     audio_anc_set_resample_in_out_fs(ANC0, ANC_RESAMPLE_OTHERS_DECISION_FS, ANC_RESAMPLE_IN_FS_48K, ANC_RESAMPLE_OUT_FS_192K);
-    audio_resample_rst_dis();
+    audio_resample_rst_dis(ANC_CHANNEL_SELECT);
     reg_audio_anc_config1(ANC_CHANNEL_SELECT) |= FLD_ANC_SOFT_RST_EN;
 
     audio_matrix_set_anc_err_route(ANC_CHANNEL_SELECT, ANC0_ERR0, ANC_ERR_ROUTE_EQ0, ANC_ERR_DATA_FORMAT_INVALID);
@@ -4385,7 +4385,7 @@ REG_ADDR16(REG_AUDIO_ANC_BASE(ANC_CHANNEL_SELECT) + 0x9e) = BIT(ANC0_WCZ0) | BIT
     audio_rx_dma_chain_init(FIFO3, DMA3, (unsigned short *)AUDIO_BUFFER_POST_PRE, sizeof(AUDIO_BUFFER_POST_PRE));
     dma_llp_dis(DMA3); /* dis llp */
     while(reg_audio_anc_config1(ANC_CHANNEL_SELECT) & FLD_ANC_FSM_STATUS){};
-    audio_resample_rst_en();
+    audio_resample_rst_en(ANC_CHANNEL_SELECT);
     while(reg_audio_anc_config1(ANC_CHANNEL_SELECT) & FLD_ANC_FSM_STATUS){};
     reg_audio_anc_config1(ANC_CHANNEL_SELECT) &= ~FLD_ANC_SOFT_RST_EN;
     BM_SET(reg_audio_clk_en_0, FLD_CLK_ACLK_EN);

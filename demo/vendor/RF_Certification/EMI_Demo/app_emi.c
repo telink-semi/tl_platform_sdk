@@ -40,6 +40,8 @@
     #define SRAM_BASE_ADDR 0x10000000
 #elif defined(MCU_CORE_TL753X)
     #define SRAM_BASE_ADDR 0x10000000
+#elif defined(MCU_CORE_TL522X)
+    #define SRAM_BASE_ADDR 0x10000000
 #else
     #define SRAM_BASE_ADDR 0x00000000
 #endif
@@ -273,7 +275,7 @@ void emi_tx_burst(void)
     }
 
     rf_emi_stop();
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)||defined(MCU_CORE_TL522X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
 #else
@@ -322,7 +324,7 @@ void emi_tx_continue(void)
         }
     }
     rf_emi_stop();
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)||defined(MCU_CORE_TL522X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
 #else
@@ -443,7 +445,7 @@ void emicarrieronly(void)
         }
     }
     rf_emi_stop();
-#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)
+#if defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)||defined(MCU_CORE_TL522X)
     rf_dma_reset();
     rf_clr_dig_logic_state();
 #else
@@ -621,7 +623,7 @@ void user_init(void)
 
     CLOCK_INIT;
 
-#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X)||(defined(MCU_CORE_TL753X)))
+#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X)||(defined(MCU_CORE_TL753X))||(defined(MCU_CORE_TL522X)))
     //TL751X and tl322x chip rf module power-up method and digital module power-up method need to call the following interface realization
     #if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL753X))
     sys_n22_init(0x20080000);
@@ -646,7 +648,7 @@ void user_init(void)
 #if defined(MCU_CORE_TL751X)
         usbhw_init();
 #endif
-#if defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)
+#if defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)||defined(MCU_CORE_TL753X)||defined(MCU_CORE_TL522X)
 
 #else
         usb_set_pin(1);

@@ -21,10 +21,11 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#if !defined(MCU_CORE_TL322X)
 #include "driver.h"
 
 #include "common.h"
-#include "../../usb_default.h"
+#include "../usb_default.h"
 
 #define MODULE_USB_ENABLE 1
 
@@ -1020,3 +1021,5 @@ PLIC_ISR_REGISTER(usb_250us_or_sof_irq_handler, IRQ_USB_250US_OR_SOF)
 #endif
 
 #endif
+
+#endif // !defined(MCU_CORE_TL322X)
