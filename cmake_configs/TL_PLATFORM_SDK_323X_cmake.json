@@ -18,8 +18,7 @@
         "demo/vendor/ALG_REG_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -158,8 +157,7 @@
         "demo/vendor/RF_Certification/common",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -301,8 +299,7 @@
         "demo/vendor/Debug_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -441,8 +438,7 @@
         "demo/vendor/RF_Certification/common",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -584,8 +580,7 @@
         "demo/vendor/Flash_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -723,8 +718,7 @@
         "demo/vendor/GPIO_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -862,8 +856,7 @@
         "demo/vendor/HASH_Demo/HASH_Demo_Telink_2025Q1-v1.2.3-a/HASH_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1001,8 +994,7 @@
         "demo/vendor/I2C_Demo/I2C_V1.1",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1140,8 +1132,7 @@
         "demo/vendor/PEM_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1279,8 +1270,7 @@
         "demo/vendor/PKE_Demo/PKE_Demo_Telink_2025Q1-v1.2.3-a/PKE_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1418,8 +1408,7 @@
         "demo/vendor/PM_DEMO",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1557,8 +1546,7 @@
         "demo/vendor/PMP_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1696,8 +1684,7 @@
         "demo/vendor/PWM_DEMO",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1835,8 +1822,7 @@
         "demo/vendor/RF_DEMO",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -1974,8 +1960,7 @@
         "demo/vendor/SD_ADC_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2113,8 +2098,7 @@
         "demo/vendor/Debug_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2253,8 +2237,7 @@
         "demo/vendor/SKE_Demo/SKE_Demo_Telink_2025Q1-v1.2.3-a/SKE_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2391,8 +2374,7 @@
         "demo/vendor/SPI_Demo/SPI_V1.1/SPI_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2530,8 +2512,7 @@
         "demo/vendor/STimer_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2669,8 +2650,7 @@
         "demo/vendor/Timer_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2808,8 +2788,7 @@
         "demo/vendor/TRAP_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -2947,8 +2926,7 @@
         "demo/vendor/TRNG_Demo",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
@@ -3086,8 +3064,7 @@
         "demo/vendor/UART_DEMO/UART_V1.0",
         "demo/vendor/common/common",
         "demo/vendor/common/tl323x/calibration",
-        "demo/vendor/common/tl323x/exception.c",
-        "tools/secure_boot_tool/config/tl323x/secure_boot_tool_cfg.ini"
+        "demo/vendor/common/tl323x/exception.c"
       ],
       "global_options": [
         "-mcmodel=medium",
