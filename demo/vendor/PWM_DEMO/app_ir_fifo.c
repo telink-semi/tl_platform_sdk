@@ -39,7 +39,7 @@
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB5
         #define PWM_FUNC PWM0
-    #elif defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB3
         #define PWM_FUNC PWM0
@@ -51,7 +51,7 @@
 
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     if(pwm_get_irq_status(FLD_PWM0_IR_FIFO_IRQ )){
 #else
     if(pwm_get_irq_status(PWM0_ID, FLD_PWM0_IR_FIFO_IRQ)){
@@ -60,7 +60,7 @@ _attribute_ram_code_sec_ void pwm_irq_handler(void)
         pwm_set_pwm0_ir_fifo_cfg_data(PWM_PULSE_NUM1, 1, 1);
 
         pwm_set_pwm0_ir_fifo_cfg_data(PWM_PULSE_NUM2, 0, 1);
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
         pwm_clr_irq_status(FLD_PWM0_IR_FIFO_IRQ);
 #else
         pwm_clr_irq_status(PWM0_ID, FLD_PWM0_IR_FIFO_IRQ);
@@ -104,7 +104,7 @@ void user_init(void)
     pwm_set_pwm0_ir_fifo_cfg_data(PWM_PULSE_NUM2, 0, 1);
 
 
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     pwm_clr_irq_status(FLD_PWM0_IR_FIFO_IRQ );
 #else
     pwm_clr_irq_status(PWM0_ID, FLD_PWM0_IR_FIFO_IRQ);
@@ -112,7 +112,7 @@ void user_init(void)
 
     pwm_set_pwm0_ir_fifo_irq_trig_level(1);
 
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     pwm_set_irq_mask(FLD_PWM0_IR_FIFO_IRQ );
 #else
     pwm_set_irq_mask(PWM0_ID, FLD_PWM0_IR_FIFO_IRQ);

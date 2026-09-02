@@ -4,9 +4,9 @@
  * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2026
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.

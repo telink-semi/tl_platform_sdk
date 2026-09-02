@@ -89,7 +89,7 @@ void user_init(void)
     audio_matrix_set_dac_route(codec_output_config.output_dst, DAC_ROUTE_FIFO, DAC_FIFO_MONO_24BIT_FIFO0 + DAC_FIFO_CHANNEL);
     audio_tx_dma_chain_init(DAC_FIFO_CHANNEL, DAC_DMA_CHANNEL, (unsigned short *)AUDIO_BUFFER, sizeof(AUDIO_BUFFER));
 
-    audio_codec_dac_clck_en(codec_output_config.output_dst);
+    audio_codec_dac_clk_en(codec_output_config.output_dst);
     audio_codec_output_init(&codec_output_config);
     audio_codec_dac_en(codec_output_config.output_dst);
 
@@ -127,7 +127,7 @@ void user_init(void)
     audio_tx_dma_chain_init(DAC_FIFO_CHANNEL, DAC_DMA_CHANNEL, (unsigned short *)AUDIO_BUFFER, sizeof(AUDIO_BUFFER));
 
 
-    audio_codec_dac_clck_en(codec_output_config.output_dst);
+    audio_codec_dac_clk_en(codec_output_config.output_dst);
     audio_codec_output_init(&codec_output_config);
     audio_codec_dac_en(codec_output_config.output_dst);
 

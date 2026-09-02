@@ -42,7 +42,7 @@ int main(void)
 #else
     PLATFORM_INIT;
     CLOCK_INIT;
-#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X)||(defined(MCU_CORE_TL753X)))
+#if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X)||(defined(MCU_CORE_TL753X))||(defined(MCU_CORE_TL522X)))
     #if (defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL753X))
     sys_n22_init(0x20080000);
     #endif

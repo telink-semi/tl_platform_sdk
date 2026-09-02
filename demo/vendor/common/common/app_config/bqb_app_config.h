@@ -55,7 +55,7 @@ extern "C"
 #elif defined(MCU_CORE_TL322X)
     #define BQB_TX_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL521X)
-    #define BQB_TX_POWER RF_POWER_P7p91dBm
+    #define BQB_TX_POWER RF_POWER_P8p00dBm
 #elif defined(MCU_CORE_TL753X)
     #define BQB_TX_POWER RF_POWER_P10p00dBm
 #else

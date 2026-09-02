@@ -39,7 +39,7 @@
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB5
         #define PWM_FUNC PWM0
-    #elif defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB3
         #define PWM_FUNC PWM0
@@ -83,7 +83,7 @@ volatile unsigned char index3 = 0;
     #if (SET_PWM_DMA_MODE == PWM_IR_FIFO_DMA)
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     if(pwm_get_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ )){
         pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ );
 #else
@@ -151,7 +151,7 @@ void user_init(void)
 
     pwm_set_dma_buf(DMA_CHN, (unsigned int)IR_DMA_Buff, 6);
 
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     pwm_set_irq_mask(FLD_PWM0_IR_DMA_FIFO_IRQ );
     pwm_clr_irq_status(FLD_PWM0_IR_DMA_FIFO_IRQ);
 #else

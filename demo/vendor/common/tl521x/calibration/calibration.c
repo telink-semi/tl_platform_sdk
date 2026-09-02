@@ -23,6 +23,80 @@
  *******************************************************************************************************/
 #include "calibration.h"
 
+extern drv_api_status_e efuse_calib_sd_adc_vref(unsigned char calib_single_gpio_flag, unsigned char calib_vbat_flag, unsigned char calib_diff_gpio_flag);
+
+/**
+ * @brief      This function serves to set the calibration value of the the adc vref with valid range.
+ * @param[in]  gain       - the gain value (valid range: [8000, 12000]).
+ * @param[in]  offset     - the offset value (valid range: [-1000, 1000]).
+ * @param[in]  calib_func - the calibration function to be called if values are valid.
+ * @return     0 - calibration value set successfully, -1 - calibration value is invalid.
+ */
+int user_set_sd_adc_calib_value(unsigned short gain, signed short offset, void (*calib_func)(unsigned short, signed short))
+{
+    /**
+     * The legal range of gain for both gpio and vbat in efuse is [8000,12000],
+     * and the legal range of offset for both gpio and vbat is [-1000,1000].
+     */
+    if ((gain >= 8000) && (gain <= 12000) && (offset >= -1000) && (offset <= 1000)) {
+        (*calib_func)(gain, offset);
+        return 0;
+    }
+    return -1;
+}
+
+/**
+ * @brief      This function serves to calibrate the sd adc vref from flash or efuse.
+ *             If flash address is 0, calibrate all groups from efuse directly.
+ *             Otherwise, read calibration values from flash first; for any group
+ *             whose flash values are invalid, fall back to efuse values.
+ * @param[in]  flash_addr - flash address of calibration values, or 0 to use efuse only.
+ * @return     none.
+ */
+void user_calib_adc_vref(unsigned int flash_addr)
+{
+    /* 3 groups to calibrate: single-gpio / vbat / diff-gpio. */
+    unsigned char need_efuse_single_gpio = 0;
+    unsigned char need_efuse_vbat        = 0;
+    unsigned char need_efuse_diff_gpio   = 0;
+
+    if (flash_addr == 0) {
+        /* No valid flash address: calibrate all 3 groups from efuse. */
+        efuse_calib_sd_adc_vref(1, 1, 1);
+        return;
+    }
+
+    /*
+     * Flash layout (12 bytes = 3 groups x 4 bytes), each group stores:
+     *   [gain: unsigned short][offset: signed short]
+     *   [0..3]  single-gpio group
+     *   [4..7]  vbat group
+     *   [8..11] diff-gpio group
+     */
+    unsigned char flash_calib[12] = {0};
+    flash_read_page(flash_addr, sizeof(flash_calib), flash_calib);
+
+    /*
+     * Apply each group's flash value only when it is within the legal range
+     * (user_set_sd_adc_calib_value returns 0). Otherwise mark that group so
+     * it can be recovered from efuse later.
+     */
+    if (user_set_sd_adc_calib_value(*(unsigned short *)(flash_calib + 0), *(signed short *)(flash_calib + 2), sd_adc_set_single_gpio_calib_vref) != 0) {
+        need_efuse_single_gpio = 1;
+    }
+    if (user_set_sd_adc_calib_value(*(unsigned short *)(flash_calib + 4), *(signed short *)(flash_calib + 6), sd_adc_set_vbat_calib_vref) != 0) {
+        need_efuse_vbat = 1;
+    }
+    if (user_set_sd_adc_calib_value(*(unsigned short *)(flash_calib + 8), *(signed short *)(flash_calib + 10), sd_adc_set_diff_gpio_calib_vref) != 0) {
+        need_efuse_diff_gpio = 1;
+    }
+
+    /* Only fall back to efuse for the groups whose flash values were invalid. */
+    if (need_efuse_single_gpio || need_efuse_vbat || need_efuse_diff_gpio) {
+        efuse_calib_sd_adc_vref(need_efuse_single_gpio, need_efuse_vbat, need_efuse_diff_gpio);
+    }
+}
+
 /**
  * @brief      This function serves to update rf frequency offset.
  * @param[in]  addr - the frequency offset value address of flash.
@@ -56,7 +130,7 @@ void calibration_func(void)
     unsigned char flash_mid_sure = 0;
     unsigned int  ieee_flash_pos = 0, cap_value_addr = 0;
     unsigned char ieee_addr[8];
-
+    unsigned int adc_value_addr = 0;
     /******check for flash mid********/
     flash_mid_sure = flash_read_mid_uid_with_check((unsigned int *)flash_mid, flash_uid);
 
@@ -66,30 +140,37 @@ void calibration_func(void)
         case FLASH_SIZE_64K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_64K;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_64K;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_64K;
             break;
         case FLASH_SIZE_128K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_128K;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_128K;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_128K;
             break;
         case FLASH_SIZE_512K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_512K;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_512K;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_512K;
             break;
         case FLASH_SIZE_1M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_1M;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_1M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_1M;
             break;
         case FLASH_SIZE_2M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_2M;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_2M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_2M;
             break;
         case FLASH_SIZE_4M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_4M;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_4M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_4M;
             break;
         case FLASH_SIZE_16M:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_16M;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_16M;
+            adc_value_addr = FLASH_ADC_CALI_VALUE_ADDR_16M;
             break;
         default:
             break;
@@ -100,10 +181,11 @@ void calibration_func(void)
         if (ieee_flash_pos) {
             user_get_ieee_addr(ieee_flash_pos, ieee_addr);
         }
-
     } else {
         user_get_ieee_addr(0, ieee_addr);
     }
+    /*adc calibration*/
+    user_calib_adc_vref(adc_value_addr);
 }
 
 /**

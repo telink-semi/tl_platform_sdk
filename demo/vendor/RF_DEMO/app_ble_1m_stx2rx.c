@@ -28,7 +28,7 @@
 unsigned char rx_packet[128 * 4] __attribute__((aligned(4)));
 unsigned char ble_tx_packet[48] __attribute__((aligned(4))) = {3, 0, 0, 0, 0, 10, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xc, 0xf};
 
-
+    #define ASYM_PHY_ENABLE 0  //chip support:TL521X/TL522X
     #define TX_FIRST        1
     #define RX_FIRST        2
     #define RF_STRX_MODE    RX_FIRST
@@ -184,6 +184,10 @@ void user_init(void)
     rf_set_irq_mask(FLD_RF_IRQ_TX | FLD_RF_IRQ_RX | FLD_RF_IRQ_RX_TIMEOUT);
         #endif
 
+    #if (ASYM_PHY_ENABLE)
+    rf_phy_switch_asymmetric(ASYM_1M_TO_2M,1);
+    #endif
+
     #elif (RF_STRX_MODE == RX_FIRST)
     core_interrupt_enable();
         #if defined(MCU_CORE_TL751X_N22)
@@ -199,6 +203,12 @@ void user_init(void)
         #else
     rf_set_irq_mask(FLD_RF_IRQ_TX | FLD_RF_IRQ_RX | FLD_RF_IRQ_FIRST_TIMEOUT);
         #endif
+
+    #if (ASYM_PHY_ENABLE)
+    rf_set_ble_2M_mode();
+    rf_phy_switch_asymmetric(ASYM_2M_TO_1M,1);
+    #endif
+
     #endif
 }
 

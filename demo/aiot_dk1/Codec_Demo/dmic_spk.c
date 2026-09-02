@@ -22,8 +22,11 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-
-#if defined(MCU_CORE_TL721X)
+#define SDM_P_PIN        PIN19//GPIO_PA0
+#define SDM_N_PIN        PIN20//GPIO_PA1
+#define DMIC_CLK1_PIN    PIN32//GPIO_PB4
+#define DMIC_CLK2_PIN    PIN21//GPIO_PA2
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X)
 #if (AUDIO_MODE == DMIC_INPUT_TO_BUF_TO_LINEOUT)
 #include "audio_common.h"
 #define AUDIO_BUFF_SIZE 4096 * 2 /* In order to support codec data fade-in process, define enough buff */
@@ -33,8 +36,8 @@
 signed short AUDIO_BUFF[AUDIO_BUFF_SIZE >> 1] __attribute__((aligned(4)));
 
 sdm_pin_config_t sdm_pin_config = {
-    .sdm0_p_pin = GPIO_FC_PA0, //Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
-    .sdm0_n_pin = GPIO_FC_PA1,
+    .sdm0_p_pin = (gpio_func_pin_e)SDM_P_PIN, //Both the SDM and printf print functions use the PA0 pin. If the SDM function is used, modify the pin used for DEBUG_INFO_TX_PIN in printf.h.
+    .sdm0_n_pin = (gpio_func_pin_e)SDM_N_PIN,
     // .sdm1_p_pin = GPIO_FC_PF4,
     // .sdm1_n_pin = GPIO_FC_PF5,
 };
@@ -76,7 +79,7 @@ void user_init(void)
     audio_init();
 
     /****setting up the dmic's multiplexed pins****/
-    audio_set_stream0_dmic_pin(GPIO_FC_PB4, GPIO_FC_PA2, GPIO_NONE_PIN);
+    audio_set_stream0_dmic_pin((gpio_func_pin_e)DMIC_CLK1_PIN, (gpio_func_pin_e)DMIC_CLK2_PIN, GPIO_NONE_PIN);
 
     /****stream0 line in/amic/dmic init****/
     audio_codec_stream0_input_init(&audio_codec_stream0_input);

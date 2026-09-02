@@ -4,9 +4,9 @@
  * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2026
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@
         #define GSPI1_MODULE 2
         #define HSPI_MODULE  3
     #endif
-    #if defined(MCU_CORE_TL322X)
+    #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
         #define GSPI1_MODULE 2
         #define GSPI2_MODULE 3
         #define GSPI3_MODULE 4
@@ -270,6 +270,60 @@ gspi_pin_config_t gspi4_pin_config = {
         #endif
     #endif
 
+#if defined(MCU_CORE_TL522X)
+    #if (SPI_MODULE_SEL == GSPI_MODULE)
+    gspi_pin_config_t gspi_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PA1,
+    .spi_clk_pin      = GPIO_FC_PA2,
+    .spi_mosi_io0_pin = GPIO_FC_PA3,
+    .spi_miso_io1_pin = GPIO_FC_PA4,
+//    .spi_io2_pin      = GPIO_FC_PC1, //quad  mode is required, otherwise it is NONE_PIN.
+//    .spi_io3_pin      = GPIO_FC_PC2,
+    };
+    #endif
+       #if (SPI_MODULE_SEL == GSPI1_MODULE)
+    gspi_pin_config_t gspi1_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PA1,
+    .spi_clk_pin      = GPIO_FC_PA2,
+    .spi_mosi_io0_pin = GPIO_FC_PA3,
+    .spi_miso_io1_pin = GPIO_FC_PA4,
+    .spi_io2_pin      = GPIO_FC_PC1, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PC2,
+};
+       #endif
+       #if (SPI_MODULE_SEL == GSPI2_MODULE)
+    gspi_pin_config_t gspi2_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PA0,
+    .spi_clk_pin      = GPIO_FC_PA1,
+    .spi_mosi_io0_pin = GPIO_FC_PA2,
+    .spi_miso_io1_pin = GPIO_FC_PC0,
+    .spi_io2_pin      = GPIO_FC_PC1, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PC2,
+};
+       #endif
+       #if (SPI_MODULE_SEL == GSPI3_MODULE)
+    gspi_pin_config_t gspi3_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PA0,
+    .spi_clk_pin      = GPIO_FC_PA1,
+    .spi_mosi_io0_pin = GPIO_FC_PA2,
+    .spi_miso_io1_pin = GPIO_FC_PC0,
+    .spi_io2_pin      = GPIO_FC_PC1, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PC2,//quad  mode is required, otherwise it is NONE_PIN.
+};
+       #endif
+       #if (SPI_MODULE_SEL == GSPI4_MODULE)
+    gspi_pin_config_t gspi4_pin_config = {
+    .spi_csn_pin      = GPIO_FC_PA0,
+    .spi_clk_pin      = GPIO_FC_PA1,
+    .spi_mosi_io0_pin = GPIO_FC_PA2,
+    .spi_miso_io1_pin = GPIO_FC_PC0,
+    .spi_io2_pin      = GPIO_FC_PC1, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = GPIO_FC_PC2, //quad  mode is required, otherwise it is NONE_PIN.
+};
+       #endif
+   #endif
+
+
     #if defined(MCU_CORE_TL521X)
         #if (SPI_MODULE_SEL == GSPI_MODULE)
 gspi_pin_config_t gspi_pin_config = {
@@ -411,7 +465,7 @@ volatile unsigned char spi_b91m_slave_io_mode;
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
     .spi_io_mode   = SPI_SINGLE_MODE, /*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
     .spi_dummy_cnt = 32,              //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
-                #if defined(MCU_CORE_TL322X)
+                #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
     .spi_dummy_hold = 0,
                 #endif
     .spi_cmd_en      = 1,
@@ -424,7 +478,7 @@ spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
 spi_wr_rd_config_t spi_b91m_slave_protocol_config = {
     .spi_io_mode   = SPI_SINGLE_MODE, /*IO mode set to SPI_3_LINE_MODE when SPI_3LINE_SLAVE.*/
     .spi_dummy_cnt = 0,               //B92 supports up to 32 clk cycle dummy, and TL751X,TL7518,TL721X,TL321X,tl322x supports up to 256 clk cycle dummy.
-                #if defined(MCU_CORE_TL322X)
+                #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
     .spi_dummy_hold = 0,
                 #endif
     .spi_cmd_en      = 0,
@@ -500,7 +554,7 @@ void user_init(void)
     hspi_set_pin(&hspi_pin_config);
             #endif
         #endif
-        #if defined(MCU_CORE_TL322X)
+        #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
             #if (SPI_MODULE_SEL == GSPI1_MODULE)
     gspi1_set_pin(&gspi1_pin_config);
             #endif
@@ -738,7 +792,7 @@ void user_init(void)
     plic_interrupt_enable(IRQ_HSPI);
                 #endif
             #endif
-            #if defined(MCU_CORE_TL322X)
+            #if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
                 #if (SPI_MODULE_SEL == GSPI1_MODULE)
     gspi1_set_pin(&gspi1_pin_config);
     plic_interrupt_enable(IRQ_GSPI1);
@@ -868,7 +922,7 @@ _attribute_ram_code_sec_noinline_ void gspi_irq_handler(void)
     _attribute_ram_code_sec_noinline_ void hspi_irq_handler(void)
                     #endif
                 #endif
-                #if defined(MCU_CORE_TL322X)
+                #if defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL522X)
                     #if (SPI_MODULE_SEL == GSPI1_MODULE)
     _attribute_ram_code_sec_noinline_ void gspi1_irq_handler(void)
                     #endif
@@ -934,7 +988,7 @@ PLIC_ISR_REGISTER(gspi1_irq_handler, IRQ_GSPI1)
 PLIC_ISR_REGISTER(hspi_irq_handler, IRQ_HSPI)
                     #endif
                 #endif
-                #if defined(MCU_CORE_TL322X)
+                #if defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL522X)
                     #if (SPI_MODULE_SEL == GSPI1_MODULE)
 PLIC_ISR_REGISTER(gspi1_irq_handler, IRQ_GSPI1)
                     #endif
@@ -953,7 +1007,7 @@ PLIC_ISR_REGISTER(gspi4_irq_handler, IRQ_GSPI4)
 PLIC_ISR_REGISTER(gspi1_irq_handler, IRQ_GSPI1)
                     #endif
                 #endif
-                #if defined(MCU_CORE_TL322X)
+                #if defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL522X)
                     #if (SPI_MODULE_SEL == LSPI_MODULE)
 PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
                     #endif

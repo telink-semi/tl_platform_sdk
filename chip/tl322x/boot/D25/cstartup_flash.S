@@ -60,10 +60,17 @@
 #define  SRAM_SIZE     SRAM_384K
 
 #if(SRAM_SIZE  ==   SRAM_384K)
+#ifdef AIOT_DK1
+    .equ __D25F_IRAM_SIZE,   2 //64KB
+    .equ __D25F_DRAM_SIZE,   6 //192KB
+    .equ __N22_IRAM_SIZE,    2 //64KB
+    .equ __N22_DRAM_SIZE,    2 //64KB
+#else
     .equ __D25F_IRAM_SIZE,   2 //64KB
     .equ __D25F_DRAM_SIZE,   3 //96KB
     .equ __N22_IRAM_SIZE,    5 //160KB
     .equ __N22_DRAM_SIZE,    2 //64KB
+#endif
 #elif(SRAM_SIZE  ==   SRAM_256K)
     .equ __D25F_IRAM_SIZE,   3 //96KB
     .equ __D25F_DRAM_SIZE,   3 //96KB

@@ -891,7 +891,8 @@ typedef enum
     FLD_RF_IRQ_SYNC            = BIT(19),
     FLD_RF_IRQ_HEADER          = BIT(20),
     FLD_RF_IRQ_TX_EN_DONE      = BIT(21),
-    FLD_RF_IRQ_ALL             = 0XFFFFFF,
+
+    FLD_RF_IRQ_ALL             = 0X3FFFFF,
 } rf_irq_e;
 
 #define reg_rf_ll_pid_l REG_ADDR8(REG_BB_LL_BASE_ADDR + 0x22)
@@ -974,7 +975,7 @@ enum
 };
 
 #define   CLEAR_ALL_RFIRQ_STATUS        do{reg_rf_irq_status = 0xffff; \
-                                            reg_rf_ll_irq_list_h = 0xff;}while(0)//Read operation cleanup
+                                            reg_rf_ll_irq_list_h = 0x3f;}while(0)//Read operation cleanup
 
 #define reg_rf_ll_tx_en_ctrl4 REG_ADDR8(REG_BB_LL_BASE_ADDR + 0x4f)
 

@@ -51,35 +51,16 @@ extern "C"
 #define LGRAYBLUE  0XA651
 #define LBBLUE     0X2B12
 
-#if defined(MCU_CORE_TL721X)
-#define LCD_ST7789_DC GPIO_PE5
-#elif defined(MCU_CORE_TL321X)
-#define LCD_ST7789_DC GPIO_PE6
-#endif
+
 #define LCD_ST7789_DC_0 gpio_set_low_level(LCD_ST7789_DC)
 #define LCD_ST7789_DC_1 gpio_set_high_level(LCD_ST7789_DC)
 
-#if defined(MCU_CORE_TL721X)
-#define LCD_ST7789_CN GPIO_PD3
-#elif defined(MCU_CORE_TL321X)
-#define LCD_ST7789_CN GPIO_PB5
-#endif
 #define LCD_ST7789_CN_0 gpio_set_low_level(LCD_ST7789_CN)
 #define LCD_ST7789_CN_1 gpio_set_high_level(LCD_ST7789_CN)
 
-#if defined(MCU_CORE_TL721X)
-#define LCD_ST7789_RTS GPIO_PE4
-#elif defined(MCU_CORE_TL321X)
-#define LCD_ST7789_RTS GPIO_PE7
-#endif
 #define LCD_ST7789_RTS_0 gpio_set_low_level(LCD_ST7789_RTS)
 #define LCD_ST7789_RTS_1 gpio_set_high_level(LCD_ST7789_RTS)
 
-#if defined(MCU_CORE_TL721X)
-#define LCD_ST7789_BL GPIO_PE3
-#elif defined(MCU_CORE_TL321X)
-#define LCD_ST7789_BL GPIO_PE2
-#endif
 #define LCD_ST7789_BL_0   gpio_set_low_level(LCD_ST7789_BL)
 #define LCD_ST7789_BL_1   gpio_set_high_level(LCD_ST7789_BL)
 
@@ -88,23 +69,23 @@ extern "C"
 #define LCD_ST7789_HEIGHT 320
 #define LCD_ST7789_WIDTH  240
 
-    typedef struct
-    {
-        uint16_t WIDTH;
-        uint16_t HEIGHT;
-        uint32_t SCAN_DIR;
-    } LCD_ST7789_ATTRIBUTES;
+typedef struct
+{
+    uint16_t WIDTH;
+    uint16_t HEIGHT;
+    uint32_t SCAN_DIR;
+} LCD_ST7789_ATTRIBUTES;
 
-    extern LCD_ST7789_ATTRIBUTES LCD_ST7789_ST;
+extern LCD_ST7789_ATTRIBUTES LCD_ST7789_ST;
 
-    extern uint16_t POINT_COLOR;
-    extern uint16_t BACK_COLOR;
-    void            LCD_Init(void);
-    void            LCD_Fill(uint16_t color);
-    void            LCD_2IN_DrawPaint(uint16_t x, uint16_t y, uint16_t Color);
-    void            LCD_ClearWindow(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t color);
+extern uint16_t POINT_COLOR;
+extern uint16_t BACK_COLOR;
+void            LCD_Init(void);
+void            LCD_Fill(uint16_t color);
+void            LCD_2IN_DrawPaint(uint16_t x, uint16_t y, uint16_t Color);
+void            LCD_ClearWindow(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t color);
 
-    void LCD_ShowString(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t size, uint8_t *p);
+void LCD_ShowString(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t size, uint8_t *p);
 
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

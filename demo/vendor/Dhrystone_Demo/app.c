@@ -26,6 +26,8 @@
 #define CURRENT_PER_MHZ_TEST 0
 #if !defined(MCU_CORE_TL321X) || (GPIO_TEST_MODE == MANUAL_TEST_MODE)
 
+#if (DHRYSTONE_TEST_MODE == MANUAL_MODE)
+
 void user_init(void)
 {
     #if defined(MCU_CORE_TL321X) && (CURRENT_PER_MHZ_TEST)
@@ -155,7 +157,9 @@ void user_init(void)
     }
 
     #else
+#if !(defined(MCU_CORE_TL7518_N22) || defined(MCU_CORE_TL751X_N22) || defined(MCU_CORE_TL753X_N22) || defined(MCU_CORE_TL322X_N22))
     CLOCK_INIT;
+#endif
     printf("\r\n\r\n Drystone Benchmark %d Starts ...", 1);
     dhry_main();
     #endif
@@ -174,4 +178,5 @@ void main_loop(void)
     gpio_toggle(LED2);
 }
 
+#endif
 #endif

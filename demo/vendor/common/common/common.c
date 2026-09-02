@@ -95,6 +95,7 @@ flash_user_defined_list_t flash_init_list[] = {
     //128K
     {0x1151CD, FLASH_LOCK_LOW_64K_MID1151CD},
     //256K
+    {0x124585, FLASH_LOCK_LOW_128K_MID124585},
     {0x1271CD, FLASH_LOCK_LOW_128K_MID1271CD},
     //512K
     {0x136085, FLASH_LOCK_LOW_256K_MID136085},
@@ -115,6 +116,15 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x1560c8, FLASH_LOCK_LOW_1M_MID1560C8},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+#elif defined(MCU_CORE_TL522X)
+    //1M
+    {0x146085, FLASH_LOCK_LOW_512K_MID146085},
+    //2M
+    {0x156085, FLASH_LOCK_LOW_1M_MID156085},
+    //4M
+    {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    //8M
+    {0x176085, FLASH_LOCK_LOW_4M_MID176085},
 #elif defined(MCU_CORE_TL323X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
@@ -253,7 +263,7 @@ void platform_init(unsigned char flash_protect_en)
 
 
 #if (!defined(DUT_TEST))
-   #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
+   #if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL521X)
     /**
         ===============================================================================
         To prevent leakage, all GPIOs are set to High-impedance and also enable the pull-down resistor except the MSPI pins and SWS.
@@ -284,7 +294,7 @@ void platform_init(unsigned char flash_protect_en)
     Otherwise, the next judgment may be inaccurate because the corresponding value is not configured.
     ===============================================================================
 */
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL523X)|| defined(MCU_CORE_TL522X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL523X)|| defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL753X)
     pm_update_status_info(1);
 #elif defined(MCU_CORE_TL752X)
     pm_update_status_info(0);
@@ -346,7 +356,7 @@ void platform_init(unsigned char flash_protect_en)
     user_read_flash_value_calib();
 #elif defined(MCU_CORE_B92)
     calibration_func(gpio_v);
-#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL752X)
+#elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL752X) || defined(MCU_CORE_TL521X)
     calibration_func();
 #endif
 
@@ -388,11 +398,13 @@ void platform_init(unsigned char flash_protect_en)
     {
         // No test data
     } else {
+#if A0_VERSION
         analog_write_reg8(0xb5, 0x87);
         pm_set_avdd1(PM_AVDD1_VOLTAGE_1V216);                            // test result 1.186 / target 1.2
         pm_set_avdd2(PM_AVDD2_VOLTAGE_2V083);                            // test result 2.138 / target 2.05
         pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V884);                            // test result 0.844 / target 0.85
         pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V858);                            // test result 0.841 / target 0.85
+#endif
         // pm_set_dvdd1(PM_DVDD1_VOLTAGE_1V019);                            // test result 0.957 / target 0.95
         // pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V992);                            // test result 0.952 / target 0.95
     }

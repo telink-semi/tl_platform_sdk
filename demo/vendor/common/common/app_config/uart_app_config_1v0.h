@@ -197,7 +197,7 @@ extern "C"
     #define UART2_RX_PIN  GPIO_FC_PC5
     #define UART2_CTS_PIN GPIO_FC_PC6
     #define UART2_RTS_PIN GPIO_FC_PC7
-#elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
+#elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     #define UART0_RTX_PIN GPIO_FC_PC5
     #define UART0_TX_PIN  GPIO_FC_PC4
     #define UART0_RX_PIN  GPIO_FC_PC5

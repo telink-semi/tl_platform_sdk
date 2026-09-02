@@ -68,7 +68,7 @@ void user_init(void)
 #endif
 
     sd_adc_power_on(SD_ADC_SAMPLE_MODE);
-#if defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     delay_us(200);//must delay 200us for the ADC to stabilize
 #endif
     sd_adc_sample_start();
@@ -184,7 +184,7 @@ signed int sd_adc_get_result(sd_adc_result_type_e result_type)
         {
             sd_adc_result = sd_adc_calculate_voltage(code_average, result_type);
 #if(defined(MCU_CORE_TL323X))
-            if (sd_adc_div_switch_adjust_rescale(sd_adc_result, result_type, &sd_adc_gpio_cfg.gpio_div))
+            if (sd_adc_div_switch_adjust_rescale(sd_adc_result, result_type, sd_adc_gpio_cfg.input_n, &sd_adc_gpio_cfg.gpio_div))
             {
 #if(SAMPLE_MODE == DMA_INTERRUPT_MODE)
                 sd_adc_rx_done_flag = 0; /* Reset flag for new range data */

@@ -23,14 +23,6 @@
  *******************************************************************************************************/
 #include "common.h"
 #include <printf.h>
-/**************************notices******************************************
- * ********timer_bb clock use N22 clock(HCLK1) ******************/
-
-/**
- * N22_CLK frequency is managed by D25F, D25F default configuration of  N22_CLK is 48M Hz,
- * if D25F changes its configuration, you need to change it here as well.
- */
-#define N22_CLK_MHZ 48
 
 volatile unsigned int t0;
 
@@ -51,11 +43,18 @@ void user_init(void)
     core_interrupt_enable();
 
     timer_bb_set_init_tick(TIMER_BB0, 0);
-    timer_bb_set_cap_tick(TIMER_BB0, 50 * N22_CLK_MHZ * 1000);
     timer_bb_set_init_tick(TIMER_BB1, 0);
-    timer_bb_set_cap_tick(TIMER_BB1, 50 * N22_CLK_MHZ * 1000);
     timer_bb_set_init_tick(TIMER_BB2, 0);
-    timer_bb_set_cap_tick(TIMER_BB2, 50 * N22_CLK_MHZ * 1000);
+    
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
+    timer_bb_set_cap_tick(TIMER_BB0, 50 * sys_clk.hclk_n22 * 1000);
+    timer_bb_set_cap_tick(TIMER_BB1, 50 * sys_clk.hclk_n22 * 1000);
+    timer_bb_set_cap_tick(TIMER_BB2, 50 * sys_clk.hclk_n22 * 1000);
+#elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL753X)
+    timer_bb_set_cap_tick(TIMER_BB0, (unsigned int)(50 * sys_clk.n22_clk * 1000));
+    timer_bb_set_cap_tick(TIMER_BB1, (unsigned int)(50 * sys_clk.n22_clk * 1000));
+    timer_bb_set_cap_tick(TIMER_BB2, (unsigned int)(50 * sys_clk.n22_clk * 1000));
+#endif
 
     timer_bb_set_mode(TIMER_BB0, TIMER_BB_MODE_SYSCLK);
     timer_bb_set_mode(TIMER_BB1, TIMER_BB_MODE_SYSCLK);

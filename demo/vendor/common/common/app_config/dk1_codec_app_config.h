@@ -29,21 +29,10 @@ extern "C"
 #endif
 #include "driver.h"
 #include "common.h"
-
 #include "audio.h"
+#include "mlxxxxx_pin_map_config.h"
 
-#if defined(MCU_CORE_TL721X)
-
-#define LEDTEST1                     GPIO_PE1
-#define LEDTEST2                     GPIO_PE2
-
-#define DMIC_INPUT_TO_BUF_TO_LINEOUT 1 //dmic_in->buff->SDM out
-#define I2S_TO_EXT_CODEC_USB         2 //I2S input->buff->I2S out for  external codec. See AUDIO_I2S_TO_EXT_MODE to choose codec type
-#define I2S_TO_EXT_CODEC_MIC_SPK     3 //I2S input->buff->I2S out for  external codec. See AUDIO_I2S_TO_EXT_MODE to choose codec type
-
-#define AUDIO_MODE                   I2S_TO_EXT_CODEC_USB
-
-#elif defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL321X)
 
 #define LEDTEST1                 GPIO_PE5
 #define LEDTEST2                 GPIO_PE4
@@ -52,6 +41,18 @@ extern "C"
 #define I2S_TO_EXT_CODEC_MIC_SPK 3 //I2S input->buff->I2S out for  external codec
 
 #define AUDIO_MODE               I2S_TO_EXT_CODEC_USB
+
+#else
+// #define LEDTEST1                     GPIO_PE1
+// #define LEDTEST2                     GPIO_PE2
+#define LEDTEST1                     PIN17
+#define LEDTEST2                     PIN16
+
+#define DMIC_INPUT_TO_BUF_TO_LINEOUT 1 //dmic_in->buff->SDM out
+#define I2S_TO_EXT_CODEC_USB         2 //I2S input->buff->I2S out for  external codec. See AUDIO_I2S_TO_EXT_MODE to choose codec type
+#define I2S_TO_EXT_CODEC_MIC_SPK     3 //I2S input->buff->I2S out for  external codec. See AUDIO_I2S_TO_EXT_MODE to choose codec type
+
+#define AUDIO_MODE                   I2S_TO_EXT_CODEC_USB
 #endif
 
 /* Choose different external codec type */
@@ -63,7 +64,6 @@ typedef unsigned int sa_adc_t;
 typedef unsigned int sa_dac_t;
 
 void app_usb_handle_set_intf(int intf, int alt);
-void usb_data_reset_handler(void);
 
 #if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X)
 /**
@@ -132,6 +132,32 @@ void usb_data_reset_handler(void);
 #define CHIP_VER_A0 0
 #define CHIP_VER_A1 1
 #define CHIP_VER    CHIP_VER_A1
+
+
+#if defined(MCU_CORE_TL322X)
+#define I2C_CHN                                            I2C0
+#define _i2c_set_pin(sda, scl)                             i2c_set_pin(I2C_CHN, sda, scl)
+#define _i2c_master_init()                                 i2c_master_init(I2C_CHN)
+#define _i2c_master_write(id, wr_data, wr_len)             i2c_master_write(I2C_CHN, id, wr_data, wr_len)
+#define _i2c_master_read(id, rd_data, rd_len)              i2c_master_read(I2C_CHN, id, rd_data, rd_len)
+#define _i2c_set_master_clk(div)                           i2c_set_master_clk(I2C_CHN, div)
+#define _i2c_set_tx_dma_config(chn)                        i2c_set_tx_dma_config(I2C_CHN, chn)
+#define _i2c_set_rx_dma_config(chn)                        i2c_set_rx_dma_config(I2C_CHN, chn)
+#define _i2c_master_busy()                                 i2c_master_busy(I2C_CHN)
+#define _i2c_master_write_dma(id, wr_data, wr_len)         i2c_master_write_dma(I2C_CHN, id, wr_data, wr_len)
+#define _i2c_master_read_dma(id, rd_data, rd_len)          i2c_master_read_dma(I2C_CHN, id, rd_data, rd_len)
+#else
+#define _i2c_set_pin(sda, scl)                             i2c_set_pin(sda, scl)
+#define _i2c_master_init()                                 i2c_master_init()
+#define _i2c_master_write(id, wr_data, wr_len)             i2c_master_write(id, wr_data, wr_len)
+#define _i2c_master_read(id, rd_data, rd_len)              i2c_master_read(id, rd_data, rd_len)
+#define _i2c_set_master_clk(div)                           i2c_set_master_clk(div)
+#define _i2c_set_tx_dma_config(chn)                        i2c_set_tx_dma_config(chn)
+#define _i2c_set_rx_dma_config(chn)                        i2c_set_rx_dma_config(chn)
+#define _i2c_master_busy()                                 i2c_master_busy()
+#define _i2c_master_write_dma(id, wr_data, wr_len)         i2c_master_write_dma(id, wr_data, wr_len)
+#define _i2c_master_read_dma(id, rd_data, rd_len)          i2c_master_read_dma(id, rd_data, rd_len)
+#endif
 
 
 /* Disable C linkage for C++ Compilers: */

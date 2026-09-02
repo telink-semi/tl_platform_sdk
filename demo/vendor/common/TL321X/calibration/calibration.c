@@ -74,6 +74,10 @@ void calibration_func(void)
             cap_value_addr = FLASH_CAP_VALUE_ADDR_128K;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_128K;
             break;
+        case FLASH_SIZE_256K:
+            cap_value_addr = FLASH_CAP_VALUE_ADDR_256K;
+            ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_256K;
+            break;
         case FLASH_SIZE_512K:
             cap_value_addr = FLASH_CAP_VALUE_ADDR_512K;
             ieee_flash_pos = FLASH_IEEE_ADDR_LOCATION_512K;

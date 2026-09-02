@@ -29,7 +29,6 @@ void user_init(void)
 {
     lcd_spi_init();
     cis_init();
-
     core_interrupt_enable();
 }
 
@@ -37,3 +36,6 @@ void main_loop(void)
 {
     cis_sta_machine();
 }
+
+
+

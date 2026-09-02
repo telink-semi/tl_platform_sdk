@@ -27,11 +27,11 @@
 
 void hal_i2c_init(void)
 {
-    i2c_set_pin(I2C_GPIO_SDA_PIN, I2C_GPIO_SCL_PIN);
-    i2c_set_tx_dma_config(I2C_TX_DMA_CHN);
-    i2c_set_rx_dma_config(I2C_RX_DMA_CHN);
-    i2c_master_init();
-    i2c_set_master_clk((unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED)));
+    _i2c_set_pin((gpio_func_pin_e)I2C_GPIO_SDA_PIN, (gpio_func_pin_e)I2C_GPIO_SCL_PIN);
+    _i2c_set_tx_dma_config(I2C_TX_DMA_CHN);
+    _i2c_set_rx_dma_config(I2C_RX_DMA_CHN);
+    _i2c_master_init();
+    _i2c_set_master_clk((unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED)));
 }
 
 #if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_es8389)
@@ -43,9 +43,9 @@ __attribute__((section(".ram_code"))) void hal_i2c_write(uint8_t addr, uint8_t r
     write_buf[0] = reg;
     write_buf[1] = value;
 
-    i2c_master_write_dma(addr, (unsigned char *)write_buf, 2);
+    _i2c_master_write_dma(addr, (unsigned char *)write_buf, 2);
     ref = (clock_time() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 }
 
 __attribute__((section(".ram_code"))) void hal_i2c_read(uint8_t addr, uint8_t reg, uint8_t *data, uint8_t len)
@@ -55,14 +55,14 @@ __attribute__((section(".ram_code"))) void hal_i2c_read(uint8_t addr, uint8_t re
 
     write_buf[0] = reg;
 
-    i2c_master_write_dma(addr, (unsigned char *)write_buf, 1);
+    _i2c_master_write_dma(addr, (unsigned char *)write_buf, 1);
     ref = (clock_time() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 
 
-    i2c_master_read_dma(addr, (unsigned char *)data, len);
+    _i2c_master_read_dma(addr, (unsigned char *)data, len);
     ref = (clock_time() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 }
 
 void hal_i2c_update_bits(uint8_t addr, uint8_t reg, uint8_t mask, uint8_t value)
@@ -75,9 +75,9 @@ void hal_i2c_update_bits(uint8_t addr, uint8_t reg, uint8_t mask, uint8_t value)
     write_buf[0] = reg;
     write_buf[1] = (read_buf[0] & (~mask)) | (mask & value);
 
-    i2c_master_write_dma(addr, (unsigned char *)write_buf, 2);
+     _i2c_master_write_dma(addr, (unsigned char *)write_buf, 2);
     ref = (clock_time() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 }
 #endif
 
@@ -92,9 +92,9 @@ __attribute__((section(".ram_code"))) void hal_i2c_nau8821_write(uint8_t addr, u
     write_buf[2] = (value & 0xff00) >> 8;
     write_buf[3] = (value & 0x00ff);
 
-    i2c_master_write_dma(addr, (unsigned char *)write_buf, 4);
+    _i2c_master_write_dma(addr, (unsigned char *)write_buf, 4);
     ref = (stimer_get_tick() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 }
 
 __attribute__((section(".ram_code"))) uint8_t hal_i2c_nau8821_read(uint8_t addr, uint16_t reg, uint16_t *data)
@@ -105,13 +105,13 @@ __attribute__((section(".ram_code"))) uint8_t hal_i2c_nau8821_read(uint8_t addr,
     write_buf[0] = (reg & 0xff00) >> 8;
     write_buf[1] = (reg & 0x00ff);
 
-    i2c_master_write_dma(addr, write_buf, 2);
+    _i2c_master_write_dma(addr, write_buf, 2);
     ref = (stimer_get_tick() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 
-    i2c_master_read_dma(addr, (unsigned char *)data, 2);
+    _i2c_master_read_dma(addr, (unsigned char *)data, 2);
     ref = (stimer_get_tick() - 2) | 1;
-    while (i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
+    while (_i2c_master_busy() && !clock_time_exceed(ref, 50 * 1000));
 
     return 0;
 }

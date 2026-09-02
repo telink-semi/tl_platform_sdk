@@ -76,8 +76,9 @@ extern "C"
 #endif
 
 #define RF_FAST_SETTLE_TEST 41
+#define TEST_BLE_AES_CCM    42
 
-#define RF_MODE             RF_BLE_1M
+#define RF_MODE             RF_BLE_2M_NO_PN
 
 #if (defined(MCU_CORE_TL322X))||(defined(MCU_CORE_TL753X))
 #define RF_HIGH_PER_MODE     1
@@ -173,7 +174,9 @@ extern "C"
 #elif defined(MCU_CORE_TL753X)
     #define RF_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL521X)
-    #define RF_POWER RF_POWER_P7p91dBm
+    #define RF_POWER RF_POWER_P8p00dBm
+#elif defined(MCU_CORE_TL522X)
+    #define RF_POWER RF_POWER_P10p00dBm
 #endif
 
 #if(!defined(MCU_CORE_TL752X))

@@ -28,7 +28,7 @@
 
 volatile uint32_t g_time0;
 volatile uint32_t g_index   = 0;
-volatile uint16_t g_color[] = {BLACK, BLUE, BRED, WHITE, GRED};
+volatile uint16_t g_color[] = {BLACK, BLUE, BRED, WHITE, GREEN};
 volatile uint32_t g_time1;
 volatile uint32_t g_index2 = 0;
 volatile uint32_t g_index3 = 0;
@@ -38,7 +38,8 @@ void user_init(void)
     gpio_function_en(GPIO_PA4);
     gpio_output_en(GPIO_PA4);
     gpio_set_high_level(GPIO_PA4);
-    LCD_Test();
+    // LCD_Test();
+    LCD_Init();
     g_time0 = stimer_get_tick();
     // g_time1 = stimer_get_tick();
 }
