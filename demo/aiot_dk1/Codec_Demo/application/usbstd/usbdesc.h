@@ -36,7 +36,7 @@ extern "C"
 #include "USBController.h"
 #include "StdRequestType.h"
 #include "StdDescriptors.h"
-#include "../../usb_default.h"
+#include "../usb_default.h"
 #include "usbdesc.h"
 
     // interface id

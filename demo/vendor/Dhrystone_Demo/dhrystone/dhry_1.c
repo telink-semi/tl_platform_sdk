@@ -127,8 +127,14 @@ _attribute_ram_code_ void dhry_main(void)
     #else
     cpu_mhz = sys_clk.n22_clk;
     #endif
-#elif defined(MCU_CORE_TL751X)||defined(MCU_CORE_TL753X)
+#elif defined(MCU_CORE_TL751X)
     #if !defined(MCU_CORE_TL751X_N22)
+    cpu_mhz = sys_clk.cclk_d25f_dsp;
+    #else
+    cpu_mhz = sys_clk.n22_clk;
+    #endif
+#elif defined(MCU_CORE_TL753X)
+    #if !defined(MCU_CORE_TL753X_N22)
     cpu_mhz = sys_clk.cclk_d25f_dsp;
     #else
     cpu_mhz = sys_clk.n22_clk;
@@ -292,9 +298,11 @@ _attribute_ram_code_ void dhry_main(void)
     User_Time = End_Time - Begin_Time;
 
     if (User_Time < Too_Small_Time) {
+#if !CURRENT_PER_MHZ_TEST
         printf("Measured time too small to obtain meaningful results\r\n");
         printf("Please increase number of runs\r\n");
         printf("\r\n");
+#endif
     } else {
 #ifdef TIME
         Microseconds          = (float)User_Time * Mic_secs_Per_Second / (float)Number_Of_Runs;

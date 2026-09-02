@@ -31,17 +31,7 @@ LCD_ST7789_ATTRIBUTES LCD_ST7789_ST;
 uint16_t POINT_COLOR = GREEN;
 uint16_t BACK_COLOR  = BLACK; //BG
 
-#if defined(MCU_CORE_TL721X)
-#define SPI_MODULE LSPI_MODULE
-lspi_pin_config_t lspi_pin_config = {
-    .spi_csn_pin      = SPI_CSN_PIN,
-    .spi_clk_pin      = SPI_CLK_PIN,
-    .spi_mosi_io0_pin = SPI_MOSI_PIN,
-    .spi_miso_io1_pin = (lspi_pin_def_e)GPIO_NONE_PIN, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = (lspi_pin_def_e)GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = (lspi_pin_def_e)GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
-};
-#elif defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL321X)
 #define SPI_MODULE GSPI_MODULE
 gspi_pin_config_t gspi_pin_config = {
     .spi_csn_pin      = SPI_CSN_PIN,
@@ -50,6 +40,20 @@ gspi_pin_config_t gspi_pin_config = {
     .spi_miso_io1_pin = (gpio_func_pin_e)GPIO_NONE_PIN, //3line mode is required, otherwise it is NONE_PIN.
     .spi_io2_pin      = (gpio_func_pin_e)GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = (gpio_func_pin_e)GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
+};
+#else
+#define SPI_MODULE LSPI_MODULE
+#if defined(MCU_CORE_TL322X)
+typedef gpio_func_pin_e lspi_pin_def_e;
+#endif
+
+lspi_pin_config_t lspi_pin_config = {
+    .spi_csn_pin      = (lspi_pin_def_e)SPI_CSN_PIN,
+    .spi_clk_pin      = (lspi_pin_def_e)SPI_CLK_PIN,
+    .spi_mosi_io0_pin = (lspi_pin_def_e)SPI_MOSI_PIN,
+    .spi_miso_io1_pin = (lspi_pin_def_e)GPIO_NONE_PIN, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = (lspi_pin_def_e)GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = (lspi_pin_def_e)GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
 };
 #endif
 
@@ -110,7 +114,7 @@ void LCD_ST7789_Init(void)
     LCD_ST7789_CN_0;
 
     spi_master_init(SPI_MODULE, sys_clk.pll_clk * 1000000 / SPI_CLK_SPEED, SPI_MODE0);
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X)
     lspi_set_pin(&lspi_pin_config);
 #elif defined(MCU_CORE_TL321X)
     gspi_set_pin(&gspi_pin_config);
@@ -120,8 +124,8 @@ void LCD_ST7789_Init(void)
 
 void LCD_ST7789_InitReg(void)
 {
-    LCD_ST7789_Reset();
     LCD_ST7789_SendCommand(0x36);
+    LCD_ST7789_Reset();
     LCD_ST7789_SendByte(0x00);
 
     LCD_ST7789_SendCommand(0x3A);

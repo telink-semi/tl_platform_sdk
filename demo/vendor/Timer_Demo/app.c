@@ -109,7 +109,7 @@ void user_init(void)
     timer_set_cap_tick(TIMER1, 500 * sys_clk.pclk * 1000); //500ms
     timer_set_mode(TIMER0, TIMER_MODE_SYSCLK);
     timer_set_mode(TIMER1, TIMER_MODE_SYSCLK);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) ||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) ||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     timer_set_irq_mask(FLD_TMR0_MODE_IRQ);
     timer_set_irq_mask(FLD_TMR1_MODE_IRQ);
     #endif
@@ -131,7 +131,7 @@ void user_init(void)
     timer_set_init_tick(TIMER0, 0);
     timer_set_cap_tick(TIMER0, TIMER_MODE_GPIO_TRIGGER_TICK);
     timer_set_mode(TIMER0, TIMER_MODE_GPIO_TRIGGER);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     timer_set_irq_mask(FLD_TMR0_MODE_IRQ);
     #endif
     timer_start(TIMER0);
@@ -141,7 +141,7 @@ void user_init(void)
     timer_set_init_tick(TIMER1, 0);
     timer_set_cap_tick(TIMER1, TIMER_MODE_GPIO_TRIGGER_TICK);
     timer_set_mode(TIMER1, TIMER_MODE_GPIO_TRIGGER);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     timer_set_irq_mask(FLD_TMR1_MODE_IRQ);
     #endif
     timer_start(TIMER1);
@@ -162,7 +162,7 @@ void user_init(void)
     timer_set_init_tick(TIMER0, 0);
     timer_set_cap_tick(TIMER0, 0);
     timer_set_mode(TIMER0, TIMER_MODE_GPIO_WIDTH);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     timer_set_irq_mask(FLD_TMR0_MODE_IRQ);
     #endif
     timer_start(TIMER0);
@@ -177,7 +177,7 @@ void user_init(void)
     timer_set_init_tick(TIMER1, 0);
     timer_set_cap_tick(TIMER1, 0);
     timer_set_mode(TIMER1, TIMER_MODE_GPIO_WIDTH);
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     timer_set_irq_mask(FLD_TMR1_MODE_IRQ);
     #endif
     timer_start(TIMER1);
@@ -366,11 +366,7 @@ void main_loop(void)
     //800ms<1000ms, watchdog does not overflow and the program continues to run.
     for(int i=0; i<2; i++)
     {
-#if !defined(MCU_CORE_TL753X)
         pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 200 * SYSTEM_TIMER_TICK_1MS);
-#else
-        delay_ms(200);
-#endif
         gpio_set_high_level(LED2);
         delay_ms(200);
         gpio_set_low_level(LED2);
@@ -387,20 +383,12 @@ void main_loop(void)
     //1200ms>1000ms, watchdog overflows, program restarts.
     for(int i=0; i<2; i++)
     {
-#if !defined(MCU_CORE_TL753X)
         pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 200 * SYSTEM_TIMER_TICK_1MS);
-#else
-        delay_ms(200);
-#endif
         gpio_set_high_level(LED2);
         delay_ms(200);
         gpio_set_low_level(LED2);
     }
-#if !defined(MCU_CORE_TL753X)
         pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_TIMER, PM_TICK_STIMER, stimer_get_tick() + 400 * SYSTEM_TIMER_TICK_1MS);
-#else
-        delay_ms(400);
-#endif
     gpio_set_high_level(LED4);
     while(1){}
 #else
@@ -414,13 +402,13 @@ void main_loop(void)
 _attribute_ram_code_sec_ void timer0_irq_handler(void)
 {
 #if (TIMER_MODE == TIMER_SYS_CLOCK_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     if (timer_get_irq_status(FLD_TMR0_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR0))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         timer_clr_irq_status(FLD_TMR0_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
@@ -429,13 +417,13 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
         timer0_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     if (timer_get_irq_status(FLD_TMR0_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR0))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         timer_clr_irq_status(FLD_TMR0_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
@@ -444,13 +432,13 @@ _attribute_ram_code_sec_ void timer0_irq_handler(void)
         timer0_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     if (timer_get_irq_status(FLD_TMR0_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR0))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         timer_clr_irq_status(FLD_TMR0_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR0); //clear irq status
@@ -479,13 +467,13 @@ PLIC_ISR_REGISTER(timer0_irq_handler, IRQ_TIMER0)
 _attribute_ram_code_sec_ void timer1_irq_handler(void)
 {
 #if (TIMER_MODE == TIMER_SYS_CLOCK_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     if (timer_get_irq_status(FLD_TMR1_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR1))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         timer_clr_irq_status(FLD_TMR1_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR1); //clear irq status
@@ -494,13 +482,13 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
         timer1_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_TRIGGER_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     if (timer_get_irq_status(FLD_TMR1_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR1))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         timer_clr_irq_status(FLD_TMR1_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR1); //clear irq status
@@ -509,13 +497,13 @@ _attribute_ram_code_sec_ void timer1_irq_handler(void)
         timer1_irq_cnt++;
     }
 #elif (TIMER_MODE == TIMER_GPIO_WIDTH_MODE)
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
     if (timer_get_irq_status(FLD_TMR1_MODE_IRQ))
     #else
     if (timer_get_irq_status(TMR_STA_TMR1))
     #endif
     {
-    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X)
+    #if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)||defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
         timer_clr_irq_status(FLD_TMR1_MODE_IRQ); //clear irq status
     #else
         timer_clr_irq_status(TMR_STA_TMR1); //clear irq status

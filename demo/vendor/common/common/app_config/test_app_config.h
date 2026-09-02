@@ -178,7 +178,7 @@ extern "C"
 
 #define TEST_INIT_CUR               77
 
-#define TEST_MODE                   TEST_INIT_CUR
+#define TEST_MODE                   TEST_HTOL_TL753X_MODE
 
 #if defined(MCU_CORE_B91)
 #define PM_TICK_STIMER          PM_TICK_STIMER_16M
@@ -290,6 +290,14 @@ volatile unsigned char KEY2;
 #define TEST_LED3               GPIO_PI2
 #define TEST_LED4               GPIO_PI1
 #endif
+
+#elif defined(MCU_CORE_TL753X)
+#define PM_TL7539X_128PIN      1
+#define PM_PIN_MODE            PM_TL7539X_128PIN
+#define TEST_LED1              GPIO_PG5
+#define TEST_LED2              GPIO_PG6
+#define TEST_LED3              GPIO_PG7
+#define TEST_LED4              GPIO_PG4
 
 #elif defined(MCU_CORE_TL322X)
 

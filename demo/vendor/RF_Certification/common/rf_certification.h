@@ -26,7 +26,7 @@
 #include "calibration.h"
 #include "pa.h"
 #include "config_obj.h"
-#include "lib/include/emi_internal.h"
+#include "lib/include/emi_cert.h"
 
 /* Enable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

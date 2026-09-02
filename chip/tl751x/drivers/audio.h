@@ -2304,6 +2304,13 @@ void audio_codec0_set_output_mute(audio_codec0_output_select_e output, unsigned 
 void audio_codec0_set_input_filter_mode(audio_codec0_input_select_e input, audio_filter_mode_e fmode);
 
 /**
+ * @brief      This function serves to set codec1 dmic filter mode.
+ * @param[in]  fmode - filter mode.
+ * @return     none
+ */
+void audio_codec1_set_input_filter_mode(audio_filter_mode_e fmode);
+
+/**
  * @brief      This function serves to set codec0 input sample rate.
  * @param[in]  input - input channel.
  * @param[in]  fs    - input sample rate.

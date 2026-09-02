@@ -25,6 +25,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>aiot_dk1</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/aiot_dk1</locationURI>
+		</link>
+		<link>
 			<name>boot</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/chip/tl322x/boot</locationURI>
@@ -68,6 +73,11 @@
 			<name>vendor/CAN_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/CAN_Demo</locationURI>
+		</link>
+		<link>
+			<name>vendor/CTB_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/CTB_Demo/CTB_V1.1/CTB_Demo</locationURI>
 		</link>
 		<link>
 			<name>vendor/Coremark_demo</name>

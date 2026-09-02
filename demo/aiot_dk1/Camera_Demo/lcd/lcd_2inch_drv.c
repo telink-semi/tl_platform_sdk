@@ -27,21 +27,21 @@
 #include "common.h"
 
 
-#define GSPI_TX_DMA_CHN   DMA3
+#define GSPI_TX_DMA_CHN   LCD_CFG_SPI_DMA_CHN
 
 #define DEV_Digital_Write gpio_set_level
 #define DEV_Delay_ms      delay_ms
-#define SPI_CLK           48000000
+#define SPI_CLK           LCD_CFG_SPI_CLK
 
-#define LCD_CS            GPIO_PA0
-#define LCD_BL            GPIO_PC3
-#define LCD_RST           GPIO_PC1
-#define LCD_DC            GPIO_PD1
+#define LCD_CS            LCD_PIN_SPI_CSN
+#define LCD_BL            LCD_PIN_BL
+#define LCD_RST           LCD_PIN_RST
+#define LCD_DC            LCD_PIN_DC
 
 gspi_pin_config_t lcd_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PA0,
-    .spi_clk_pin      = GPIO_FC_PA1,
-    .spi_mosi_io0_pin = GPIO_FC_PC2,
+    .spi_csn_pin      = (gpio_func_pin_e)LCD_PIN_SPI_CSN,
+    .spi_clk_pin      = (gpio_func_pin_e)LCD_PIN_SPI_CLK,
+    .spi_mosi_io0_pin = (gpio_func_pin_e)LCD_PIN_SPI_MOSI,
     .spi_miso_io1_pin = GPIO_NONE_PIN, //3line mode is required, otherwise it is NONE_PIN.
     .spi_io2_pin      = GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
     .spi_io3_pin      = GPIO_NONE_PIN, //quad  mode is required, otherwise it is NONE_PIN.
@@ -628,10 +628,20 @@ parameter    :
 ******************************************************************************/
 void lcd_spi_display(int x, int y, UBYTE *image, int width, int height)
 {
+    (void)x;
+    (void)y;
+    (void)image;
+    (void)width;
+    (void)height;
+#if LCD_DISPLAY_ON
     LCD_2IN_SetWindow(x, y, x + width, y + height);
     DEV_Digital_Write(LCD_DC, 1);
-
     spi_master_write_dma_plus(GSPI_MODULE, SPI_WRITE_DATA_SINGLE_CMD, (unsigned int)NULL, (unsigned char *)image, width * 2 * height, SPI_MODE_WR_WRITE_ONLY);
+#else
+    for(int i = 0; i < 10; i++) {
+        image[i] = image[i];
+    }
+#endif
 }
 
 /******************************************************************************
@@ -649,28 +659,39 @@ void LCD_2IN_DrawPaint(UWORD x, UWORD y, UWORD Color)
 
 void lcd_spi_cfg(void)
 {
-    reg_gpio_func_mux(lcd_pin_config.spi_clk_pin)      = GSPI_CK_IO;
-    reg_gpio_func_mux(lcd_pin_config.spi_csn_pin)      = GSPI_CN0_IO;
-    reg_gpio_func_mux(lcd_pin_config.spi_mosi_io0_pin) = GSPI_MOSI_IO;
+#if LCD_DISPLAY_ON
+#if defined(MCU_CORE_TL721X)
+    reg_gpio_func_mux(lcd_pin_config.spi_clk_pin)      = LCD_PIN_FUNC_SPI_CLK;
+    reg_gpio_func_mux(lcd_pin_config.spi_csn_pin)      = LCD_PIN_FUNC_SPI_CSN;
+    reg_gpio_func_mux(lcd_pin_config.spi_mosi_io0_pin) = LCD_PIN_FUNC_SPI_MOSI;
 
     spi_set_io_mode(GSPI_MODULE, SPI_SINGLE_MODE);
     reg_spi_ctrl3(GSPI_MODULE) |= (FLD_SPI_MASTER_MODE | FLD_SPI_AUTO_HREADY_EN);                          //master
-    reg_spi_ctrl3(GSPI_MODULE) = ((reg_spi_ctrl3(GSPI_MODULE) & (~FLD_SPI_WORK_MODE)) | (SPI_MODE0 << 2)); // select SPI mode, support four modes.
+    reg_spi_ctrl3(GSPI_MODULE) = ((reg_spi_ctrl3(GSPI_MODULE) & (~FLD_SPI_WORK_MODE)) | (LCD_SPI_MODE << 2)); // select SPI mode, support four modes.
 
     gpio_function_dis((gpio_pin_e)lcd_pin_config.spi_csn_pin);
     gpio_function_dis((gpio_pin_e)lcd_pin_config.spi_clk_pin);
     gpio_function_dis((gpio_pin_e)lcd_pin_config.spi_mosi_io0_pin);
+#else
+    spi_set_io_mode(GSPI_MODULE, SPI_SINGLE_MODE);
+    spi_master_init(GSPI_MODULE, sys_clk.pll_clk * 1000000 / SPI_CLK, LCD_SPI_MODE);
+    gspi_set_pin(&lcd_pin_config);
+#endif
+#endif
 }
 
 void lcd_spi_cfg_disable(void)
 {
+#if LCD_DISPLAY_ON
     gpio_function_en((gpio_pin_e)lcd_pin_config.spi_csn_pin);
     gpio_function_en((gpio_pin_e)lcd_pin_config.spi_clk_pin);
     gpio_function_en((gpio_pin_e)lcd_pin_config.spi_mosi_io0_pin);
+#endif
 }
 
 unsigned int lcd_spi_init(void)
 {
+#if LCD_DISPLAY_ON
     gpio_function_en(LCD_CS);
     gpio_output_en(LCD_CS);
     gpio_set_level(LCD_CS, 1);
@@ -689,7 +710,7 @@ unsigned int lcd_spi_init(void)
 
     LCD_2IN_Reset();
 
-    spi_master_init(GSPI_MODULE, sys_clk.pll_clk * 1000000 / SPI_CLK, SPI_MODE0);
+    spi_master_init(GSPI_MODULE, sys_clk.pll_clk * 1000000 / SPI_CLK, LCD_SPI_MODE);
     spi_cmd_dis(GSPI_MODULE);
     spi_addr_dis(GSPI_MODULE);
     spi_set_io_mode(GSPI_MODULE, SPI_SINGLE_MODE);
@@ -711,4 +732,8 @@ unsigned int lcd_spi_init(void)
     lcd_spi_cfg_disable();
 
     return s;
+#else
+    (void)LCD_2IN_Reset;
+    return -1;
+#endif
 }

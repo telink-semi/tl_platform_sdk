@@ -31,12 +31,12 @@
 #define AMIC_INPUT_TO_BUF             (3)
 #define BUFFER_TO_LINEOUT             (4)
 
-#define CODEC_MODE_SELECT            BUFFER_TO_LINEOUT
+#define CODEC_MODE_SELECT            AMIC_INPUT_TO_BUF_TO_LINEOUT
 
 #define PLL0_AUDIO_CLK (0)
 #define PLL1_AUDIO_CLK (1)
 
-#define AUDIO_CLK_SOURCE_SEL PLL0_AUDIO_CLK
+#define AUDIO_CLK_SOURCE_SEL PLL1_AUDIO_CLK
 
 #define AUDIO_BUFF_SIZE    4096
 unsigned char AUDIO_BUFF[AUDIO_BUFF_SIZE];
@@ -51,7 +51,7 @@ void user_init(void)
 #if (AUDIO_CLK_SOURCE_SEL == PLL1_AUDIO_CLK)
     audio_init(PLL1_AUDIO_CLK_172P032M); /* must configured first. */
 #else
-    audio_init(PLL0_AUDIO_CLK_192M); /* must configured first. */
+    audio_init(PLL0_AUDIO_CLK_288M); /* must configured first. */
     pm_audio_pll_power_down();
 #endif
 #if (CODEC_MODE_SELECT == LINE_INPUT_TO_BUF_TO_LINEOUT)
@@ -69,7 +69,7 @@ void user_init(void)
     audio_rx_dma_chain_init(FIFO0, DMA1, (unsigned short *)AUDIO_BUFF, sizeof(AUDIO_BUFF));
     audio_rx_dma_en(DMA1); /* the rx dma enable must precede the adc enable. */
 
-    audio_codec_adc_clck_en(codec_input_config.input_src);
+    audio_codec_adc_clk_en(codec_input_config.input_src);
     audio_codec_input_init(&codec_input_config);
     audio_codec_adc_en(codec_input_config.input_src);
 
@@ -82,7 +82,7 @@ void user_init(void)
     /* matrix output config. */
     audio_matrix_set_dac_route(codec_output_config.output_dst, DAC_ROUTE_FIFO, DAC_FIFO_STEREO_24BIT_FIFO0);
 
-    audio_codec_dac_clck_en(codec_output_config.output_dst);
+    audio_codec_dac_clk_en(codec_output_config.output_dst);
     audio_codec_output_init(&codec_output_config);
     audio_codec_dac_en(codec_output_config.output_dst);
 
@@ -104,7 +104,7 @@ void user_init(void)
     audio_rx_dma_chain_init(FIFO0, DMA0, (unsigned short *)AUDIO_BUFF, sizeof(AUDIO_BUFF));
     audio_rx_dma_en(DMA0); /* the rx dma enable must precede the adc enable. */
 
-    audio_codec_adc_clck_en(codec_input_config.input_src);
+    audio_codec_adc_clk_en(codec_input_config.input_src);
     audio_codec_input_init(&codec_input_config);
     audio_codec_adc_en(codec_input_config.input_src);
 
@@ -117,7 +117,7 @@ void user_init(void)
     /* matrix output config. */
     audio_matrix_set_dac_route(codec_output_config.output_dst, DAC_ROUTE_FIFO, DAC_FIFO_STEREO_24BIT_FIFO0);
 
-    audio_codec_dac_clck_en(codec_output_config.output_dst);
+    audio_codec_dac_clk_en(codec_output_config.output_dst);
     audio_codec_output_init(&codec_output_config);
     audio_codec_dac_en(codec_output_config.output_dst);
 
@@ -139,7 +139,7 @@ void user_init(void)
     audio_rx_dma_chain_init(FIFO0, DMA0, (unsigned short *)AUDIO_BUFF, sizeof(AUDIO_BUFF));
     audio_rx_dma_en(DMA0); /* the rx dma enable must precede the adc enable. */
 
-    audio_codec_adc_clck_en(codec_input_config.input_src);
+    audio_codec_adc_clk_en(codec_input_config.input_src);
     audio_codec_input_init(&codec_input_config);
     audio_codec_adc_en(codec_input_config.input_src);
 
@@ -154,7 +154,7 @@ void user_init(void)
     /* matrix output config. */
     audio_matrix_set_dac_route(codec_output_config.output_dst, DAC_ROUTE_FIFO, DAC_FIFO_MONO_16BIT_FIFO0);
 
-    audio_codec_dac_clck_en(codec_output_config.output_dst);
+    audio_codec_dac_clk_en(codec_output_config.output_dst);
     audio_codec_output_init(&codec_output_config);
     audio_codec_dac_en(codec_output_config.output_dst);
 

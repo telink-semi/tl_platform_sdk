@@ -50,46 +50,44 @@ void n22_get_cpu_clk(void)
 {
 #if defined(MCU_CORE_TL751X_N22)
     cpu_mhz = 48;
+#elif defined(MCU_CORE_TL753X_N22)
+    cpu_mhz = 48;
+#elif defined(MCU_CORE_TL7518_N22)
+    cpu_mhz = 48;
+#elif defined(MCU_CORE_TL322X_N22)
+    if (COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_192M_HCLK_D25F_N22_96M_PCLK_96M_MSPI_64M)){
+        cpu_mhz = 96;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_96M_HCLK_D25F_N22_48M_PCLK_48M_MSPI_64M)){
+        cpu_mhz = 48;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,PLL_144M_CCLK_48M_HCLK_D25F_N22_48M_PCLK_48M_MSPI_48M)){
+        cpu_mhz = 48;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,PLL_144M_CCLK_72M_HCLK_D25F_N22_36M_PCLK_36M_MSPI_48M)){
+        cpu_mhz = 36;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_64M_HCLK_D25F_N22_32M_PCLK_32M_MSPI_48M)){
+        cpu_mhz = 32;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_48M_HCLK_D25F_N22_24M_PCLK_12M_MSPI_48M)){
+        cpu_mhz = 24;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,XTAL_24M_CCLK_24M_HCLK_D25F_N22_24M_PCLK_24M_MSPI_24M)){
+        cpu_mhz = 24;
+    }
+    else if(COMPARE_MACROS(CLOCK_INIT,RC_24M_CCLK_24M_HCLK_D25F_N22_24M_PCLK_24M_MSPI_24M)){
+        cpu_mhz = 24;
+    }
 #endif
 
-#if defined(MCU_CORE_TL7518_N22)
-    cpu_mhz = 48;
-#endif
-
-#if defined(MCU_CORE_TL322X_N22)
-if (COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_192M_HCLK_D25F_N22_96M_PCLK_96M_MSPI_64M)){
-    cpu_mhz = 96;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_96M_HCLK_D25F_N22_48M_PCLK_48M_MSPI_64M)){
-    cpu_mhz = 48;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,PLL_144M_CCLK_48M_HCLK_D25F_N22_48M_PCLK_48M_MSPI_48M)){
-    cpu_mhz = 48;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,PLL_144M_CCLK_72M_HCLK_D25F_N22_36M_PCLK_36M_MSPI_48M)){
-    cpu_mhz = 36;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_64M_HCLK_D25F_N22_32M_PCLK_32M_MSPI_48M)){
-    cpu_mhz = 32;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,PLL_192M_CCLK_48M_HCLK_D25F_N22_24M_PCLK_12M_MSPI_48M)){
-    cpu_mhz = 24;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,XTAL_24M_CCLK_24M_HCLK_D25F_N22_24M_PCLK_24M_MSPI_24M)){
-    cpu_mhz = 24;
-}
-else if(COMPARE_MACROS(CLOCK_INIT,RC_24M_CCLK_24M_HCLK_D25F_N22_24M_PCLK_24M_MSPI_24M)){
-    cpu_mhz = 24;
-}
-#endif
-
- printf("cpu_mhz = %d\r\n",cpu_mhz);
+    printf("cpu_mhz = %d\r\n",cpu_mhz);
 }
 
 
 int main(void)
 {
-#if !(defined(MCU_CORE_TL7518_N22) || defined(MCU_CORE_TL751X_N22)|| defined(MCU_CORE_TL322X_N22))
+#if !(defined(MCU_CORE_TL7518_N22) || defined(MCU_CORE_TL751X_N22)|| defined(MCU_CORE_TL753X_N22) || defined(MCU_CORE_TL322X_N22))
     PLATFORM_INIT;
     CLOCK_INIT;
 #endif
@@ -105,6 +103,12 @@ int main(void)
     #endif
 #elif defined(MCU_CORE_TL751X)
     #if !defined(MCU_CORE_TL751X_N22)
+    cpu_mhz = sys_clk.cclk_d25f_dsp;
+    #else
+    n22_get_cpu_clk();
+    #endif
+#elif defined(MCU_CORE_TL753X)
+    #if !defined(MCU_CORE_TL753X_N22)
     cpu_mhz = sys_clk.cclk_d25f_dsp;
     #else
     n22_get_cpu_clk();

@@ -26,34 +26,47 @@
 #include "../i2c/hal_es8389.h"
 #include "../i2c/hal_nau8821.h"
 #include "hal_i2s.h"
-#if defined(MCU_CORE_TL721X)
-#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
-#define MCLK_PIN_NUM GPIO_FC_PE7
-#endif
-unsigned short audio_i2s_48k_config[5] = {8, 625, 0, 64, 64};
-#elif defined(MCU_CORE_TL321X)
+
+#if defined(MCU_CORE_TL321X)
 #if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
 #define MCLK_PIN_NUM GPIO_FC_PA0
 #endif
 unsigned short audio_i2s_48k_config[5] = {2, 125, 0, 64, 64};
+#else
+#define I2S_PIN_BCLK                PIN22//GPIO_FC_PA3, //J5
+#define I2S_PIN_ADC_LR_CLK          PIN32//GPIO_FC_PB4, 
+#define I2S_PIN_DAC_LR_CLK          PIN32//GPIO_FC_PB4, 
+#define I2S_PIN_ADC_DAT             PIN24//GPIO_FC_PA4, 
+#define I2S_PIN_DAC_DAT             PIN21//GPIO_FC_PA2,
+#if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
+#define MCLK_PIN_NUM                PIN11//GPIO_FC_PE7
+#endif
+#if defined(MCU_CORE_TL721X)
+unsigned short audio_i2s_48k_config[5] = {8, 625, 0, 64, 64};
+#else
+unsigned short audio_i2s_48k_config[5] = {12, 750, 0, 64, 64};
+#endif
 #endif
 
 i2s_pin_config_t i2s_pin_config = {
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL321X)
+    .bclk_pin       = GPIO_FC_PA1, //J5
+    .adc_lr_clk_pin = GPIO_FC_PD1,
+    .dac_lr_clk_pin = GPIO_FC_PD1,
+    .adc_dat_pin    = GPIO_FC_PD4,
+    .dac_dat_pin    = GPIO_FC_PB0,
+#else
     // .bclk_pin       = GPIO_FC_PC1, //J6
     // .adc_lr_clk_pin = GPIO_FC_PA1,
     // .dac_lr_clk_pin = GPIO_FC_PA1,
     // .adc_dat_pin    = GPIO_FC_PB3,
     // .dac_dat_pin    = GPIO_FC_PA0,
 
-    .bclk_pin       = GPIO_FC_PA3, //J5
-    .adc_lr_clk_pin = GPIO_FC_PB4, .dac_lr_clk_pin = GPIO_FC_PB4, .adc_dat_pin = GPIO_FC_PA4, .dac_dat_pin = GPIO_FC_PA2,
-#elif defined(MCU_CORE_TL321X)
-    .bclk_pin       = GPIO_FC_PA1, //J5
-    .adc_lr_clk_pin = GPIO_FC_PD1,
-    .dac_lr_clk_pin = GPIO_FC_PD1,
-    .adc_dat_pin    = GPIO_FC_PD4,
-    .dac_dat_pin    = GPIO_FC_PB0,
+    .bclk_pin       = (gpio_func_pin_e)I2S_PIN_BCLK, //J5
+    .adc_lr_clk_pin = (gpio_func_pin_e)I2S_PIN_ADC_LR_CLK, 
+    .dac_lr_clk_pin = (gpio_func_pin_e)I2S_PIN_DAC_LR_CLK, 
+    .adc_dat_pin =    (gpio_func_pin_e)I2S_PIN_ADC_DAT, 
+    .dac_dat_pin =    (gpio_func_pin_e)I2S_PIN_DAC_DAT,
 #endif
 };
 
@@ -70,7 +83,11 @@ audio_i2s_input_output_t hal_i2s_input = {
     .i2s_select    = I2S2,
     .data_width    = I2S_BIT_16_DATA,
     .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+#if defined(MCU_CORE_TL322X)
+    .fifo_chn      = FIFO1,
+#else
     .fifo_chn      = FIFO2,
+#endif
     .dma_num       = I2S_MIC_DMA,
     .data_buf      = NULL,
     .data_buf_size = 0,
@@ -80,7 +97,11 @@ audio_i2s_input_output_t hal_i2s_output = {
     .i2s_select    = I2S2,
     .data_width    = I2S_BIT_16_DATA,
     .i2s_ch_sel    = I2S_CHANNEL_STEREO,
+#if defined(MCU_CORE_TL322X)
+    .fifo_chn      = FIFO1,
+#else
     .fifo_chn      = FIFO2,
+#endif
     .dma_num       = I2S_SPK_DMA,
     .data_buf      = NULL,
     .data_buf_size = 0,
@@ -111,10 +132,14 @@ void hal_i2s_init(unsigned int *mic_buff, unsigned int *spk_buff, unsigned int m
 
 #if (AUDIO_I2S_TO_EXT_MODE == I2S_TO_EXT_nau8821)
     delay_ms(1);
-#if defined(MCU_CORE_TL721X)
-    audio_set_i2s_clk_as_mclk(I2S0, MCLK_PIN_NUM, 32, 640);
-#elif defined(MCU_CORE_TL321X)
+
+#if defined(MCU_CORE_TL321X)
     audio_set_sdm_clk_as_mclk(MCLK_PIN_NUM, 8, 125);
+#elif defined(MCU_CORE_TL721X)
+    audio_set_i2s_clk_as_mclk(I2S0, (gpio_func_pin_e)MCLK_PIN_NUM, 32, 640);
+#elif defined(MCU_CORE_TL322X)
+    // audio_set_i2s_clk_as_mclk((gpio_func_pin_e)MCLK_PIN_NUM, 1, 12);
+    audio_set_codec_clk_as_mclk((gpio_func_pin_e)MCLK_PIN_NUM);
 #endif
 #endif
     /***configuring external codec-related registers via i2c***/

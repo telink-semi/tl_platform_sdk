@@ -31,18 +31,40 @@
 
 #define LINE_INPUT_TO_ANC_TO_DAC      (3)  /* data route: codec0 line-in -> anc -> dac */
 
-#define AUDIO_MODE_SELECT             I2S_INPUT_TO_BUF_TO_DAC
+#define AUDIO_MODE_SELECT             LINE_INPUT_TO_BUF_TO_I2S
 #define FIFO_SELECT                   FIFO0
 
 unsigned short audio_i2s_192k_config[5] ={2, 14, 1, 64, 64}; /* sampling rate = pll1_clk(default 172.032MHz) * (2 / 14) / (2 * 1) / (64)  = 96KHz */
 unsigned short audio_i2s_96k_config[5] = {1, 14, 1, 64, 64}; /* sampling rate = pll1_clk(default 172.032MHz) * (1 / 14) / (2 * 1) / (64)  = 96KHz */
 unsigned short audio_i2s_48k_config[5] = {1, 14, 2, 64, 64}; /* sampling rate = pll1_clk(default 172.032MHz) * (1 / 14) / (2 * 2) / (64)  = 48KHz */
 unsigned short audio_i2s_44p1k_config[5]={1, 14, 2, 64, 64}; /* sampling rate = pll1_clk(PLL1    158.0544MHz)* (1 / 14) / (2 * 2) / (64)  = 44.1KHz */
+unsigned short audio_i2s_32k_config[5] = {1, 14, 3, 64, 64}; /* sampling rate = pll1_clk(default 172.032MHz) * (1 / 14) / (2 * 6) / (64)  = 16KHz */
 unsigned short audio_i2s_16k_config[5] = {1, 14, 6, 64, 64}; /* sampling rate = pll1_clk(default 172.032MHz) * (1 / 14) / (2 * 6) / (64)  = 16KHz */
+unsigned short audio_i2s_8k_config[5] =  {1, 14, 12,64, 64}; /* sampling rate = pll1_clk(default 172.032MHz) * (1 / 14) / (2 * 12)/ (64)  = 8KHz */
+
+unsigned short audio_i2s_192k_config_pll0_192m[5] ={8, 125, 0, 64, 64}; /* sampling rate = pll0_clk(192MHz) * (8 / 125) / (1)     / (64)  = 192KHz */
+unsigned short audio_i2s_96k_config_pll0_192m[5] = {4, 125, 0, 64, 64}; /* sampling rate = pll0_clk(192MHz) * (4 / 125) / (1)     / (64)  = 96KHz */
+unsigned short audio_i2s_48k_config_pll0_192m[5] = {2, 125, 0, 64, 64}; /* sampling rate = pll0_clk(192MHz) * (2 / 14)  / (1)     / (64)  = 48KHz */
+unsigned short audio_i2s_44p1k_config_pll0_192m[5]={76,235, 11,64, 64}; /* sampling rate = pll0_clk(192MHz) * (76 / 235)/ (2 * 11)/ (64)  = 44.1KHz */
+unsigned short audio_i2s_32k_config_pll0_192m[5] = {8, 125, 3, 64, 64}; /* sampling rate = pll0_clk(192MHz) * (8 / 125) / (2 * 6) / (64)  = 16KHz */
+unsigned short audio_i2s_16k_config_pll0_192m[5] = {8, 125, 6, 64, 64}; /* sampling rate = pll0_clk(192MHz) * (8 / 125) / (2 * 6) / (64)  = 16KHz */
+unsigned short audio_i2s_8k_config_pll0_192m[5] =  {8, 125, 12,64, 64}; /* sampling rate = pll0_clk(192MHz) * (8 / 14)  / (2 * 12)/ (64)  = 8KHz */
+
+unsigned short audio_i2s_192k_config_pll0_288m[5] ={32, 125, 3, 64, 64}; /* sampling rate = pll0_clk(288MHz) * (8 / 125) / (1)     / (64)  = 192KHz */
+unsigned short audio_i2s_96k_config_pll0_288m[5] = {16, 125, 3, 64, 64}; /* sampling rate = pll0_clk(288MHz) * (4 / 125) / (1)     / (64)  = 96KHz */
+unsigned short audio_i2s_48k_config_pll0_288m[5] = {8, 125, 3, 64, 64}; /* sampling rate = pll0_clk(288MHz) * (2 / 14)  / (1)     / (64)  = 48KHz */
+unsigned short audio_i2s_44p1k_config_pll0_288m[5]={304, 705, 22, 64, 64}; /* sampling rate = pll0_clk(288MHz) * (76 / 235)/ (2 * 11)/ (64)  = 44.1KHz */
+unsigned short audio_i2s_32k_config_pll0_288m[5] = {16, 125, 9, 64, 64}; /* sampling rate = pll0_clk(288MHz) * (8 / 125) / (2 * 6) / (64)  = 16KHz */
+unsigned short audio_i2s_16k_config_pll0_288m[5] = {8, 125, 9, 64, 64}; /* sampling rate = pll0_clk(288MHz) * (8 / 125) / (2 * 6) / (64)  = 16KHz */
+unsigned short audio_i2s_8k_config_pll0_288m[5] =  {8, 125, 18,64, 64}; /* sampling rate = pll0_clk(288MHz) * (8 / 14)  / (2 * 12)/ (64)  = 8KHz */
 
 signed short drop_coef[9] = {0, 0, 0, 0, 1, -4, 12, -58, 2100};
 
 int AUDIO_BUFF[4096];
+#define PLL0_AUDIO_CLK (0)
+#define PLL1_AUDIO_CLK (1)
+
+#define AUDIO_CLK_SOURCE_SEL PLL1_AUDIO_CLK
 
 void user_init(void)
 {
@@ -51,15 +73,20 @@ void user_init(void)
     gpio_input_dis(LED2);
 
     clock_pll_audio_init(PLL1_AUDIO_CLK_172P032M);
+#if (AUDIO_CLK_SOURCE_SEL == PLL1_AUDIO_CLK)
     audio_init(PLL1_AUDIO_CLK_172P032M); /* must configured first. */
+#else
+    audio_init(PLL0_AUDIO_CLK_192M); /* must configured first. */
+    pm_audio_pll_power_down();
+#endif
 
     #if (AUDIO_MODE_SELECT == LINE_INPUT_TO_BUF_TO_I2S)
     i2s_pin_config_t i2s_pin_config = {
-        .bclk_pin       = GPIO_FC_PA4,
+        .bclk_pin       = GPIO_FC_PC0,
         .adc_lr_clk_pin = GPIO_NONE_PIN,
         .adc_dat_pin    = GPIO_NONE_PIN,
-        .dac_lr_clk_pin = GPIO_FC_PA5,
-        .dac_dat_pin    = GPIO_FC_PA6,
+        .dac_lr_clk_pin = GPIO_FC_PC1,
+        .dac_dat_pin    = GPIO_FC_PC2,
     };
     audio_i2s_config_t audio_i2s_config = {
         .i2s_select        = I2S0,
@@ -77,7 +104,7 @@ void user_init(void)
         .sample_rate = AUDIO_48K,
     };
     /* codec adc config */
-    audio_codec_adc_clck_en(codec_input_config.input_src);
+    audio_codec_adc_clk_en(codec_input_config.input_src);
     audio_codec_input_init(&codec_input_config);
     audio_codec_adc_en(codec_input_config.input_src);
 
@@ -92,9 +119,9 @@ void user_init(void)
 
     #elif (AUDIO_MODE_SELECT == I2S_INPUT_TO_BUF_TO_DAC)
     i2s_pin_config_t i2s_pin_config = {
-        .bclk_pin       = GPIO_FC_PA4,
-        .adc_lr_clk_pin = GPIO_FC_PA5,
-        .adc_dat_pin    = GPIO_FC_PA6,
+        .bclk_pin       = GPIO_FC_PC0,
+        .adc_lr_clk_pin = GPIO_FC_PC1,
+        .adc_dat_pin    = GPIO_FC_PC2,
         .dac_lr_clk_pin = GPIO_NONE_PIN,
         .dac_dat_pin    = GPIO_NONE_PIN,
     };
@@ -119,7 +146,7 @@ void user_init(void)
         .sample_rate = AUDIO_48K,
     };
 
-    audio_codec_dac_clck_en(codec_output_config.output_dst);
+    audio_codec_dac_clk_en(codec_output_config.output_dst);
     audio_codec_output_init(&codec_output_config);
     audio_codec_dac_en(codec_output_config.output_dst);
 
@@ -172,7 +199,7 @@ void user_init(void)
     /* matrix output config. */
     audio_matrix_set_dac_route(codec_output_config.output_dst, DAC_ROUTE_ANC0_SPEAKER, DAC_DATA_FORMAT_INVALID);
 
-    audio_codec_adc_dac_clck_en(codec_input_config.input_src, codec_output_config.output_dst);
+    audio_codec_adc_dac_clk_en(codec_input_config.input_src, codec_output_config.output_dst);
 
     if (codec_output_config.sample_rate == AUDIO_768K)
     {
@@ -188,10 +215,10 @@ void user_init(void)
         reg_audio_codec_cfg_5 = (reg_audio_codec_cfg_5 & ~(FLD_CODEC_DAC0_COEF_SEL)) | MASK_VAL(FLD_CODEC_DAC0_COEF_SEL, 3);
         reg_audio_codec_cfg_7 = (reg_audio_codec_cfg_7 & ~(FLD_CODEC_DAC1_COEF_SEL)) | MASK_VAL(FLD_CODEC_DAC1_COEF_SEL, 3);
     }
-    audio_codec_input_init(&codec_input_config);
     audio_codec_output_init(&codec_output_config);
-    audio_codec_adc_en(codec_input_config.input_src);
     audio_codec_dac_en(codec_output_config.output_dst);
+    audio_codec_input_init(&codec_input_config);
+    audio_codec_adc_en(codec_input_config.input_src);
 #endif
 
 #if (AUDIO_MODE_SELECT < LINE_INPUT_TO_ANC_TO_DAC)

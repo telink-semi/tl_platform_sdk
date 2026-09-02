@@ -554,8 +554,8 @@ enum {
 #define reg_tahdt_bb_crypt_sk_w3              REG_ADDR32(TAHDT_BB_BASE_ADDR + 0xa8)
 
 #define reg_tahdt_bb_crypt_receive_rxmic      REG_ADDR32(TAHDT_BB_BASE_ADDR + 0xac)
-#define reg_tahdt_bb_crypt_caculate_rxmic     REG_ADDR32(TAHDT_BB_BASE_ADDR + 0xb0)
-#define reg_tahdt_bb_crypt_caculate_txmic     REG_ADDR32(TAHDT_BB_BASE_ADDR + 0xb4)
+#define reg_tahdt_bb_crypt_calculate_rxmic     REG_ADDR32(TAHDT_BB_BASE_ADDR + 0xb0)
+#define reg_tahdt_bb_crypt_calculate_txmic     REG_ADDR32(TAHDT_BB_BASE_ADDR + 0xb4)
 
 #define reg_tahdt_bb_datseg_crc_error_table0  REG_ADDR8(TAHDT_BB_BASE_ADDR + 0xb8)
 #define reg_tahdt_bb_datseg_crc_error_table1  REG_ADDR8(TAHDT_BB_BASE_ADDR + 0xb9)

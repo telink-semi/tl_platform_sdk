@@ -73,6 +73,7 @@ unsigned char usbd_audio_interface_request_handler(unsigned char bus, usb_contro
         switch (setup->bmRequestType_bit.recipient) {
         case 1:
         {
+        #if 0
             /* recipient interface */
             if (setup_stage) {
                 if (((setup->wLength) && ((setup->bmRequestType_bit.direction) == USB_DIR_OUT))) {
@@ -86,6 +87,21 @@ unsigned char usbd_audio_interface_request_handler(unsigned char bus, usb_contro
                     return false;
                 }
             }
+        #else
+            if (setup_stage) {
+
+                if (usbd_audio_interface_cb) {
+                    return usbd_audio_interface_cb(bus, setup);
+                } else {
+                    return false;
+                }
+            } else {
+                if (((setup->wLength) && ((setup->bmRequestType_bit.direction) == USB_DIR_OUT))) {
+                    usbd_ep_read(bus, 0, usbd_audio[0].cur, setup->wLength);
+                    return true;
+                }
+            }
+        #endif
         } break;
 
         case 2:

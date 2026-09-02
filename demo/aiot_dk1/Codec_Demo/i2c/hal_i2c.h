@@ -32,12 +32,15 @@ extern "C"
 #endif
 
 #define I2C_CLK_SPEED 400000 //i2c clock 400K.
-#if defined(MCU_CORE_TL721X)
-#define I2C_GPIO_SDA_PIN GPIO_FC_PB7
-#define I2C_GPIO_SCL_PIN GPIO_FC_PC0
-#elif defined(MCU_CORE_TL321X)
+
+#if defined(MCU_CORE_TL321X)
 #define I2C_GPIO_SDA_PIN GPIO_FC_PB7
 #define I2C_GPIO_SCL_PIN GPIO_FC_PA4
+#else
+
+#define I2C_GPIO_SDA_PIN    PIN35//GPIO_FC_PB7
+#define I2C_GPIO_SCL_PIN    PIN38//GPIO_FC_PC0
+
 #endif
 
 #define I2C_TX_DMA_CHN DMA2

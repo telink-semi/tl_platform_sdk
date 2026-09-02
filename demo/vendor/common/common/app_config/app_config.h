@@ -71,7 +71,10 @@ extern "C"
 
 #if defined(CURRENT_BUILD_CTB_Demo)
 #if defined(MCU_CORE_B92)
-#include "app_config/ctb_app_config.h"
+#include "app_config/ctb_app_config_1V0.h"
+#endif
+#if defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL322X)
+#include "app_config/ctb_app_config_1V1.h"
 #endif
 #endif
 
@@ -190,7 +193,7 @@ extern "C"
 #if defined(MCU_CORE_B91)
 #include "app_config/spi_app_config_1v0.h"
 #endif
-#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL521X)
+#if defined(MCU_CORE_B92) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL753X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
 #include "app_config/spi_app_config_1v1.h"
 #elif defined(MCU_CORE_TL752X)
 #include "app_config/spi_app_config_1v2.h"
@@ -383,20 +386,26 @@ extern "C"
 #endif
 
 #if defined(CURRENT_BUILD_Camera_Demo)
-#if defined(MCU_CORE_TL721X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X)
 #include "app_config/dk1_camera_app_config.h"
 #endif
 #endif
 
 #if defined(CURRENT_BUILD_Codec_Demo)
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
 #include "app_config/dk1_codec_app_config.h"
 #endif
 #endif
 
 #if defined(CURRENT_BUILD_Sensor_Lcd_Demo)
-#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X)
 #include "app_config/dk1_sensor_lcd_app_config.h"
+#endif
+#endif
+
+#if defined(CURRENT_BUILD_SpiFlash_Demo)
+#if defined(MCU_CORE_TL322X)
+#include "app_config/dk1_spi_flash_app_config.h"
 #endif
 #endif
 
@@ -440,6 +449,10 @@ extern "C"
 
 #if defined(CURRENT_BUILD_PMP_Demo)
 #include "app_config/pmp_app_config.h"
+#endif
+
+#if defined(CURRENT_BUILD_Programmer_Demo)
+#include "app_config/programmer_app_config.h"
 #endif
 
 #if defined(__cplusplus)

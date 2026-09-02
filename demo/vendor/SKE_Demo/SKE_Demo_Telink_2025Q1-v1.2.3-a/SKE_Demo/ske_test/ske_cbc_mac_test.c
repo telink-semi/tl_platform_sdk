@@ -23,7 +23,7 @@
  *******************************************************************************************************/
 #include <stdio.h>
 #include "lib/include/crypto_common/utility.h"
-#if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL323X)
+#if defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL323X)
 #include "lib/include/ske/ske_cbc_mac.h"
 #endif
 #include "common.h"

@@ -21,6 +21,8 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#if !defined(MCU_CORE_TL322X)
+
 #include "common.h"
 #include "usbdesc.h"
 
@@ -854,3 +856,5 @@ unsigned char *usbdesc_get_cdc_inf(void)
     return (unsigned char *)(unsigned int)(&configuration_desc.cdc_interface);
 }
 #endif
+
+#endif // !defined(MCU_CORE_TL322X)

@@ -41,6 +41,9 @@ extern void lcd_spi_display(int x, int y, unsigned char *image, int width, int h
 #define CIS_RX_BUFF_LEN  (CIS_IMAGE_WIDTH * 5)
 #define CIS_FRAME_SIZE   (CIS_IMAGE_WIDTH * CIS_IMAGE_HEIGHT * 2)
 
+#define TEST_PIN  PIN_J4_TX
+#define TEST_PIN1  PIN_J4_RX
+
 
 const unsigned char c_bitmap_lspi[4] = {7, 5, 3, 1};
 const unsigned char c_bitmap_gspi[4] = {6, 4, 2, 0};
@@ -112,70 +115,66 @@ typedef struct
 } cis_pin_config_t;
 
 cis_pin_config_t cis_cfg = {
-#if 0
-        .pin_xclk    = GPIO_FC_PF0,
-        .pin_sda    = GPIO_FC_PF4,
-        .pin_scl    = GPIO_FC_PF6,
 
-        .pin_vs     = GPIO_PE0,
-        .pin_rstb    = GPIO_PE6,
-        .pin_pwdn    = GPIO_PA0,
+    .pin_xclk = (gpio_func_pin_e)CAMERA_PIN_CIS_XCLK,
+    .pin_sda  = (gpio_func_pin_e)CAMERA_PIN_CIS_SDA,
+    .pin_scl  = (gpio_func_pin_e)CAMERA_PIN_CIS_SCL,
 
-        .pin_hs        = GPIO_PE7,
-        .pin_pclk    = GPIO_PE1,
-        .pin_d7        = GPIO_PE2,
-        .pin_d5        = GPIO_PE3,
-        .pin_d3        = GPIO_PE4,
-        .pin_d1        = GPIO_PE5,
+    .pin_vs   = CAMERA_PIN_CIS_VS,
+    .pin_rstb = CAMERA_PIN_CIS_RSTB, 
+    .pin_pwdn = CAMERA_PIN_CIS_PWDN, 
 
-        .pin_hs2     = GPIO_PA0,
-        .pin_pclk2    = GPIO_PF3,
-        .pin_d6        = GPIO_PF1,
-        .pin_d4        = GPIO_PF2,
-        .pin_d2        = GPIO_PF5,
-        .pin_d0        = GPIO_PF7,
-#else
-    .pin_xclk = GPIO_FC_PF1, //GPIO_FC_PF0,
-    .pin_sda  = GPIO_FC_PB7, //GPIO_FC_PF4,
-    .pin_scl  = GPIO_FC_PC0, //GPIO_FC_PF6,
+    .pin_hs   = CAMERA_PIN_CIS_HS,
+    .pin_pclk = CAMERA_PIN_CIS_PCLK,
+    .pin_d0   = CAMERA_PIN_CIS_D0,
+    .pin_d1   = CAMERA_PIN_CIS_D1,
+    .pin_d2   = CAMERA_PIN_CIS_D2,
+    .pin_d3   = CAMERA_PIN_CIS_D3,
 
-    .pin_vs   = GPIO_PF3, //GPIO_PE0,
-    .pin_rstb = GPIO_PB2, //GPIO_PE6,
-    .pin_pwdn = GPIO_PB1, //GPIO_PA0,
-
-    .pin_hs   = GPIO_PF2,
-    .pin_pclk = GPIO_PE1,
-    .pin_d0   = GPIO_PE2,
-    .pin_d1   = GPIO_PE3,
-    .pin_d2   = GPIO_PE4,
-    .pin_d3   = GPIO_PE5,
-
-    .pin_hs2   = GPIO_PB3,
-    .pin_pclk2 = GPIO_PD6,
-    .pin_d4    = GPIO_PB0,
-    .pin_d5    = GPIO_PE0,
-    .pin_d6    = GPIO_PE6,
-    .pin_d7    = GPIO_PF0,
-#endif
+    .pin_hs2   = CAMERA_PIN_CIS_HS2,
+    .pin_pclk2 = CAMERA_PIN_CIS_PCLK2,
+    .pin_d4    = CAMERA_PIN_CIS_D4,
+    .pin_d5    = CAMERA_PIN_CIS_D5,
+    .pin_d6    = CAMERA_PIN_CIS_D6,
+    .pin_d7    = CAMERA_PIN_CIS_D7,
 
 };
 
+#if defined(MCU_CORE_TL322X)
+typedef gpio_func_pin_e lspi_pin_def_e;
+#define I2C_CHN                                                            I2C1
+#define i2c1_m_master_init()                                               i2c_master_init(I2C_CHN)
+#define i2c1_m_master_write(id, wr_data, wr_len)                           i2c_master_write(I2C_CHN, id, wr_data, wr_len) 
+#define i2c1_m_set_master_clk(clk)                                         i2c_set_master_clk(I2C_CHN, clk)  
+#define i2c1_m_set_pin(scl, sda)                                           i2c_set_pin(I2C_CHN, scl, sda)
+#define i2c1_m_master_write_read(id, wr_data, wr_len, rd_data, rd_len)     i2c_master_write_read(I2C_CHN, id, wr_data, wr_len, rd_data, rd_len)
+#define FLD_GPIO_IRQ                                                       GPIO_IRQ_IRQ0
+#define FLD_GPIO_IRQ_MASK                                                  GPIO_IRQ_IRQ0
+#define IRQ_GPIO                                                           IRQ_GPIO_IRQ0
+#define IRQ_USB_ENDPOINT                                                   IRQ_USB1_ENDPOINT
+#define _gpio_set_irq(pin, intr)                                           gpio_set_irq(GPIO_IRQ0, pin, intr)
+#elif defined(MCU_CORE_TL721X)
+#define _gpio_set_irq(pin, intr)                                           gpio_set_irq(pin, intr)
+#define FLD_GPIO_IRQ                                                       FLD_GPIO_IRQ_CLR
+#define FLD_GPIO_IRQ_MASK                                                  GPIO_IRQ_MASK_GPIO
+#endif
+
 lspi_pin_config_t lspi_pin_config = {
-    .spi_csn_pin      = LSPI_CSN_PF2_PIN,
-    .spi_clk_pin      = LSPI_CLK_PE1_PIN,
-    .spi_mosi_io0_pin = LSPI_MOSI_IO0_PE2_PIN,
-    .spi_miso_io1_pin = LSPI_MISO_IO1_PE3_PIN, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = LSPI_IO2_PE4_PIN,      //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = LSPI_IO3_PE5_PIN,      //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = (lspi_pin_def_e)CAMERA_PIN_SPI0_CSN,
+    .spi_clk_pin      = (lspi_pin_def_e)CAMERA_PIN_SPI0_CLK,
+    .spi_mosi_io0_pin = (lspi_pin_def_e)CAMERA_PIN_SPI0_MOSI,
+    .spi_miso_io1_pin = (lspi_pin_def_e)CAMERA_PIN_SPI0_MISO, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = (lspi_pin_def_e)CAMERA_PIN_SPI0_IO2,  //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = (lspi_pin_def_e)CAMERA_PIN_SPI0_IO3,  //quad  mode is required, otherwise it is NONE_PIN.
 };
 
 gspi_pin_config_t gspi_pin_config = {
-    .spi_csn_pin      = GPIO_FC_PB3,
-    .spi_clk_pin      = GPIO_FC_PD6,
-    .spi_mosi_io0_pin = GPIO_FC_PB0,
-    .spi_miso_io1_pin = GPIO_FC_PE0, //3line mode is required, otherwise it is NONE_PIN.
-    .spi_io2_pin      = GPIO_FC_PE6, //quad  mode is required, otherwise it is NONE_PIN.
-    .spi_io3_pin      = GPIO_FC_PF0, //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_csn_pin      = (gpio_func_pin_e)CAMERA_PIN_SPI1_CSN,
+    .spi_clk_pin      = (gpio_func_pin_e)CAMERA_PIN_SPI1_CLK,
+    .spi_mosi_io0_pin = (gpio_func_pin_e)CAMERA_PIN_SPI1_MOSI,
+    .spi_miso_io1_pin = (gpio_func_pin_e)CAMERA_PIN_SPI1_MISO, //3line mode is required, otherwise it is NONE_PIN.
+    .spi_io2_pin      = (gpio_func_pin_e)CAMERA_PIN_SPI1_IO2,  //quad  mode is required, otherwise it is NONE_PIN.
+    .spi_io3_pin      = (gpio_func_pin_e)CAMERA_PIN_SPI1_IO3,  //quad  mode is required, otherwise it is NONE_PIN.
 };
 
 unsigned char ov7670_reg_tbl[] = {
@@ -217,6 +216,8 @@ unsigned char ov7670_reg_tbl[] = {
 
 void lspi_pin_gpio_en(int en)
 {
+    (void)en;
+#if SPI0_MODULE_ON
     if (!en) {
         gpio_function_dis((gpio_pin_e)lspi_pin_config.spi_csn_pin);
         gpio_function_dis((gpio_pin_e)lspi_pin_config.spi_clk_pin);
@@ -227,15 +228,18 @@ void lspi_pin_gpio_en(int en)
     } else {
         gpio_function_en((gpio_pin_e)lspi_pin_config.spi_csn_pin);
         gpio_function_en((gpio_pin_e)lspi_pin_config.spi_clk_pin);
-        //gpio_function_en((gpio_pin_e)gspi_pin_config.spi_mosi_io0_pin);
-        //gpio_function_en((gpio_pin_e)gspi_pin_config.spi_miso_io1_pin);
-        //gpio_function_en((gpio_pin_e)gspi_pin_config.spi_io2_pin);
-        //gpio_function_en((gpio_pin_e)gspi_pin_config.spi_io3_pin);
+        gpio_function_en((gpio_pin_e)gspi_pin_config.spi_mosi_io0_pin);
+        gpio_function_en((gpio_pin_e)gspi_pin_config.spi_miso_io1_pin);
+        gpio_function_en((gpio_pin_e)gspi_pin_config.spi_io2_pin);
+        gpio_function_en((gpio_pin_e)gspi_pin_config.spi_io3_pin);
     }
+#endif
 }
 
 void gspi_pin_gpio_en(int en)
 {
+    (void)en;
+#if SPI1_MODULE_ON
     if (!en) {
         gpio_function_dis((gpio_pin_e)gspi_pin_config.spi_csn_pin);
         gpio_function_dis((gpio_pin_e)gspi_pin_config.spi_clk_pin);
@@ -251,25 +255,37 @@ void gspi_pin_gpio_en(int en)
         gpio_function_en((gpio_pin_e)gspi_pin_config.spi_io2_pin);
         gpio_function_en((gpio_pin_e)gspi_pin_config.spi_io3_pin);
     }
+#endif
 }
 
 void lspi_gspi_input_en(void)
 {
+#if SPI1_MODULE_ON
     gpio_input_en((gpio_pin_e)gspi_pin_config.spi_csn_pin);
+#if defined(MCU_CORE_TL322X)
+    gpio_set_up_down_res((gpio_pin_e)gspi_pin_config.spi_csn_pin, GPIO_PIN_PULLUP_10K);
+#endif
     gpio_input_en((gpio_pin_e)gspi_pin_config.spi_clk_pin);
     gpio_input_en((gpio_pin_e)gspi_pin_config.spi_mosi_io0_pin);
     gpio_input_en((gpio_pin_e)gspi_pin_config.spi_miso_io1_pin);
     gpio_input_en((gpio_pin_e)gspi_pin_config.spi_io2_pin);
     gpio_input_en((gpio_pin_e)gspi_pin_config.spi_io3_pin);
+#endif
 
+#if SPI0_MODULE_ON
     gpio_input_en((gpio_pin_e)lspi_pin_config.spi_csn_pin);
+#if defined(MCU_CORE_TL322X)
+    gpio_set_up_down_res((gpio_pin_e)lspi_pin_config.spi_csn_pin, GPIO_PIN_PULLUP_10K);
+#endif
     gpio_input_en((gpio_pin_e)lspi_pin_config.spi_clk_pin);
     gpio_input_en((gpio_pin_e)lspi_pin_config.spi_mosi_io0_pin);
     gpio_input_en((gpio_pin_e)lspi_pin_config.spi_miso_io1_pin);
     gpio_input_en((gpio_pin_e)lspi_pin_config.spi_io2_pin);
     gpio_input_en((gpio_pin_e)lspi_pin_config.spi_io3_pin);
+#endif
 }
 
+#if defined(MCU_CORE_TL721X)
 /**
  * BIT[0:3]  the transfer mode.slave only.
  * the transfer sequence could be:
@@ -304,6 +320,8 @@ static void spi_set_slave_transmode(spi_sel_e spi_sel, spi_tans_mode_e mode)
     reg_spi_slv_trans_mode(spi_sel) = ((reg_spi_slv_trans_mode(spi_sel) & (~FLD_SPI_SLV_TRANS_MODE)) | (mode & 0xf));
 }
 
+#endif
+
 static void ov7670_i2c_write(uint8_t reg, uint8_t value)
 {
     uint8_t buf[2];
@@ -330,7 +348,10 @@ static void ov7670_config_window(uint16_t startx, uint16_t starty, uint16_t widt
 
 void spi_dma_init(spi_sel_e spi, int chn)
 {
-    // spi_slave_init(spi, SPI_MODE0);
+#if defined(MCU_CORE_TL322X)
+    //GSPI clk pin will affect the pclk pin of camera, so we need to set slave mode firstly.
+    spi_slave_init(spi, SPI_MODE0);
+#endif
     spi_cmd_dis(spi);
     spi_addr_dis(spi);
     spi_set_io_mode(spi, SPI_QUAD_MODE);
@@ -344,68 +365,98 @@ void spi_dma_init(spi_sel_e spi, int chn)
     dma_set_irq_mask(chn, TC_MASK);
     dma_set_llp_irq_mode(chn, DMA_INTERRUPT_MODE);
 
-    if (spi == LSPI_MODULE) {
+    if (spi == CAMERA_SPI0_MODULE) {
         lspi_slave_rx_dma_config.write_num_en = 0;
-
-        lspi_pin_gpio_en(1);
-
+#if defined(MCU_CORE_TL721X)
+        lspi_pin_gpio_en(1); 
         gpio_set_up_down_res((gpio_pin_e)lspi_pin_config.spi_csn_pin, GPIO_PIN_PULLUP_10K);
-        reg_gpio_func_mux(lspi_pin_config.spi_csn_pin) = LSPI_CN_IO;
-
-        spi_set_slave_rx_dma_chain_llp(LSPI_MODULE, chn, cis_rx_buff[0], CIS_RX_BUFF_LEN, &lspi_chain[0]);
-        spi_rx_dma_add_list_element(LSPI_MODULE, chn, &lspi_chain[0], &lspi_chain[1], cis_rx_buff[1], CIS_RX_BUFF_LEN);
-        spi_rx_dma_add_list_element(LSPI_MODULE, chn, &lspi_chain[1], &lspi_chain[0], cis_rx_buff[0], CIS_RX_BUFF_LEN);
+        reg_gpio_func_mux(lspi_pin_config.spi_csn_pin) = CAMERA_PIN_FUNC_SPI0_CSN; 
+#elif defined(MCU_CORE_TL322X)
+        lspi_set_pin_mux((gpio_func_pin_e)lspi_pin_config.spi_clk_pin, CAMERA_PIN_FUNC_SPI0_CLK);
+        reg_gpio_func_mux(lspi_pin_config.spi_csn_pin) = CAMERA_PIN_FUNC_SPI0_CSN;
+        lspi_set_pin_mux((gpio_func_pin_e)lspi_pin_config.spi_mosi_io0_pin, CAMERA_PIN_FUNC_SPI0_MOSI);
+        lspi_set_pin_mux((gpio_func_pin_e)lspi_pin_config.spi_miso_io1_pin, CAMERA_PIN_FUNC_SPI0_MISO);
+        lspi_set_pin_mux((gpio_func_pin_e)lspi_pin_config.spi_io2_pin, CAMERA_PIN_FUNC_SPI0_IO2);
+        lspi_set_pin_mux((gpio_func_pin_e)lspi_pin_config.spi_io3_pin, CAMERA_PIN_FUNC_SPI0_IO3);
+        lspi_pin_gpio_en(1);
+#endif
+#if !SWITCH_DMA_BUFFER
+        spi_set_slave_rx_dma_chain_llp(spi, chn, cis_rx_buff[0], CIS_RX_BUFF_LEN, &lspi_chain[0]);
+        spi_rx_dma_add_list_element(spi, chn, &lspi_chain[0], &lspi_chain[1], cis_rx_buff[1], CIS_RX_BUFF_LEN);
+        spi_rx_dma_add_list_element(spi, chn, &lspi_chain[1], &lspi_chain[0], cis_rx_buff[0], CIS_RX_BUFF_LEN);
+#else
+        spi_set_slave_rx_dma_chain_llp(spi, chn, cis_rx_buff[2], CIS_RX_BUFF_LEN, &lspi_chain[0]);
+        spi_rx_dma_add_list_element(spi, chn, &lspi_chain[0], &lspi_chain[1], cis_rx_buff[3], CIS_RX_BUFF_LEN);
+        spi_rx_dma_add_list_element(spi, chn, &lspi_chain[1], &lspi_chain[0], cis_rx_buff[2], CIS_RX_BUFF_LEN);
+#endif
     } else {
         gspi_slave_rx_dma_config.write_num_en = 0;
-
+#if defined(MCU_CORE_TL721X)
         gspi_pin_gpio_en(1);
-
-        reg_gpio_func_mux(gspi_pin_config.spi_clk_pin) = GSPI_CK_IO;
+        reg_gpio_func_mux(gspi_pin_config.spi_clk_pin) = (gpio_func_pin_e)CAMERA_PIN_FUNC_SPI1_CLK;
 
         gpio_set_up_down_res((gpio_pin_e)gspi_pin_config.spi_csn_pin, GPIO_PIN_PULLUP_10K);
-        reg_gpio_func_mux(gspi_pin_config.spi_csn_pin) = GSPI_CN0_IO;
+        reg_gpio_func_mux(gspi_pin_config.spi_csn_pin) = (gpio_func_pin_e)CAMERA_PIN_FUNC_SPI1_CSN;
 
-        reg_gpio_func_mux(gspi_pin_config.spi_mosi_io0_pin) = GSPI_MOSI_IO;
-        reg_gpio_func_mux(gspi_pin_config.spi_miso_io1_pin) = GSPI_MISO_IO;
-        reg_gpio_func_mux(gspi_pin_config.spi_io2_pin)      = GSPI_IO2_IO;
-        reg_gpio_func_mux(gspi_pin_config.spi_io3_pin)      = GSPI_IO3_IO;
+        reg_gpio_func_mux(gspi_pin_config.spi_mosi_io0_pin) = (gpio_func_pin_e)CAMERA_PIN_FUNC_SPI1_MOSI;
+        reg_gpio_func_mux(gspi_pin_config.spi_miso_io1_pin) = (gpio_func_pin_e)CAMERA_PIN_FUNC_SPI1_MISO;
+        reg_gpio_func_mux(gspi_pin_config.spi_io2_pin)      = (gpio_func_pin_e)CAMERA_PIN_FUNC_SPI1_IO2;
+        reg_gpio_func_mux(gspi_pin_config.spi_io3_pin)      = (gpio_func_pin_e)CAMERA_PIN_FUNC_SPI1_IO3;
+#elif defined(MCU_CORE_TL322X)
+        gspi_set_pin_mux(gspi_pin_config.spi_clk_pin, CAMERA_PIN_FUNC_SPI1_CLK);
+        reg_gpio_func_mux(gspi_pin_config.spi_csn_pin) = CAMERA_PIN_FUNC_SPI1_CSN;
+        gspi_set_pin_mux(gspi_pin_config.spi_mosi_io0_pin, CAMERA_PIN_FUNC_SPI1_MOSI);
+        gspi_set_pin_mux(gspi_pin_config.spi_miso_io1_pin, CAMERA_PIN_FUNC_SPI1_MISO);
+        gspi_set_pin_mux(gspi_pin_config.spi_io2_pin, CAMERA_PIN_FUNC_SPI1_IO2);
+        gspi_set_pin_mux(gspi_pin_config.spi_io3_pin, CAMERA_PIN_FUNC_SPI1_IO3);
+        gspi_pin_gpio_en(1);
 
-        spi_set_slave_rx_dma_chain_llp(GSPI_MODULE, chn, cis_rx_buff[2], CIS_RX_BUFF_LEN, &gspi_chain[0]);
-        spi_rx_dma_add_list_element(GSPI_MODULE, chn, &gspi_chain[0], &gspi_chain[1], cis_rx_buff[3], CIS_RX_BUFF_LEN);
-        spi_rx_dma_add_list_element(GSPI_MODULE, chn, &gspi_chain[1], &gspi_chain[0], cis_rx_buff[2], CIS_RX_BUFF_LEN);
+#endif
+#if !SWITCH_DMA_BUFFER
+        spi_set_slave_rx_dma_chain_llp(spi, chn, cis_rx_buff[2], CIS_RX_BUFF_LEN, &gspi_chain[0]);
+        spi_rx_dma_add_list_element(spi, chn, &gspi_chain[0], &gspi_chain[1], cis_rx_buff[3], CIS_RX_BUFF_LEN);
+        spi_rx_dma_add_list_element(spi, chn, &gspi_chain[1], &gspi_chain[0], cis_rx_buff[2], CIS_RX_BUFF_LEN);
+#else
+        spi_set_slave_rx_dma_chain_llp(spi, chn, cis_rx_buff[0], CIS_RX_BUFF_LEN, &gspi_chain[0]);
+        spi_rx_dma_add_list_element(spi, chn, &gspi_chain[0], &gspi_chain[1], cis_rx_buff[1], CIS_RX_BUFF_LEN);
+        spi_rx_dma_add_list_element(spi, chn, &gspi_chain[1], &gspi_chain[0], cis_rx_buff[0], CIS_RX_BUFF_LEN);
+#endif
+
     }
 
     spi_slave_init(spi, SPI_MODE0);
 }
 
+
 unsigned int cis_init(void)
 {
+    int pid = 0x0a;
+    gpio_function_en(TEST_PIN);
+    gpio_output_en(TEST_PIN);
+    gpio_set_level(TEST_PIN, 0);
+
+    gpio_function_en(TEST_PIN1);
+    gpio_output_en(TEST_PIN1);
+    gpio_set_level(TEST_PIN1, 0);
+    lspi_gspi_input_en();
+
+
+#if CIS_OV7670_INIT_ON
+
     for (int i = 0; i < 16; i++) {
         tbl_nib_lspi[i] = (i & 1 ? BIT(c_bitmap_lspi[0]) : 0) + (i & 2 ? BIT(c_bitmap_lspi[1]) : 0) + (i & 4 ? BIT(c_bitmap_lspi[2]) : 0) + (i & 8 ? BIT(c_bitmap_lspi[3]) : 0);
 
         tbl_nib_gspi[i] = (i & 1 ? BIT(c_bitmap_gspi[0]) : 0) + (i & 2 ? BIT(c_bitmap_gspi[1]) : 0) + (i & 4 ? BIT(c_bitmap_gspi[2]) : 0) + (i & 8 ? BIT(c_bitmap_gspi[3]) : 0);
     }
 
-    lspi_gspi_input_en();
-
-    spi_dma_init(LSPI_MODULE, LSPI_RX_DMA_CHN);
-    //gpio_function_en((gpio_pin_e)lspi_pin_config.spi_csn_pin);        //disable SPI
-
-
-    spi_dma_init(GSPI_MODULE, GSPI_RX_DMA_CHN);
-    //gpio_function_en((gpio_pin_e)gspi_pin_config.spi_clk_pin);        //disable SPI
-
-
-    //plic_interrupt_enable(IRQ_LSPI);
-
 
     /////////////////////////////////////////////////////////////////////////
     //pwdn = 0; rstb = 1;
-    pwm_set_pin(cis_cfg.pin_xclk, PWM0);
+    pwm_set_pin(cis_cfg.pin_xclk, CAMERA_PIN_FUNC_PWM);
     pwm_set_clk(0);
-    pwm_set_tcmp(PWM0_ID, 5);
-    pwm_set_tmax(PWM0_ID, 10);
-    pwm_start(FLD_PWM0_EN);
+    pwm_set_tcmp(CAMERA_XTAL_PWM_ID, CAMERA_XTAL_PWM_CMP);
+    pwm_set_tmax(CAMERA_XTAL_PWM_ID, CAMERA_XTAL_PWM_MAX);
+    pwm_start(CAMERA_XTAL_PWM_FLD);
 
     gpio_function_en(cis_cfg.pin_rstb);
     gpio_output_en(cis_cfg.pin_rstb);
@@ -415,47 +466,47 @@ unsigned int cis_init(void)
     gpio_output_en(cis_cfg.pin_pwdn);
     gpio_set_level(cis_cfg.pin_pwdn, 0);
 
+
     //i2c configuration for CSI control
     i2c1_m_set_pin(cis_cfg.pin_sda, cis_cfg.pin_scl);
 
     i2c1_m_master_init();
     i2c1_m_set_master_clk((unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C1_M_CLK_SPEED)));
 
+    if(1){
     unsigned int t = stimer_get_tick();
     while (!clock_time_exceed(t, 1500)); //need 300us for ov7670 ready
 
-    int pid = 0x0a;
     i2c1_m_master_write_read(0x42, (unsigned char *)&pid, 1, ((unsigned char *)&pid + 1), 2);
 
     for (unsigned int i = 0; i < sizeof(ov7670_reg_tbl); i += 2) {
         i2c1_m_master_write(0x42, ov7670_reg_tbl + i, 2);
     }
+  
 
-    /*The starting point needs to be adjusted in conjunction with the lens field of view*/
+  /*The starting point needs to be adjusted in conjunction with the lens field of view*/
     ov7670_config_window(184, 10, CIS_IMAGE_WIDTH, CIS_IMAGE_HEIGHT);
+#endif
 
 #if CIS_USB_DISPLAY_EN
     reg_usb_ep_irq_mask = FLD_USB_EDP8_IRQ;
     plic_interrupt_enable(IRQ_USB_ENDPOINT);
 #endif
 
-    //gpio_set_level(cis_cfg.pin_pwdn, 1);
+}
     gpio_function_en(cis_cfg.pin_vs);
     gpio_output_dis(cis_cfg.pin_vs);
     gpio_input_en(cis_cfg.pin_vs);
-    gpio_set_irq(cis_cfg.pin_vs, INTR_RISING_EDGE); //When SW2 is pressed, the falling edge triggers the interrupt.
-    gpio_clr_irq_status(FLD_GPIO_IRQ_CLR);
+    _gpio_set_irq(cis_cfg.pin_vs, INTR_RISING_EDGE); //When SW2 is pressed, the falling edge triggers the interrupt.
+    gpio_set_irq_mask(FLD_GPIO_IRQ_MASK);
+    gpio_clr_irq_status(FLD_GPIO_IRQ);
 
-    plic_set_priority(IRQ_USB_ENDPOINT, IRQ_PRI_LEV3);
+   // plic_set_priority(IRQ_USB_ENDPOINT, IRQ_PRI_LEV3);
     plic_set_priority(IRQ_GPIO, IRQ_PRI_LEV2);
     plic_set_priority(IRQ_DMA, IRQ_PRI_LEV1);
 
     plic_preempt_feature_en(CORE_PREEMPT_PRI_MODE0);
 
-    //flash_read_page(0x80000, 153600, cis_frame);
-
-    dma_chn_en(LSPI_RX_DMA_CHN);
-    dma_chn_en(GSPI_RX_DMA_CHN);
     plic_interrupt_enable(IRQ_DMA);
     plic_interrupt_enable(IRQ_GPIO);
 
@@ -485,17 +536,36 @@ void cis_sccb(int type, int read, unsigned int adr, int n, unsigned char *p)
 ////////////////////////////////////////////////////////////////////////////////
 ///  Combine data from LSPI/GSPI
 ////////////////////////////////////////////////////////////////////////////////
+uint8_t bit_rev_table[16] = {
+    0x0, 0x8, 0x4, 0xC, 0x2, 0xA, 0x6, 0xE,
+    0x1, 0x9, 0x5, 0xD, 0x3, 0xB, 0x7, 0xF
+};
+
+#define REVERSE_NIBBLES(byte)  (byte)//(bit_rev_table[(byte >> 4) & 0x0F] << 4 | bit_rev_table[byte & 0x0F])
 _attribute_ram_code_sec_noinline_ void cis_dma2frame(void)
 {
     if (cis_wr_cnt) {
         return;
     }
+
+#if !SWITCH_PINS_SPI0_SPI1
     unsigned char *pl = cis_rx_buff[cis_rx_buff_idx & 1];
     unsigned char *pg = cis_rx_buff[2 + (cis_rx_buff_idx & 1)];
+#else
+    unsigned char *pg = cis_rx_buff[cis_rx_buff_idx & 1];
+    unsigned char *pl = cis_rx_buff[2 + (cis_rx_buff_idx & 1)];
+#endif
+
+#if SWITCH_DMA_BUFFER
+    unsigned char *temp = pg;
+    pg = pl;
+    pl = temp;
+#endif
+
     int            c  = cis_dat_cnt / CIS_IMAGE_WIDTH;
     for (int l = 0; l < CIS_RX_BUFF_LEN / CIS_IMAGE_WIDTH; l++) {
         int idx = c + l * 2 + CIS_IMAGE_HEIGHT * (CIS_IMAGE_WIDTH - 1) * 2;
-        for (int i = 0; i < CIS_IMAGE_WIDTH; i++) {
+        for (int i = 0; i < CIS_IMAGE_WIDTH; i++) {  
 #if 0
             unsigned short s;
             s = tbl_nib_lspi[*pl & 15] + tbl_nib_gspi[*pg & 15];
@@ -512,9 +582,10 @@ _attribute_ram_code_sec_noinline_ void cis_dma2frame(void)
             cis_dat_cnt += 2;
 #else
             unsigned short s;
-            s                  = (*pl & 15) + (*pg << 4);
+            (void)s;
+            s                  = REVERSE_NIBBLES((*pl & 15) + (*pg << 4));
             cis_frame[idx]     = s;
-            s                  = (*pl >> 4) + (*pg & 0xf0);
+            s                  = REVERSE_NIBBLES((*pl >> 4) + (*pg & 0xf0));
             cis_frame[idx + 1] = s;
             idx -= CIS_IMAGE_HEIGHT * 2;
             cis_dat_cnt += 2;
@@ -591,11 +662,17 @@ _attribute_ram_code_sec_noinline_ void cis_sta_machine(void)
 ////////////////////////////////////////////////////////////////////////////////
 ///  GPIO - VSYNC
 ////////////////////////////////////////////////////////////////////////////////
+volatile uint32_t image_test_cnt = 0;
 void lcd_display_image(void)
 {
+#if SPI0_MODULE_ON
     lspi_pin_gpio_en(1);
+#endif
+#if SPI1_MODULE_ON
     gspi_pin_gpio_en(1);
-
+#endif
+    image_test_cnt++;
+    
     lcd_spi_cfg();
     lcd_spi_display(0, 0, cis_frame, CIS_IMAGE_HEIGHT, CIS_IMAGE_WIDTH);
 }
@@ -607,33 +684,52 @@ typedef struct
 
 _attribute_data_retention_sec_ RGB dst[32 * 32];
 
+volatile uint32_t gpio_irq_cnt = 0;
+volatile uint32_t display_cnt = 0;
 _attribute_ram_code_sec_noinline_ void gpio_irq_handler(void)
 {
-    gpio_clr_irq_status(FLD_GPIO_IRQ_CLR);
+    gpio_irq_cnt++;
+
+    gpio_clr_irq_status(FLD_GPIO_IRQ);
     dma_chn_dis(LSPI_RX_DMA_CHN);
     dma_chn_dis(GSPI_RX_DMA_CHN);
-
+#if 1
     cis_vs_cnt = 0;
     if (cis_capture_busy && !cis_capture) {
+
         cis_capture = 1;
         cis_rd_cnt  = 0;
         cis_wr_cnt  = 0;
         cis_dat_cnt = 0;
 
         lcd_spi_cfg_disable();
+#if SPI0_MODULE_ON
+        spi_dma_init(CAMERA_SPI0_MODULE, LSPI_RX_DMA_CHN);
+#endif
+#if SPI1_MODULE_ON
+        spi_dma_init(CAMERA_SPI1_MODULE, GSPI_RX_DMA_CHN);
+#endif
 
-        spi_dma_init(LSPI_MODULE, LSPI_RX_DMA_CHN);
-        spi_dma_init(GSPI_MODULE, GSPI_RX_DMA_CHN);
-
+#if SPI0_MODULE_ON
         lspi_pin_gpio_en(0);
+#endif
+#if SPI1_MODULE_ON
         gspi_pin_gpio_en(0);
+#endif
 
+#if SPI0_MODULE_ON
         dma_chn_en(LSPI_RX_DMA_CHN);
+#endif
+#if SPI1_MODULE_ON
         dma_chn_en(GSPI_RX_DMA_CHN);
+#endif
     } else if (cis_capture && cis_capture_busy) {
         cis_capture_busy = 0;
         lcd_display_image();
+        display_cnt++;
     }
+#endif
+
 }
 
 PLIC_ISR_REGISTER(gpio_irq_handler, IRQ_GPIO)
@@ -658,21 +754,61 @@ PLIC_ISR_REGISTER(lspi_irq_handler, IRQ_LSPI)
 ////////////////////////////////////////////////////////////////////////////////
 ///  DMA
 ////////////////////////////////////////////////////////////////////////////////
+#include "test_stripes.h"
+volatile uint32_t dma_lspi_irq_cnt = 0;
+volatile uint32_t dma_gspi_irq_cnt = 0;
 _attribute_ram_code_sec_noinline_ void dma_irq_handler(void)
 {
-    unsigned int t = stimer_get_tick();
+
+#if SPI0_MODULE_ON && SPI1_MODULE_ON
     if (dma_get_tc_irq_status(BIT(LSPI_RX_DMA_CHN))) {
+        gpio_set_level(TEST_PIN, 1);
         dma_clr_tc_irq_status(BIT(LSPI_RX_DMA_CHN));
         cis_vs_cnt++;
+#if LCD_DISPLAY_DEBUG_IMAGE
+        if(image_test_cnt < 30) {
+            cis_dma2frame();
+        } else if (image_test_cnt == 30) {
+#if LCD_DISPLAY_COLOR_BAR
+            memcpy(cis_frame, test_stripes_rgb565, CIS_FRAME_SIZE);
+#endif
+        }
+#else
         cis_dma2frame();
+#endif
         cis_rx_buff_idx++;
-        t = stimer_get_tick() - t;
+        dma_lspi_irq_cnt++;
+        gpio_set_level(TEST_PIN, 0);
     }
 
     if (dma_get_tc_irq_status(BIT(GSPI_RX_DMA_CHN))) {
         dma_clr_tc_irq_status(BIT(GSPI_RX_DMA_CHN));
+        gpio_set_level(TEST_PIN1, 1);
+        
         cis_vs_cnt += 0x10000;
+        dma_gspi_irq_cnt++;
+
+        gpio_set_level(TEST_PIN1, 0);
     }
+#else
+    if (dma_get_tc_irq_status(BIT(LSPI_RX_DMA_CHN)) || dma_get_tc_irq_status(BIT(GSPI_RX_DMA_CHN))) {
+        dma_clr_tc_irq_status(BIT(LSPI_RX_DMA_CHN));
+        dma_clr_tc_irq_status(BIT(GSPI_RX_DMA_CHN));
+#if LCD_DISPLAY_DEBUG_IMAGE
+        if(image_test_cnt < 30) {
+            cis_dma2frame();
+        } else if (image_test_cnt == 30) {
+#if LCD_DISPLAY_COLOR_BAR
+            memcpy(cis_frame, test_stripes_rgb565, CIS_FRAME_SIZE);
+#endif
+        }
+#else
+        cis_dma2frame();
+#endif
+        cis_rx_buff_idx++;
+    }
+#endif
+
 }
 PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
 

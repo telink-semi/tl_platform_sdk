@@ -42,7 +42,7 @@
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB5
         #define PWM_FUNC PWM0
-    #elif defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
         #define PWM_ID   PWM0_ID
         #define PWM_PIN  GPIO_FC_PB3
         #define PWM_FUNC PWM0
@@ -67,7 +67,7 @@
 
 _attribute_ram_code_sec_ void pwm_irq_handler(void)
 {
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     if (pwm_get_irq_status(FLD_PWM0_PNUM_IRQ | FLD_PWM0_FRAME_DONE_IRQ)) {
         pwm_clr_irq_status(FLD_PWM0_PNUM_IRQ | FLD_PWM0_FRAME_DONE_IRQ);
 #else
@@ -99,7 +99,7 @@ void user_init(void)
         #if (!((PWM_CLK == PWM_32K) && defined(MCU_CORE_B91)))
     //In eagle count mode,using 32k clock source, PWM_FRAME_DONE_IRQ interrupt have problem,not Recommended.
     //In B92, the issue has been fixed.
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     pwm_set_irq_mask(FLD_PWM0_FRAME_DONE_IRQ);
 #else
     pwm_set_irq_mask(PWM_ID, FLD_PWM0_FRAME_DONE_IRQ);
@@ -116,7 +116,7 @@ void user_init(void)
         #if (!((PWM_CLK == PWM_32K) && defined(MCU_CORE_B91)))
     //In eagle count mode,using 32k clock source, PWM_PNUM_IRQ interrupt have problem,not Recommended.
     //In B92, the issue has been fixed.
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     pwm_set_irq_mask(FLD_PWM0_PNUM_IRQ);
     pwm_clr_irq_status(FLD_PWM0_PNUM_IRQ);
 #else
@@ -152,7 +152,7 @@ void user_init(void)
 #endif
     clock_cal_32k_rc();
 
-#if !defined(MCU_CORE_TL322X)
+#if !defined(MCU_CORE_TL322X) && !defined(MCU_CORE_TL522X)
     pwm_32k_chn_en(PWM_CLOCK_32K_CHN_PWM0);
 #else
     pwm_32k_chn_en(PWM_ID);
