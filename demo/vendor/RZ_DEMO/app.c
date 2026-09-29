@@ -4,9 +4,9 @@
  * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2025
+ * @date    2026
  *
- * @par     Copyright (c) 2025, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -45,8 +45,15 @@ void user_init(void)
 #if (RZ_MODE == RZ_DMA_SERIAL_SEQUENTIAL)
     /* gpio config. */
     gpio_function_dis(GPIO_PC0);
+#if !defined(MCU_CORE_TL522X)
     gpio_set_mux_function((gpio_func_pin_e)GPIO_PC0,RZ_TX);
-
+#else
+    #if (RZ_NUM == RZ0)
+    gpio_set_mux_function((gpio_func_pin_e)GPIO_PC0,RZ_TX);
+    #elif(RZ_NUM == RZ1)
+    gpio_set_mux_function((gpio_func_pin_e)GPIO_PC0,RZ1_TX);
+    #endif
+#endif
     /* rz protocol config. */
     rz_tx_config_t rz_tx_config = {
         .pola              = POLARITY_NO_INV,
@@ -54,24 +61,36 @@ void user_init(void)
         .bit_msb           = BIT_LSB,
         .big_endian_mode   = BIG_ENDIAN_MODE,
         .global_data_mode  = GLOBAL_DATA_AFTER_EACH_PIXEL_DATA,
-        .align_32bits_mode = EACH_PIXEL_DATA_AT_8BITS_BOUNDARY,
+        .align_32bits_mode = EACH_PIXEL_DATA_AT_32BITS_BOUNDARY,
         .jitter_l_en       = DISABLE_JITTER_ON_T0L_T1L,
         .jitter_h_en       = DISABLE_JITTER_ON_T0H_T1H,
         .jitter_range      = JITTER_RANGE_FROM_0_TO_1,
     };
+#if !defined(MCU_CORE_TL522X)
     rz_set_tx_config(&rz_tx_config);
     rz_set_t0h_t0l_time(12, 33); //12*1000/sys_clk.pclk=333ns,33*1000/sys_clk.pclk=916ns //default:36M
     rz_set_t1h_t1l_time(23, 23); //23*1000/sys_clk.pclk=625ns,23*1000/sys_clk.pclk=625ns
     rz_set_tsrh_tsrl_time(0, 9000); //0*1000/sys_clk.pclk=0us,9000*1000/sys_clk.pclk=250000ns
     rz_set_pixel_ic_num(8);
     rz_data_bit_num_per_pixel(24);
-
+#else
+    rz_set_tx_config(&rz_tx_config, RZ_NUM);
+    rz_set_t0h_t0l_time(12, 33, RZ_NUM); //12*1000/sys_clk.pclk=333ns,33*1000/sys_clk.pclk=916ns //default:36M
+    rz_set_t1h_t1l_time(23, 23, RZ_NUM); //23*1000/sys_clk.pclk=625ns,23*1000/sys_clk.pclk=625ns
+    rz_set_tsrh_tsrl_time(0, 9000, RZ_NUM); //0*1000/sys_clk.pclk=0us,9000*1000/sys_clk.pclk=250000ns
+    rz_set_pixel_ic_num(8, RZ_NUM);
+    rz_data_bit_num_per_pixel(24, RZ_NUM);
+    reg_rz_mask(RZ_NUM) |= BIT(4);
+    rz_set_eofh_eofl_time(50, 50, RZ_NUM);
+    reg_rz_mask(RZ_NUM) |= BIT(5);
+    rz_set_adah_adal_time(80, 80, RZ_NUM);
+#endif
     /**
      * Series connection is required, parallel connection is not required, this is because the external ic bugs lead to,
      * may be the GPIO on the disturbance pulse as data, in sending data before the need to delay at least a reset time out.
      */
     delay_ms(20);
-
+#if !defined(MCU_CORE_TL522X)
     /* dam config. */
     rz_set_dma_config(DMA1);
     rz_set_dma(DMA1, (unsigned int*)(g_ram_data_buffer1), sizeof(g_ram_data_buffer1));
@@ -81,11 +100,33 @@ void user_init(void)
     plic_interrupt_enable(IRQ_RZ);
     core_interrupt_enable();
 
+#else
+    /* dam config. */
+    rz_set_dma_config(DMA1, RZ_NUM);
+    rz_set_dma(DMA1, (unsigned int*)(g_ram_data_buffer1), sizeof(g_ram_data_buffer1), RZ_NUM);
+
+    /* interrupt config. */
+    rz_set_irq_mask(FLD_RZ_MASK_TXDONE, RZ_NUM);
+    #if (RZ_NUM == RZ0)
+    plic_interrupt_enable(IRQ_RZ);
+    #elif (RZ_NUM == RZ1)
+    plic_interrupt_enable(IRQ_RZ1);
+    #endif
+    core_interrupt_enable();
+#endif
+
 #elif (RZ_MODE == RZ_DMA_PARALLEL_RANDOM)
     /* gpio config. */
     gpio_function_dis(GPIO_PC0);
+#if !defined(MCU_CORE_TL522X)
     gpio_set_mux_function((gpio_func_pin_e)GPIO_PC0,RZ_TX);
-
+#else
+    #if (RZ_NUM == RZ0)
+    gpio_set_mux_function((gpio_func_pin_e)GPIO_PC0,RZ_TX);
+    #elif (RZ_NUM == RZ1)
+    gpio_set_mux_function((gpio_func_pin_e)GPIO_PC0,RZ1_TX);
+    #endif
+#endif
     /* rz protocol config. */
     rz_tx_config_t rz_tx_config = {
         .pola              = POLARITY_NO_INV,
@@ -93,11 +134,31 @@ void user_init(void)
         .bit_msb           = BIT_LSB,
         .big_endian_mode   = BIG_ENDIAN_MODE,
         .global_data_mode  = GLOBAL_DATA_AFTER_EACH_PIXEL_DATA,
-        .align_32bits_mode = EACH_PIXEL_DATA_AT_32BITS_BOUNDARY,
+        .align_32bits_mode = EACH_PIXEL_DATA_AT_8BITS_BOUNDARY,
         .jitter_l_en       = DISABLE_JITTER_ON_T0L_T1L,
         .jitter_h_en       = DISABLE_JITTER_ON_T0H_T1H,
         .jitter_range      = JITTER_RANGE_FROM_0_TO_1,
     };
+#if defined(MCU_CORE_TL522X)
+    rz_set_tx_config(&rz_tx_config, RZ_NUM);
+    rz_set_t0h_t0l_time(8, 22, RZ_NUM);
+    rz_set_t1h_t1l_time(15, 15, RZ_NUM);
+    rz_set_tsrh_tsrl_time(0, 6000, RZ_NUM);
+    rz_set_pixel_ic_num(3, RZ_NUM);
+    rz_data_bit_num_per_pixel(47, RZ_NUM);
+
+    /* dam config. */
+    rz_set_dma_config(DMA1, RZ_NUM);
+    rz_set_dma(DMA1, (unsigned int*)(g_ram_data_buffer1), sizeof(g_ram_data_buffer1), RZ_NUM);
+
+    /* interrupt config. */
+    rz_set_irq_mask(FLD_RZ_MASK_TXDONE, RZ_NUM);
+    #if (RZ_NUM == RZ0)
+    plic_interrupt_enable(IRQ_RZ);
+    #elif (RZ_NUM == RZ1)
+    plic_interrupt_enable(IRQ_RZ1);
+    #endif
+#else
     rz_set_tx_config(&rz_tx_config);
     rz_set_t0h_t0l_time(8, 22);
     rz_set_t1h_t1l_time(15, 15);
@@ -113,6 +174,7 @@ void user_init(void)
     rz_set_irq_mask(FLD_RZ_MASK_TXDONE);
     plic_interrupt_enable(IRQ_RZ);
     core_interrupt_enable();
+#endif
 
 #endif
 }
@@ -124,14 +186,22 @@ void main_loop (void)
 {
     if(rz_dma_send_flag == 1)
     {
-        rz_set_dma_config(DMA1);
-        rz_set_dma(DMA1, (unsigned int*)(g_ram_data_buffer2), sizeof(g_ram_data_buffer2));
-        rz_dma_send_flag = 0;
+      #if defined(MCU_CORE_TL522X)
+          rz_set_dma_config(DMA1, RZ_NUM);
+          rz_set_dma(DMA1, (unsigned int*)(g_ram_data_buffer2), sizeof(g_ram_data_buffer2), RZ_NUM);
+          rz_dma_send_flag = 0;
+      #else
+          rz_set_dma_config(DMA1);
+          rz_set_dma(DMA1, (unsigned int*)(g_ram_data_buffer2), sizeof(g_ram_data_buffer2));
+          rz_dma_send_flag = 0;
+      #endif
+          gpio_toggle(LED3);
+          delay_ms(500);
     }
-    gpio_toggle(LED3);
-    delay_ms(500);
+
 }
 
+#if !defined(MCU_CORE_TL522X)
 _attribute_ram_code_sec_ void rz_irq_handler(void)
 {
     if(rz_get_irq_status(FLD_RZ_CLR_INT_TXDONE))
@@ -143,3 +213,28 @@ _attribute_ram_code_sec_ void rz_irq_handler(void)
 }
 PLIC_ISR_REGISTER(rz_irq_handler, IRQ_RZ)
 
+#else
+#if (RZ_NUM == RZ0)
+_attribute_ram_code_sec_ void rz0_irq_handler(void)
+{
+    if(rz_get_irq_status(FLD_RZ_CLR_INT_TXDONE, RZ0))
+    {
+        gpio_toggle(LED4);
+        rz_clr_irq_status(FLD_RZ_CLR_INT_TXDONE, RZ0);
+        rz_dma_send_flag = 1;
+    }
+}
+PLIC_ISR_REGISTER(rz0_irq_handler, IRQ_RZ)
+#elif (RZ_NUM == RZ1)
+_attribute_ram_code_sec_ void rz1_irq_handler(void)
+{
+    if(rz_get_irq_status(FLD_RZ_CLR_INT_TXDONE, RZ1))
+    {
+        gpio_toggle(LED4);
+        rz_clr_irq_status(FLD_RZ_CLR_INT_TXDONE, RZ1);
+        rz_dma_send_flag = 1;
+    }
+}
+PLIC_ISR_REGISTER(rz1_irq_handler, IRQ_RZ1)
+#endif
+#endif

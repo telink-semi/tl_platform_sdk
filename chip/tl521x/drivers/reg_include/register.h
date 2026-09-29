@@ -51,4 +51,5 @@
 #include "analog_afe1v_reg.h"
 #include "ir_learn_reg.h"
 #include "can_reg.h"
+#include "i3c_reg.h"
 #endif

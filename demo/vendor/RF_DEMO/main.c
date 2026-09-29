@@ -83,7 +83,7 @@ int main(void)
     rf_set_ble_1M_mode();
 #endif
 
-#if ((!defined(MCU_CORE_TL7518)) || (!defined(MCU_CORE_TL751X)))
+#if ((!defined(MCU_CORE_TL7518)) && (!defined(MCU_CORE_TL751X)) && (!defined(MCU_CORE_TL753X)))
     #if (RF_MODE == RF_PRIVATE_250K)
     rf_set_pri_250K_mode();
     #elif (RF_MODE == RF_PRIVATE_500K)

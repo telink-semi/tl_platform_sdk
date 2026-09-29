@@ -4,9 +4,9 @@
  * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2026
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -91,18 +91,18 @@ void user_init(void)
     gpio_function_en(LED4);
     gpio_output_en(LED4); //enable output
     gpio_input_dis(LED4); //disable input
-    i2c_set_pin(I2C0,I2C_GPIO_SDA_PIN, I2C_GPIO_SCL_PIN);
+    i2c_set_pin(I2C_NUM,I2C_GPIO_SDA_PIN, I2C_GPIO_SCL_PIN);
 
 #if (I2C_DEVICE == I2C_MASTER_DEVICE)
-    i2c_master_init(I2C0);
-    i2c_set_master_clk(I2C0,(unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED)));
+    i2c_master_init(I2C_NUM);
+    i2c_set_master_clk(I2C_NUM,(unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED)));
 #elif (I2C_DEVICE == I2C_SLAVE_DEVICE)
-    i2c_slave_init(I2C0,0x5a);
-    i2c_rx_irq_trig_cnt(I2C0,SLAVE_RX_IRQ_TRIG_LEVEL);
+    i2c_slave_init(I2C_NUM,0x5a);
+    i2c_rx_irq_trig_cnt(I2C_NUM,SLAVE_RX_IRQ_TRIG_LEVEL);
 
-    i2c_set_irq_mask(I2C0,I2C_RX_BUF_MASK | I2C_RX_END_MASK);
+    i2c_set_irq_mask(I2C_NUM,I2C_RX_BUF_MASK | I2C_RX_END_MASK);
 #if (I2C_STRETCH_MODE == I2C_STRETCH_EN)
-    i2c_slave_stretch_en(I2C0);
+    i2c_slave_stretch_en(I2C_NUM);
 #endif
 
     plic_interrupt_enable(IRQ_I2C);
@@ -115,9 +115,9 @@ void main_loop(void)
 #if (I2C_DEVICE == I2C_MASTER_DEVICE)
 
     delay_ms(10);
-    i2c_master_write(I2C0,0x5a, (unsigned char *)i2c_tx_buff, BUFF_ADDR_DATA_LEN_NO_DMA);
+    i2c_master_write(I2C_NUM,0x5a, (unsigned char *)i2c_tx_buff, BUFF_ADDR_DATA_LEN_NO_DMA);
     delay_ms(10);
-    i2c_master_read(I2C0,0x5a, (unsigned char *)i2c_rx_buff, BUFF_DATA_LEN_NO_DMA);
+    i2c_master_read(I2C_NUM,0x5a, (unsigned char *)i2c_rx_buff, BUFF_DATA_LEN_NO_DMA);
 
     for (volatile unsigned int i = 0; i < BUFF_DATA_LEN_NO_DMA; i++) {
         if (i2c_rx_buff[i] != i2c_tx_buff[i]) {
@@ -133,7 +133,7 @@ void main_loop(void)
 
 #if (I2C_STRETCH_MODE == I2C_STRETCH_DIS)
     if ((slave_rx_done_end_flag == 1) || (slave_rx_end_flag == 1)) {
-        i2c_slave_write(I2C0,(unsigned char *)i2c_rx_buff, BUFF_DATA_LEN_NO_DMA);
+        i2c_slave_write(I2C_NUM,(unsigned char *)i2c_rx_buff, BUFF_DATA_LEN_NO_DMA);
         slave_rx_done_end_flag = 0;
         slave_rx_end_flag      = 0;
         gpio_toggle(LED4);
@@ -141,10 +141,10 @@ void main_loop(void)
 #elif (I2C_STRETCH_MODE == I2C_STRETCH_EN)
     //parsing to the read and write command sent by the master, the interrupt state set 1,
     //judge whether it is a read command or not,the slave pull the clock line up,and fill in the data.
-    if (i2c_get_irq_status(I2C0,I2C_SLAVE_WR_STATUS)) {
-        i2c_clr_irq_status(I2C0,I2C_SLAVE_WR_STATUS);
-        if (I2C_SLAVE_WRITE == i2c_slave_get_cmd(I2C0)) {
-            i2c_slave_write(I2C0,(unsigned char *)i2c_rx_buff, BUFF_DATA_LEN_NO_DMA);
+    if (i2c_get_irq_status(I2C_NUM,I2C_SLAVE_WR_STATUS)) {
+        i2c_clr_irq_status(I2C_NUM,I2C_SLAVE_WR_STATUS);
+        if (I2C_SLAVE_WRITE == i2c_slave_get_cmd(I2C_NUM)) {
+            i2c_slave_write(I2C_NUM,(unsigned char *)i2c_rx_buff, BUFF_DATA_LEN_NO_DMA);
             gpio_toggle(LED4);
         }
     }
@@ -164,14 +164,14 @@ void main_loop(void)
  */
 _attribute_ram_code_sec_noinline_ void i2c_irq_handler(void)
 {
-    if (i2c_get_irq_status(I2C0,I2C_RX_BUF_STATUS)) {
-        i2c_slave_read(I2C0,(unsigned char *)(i2c_rx_buff + i2c_read_flag), SLAVE_RX_IRQ_TRIG_LEVEL);
+    if (i2c_get_irq_status(I2C_NUM,I2C_RX_BUF_STATUS)) {
+        i2c_slave_read(I2C_NUM,(unsigned char *)(i2c_rx_buff + i2c_read_flag), SLAVE_RX_IRQ_TRIG_LEVEL);
         i2c_read_flag += SLAVE_RX_IRQ_TRIG_LEVEL;
     }
-    if ((i2c_get_irq_status(I2C0,I2C_RX_END_STATUS))) {
-        i2c_clr_irq_status(I2C0,I2C_RX_END_STATUS);
-        if (i2c_get_rx_buf_cnt(I2C0) > 0) {
-            i2c_slave_read(I2C0,(unsigned char *)(i2c_rx_buff + i2c_read_flag), i2c_get_rx_buf_cnt(I2C0));
+    if ((i2c_get_irq_status(I2C_NUM,I2C_RX_END_STATUS))) {
+        i2c_clr_irq_status(I2C_NUM,I2C_RX_END_STATUS);
+        if (i2c_get_rx_buf_cnt(I2C_NUM) > 0) {
+            i2c_slave_read(I2C_NUM,(unsigned char *)(i2c_rx_buff + i2c_read_flag), i2c_get_rx_buf_cnt(I2C_NUM));
         }
         i2c_read_flag          = 0;
         slave_rx_done_end_flag = 1;

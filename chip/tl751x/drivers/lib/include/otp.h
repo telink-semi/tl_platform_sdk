@@ -265,6 +265,14 @@ void otp_pgm_margin_read(unsigned int addr, unsigned int word_len, unsigned int 
 void otp_initial_margin_read(unsigned int addr, unsigned int word_len, unsigned int *buff);
 
 /**
+* @brief      This function servers to get chip id from OTP memory.
+* @param[in]  chip_id_buff - store chip id. Chip ID is 16 bytes.
+* @note       This api will set otp active mode, after read chip id, otp will be set to deep standby mode.
+* 
+*/
+void otp_get_chip_id(unsigned int *chip_id_buff);
+
+/**
  * @}
  */
 

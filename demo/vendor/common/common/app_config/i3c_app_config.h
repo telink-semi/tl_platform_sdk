@@ -39,6 +39,17 @@ extern "C" {
 #define  MAPPED_ADDRESS           8
 #define  I3C_MODE                 NO_DMA_MASTER
 
+#if defined(MCU_CORE_TL322X)
+   #define I3C_GPIO_SDA_PIN GPIO_FC_PE0
+   #define I3C_GPIO_SCL_PIN GPIO_FC_PE2
+#elif defined(MCU_CORE_TL753X)
+   #define I3C_GPIO_SDA_PIN GPIO_FC_PA2
+   #define I3C_GPIO_SCL_PIN GPIO_FC_PA1
+#elif defined(MCU_CORE_TL521X)
+   #define I3C_GPIO_SDA_PIN GPIO_FC_PE0
+   #define I3C_GPIO_SCL_PIN GPIO_FC_PE1
+#endif
+
 #include "driver.h"
 /* Disable C linkage for C++ Compilers: */
 #if defined(__cplusplus)

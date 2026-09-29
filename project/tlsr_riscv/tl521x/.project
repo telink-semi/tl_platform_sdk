@@ -110,6 +110,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I2C_Demo/I2C_V1.1</locationURI>
 		</link>
 		<link>
+			<name>vendor/I3C_Demo</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/I3C_Demo</locationURI>
+		</link>
+		<link>
 			<name>vendor/IR_LEARN_Demo</name>
 			<type>2</type>
 			<locationURI>PARENT-3-PROJECT_LOC/demo/vendor/IR_LEARN_Demo</locationURI>

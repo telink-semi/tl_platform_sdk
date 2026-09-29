@@ -163,10 +163,9 @@ typedef enum
 typedef enum
 {
     ADC_M_CHANNEL,
-#if INTERNAL_TEST_FUNC_EN
     ADC_L_CHANNEL,
     ADC_R_CHANNEL,
-#endif
+
 } adc_sample_chn_e;
 
 /**
@@ -180,10 +179,8 @@ typedef enum
 {
     NDMA_M_CHN    = 1 | (0 << 4),
     DMA_M_CHN     = 1 | (1 << 4),
-#if INTERNAL_TEST_FUNC_EN
     DMA_M_L_CHN   = 2 | (1 << 4),
     DMA_M_L_R_CHN = 3 | (1 << 4),
-#endif
 }adc_chn_cnt_e;
 
 /**
@@ -456,7 +453,7 @@ void adc_start_sample_dma(adc_num_e sar_adc_num,short *adc_data_buf,unsigned int
  *            !0: the sample is finished.
  * @note      The code is placed in the ram code sectionunsignedunsigned, in order to shorten the time.
  */
-_attribute_ram_code_sec_noinline_ unsigned char adc_get_irq_status_dma(void);
+_attribute_ram_code_sec_noinline_ unsigned char adc_get_irq_status_dma(adc_num_e sar_adc_num);
 
 /**
  * @brief     This function serves to clear adc DMA irq status.
@@ -589,17 +586,6 @@ static inline void adc_keyscan_auto_dis(adc_num_e sar_adc_num)
 }
 
 /**
- * @brief      This function start trigger.
- * @param[in]  sar_adc_num - SAR0/SAR1.
- * @return     none
- * @note       Start collecting adc data
- */
-static inline void adc_trigger_start(adc_num_e sar_adc_num)
-{
-    reg_soft_control(sar_adc_num) = FLD_TRIG_START;
-}
-
-/**
  * @brief      This function serves to configure the PEM event.
  * @param[in]  sar_adc_num - SAR0/SAR1.
  * @param[in]  chn - to select the PEM channel.
@@ -672,8 +658,58 @@ void adc_set_sar0_vbat_calib_vref(unsigned short vref, signed char offset);
 void adc_set_sar1_gpio_calib_vref(unsigned short vref, signed char offset);
 
 /**
+ * @brief     This function serves to configure the DMA head node for SAR ADC.
+ * @param[in] sar_adc_num  - SAR0/SAR1.
+ * @param[in] chn          - the DMA channel.
+ * @param[in] dst_addr     - pointer to the destination data buffer, which must be 4-byte aligned.
+ * @param[in] data_len     - the length of data to be transferred.
+ * @param[in] head_of_list - pointer to the next DMA chain node.
+ * @return    none
+ * @note      dst_addr must be aligned by word (4 bytes), otherwise the program will enter an exception.
+ */
+void adc_set_dma_chain_llp(adc_num_e sar_adc_num, dma_chn_e chn, unsigned short *dst_addr, unsigned int data_len, dma_chain_config_t *head_of_list);
+
+/**
+ * @brief      Configure DMA cycle chain node.
+ * @param[in]  sar_adc_num - SAR0/SAR1.
+ * @param[in]  chn         - DMA channel.
+ * @param[in]  config_addr - the address of the current DMA chain node, used to configure the current transfer.
+ * @param[in]  llpointer   - the address of the next DMA chain node, used for linked list jump.
+ * @param[in]  dst_addr    - pointer to the destination data buffer, which must be 4-byte aligned.
+ * @param[in]  data_len    - the length of data to be transferred, must be less than 0xFFFFFC and a multiple of 4.
+ * @return     none.
+ * @note       there are no usage restrictions, there is no need to configure the DMA length to a maximum length, and there is no limit to the send length:
+ *             - The condition of linked list jump: one is when the length of the DMA configuration is reached, the other is rx_done,
+ *               no matter which condition has a write back length.
+ */
+void adc_rx_dma_add_list_element(adc_num_e sar_adc_num, dma_chn_e chn, dma_chain_config_t *config_addr, dma_chain_config_t *llpointer, unsigned short *dst_addr, unsigned int data_len);
+
+/**
+ * @brief      This function serves to configure ADC DMA chain transmission.
+ * @param[in]  sar_adc_num  - SAR0/SAR1.
+ * @param[in]  chn          - the DMA channel.
+ * @param[in]  dst_addr     - pointer to the destination data buffer, which must be 4-byte aligned.
+ * @param[in]  data_len     - the length of data to be transferred.
+ * @param[in]  head_of_list - pointer to the DMA chain head node.
+ * @return     none
+ * @note       This function combines DMA chain LLP configuration, DMA list element setup,
+ *             and FIFO operation configuration into a single interface.
+ *             - The default RX FIFO trigger count is 1, users should not change it.
+ *             - If the FIFO is not cleared, there may be residual values that affect the sampling results.
+ */
+void adc_dma_chain_transmission_start(adc_num_e sar_adc_num,dma_chn_e chn,unsigned short *dst_addr, unsigned int data_len, dma_chain_config_t *head_of_list);
+
+/**
  * @brief      This function is used to reset sar_adc module.
  * @param[in]  sar_adc_num - SAR0/SAR1.
  * @return     none
  */
 void adc_reset(adc_num_e sar_adc_num);
+
+/**
+ * @brief      This function start trigger.
+ * @param[in]  sar_adc_num - SAR0/SAR1.
+ * @return     none
+ * @note       Start collecting adc data
+ */
+void adc_trigger_start(adc_num_e sar_adc_num);

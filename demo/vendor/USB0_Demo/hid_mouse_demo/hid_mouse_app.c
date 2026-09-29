@@ -152,8 +152,7 @@ void user_init(void)
     pm_set_dig_ldo(DIG_VOL_1V1_MODE, 1000);
     PLL_192M_D25F_96M_HCLK_N22_48M_PCLK_48M_MSPI_48M;
 #elif defined(MCU_CORE_TL753X)
-    //TODO
-    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M;
+    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_N22_48M;
 #endif
 
 #if USB_HIGH_SPEED_EN
@@ -168,7 +167,7 @@ void user_init(void)
     core_interrupt_enable();
     plic_interrupt_enable(IRQ_USB0);
 
-#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
+#if (defined(MCU_CORE_TL322X) || (defined(MCU_CORE_TL753X) && PM_FUNCTION_SUPPORT))
     pm_set_usb0_wakeup();
     pm_set_suspend_power_cfg(FLD_PD_USB_EN, 1);
 #endif
@@ -179,7 +178,7 @@ void main_loop(void)
     led_toggle();
 
     if (g_usb_suspend_flag) {
-#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL753X)
+#if (defined(MCU_CORE_TL322X) || (defined(MCU_CORE_TL753X) && PM_FUNCTION_SUPPORT))
         pm_sleep_wakeup(SUSPEND_MODE, PM_WAKEUP_CORE, PM_TICK_STIMER, 0);
 #endif
     }

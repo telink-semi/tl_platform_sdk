@@ -28,15 +28,15 @@
 
 #define NVM_AHB0_BASE_ADDR           0x00400000
 
-#define reg_nvm_ahb0_rd_data_byte(j) REG_ADDR8(NVM_AHB0_BASE_ADDR + j)
+#define reg_nvm_ahb0_rd_data_byte(j) REG_ADDR8(NVM_AHB0_BASE_ADDR | (j))
 
-#define reg_nvm_ahb0_rd_data_word(j) REG_ADDR32(NVM_AHB0_BASE_ADDR + j)
+#define reg_nvm_ahb0_rd_data_word(j) REG_ADDR32(NVM_AHB0_BASE_ADDR | (j))
 
 #define NVM_AHB1_BASE_ADDR           0x00500000
 
-#define reg_nvm_ahb1_rd_data_byte(j) REG_ADDR8(NVM_AHB1_BASE_ADDR + j)
+#define reg_nvm_ahb1_rd_data_byte(j) REG_ADDR8(NVM_AHB1_BASE_ADDR | (j))
 
-#define reg_nvm_ahb1_rd_data_word(j) REG_ADDR32(NVM_AHB1_BASE_ADDR + j)
+#define reg_nvm_ahb1_rd_data_word(j) REG_ADDR32(NVM_AHB1_BASE_ADDR | (j))
 
 
 #define NVM_BASE_ADDR               0x80101000

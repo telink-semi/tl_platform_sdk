@@ -60,8 +60,20 @@
 
         #if defined(MCU_CORE_TL521X)
             #define DEBUG_INFO_TX_PIN GPIO_PB2 //uart tx pin
+            #define PULL_WAKEUP_SRC_PB2 GPIO_PIN_UP_DOWN_FLOAT
+            #define PB2_FUNC            AS_GPIO
+            #define PB2_INPUT_ENABLE    0
+            #define PB2_OUTPUT_ENABLE   1
+            #define PB2_DATA_OUT        0
         #else
             #define DEBUG_INFO_TX_PIN GPIO_PA0 //uart tx pin
+            
+            #define PULL_WAKEUP_SRC_PA0 GPIO_PIN_UP_DOWN_FLOAT
+            #define PA0_FUNC            AS_GPIO
+            #define PA0_INPUT_ENABLE    0
+            #define PA0_OUTPUT_ENABLE   1
+            #define PA0_DATA_OUT        0
+
         #endif
 
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92)

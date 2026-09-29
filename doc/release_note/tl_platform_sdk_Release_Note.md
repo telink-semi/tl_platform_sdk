@@ -1,3 +1,158 @@
+## V4.1.0
+
+### Version
+
+* SDK Version: tl_platform_sdk V4.1.0
+* Chip Version
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3/A4),TL322X(A1),TL323X(A0/A1),TL752X(A0),TL521X(A0),TL753X(A1)
+* Hardware EVK Version
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20
+  * TL721X: C1T315A20 In the C1T315A20_V1_5 and earlier versions, the PD4 pin used for KEY1 is not available for any functional use.
+  * TL321X: C1T335A20
+  * TL322X: C1T371A20
+  * TL323X: C1T388A20
+  * TL752X: C1T387A20
+  * TL521X: C1T416A20
+  * TL753X: C1T440A20
+* Hardware AIOT_DK1 Version
+  * C1TXA104
+* Demo Platform Requirements
+
+  | Demo Name       | Main Board | Sub-Board            |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC1/AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* Toolchain Version
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92), TL322x, TL323x, TL521x, TL721x, TL751x, TL752x, TL753x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc))
+
+* IDE
+  - [Telink IoT Studio](https://www.telink-semi.com/development-tools)
+  - [Telink VS Code Extension](https://marketplace.visualstudio.com/items?itemName=Telink.tlk)
+
+<hr style="border-bottom:2.5px solid rgb(146, 240, 161)">
+
+### Note
+* The key words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** in this release note are to be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+### Features
+* **pm**
+  * (TL751X): Added a mistake-proofing mechanism for pad wake-up: configuring the 10 kΩ internal pull-up as a wake-up source is no longer permitted. (merge_requests/@2999)
+* **rf**
+  * (TL323X): Added PTA-related drivers and adapted the demo accordingly. (merge_requests/@3003)
+* **gpio**
+  * (B91/B92/TL321X/TL322X/TL323X/TL521X/TL522X/TL523X/TL721X/TL751X/TL753X/TL711X/W92/TL7518): Added `_attribute_no_inline_` to `gpio_analog_resistance_init` to prevent the compiler from inlining it into `gpio_init` (which resides in `.ram_code`), thereby reducing `.ram_code` usage. (merge_requests/@3005)
+* **efuse**
+  * (TL322X/TL521X/TL523X/TL752X): Added the `efuse_get_chip_id` interface to obtain the chip ID. (merge_requests/@2752)
+* **otp**
+  * (TL721X): Added the `otp_get_chip_id` interface to obtain the chip ID. (merge_requests/@2752)
+### Bug Fixes
+* **flash**
+  * (TL323X): Fixed incorrect enumeration values for TH25Q16U flash protection. (merge_requests/@2991)
+* **rf**
+  * (TL323X): Fixed performance degradation caused by register misalignment when switching between Zigbee mode and other modes. (merge_requests/@3021)
+    * Detailed description: The registers configured for Zigbee mode differ in number and location from those configured for other modes. During mode switching, some registers are configured unexpectedly under specific modes, which in turn degrades performance.
+    * Fixing effect: Functionality and performance remain normal after mode switching.
+    * Update suggestion: Customers who use mode switching MUST update to this release.
+* **trng**
+  * (TL752X): Fixed an issue where `trng_rand` failed to return random numbers when a high AHB clock was used. (merge_requests/@3039)
+    * Detailed description: The maximum TRNG clock frequency is 20 MHz. When the AHB clock exceeds 80 MHz (e.g., 96 MHz), the TRNG clock exceeds 20 MHz if `trng_clk_div` is set to `TRNG_SAMPLE_CLOCK_IS_INPUT_DIV_4`, causing the module to malfunction. The `trng_init` interface has therefore been modified to adapt to the AHB clock frequency.
+    * Fixing effect: The TRNG module operates normally with high AHB clock frequencies.
+    * Update suggestion: All customers MUST update to this release.
+### Refactoring
+* N/A
+### BREAKING CHANGES
+* **sar adc**
+  * (TL322X): Fixed an issue where a single invalid set of ADC calibration values in eFuse rendered the remaining sets unusable. (merge_requests/@2951)
+    * Detailed description: Under the previous logic, if any one of the three eFuse calibration sets (`sar0 gpio`, `sar0 vbat`, and `sar1 gpio`) was invalid, the other two sets were not applied, and default values were used for calibration instead.
+    * Fixing effect: The three calibration sets are now applied independently and no longer affect one another.
+    * Update suggestion: Customers using the ADC MUST update to this release.
+### Performance Improvements
+* **rf**
+  * (TL323X): Modified the synchronization threshold to optimize Zigbee RX sensitivity. (merge_requests/@3014)
+* **lpd**
+  * (TL521X): Modified the LPD threshold levels to enhance system robustness. (merge_requests/@3022)
+
+## V4.1.0
+
+### 版本
+
+* SDK 版本: tl_platform_sdk V4.1.0
+* 芯片版本
+  - TLSR921x/TLSR951x(B91)(A0/A1/A2),TLSR922x/TLSR952x(B92)(A3/A4),TL751X(A1),TL721X(A2/A3),TL321X(A1/A2/A3/A4),TL322X(A1),TL323X(A0/A1),TL521X(A0),TL753X(A1)
+* 硬件评估板版本
+  * TLSR951x(B91): C1T213A20
+  * TLSR952x(B92): C1T266A20
+  * TL751X: C1T368A20
+  * TL721X: C1T315A20 在C1T315A20_V1_5及之前版本中，KEY1所使用的PD4引脚无法作为任何功能使用。
+  * TL321X: C1T335A20
+  * TL322X: C1T371A20
+  * TL323X: C1T388A20
+  * TL323X: C1T387A20
+  * TL521X: C1T416A20
+  * TL753X: C1T440A20
+* 硬件AIOT_DK1版本
+  * C1TXA104
+* Demo平台要求
+
+  | 示例名称        | 主板       | 子板                 |
+  |-----------------|------------|----------------------|
+  | Codec_Demo      | AIOT_DK1   | C1TXA8(AIOT-CODEC2)  |
+  | Sensor_Lcd_Demo | AIOT_DK1   | C1TXA99              |
+  | Camera_Demo     | AIOT_DK1   | C1TXA99 + OV7670     |
+  | Other demos     | EVK        | —                    |
+
+* 工具链版本
+  - TLSR921x/TLSR951x(B91): gcc7(TL32 ELF MCULIB V5F GCC7.4 (riscv32-elf-gcc))
+  - TLSR922x/TLSR952x(B92), TL322x, TL323x, TL521x, TL721x, TL751x, TL752x, TL753x: gcc12(TL32 ELF MCULIB V5F GCC12.2 (riscv32-elf-gcc))
+  - TL321x: gcc12(TL32 ELF MCULIB V5  GCC12.2 (riscv32-elf-gcc))
+
+* IDE
+  - [Telink IoT Studio](https://www.telink-semi.com/development-tools)
+  - [Telink VS Code Extension](https://marketplace.visualstudio.com/items?itemName=Telink.tlk)
+
+<hr style="border-bottom:2.5px solid rgba(36, 190, 62, 1)">
+
+* N/A
+### Features
+* **pm**
+  * (TL751X): 新增PAD唤醒防呆机制，不允许配置为10K上拉唤醒. (merge_requests/@2999)
+* **rf**
+  * (TL323X): 新增PTA相关接口及demo适配。(merge_requests/@3003)
+* **gpio**
+  * (B91/B92/TL321X/TL322X/TL323X/TL521X/TL522X/TL523X/TL721X/TL751X/TL753X/TL711X/W92/TL7518): 给 `gpio_analog_resistance_init` 添加 `_attribute_no_inline_`，避免其被内联进 `.ram_code` 段的 `gpio_init`，以减小 `.ram_code` 占用。(merge_requests/@3005)
+### Bug Fixes
+* **flash**
+  * (TL323X):修复TH25Q16U flash保护枚举值错误问题。(merge_requests/@2991)
+* **rf**
+  * (TL323X)：解决了 zigbee 和其他模式切换时寄存器未对齐对性能造成影响的问题。(merge_requests/@3021)
+    * 详细描述： zigbee 和其他模式配置的寄存器数量和位置不一致，导致在模式切换的过程部分寄存器在特定的模式下配置不符合预期，进而影响性能指标。
+    * 修复效果： 修改后模式切换后功能和性能正常。
+    * 更新建议：使用到模式切换时必须更新。
+* **trng**
+  * (TL752X)：解决了使用高ahb clk时，芯片使用trng_rand接口获取不到随机数问题。(merge_requests/@3039)
+    * 详细描述：设计的最大trng_clk为20MHz，当ahb_clk大于80Mhz（例如96MHz）时，如果使用trng_SAMPLE_CLOCK_is_INPUT_div_4的trng_clk_div，trng_clk就会大于20MHz，该模块工作异常，因此修改了trng_init接口以适应ahb时钟频率。
+    * 修复效果：使用高ahb clk时，trng模块工作正常。
+    * 更新建议：必须更新。
+### Refactoring
+* N/A
+### BREAKING CHANGES
+* **sar adc**
+  * (TL322X): 修复 efuse 中 adc 校准值有一组不合法导致其他组校准值也不能用的问题。(merge_requests/@2951)
+    * 详细描述：旧的逻辑下，efuse中sar0 gpio、sar0 vbat、sar1 gpio 三组校准值有一组不合法，其他 2 组都不会被使用,并且会使用默认值进行校准。
+    * 修复效果：新的逻辑里三组校准值独立更新，互不影响。
+    * 更新建议：使用adc时，必须更新。
+### Performance Improvements
+* **rf**
+  * (TL323X): 修改同步门限值以优化 zigbee 的 rx sensitivity 性能. (merge_requests/@3014)
+* **lpd**
+  * (TL521X): 修改LPD挡位以增强系统的鲁棒性. (merge_requests/@3022)
+
 ## V4.0.1
 
 ### Version
@@ -246,6 +401,8 @@
 * N/A
 
 ### Features
+* **adc **
+    * (TL322X) Added dual SAR synchronous sampling demo, enabled multi-channel function and supported DMA chain transmission and trigger sampling. dc_get_irq_status_dma has added the parameter for selecting SAR ADC number.(merge_requests/@2700)
 * **pm**
   * (TL322X) Support multi-address booting。(merge_requests/@2853) 
   * (TL322X) Support 32k xtal。(merge_requests/@2886) 
@@ -339,6 +496,8 @@
 * N/A
 
 ### Features
+* **adc **
+  * (TL322X) 新增双 SAR 同步采样 Demo、开放多通道功能并支持 DMA 链传与触发采样。dc_get_irq_status_dma 增加 sar_adc_num ADC选择参数(merge_requests/@2700)。
 * **pm**
   * (TL322X) 支持多地址启动。(merge_requests/@2853) 
   * (TL322X) 支持32k xtal。(merge_requests/@2886) 

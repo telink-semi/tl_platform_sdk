@@ -97,6 +97,9 @@ extern "C"
     #elif defined(MCU_CORE_TL322X)
         #define BQB_UART_TX_PORT GPIO_FC_PB5
         #define BQB_UART_RX_PORT GPIO_FC_PB6
+    #elif defined(MCU_CORE_TL523X)
+        #define BQB_UART_TX_PORT GPIO_FC_PB5
+        #define BQB_UART_RX_PORT GPIO_FC_PB6
     #endif
     #define BQB_UART_BAUD 500000 //TODO: The baud of the TL752X needs to be divisible by MCLK0.
 

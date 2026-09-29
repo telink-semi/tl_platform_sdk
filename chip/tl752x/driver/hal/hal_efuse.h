@@ -71,6 +71,14 @@ typedef struct
 drv_api_status_e efuse_get_ieee_addr(unsigned char *buf);
 
 /**
+* @brief      This function servers to get chip id from EFUSE.
+* @param[in]  chip_id_buff - store chip id. Chip ID is 16 bytes.
+* @return     DRV_API_SUCCESS: operation successful.
+*             others: get fail.
+*/
+drv_api_status_e efuse_get_chip_id(unsigned char *chip_id_buff);
+
+/**
  * @brief       This function is used to Tighten the judgment of illegal values for gpio calibration and vbat calibration in the efuse.
  *
  * @param[in]   gain - the value of gpio_calib_vref_gain or vbat_calib_vref_gain

@@ -30,7 +30,13 @@ extern "C"
 #include "driver.h"
 #include "common.h"
 
-#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL321X)
+#if defined(MCU_CORE_TL522X)
+#define RZ0 0
+#define RZ1 1
+#define RZ_NUM RZ0
+#endif
+
+#if defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL522X)
 #define RZ_DMA_SERIAL_SEQUENTIAL 1
 #define RZ_DMA_PARALLEL_RANDOM   2
 #endif

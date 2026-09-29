@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-#if ((!defined(MCU_CORE_TL7518) && (RF_MODE == RF_PRIVATE_500K || RF_MODE == RF_PRIVATE_250K)) || RF_MODE == RF_PRIVATE_1M || RF_MODE == RF_PRIVATE_2M)
+#if ((!defined(MCU_CORE_TL753X)) && ((!defined(MCU_CORE_TL7518) && (RF_MODE == RF_PRIVATE_500K || RF_MODE == RF_PRIVATE_250K)) || RF_MODE == RF_PRIVATE_1M || RF_MODE == RF_PRIVATE_2M))
 
 
 unsigned char rx_packet[128 * 4] __attribute__((aligned(4)));

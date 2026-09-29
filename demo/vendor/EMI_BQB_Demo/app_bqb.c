@@ -151,6 +151,17 @@ uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin, gpio_func_pin_e rx_pin, unsi
 
     return uart_num;
 }
+    #elif defined(MCU_CORE_TL523X)
+uart_num_redef_e uart_setup(gpio_func_pin_e tx_pin, gpio_func_pin_e rx_pin, unsigned int baudrate, unsigned int System_clock, UART_ParityTypeDef parity, UART_StopBitTypeDef stop_bit)
+{
+    uart_num_redef_e uart_num = UART_NUM0;
+
+    uart_gpio_set((uart_num_e)uart_num, tx_pin, rx_pin);
+    uart_reset((uart_num_e)uart_num);
+    uart_init_baudrate((uart_num_e)uart_num, baudrate, System_clock, parity, stop_bit);
+
+    return uart_num;
+}
     #endif
 
 /**
@@ -218,7 +229,7 @@ void user_init(void)
     #elif defined(MCU_CORE_B92)
     gpio_func_pin_e bqb_uart_tx_port = BQB_UART_TX_PORT;
     gpio_func_pin_e bqb_uart_rx_port = BQB_UART_RX_PORT;
-    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X)|| defined(MCU_CORE_TL751X)|| defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL523X)
     gpio_func_pin_e bqb_uart_tx_port = BQB_UART_TX_PORT;
     gpio_func_pin_e bqb_uart_rx_port = BQB_UART_RX_PORT;
     #endif
@@ -228,10 +239,20 @@ void user_init(void)
     }
     get_uart_port(&bqb_uart_tx_port, &bqb_uart_rx_port);
     #endif
+    #if !defined(MCU_CORE_TL523X)
     uart_using = uart_setup(bqb_uart_tx_port, bqb_uart_rx_port, BQB_UART_BAUD, sys_clk.pclk * 1000 * 1000, UART_PARITY_NONE, UART_STOP_BIT_ONE);
     uart_set_irq_mask((uart_num_e)uart_using, UART_RX_IRQ_MASK);
     uart_clr_irq_mask((uart_num_e)uart_using, UART_TX_IRQ_MASK);
     uart_rx_irq_trig_level((uart_num_e)uart_using, 1);
+    #else
+    uart_using = uart_setup(bqb_uart_tx_port, bqb_uart_rx_port, BQB_UART_BAUD, 24 * 1000 * 1000, PARITY_NONE, STOP_BIT_ONE);
+    uart_dma_enable((uart_num_e)uart_using,0, 0);
+    plic_interrupt_disable(IRQ_DMA);
+    dma_chn_irq_enable((dma_chn_e)DMA_REQ_UART0_RX, 0);
+    dma_chn_irq_enable((dma_chn_e)DMA_REQ_UART0_TX, 0);
+    uart_irq_enable((uart_num_e)uart_using, 0, 0);   //uart RX irq enable
+    uart_ndma_irq_triglevel((uart_num_e)uart_using, 0, 0);    //set the trig level. 1 indicate one byte will occur interrupt
+    #endif
     bqb_pa_init();
     bqbtest_init();
     write_sram8(CALIBRATION_CAP_RAM_ADDR, 0xff); //for sram calibration

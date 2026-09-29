@@ -104,7 +104,7 @@ static inline void adc_clk_dis(void)
  */
 static inline void adc_set_clk(void)
 {
-    reg_adc_config1 = ((reg_adc_config1 & FLD_SAR_ADC_CLK_DIV) | 2); //div=2, adc digital clk = 48MHz/div.(crystal = 48MHz)
+    reg_adc_config1 = ((reg_adc_config1 & ~FLD_SAR_ADC_CLK_DIV) | 2); //div=2, adc digital clk = 48MHz/div.(crystal = 48MHz)
     analog_write_reg8(areg_adc_sample_clk_div, 5);                   //div=5, adc analog clk = 24MHz/(1+div) = 4M.
 }
 
@@ -607,7 +607,7 @@ void adc_set_vbat_calib_vref(signed short vref, signed char offset)
 void adc_set_dma_config(dma_chn_e chn)
 {
     adc_dma_chn     = chn;
-    reg_adc_config2 = FLD_RX_DMA_ENABLE;
+    reg_adc_config2 |= FLD_RX_DMA_ENABLE;
     dma_config(chn, &adc_rx_dma_config);
     reg_dma_llp(adc_dma_chn) = 0;
     /*

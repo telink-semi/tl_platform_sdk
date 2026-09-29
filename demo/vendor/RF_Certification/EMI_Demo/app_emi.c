@@ -168,7 +168,7 @@ void emicarrieronly(void);
 void emirx(void);
 void emi_tx_burst(void);
 void emi_tx_continue(void);
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL753X)
 void rf_emi_tx_current_test(void);
 void rf_emi_rx_current_test(void);
 #endif
@@ -182,7 +182,7 @@ test_list_t ate_list[] = {
     {0x02, emi_tx_continue       },
     {0x03, emirx                 },
     {0x04, emi_tx_burst          },
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL753X)
     {0x10, rf_emi_tx_current_test},
     {0x11, rf_emi_rx_current_test}
 #endif
@@ -333,7 +333,7 @@ void emi_tx_continue(void)
 #endif
 }
 
-#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)
+#if defined(MCU_CORE_B92)||defined(MCU_CORE_TL721X)||defined(MCU_CORE_TL321X)||defined(MCU_CORE_TL322X)||defined(MCU_CORE_TL753X)
 /**
  * @brief      This function serves to test RF tx current
  * @param[in]  none
@@ -341,9 +341,11 @@ void emi_tx_continue(void)
  */
 void rf_emi_tx_current_test(void)
 {
-    extern unsigned char g_single_tong_freqoffset;
     unsigned char        power = 0;
+#if !(defined(MCU_CORE_TL753X))
+    extern unsigned char g_single_tong_freqoffset;
     rf_mode_init();
+#endif
 #if defined(MCU_CORE_TL322X)
     if((emi_cmd_now.g_rf_mode==RF_MODE_BLE_4M_NO_PN)||(emi_cmd_now.g_rf_mode==RF_MODE_BLE_6M_NO_PN)) {
         PLL_192M_D25F_48M_HCLK_N22_24M_PCLK_12M_MSPI_48M;
@@ -359,21 +361,26 @@ void rf_emi_tx_current_test(void)
         power = rf_power_Level_list[emi_cmd_now.g_power_level];
 
     }
+#if !(defined(MCU_CORE_TL753X))
     g_single_tong_freqoffset = 1;
     rf_set_chn(emi_cmd_now.g_chn);
     g_single_tong_freqoffset = 0;
     rf_set_power_level_singletone(power);
-#if defined(MCU_CORE_TL721X)
+    #if defined(MCU_CORE_TL721X)
         if(emi_cmd_now.g_power_level>RF_POWER_INDEX_N49p00dBm){
             pm_set_vdd0p94(CAL_0P94V_TO_1P05V);
         }
-#elif defined(MCU_CORE_TL322X)
+    #elif defined(MCU_CORE_TL322X)
         if(emi_cmd_now.g_power_level>RF_POWER_INDEX_N40p00dBm){
             rf_set_vant_power_trim_level(RF_VANT_HIGH_POWER);
         }
+    #endif
 #endif
-    rf_set_txmode();
     gpio_shutdown(GPIO_ALL);
+    rf_emi_tx_single_tone(power,emi_cmd_now.g_chn);
+#if !(defined(MCU_CORE_TL753X))
+    rf_set_txmode();
+#endif
     rf_current_test_cfg();
     while (1);
 }
@@ -588,6 +595,14 @@ void user_init(void)
         case 2:
             g_emi_setting.power_mode = 0x03; //B91:DCDC_1P4_DCDC_1P8; B92:DCDC_1P4_DCDC_2P0; TL721X:DCDC_0P94_DCDC_1P8; TL321X:DCDC_1P25_DCDC_1P8
             break;
+    #if defined(MCU_CORE_TL753X)
+        case 3:
+            g_emi_setting.power_mode = 0x02; //DCDC_AVDD_DCDC_DVDD
+            break;
+        case 4:
+            g_emi_setting.power_mode = 0x04; //DCDC_AVDD_DCDC_DVDD_NO_BK3
+            break;
+    #endif
         default:
             g_emi_setting.power_mode = 0x00;
             break;
@@ -620,7 +635,6 @@ void user_init(void)
 #elif defined(MCU_CORE_TL753X)
     platform_init(g_emi_setting.power_mode, VBAT_MAX_VALUE_GREATER_THAN_3V6, 0);
 #endif
-
     CLOCK_INIT;
 
 #if(defined(MCU_CORE_TL751X))||(defined(MCU_CORE_TL322X)||(defined(MCU_CORE_TL753X))||(defined(MCU_CORE_TL522X)))
