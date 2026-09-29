@@ -65,3 +65,4 @@
 #include "can.h"
 #include "rz.h"
 #include "lpc.h"
+#include "i3c.h"

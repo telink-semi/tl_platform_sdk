@@ -110,7 +110,7 @@ typedef enum
 {
     /*VBAT LDO*/
     RF_VBAT_POWER_LEVEL_MAX = BIT(7)|63,
-    /*VBUCK LDO*/           /* VBUCK TP MODE | VBUCK IQ MODE */
+    /*VBUCK LDO*/             /* VBUCK TP MODE | VBUCK IQ MODE */
     RF_POWER_LEVEL_MAX = 63, /**<  13.73 dbm | 12.32 dbm */  
     RF_POWER_LEVEL_62 = 62,  /**<  13.70 dbm | 12.28 dbm */  
     RF_POWER_LEVEL_61 = 61,  /**<  13.68 dbm | 12.24 dbm */  
@@ -190,7 +190,7 @@ typedef enum
 {
     /*VBAT LDO*/
     RF_VBAT_POWER_INDEX_LEVEL_MAX,
-    /*VBUCK LDO*/             /* VBUCK TP MODE | VBUCK IQ MODE */
+    /*VBUCK LDO*/              /* VBUCK TP MODE | VBUCK IQ MODE */
     RF_POWER_INDEX_LEVEL_MAX,  /**<  13.73 dbm | 12.32 dbm */
     RF_POWER_INDEX_LEVEL_62,   /**<  13.70 dbm | 12.28 dbm */
     RF_POWER_INDEX_LEVEL_61,   /**<  13.68 dbm | 12.24 dbm */

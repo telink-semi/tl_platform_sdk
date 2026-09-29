@@ -1,6 +1,8 @@
 {
   "name": "TL_PLATFORM_SDK_521X",
   "language": "c",
+  "source_link_order": "legacy",
+  "target_output_layout": "legacy",
   "toolchain_path": "",
   "targets": [
     {
@@ -1692,6 +1694,142 @@
       ],
       "post_build": [
         "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl521x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   I2C_Demo   TL_PLATFORM_SDK_521X"
+      ],
+      "print_size": [
+        "-t"
+      ],
+      "obj_copy": [
+        "-O binary"
+      ],
+      "obj_dump": [
+        "--source",
+        "--all-headers",
+        "--demangle",
+        "--line-numbers",
+        "--wide"
+      ],
+      "sub_directories": [],
+      "compiler": "gcc"
+    },
+    {
+      "name": "I3C_Demo",
+      "path": "./",
+      "toolchain": "RISC-V Cross GCC",
+      "toolchainVersionName": "TL32 ELF MCULIB V5F GCC12.2",
+      "directories": [
+        "chip/tl521x/boot",
+        "chip/tl521x/drivers",
+        "chip/tl521x/link",
+        "common",
+        "demo/vendor/I3C_Demo",
+        "demo/vendor/common/common",
+        "demo/vendor/common/tl521x/calibration",
+        "demo/vendor/common/tl521x/exception.c"
+      ],
+      "global_options": [
+        "-mcmodel=medium",
+        "-O2",
+        "-fmessage-length=0",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-flto",
+        "-g3",
+        "-Werror",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wimplicit-fallthrough",
+        "-Wpointer-arith",
+        "-Wredundant-decls",
+        "-Wcast-qual",
+        "-Wsign-compare",
+        "-Wunused-parameter",
+        "-Wunused-variable",
+        "-Wswitch",
+        "-Wstrict-prototypes",
+        "-Wmissing-field-initializers",
+        "-Wdeprecated-declarations",
+        "-Wenum-conversion",
+        "-Wpacked-not-aligned",
+        "-Waddress-of-packed-member",
+        "-Wundef"
+      ],
+      "asm_compile_options": [
+        "-x assembler-with-cpp",
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL521X=1",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl521x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl521x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common"
+      ],
+      "cpp_compile_options": [],
+      "c_compile_options": [
+        "-DMCU_STARTUP_FLASH=1",
+        "-DMCU_CORE_TL521X=1",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/chip/tl521x/drivers",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/tl521x/calibration",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/common",
+        "-I${CMAKE_CURRENT_SOURCE_DIR}/demo/vendor/common/common",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_script": "",
+      "linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl521x/link/flash_boot.link",
+        "-nostartfiles",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "linker_directories": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/chip/tl521x/drivers/lib"
+      ],
+      "linker_libraries": [
+        "driver"
+      ],
+      "cpp_linker_script": "",
+      "cpp_linker_options": [
+        "-Xlinker --gc-sections",
+        "-T${CMAKE_CURRENT_SOURCE_DIR}/chip/tl521x/link/flash_boot.link",
+        "-mcpu=d25f",
+        "-mext-dsp",
+        "-fomit-frame-pointer",
+        "-fno-strict-aliasing",
+        "-std=c99",
+        "-fno-jump-tables",
+        "-fno-fat-lto-objects",
+        "-fuse-ld=bfd"
+      ],
+      "cpp_linker_directories": [],
+      "cpp_linker_libraries": [
+        "driver"
+      ],
+      "pre_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl521x/../../../tools/tl_gen_config_header_tool/tl_gen_config_header.sh   I3C_Demo"
+      ],
+      "post_build": [
+        "${CMAKE_CURRENT_SOURCE_DIR}/project/tlsr_riscv/tl521x/../../../tools/tl_check_fw_tool/tl_check_fw.sh   I3C_Demo   TL_PLATFORM_SDK_521X"
       ],
       "print_size": [
         "-t"

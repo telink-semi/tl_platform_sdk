@@ -34,6 +34,7 @@ extern "C" { /* C declaration in C++ */
 /**
  * @brief     This function performs to init hw trng.
  * @return    none
+ * @note      trng_init should be called again if ahb clk frequency is change.
  **/
 void trng_init(void);
 

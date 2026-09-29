@@ -21,11 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
-#if !defined(MCU_CORE_TL322X)
-#include "gpio_default.h"
-#endif
 #include "common.h"
-
 
 extern void user_init(void);
 extern void main_loop(void);

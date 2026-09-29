@@ -67,9 +67,10 @@ unsigned char g_adc_vref_fast_startup_shadow[ADC_SAR_CNT] = {0x00,0x00};
 
 volatile unsigned char g_adc_pre_scale[ADC_SAR_CNT][ADC_CHN_CNT];
 unsigned char          g_adc_rx_fifo_index[ADC_SAR_CNT];
-unsigned char          g_channel_cnt       = 0;
+unsigned char          g_channel_cnt[ADC_SAR_CNT] = {0};
 
-dma_chn_e    adc_dma_chn;
+dma_chn_e    adc_dma_chn[2];
+
 dma_config_t adc_rx_dma_config =
     {
         .dst_req_sel    = 0,
@@ -86,42 +87,42 @@ dma_config_t adc_rx_dma_config =
         .write_num_en   = 0,
         .auto_en        = 0, //must 0
 };
-dma_config_t adc1_rx_dma_config=
-{
-    .dst_req_sel= 0,
-    .src_req_sel=DMA_REQ_SAR_ADC1_RX,
-    .dst_addr_ctrl=DMA_ADDR_INCREMENT,
-    .src_addr_ctrl=DMA_ADDR_FIX,
-    .dstmode=DMA_NORMAL_MODE,
-    .srcmode=DMA_HANDSHAKE_MODE,
-    .dstwidth=DMA_CTR_WORD_WIDTH,//must word
-    .srcwidth=DMA_CTR_WORD_WIDTH,//must word
-    .src_burst_size=0,//must 0
-    .read_num_en=0,
-    .priority=0,
-    .write_num_en=0,
-    .auto_en=0,//must 0
+dma_config_t adc1_rx_dma_config =
+    {
+        .dst_req_sel    = 0,
+        .src_req_sel    = DMA_REQ_SAR_ADC1_RX,
+        .dst_addr_ctrl  = DMA_ADDR_INCREMENT,
+        .src_addr_ctrl  = DMA_ADDR_FIX,
+        .dstmode        = DMA_NORMAL_MODE,
+        .srcmode        = DMA_HANDSHAKE_MODE,
+        .dstwidth       = DMA_CTR_WORD_WIDTH, //must word
+        .srcwidth       = DMA_CTR_WORD_WIDTH, //must word
+        .src_burst_size = 0,                  //must 0
+        .read_num_en    = 0,
+        .priority       = 0,
+        .write_num_en   = 0,
+        .auto_en        = 0,                  //must 0
 };
 /**
  * @brief      This setting serves to set the configuration of stimer PEM event.
  */
-pem_event_config_t adc_pem_event_config={
-            .module         = PEM_EVENT_SAR_ADC,
-            .sig_sel        = 0,
-            .clk_sel        = PCLK,
-            .lvl            = PULSE,
-            .edge_detect    = 0,
-            .inv            = 0,
+pem_event_config_t adc_pem_event_config = {
+    .module         = PEM_EVENT_SAR_ADC,
+    .sig_sel        = 0,
+    .clk_sel        = PCLK,
+    .lvl            = PULSE,
+    .edge_detect    = 0,
+    .inv            = 0,
 };
 
 /**
  * @brief      This setting serves to set the configuration of stimer PEM task.
  */
-pem_task_config_t adc_pem_task_config={
-            .module         = PEM_TASK_SAR_ADC,
-            .sig_sel        = 0,
-            .clk_sel        = PCLK,
-            .lvl            = PULSE,
+pem_task_config_t adc_pem_task_config = {
+    .module         = PEM_TASK_SAR_ADC,
+    .sig_sel        = 0,
+    .clk_sel        = PCLK,
+    .lvl            = PULSE,
 };
 
 /**********************************************************************************************************************
@@ -167,7 +168,7 @@ static inline void adc_clk_dis(adc_num_e sar_adc_num)
  */
 void adc_set_clk(adc_num_e sar_adc_num,char div)
 {
-    reg_adc_config1(sar_adc_num) = ((reg_adc_config1(sar_adc_num)  & FLD_ADC_CLK_DIV) | 1);//div=1, adc digital clk = pll or crystal /div.(crystal = 24MHz)
+    reg_adc_config1(sar_adc_num) = ((reg_adc_config1(sar_adc_num)  & ~FLD_SAR_ADC_CLK_DIV) | 1);//div=1, adc digital clk = pll or crystal /div.(crystal = 24MHz)
     analog_write_reg8(areg_adc_sample_clk_div(sar_adc_num), div & 0x0f);//adc analog clk = digital clock/(1+div).
 }
 
@@ -309,12 +310,12 @@ static inline void adc_set_scan_chn_dis(adc_num_e sar_adc_num)
 void adc_reset(adc_num_e sar_adc_num)
 {
     if(sar_adc_num == 0){
-        reg_rst3 &= (~FLD_RST3_SARADC );
-        reg_rst3 |=FLD_RST3_SARADC;
+        reg_rst3 &= (~FLD_RST3_SARADC);
+        reg_rst3 |= FLD_RST3_SARADC;
     }
     else{
-        reg_rst5 &= (~FLD_RST5_SAR1ADC );
-        reg_rst5 |=FLD_RST5_SAR1ADC;
+        reg_rst5 &= (~FLD_RST5_SAR1ADC);
+        reg_rst5 |= FLD_RST5_SAR1ADC;
     }
     adc_clr_rx_index(sar_adc_num);
 }
@@ -328,7 +329,7 @@ void adc_power_on(adc_num_e sar_adc_num)
 {
     adc_set_scan_chn_dis(sar_adc_num);
     adc_reset(sar_adc_num);
-    adc_set_scan_chn_cnt(sar_adc_num, 1);
+//    adc_set_scan_chn_cnt(sar_adc_num, 1);
     g_adc_pga_ctrl_shadow[sar_adc_num] &= (~FLD_SAR_ADC_POWER_DOWN);
     power_adc_protected_mode(PROTECT_VOLTAGE_PROTECT_MODE);
     analog_write_reg8(areg_adc_pga_ctrl(sar_adc_num), g_adc_pga_ctrl_shadow[sar_adc_num]);
@@ -615,7 +616,7 @@ void adc_init(adc_num_e sar_adc_num,adc_chn_cnt_e channel_cnt)
      */
     reg_adc_rng_set_state(sar_adc_num)     = 0x01;
     reg_adc_rng_capture_state(sar_adc_num) = 0x01;
-    g_channel_cnt             = channel_cnt;
+    g_channel_cnt[sar_adc_num] = channel_cnt;
 }
 
 /**
@@ -786,7 +787,7 @@ short adc_calculate_voltage(adc_num_e sar_adc_num,adc_mode_e mode,adc_sample_chn
      *               =  (adc_code * Vref * adc_pre_scale >>11) + offset
      */
     if(mode == ADC_VBAT_MODE){
-        return (((adc_code * 4 * g_adc_pre_scale[sar_adc_num][chn] * g_adc_vref[sar_adc_num][chn]) >> 11) + g_adc_vref_offset[sar_adc_num][chn]); // divider = 4
+        return (((adc_code * 4 * g_adc_vref[sar_adc_num][chn]) >> 11) + g_adc_vref_offset[sar_adc_num][chn]); // divider = 4
     }else if(mode == ADC_GPIO_MODE){
         return (((adc_code * g_adc_pre_scale[sar_adc_num][chn] * g_adc_vref[sar_adc_num][chn]) >> 11) + g_adc_vref_offset[sar_adc_num][chn]);
     }
@@ -834,6 +835,79 @@ void adc_set_sar1_gpio_calib_vref(unsigned short vref, signed char offset)
     g_adc_sar1_gpio_calib_vref_offset = offset;
 }
 
+
+/**
+ * @brief     This function servers to configure DMA head node.
+ * @param[in] chn - to select the DMA channel.
+ * @param[in] src_addr - to configure DMA source address.
+ * @param[in] data_len - to configure DMA length.
+ * @param[in] head_of_list - to configure the address of the next node configure.
+ * @return    none
+ * @note      src_addr: must be aligned by word (4 bytes), otherwise the program will enter an exception.
+ */
+void adc_set_dma_chain_llp(adc_num_e sar_adc_num,dma_chn_e chn, unsigned short *dst_addr, unsigned int data_len, dma_chain_config_t *head_of_list)
+{
+    reg_adc_config2(sar_adc_num) |= FLD_RX_DMA_ENABLE;
+    if(sar_adc_num == 0) {
+        dma_config(chn, &adc_rx_dma_config);
+    }else{
+        dma_config(chn, &adc1_rx_dma_config);
+    }
+
+    dma_set_address(chn, SAR_ADC_FIFO(sar_adc_num), (unsigned int)(dst_addr));
+    dma_set_size(chn, data_len, DMA_WORD_WIDTH);
+    reg_dma_llp(chn) = (unsigned int)(head_of_list);
+}
+
+
+/**
+  * @brief      Configure DMA cycle chain node.
+ * @param[in]   uart_num - UART0/UART1/UART2/UART3/UART4.
+  * @param[in]  chn         - DMA channel.
+ * @param[in]   config_addr - to servers to configure the address of the current node.
+  * @param[in]  llpointer   - to configure the address of the next node.
+  * @param[in]  dst_addr    - Pointer to data buffer, which must be 4 bytes aligned.
+  * @param[in]  data_len    - any length less than 0xfffffc(multiple of four).
+  * @return     none.
+  * @note       there are no usage restrictions, there is no need to configure the dma length to a maximum length, and there is no limit to the send length:
+  *             - The condition of linked list jump: one is when the length of the dma configuration is reached, the other is rx_done,
+  *               no matter which condition has a write back length.
+ */
+void adc_rx_dma_add_list_element(adc_num_e sar_adc_num, dma_chn_e chn, dma_chain_config_t *config_addr, dma_chain_config_t *llpointer, unsigned short *dst_addr, unsigned int data_len)
+{
+    adc_clr_rx_fifo_cnt(sar_adc_num); 
+    config_addr->dma_chain_ctl      = reg_dma_ctrl(chn) | BIT(0);
+    config_addr->dma_chain_src_addr =  SAR_ADC_FIFO(sar_adc_num);
+    config_addr->dma_chain_dst_addr = (unsigned int)(dst_addr);
+    config_addr->dma_chain_data_len = dma_cal_size(data_len, 4);
+    config_addr->dma_chain_llp_ptr  = (unsigned int)(llpointer);
+}
+
+/**
+ * @brief      This function serves to configure ADC DMA chain transmission.
+ * @param[in]  sar_adc_num  - SAR0/SAR1.
+ * @param[in]  chn          - the DMA channel.
+ * @param[in]  dst_addr     - pointer to the destination data buffer, which must be 4-byte aligned.
+ * @param[in]  data_len     - the length of data to be transferred.
+ * @param[in]  head_of_list - pointer to the DMA chain head node.
+ * @return     none
+ * @note       This function combines DMA chain LLP configuration, DMA list element setup,
+ *             and FIFO operation configuration into a single interface.
+ *             - The default RX FIFO trigger count is 1, users should not change it.
+ *             - If the FIFO is not cleared, there may be residual values that affect the sampling results.
+ */
+void adc_dma_chain_transmission_start(adc_num_e sar_adc_num,dma_chn_e chn,unsigned short *dst_addr, unsigned int data_len, dma_chain_config_t *head_of_list)
+{
+    adc_set_dma_chain_llp(sar_adc_num, chn, dst_addr, data_len, head_of_list);
+    adc_rx_dma_add_list_element(sar_adc_num, chn, head_of_list, head_of_list, dst_addr, data_len);
+    dma_chn_en(chn);
+    adc_set_rx_fifo_trig_cnt(sar_adc_num,1);
+    adc_clr_rx_fifo_cnt(sar_adc_num); 
+    adc_all_chn_data_to_fifo_en(sar_adc_num);
+    adc_set_scan_chn_cnt(sar_adc_num,g_channel_cnt[sar_adc_num] & 0x0f);
+}
+
+
 /**********************************************************************************************************************
  *                                                DMA only interface                                                  *
  **********************************************************************************************************************/
@@ -845,8 +919,8 @@ void adc_set_sar1_gpio_calib_vref(unsigned short vref, signed char offset)
  */
 void adc_set_dma_config(adc_num_e sar_adc_num,dma_chn_e chn)
 {
-    adc_dma_chn     = chn;
-    reg_adc_config2(sar_adc_num) = FLD_RX_DMA_ENABLE;
+    adc_dma_chn[sar_adc_num]     = chn;
+    reg_adc_config2(sar_adc_num) |= FLD_RX_DMA_ENABLE;
     if(sar_adc_num == 0){
         dma_config(chn, &adc_rx_dma_config);
     }
@@ -854,7 +928,7 @@ void adc_set_dma_config(adc_num_e sar_adc_num,dma_chn_e chn)
         dma_config(chn, &adc1_rx_dma_config);
     }
 
-    reg_dma_llp(adc_dma_chn) = 0;
+    reg_dma_llp(adc_dma_chn[sar_adc_num]) = 0;
     /*
      * Configuration differs from TL7518 for the following reasons:
      * The TL7518's RX FIFO is stored in WORD units.
@@ -880,14 +954,13 @@ void adc_set_dma_config(adc_num_e sar_adc_num,dma_chn_e chn)
  */
 void adc_start_sample_dma(adc_num_e sar_adc_num,short *adc_data_buf,unsigned int data_byte_len)
 {
-    dma_set_address(adc_dma_chn,SAR_ADC_FIFO(sar_adc_num),(unsigned int)adc_data_buf);
-    dma_set_size(adc_dma_chn, data_byte_len, DMA_WORD_WIDTH);
+    dma_set_address(adc_dma_chn[sar_adc_num],SAR_ADC_FIFO(sar_adc_num),(unsigned int)adc_data_buf);
+    dma_set_size(adc_dma_chn[sar_adc_num], data_byte_len, DMA_WORD_WIDTH);
     /*
      * dma_chn_en() must be in front of adc_set_scan_chn_cnt() to prevent mis-ordering of multi-channel sampling data when using multiple channels.
      */
-    dma_chn_en(adc_dma_chn);
-    adc_set_scan_chn_cnt(sar_adc_num,g_channel_cnt & 0x0f);
-    adc_dig_clk_en(sar_adc_num);
+    dma_chn_en(adc_dma_chn[sar_adc_num]);
+    adc_set_scan_chn_cnt(sar_adc_num, g_channel_cnt[sar_adc_num] & 0x0f);
 }
 
 /**
@@ -896,9 +969,9 @@ void adc_start_sample_dma(adc_num_e sar_adc_num,short *adc_data_buf,unsigned int
  *            !0: the sample is finished.
  * @note      The code is placed in the ram code section, in order to shorten the time.
  */
-_attribute_ram_code_sec_noinline_ unsigned char adc_get_irq_status_dma(void)
+_attribute_ram_code_sec_noinline_ unsigned char adc_get_irq_status_dma(adc_num_e sar_adc_num)
 {
-    return (dma_get_tc_irq_status(1 << adc_dma_chn));
+    return (dma_get_tc_irq_status(1 << adc_dma_chn[sar_adc_num]));
 }
 
 /**
@@ -913,8 +986,8 @@ _attribute_ram_code_sec_noinline_ void adc_clr_irq_status_dma(adc_num_e sar_adc_
      * adc_set_scan_chn_dis() must be called when DMA is finished to stop the state machine at the beginning of the M channel to prevent mis-ordering of multi-channel sampling data when using multiple channels.
      */
     adc_set_scan_chn_dis(sar_adc_num);
-    dma_chn_dis(adc_dma_chn);
-    dma_clr_tc_irq_status(1 << adc_dma_chn);
+    dma_chn_dis(adc_dma_chn[sar_adc_num]);
+    dma_clr_tc_irq_status(1 << adc_dma_chn[sar_adc_num]);
 }
 
 /**********************************************************************************************************************
@@ -1001,3 +1074,13 @@ void adc_trigger_en(adc_num_e sar_adc_num)
     reg_adc_config2(sar_adc_num) |= FLD_TRIG_MODE;
 }
 
+/**
+ * @brief      This function start trigger.
+ * @param[in]  sar_adc_num - SAR0/SAR1.
+ * @return     none
+ * @note       Start collecting adc data
+ */
+void adc_trigger_start(adc_num_e sar_adc_num)
+{
+    reg_soft_control(sar_adc_num) = FLD_TRIG_START;
+}

@@ -33,20 +33,23 @@ extern "C"
 #define RF_BLE_1M       1
 #define RF_BLE_2M       2
 #define RF_BLE_1M_NO_PN 3
-#define RF_ZIGBEE_250K  4 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define RF_BLE_2M_NO_PN 5
+
+#if !defined(MCU_CORE_TL753X)
+#define RF_ZIGBEE_250K  4 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define RF_LR_S2_500K   6
 #define RF_LR_S8_125K   7
-#if !defined(MCU_CORE_TL7518)
+    #if !defined(MCU_CORE_TL7518)
     #define RF_PRIVATE_250K 8
     #define RF_PRIVATE_500K 9
     #define RF_ANT          12 //TODO:TL721X Currently only validated in FPGA, not in chip; available after subsequent validation
-    #define RF_HYBEE_1M     13 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
+#define RF_HYBEE_1M     13 //TODO:TL322X Currently only vlidated in FPGA, not in chip; available after subsequent validation
     #define RF_HYBEE_2M     14 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
     #define RF_HYBEE_500K   15 //TODO:TL322X Currently only validated in FPGA, not in chip; available after subsequent validation
-#endif
+    #endif
 #define RF_PRIVATE_1M   10 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
 #define RF_PRIVATE_2M   11 //TODO:TL7518 is temporarily unavailable, available versions will be updated in the future
+#endif
 #define RF_BLE_STX2RX   16
 #define RF_BLE_SDK_TEST 19
 
@@ -174,7 +177,9 @@ extern "C"
 #elif defined(MCU_CORE_TL753X)
     #define RF_POWER RF_POWER_P10p00dBm
 #elif defined(MCU_CORE_TL521X)
-    #define RF_POWER RF_POWER_P8p00dBm
+    #define RF_POWER RF_POWER_P10p00dBm
+#elif defined(MCU_CORE_TL523X)
+    #define RF_POWER RF_POWER_P4p50dBm
 #elif defined(MCU_CORE_TL522X)
     #define RF_POWER RF_POWER_P10p00dBm
 #endif

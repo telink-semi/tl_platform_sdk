@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-#if (RF_MODE == RF_BLE_1M || RF_MODE == RF_BLE_2M || RF_MODE == RF_LR_S2_500K || RF_MODE == RF_LR_S8_125K || RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN )
+#if (RF_MODE == RF_BLE_1M || RF_MODE == RF_BLE_2M || ((!defined(MCU_CORE_TL753X)) && (RF_MODE == RF_LR_S2_500K || RF_MODE == RF_LR_S8_125K)) || RF_MODE == RF_BLE_1M_NO_PN || RF_MODE == RF_BLE_2M_NO_PN )
 
 
 unsigned char rx_packet[128 * 4] __attribute__((aligned(4)));

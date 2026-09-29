@@ -22,7 +22,7 @@
  *
  *******************************************************************************************************/
 #include "common.h"
-#if ((!defined(MCU_CORE_TL7518) && (RF_MODE == RF_HYBEE_1M || RF_MODE == RF_HYBEE_2M || RF_MODE == RF_HYBEE_500K)) || RF_MODE == RF_ZIGBEE_250K)
+#if  ((!defined(MCU_CORE_TL753X)) && ((!defined(MCU_CORE_TL7518) && (RF_MODE == RF_HYBEE_1M || RF_MODE == RF_HYBEE_2M || RF_MODE == RF_HYBEE_500K)) || RF_MODE == RF_ZIGBEE_250K))
 
 
     #define TX_PKT_PAYLOAD 5

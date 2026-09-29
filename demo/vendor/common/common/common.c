@@ -82,8 +82,10 @@ flash_user_defined_list_t flash_init_list[] = {
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
     //4M
     {0x166085, FLASH_LOCK_LOW_2M_MID166085},
+    {0x1660cd, FLASH_LOCK_LOW_2M_MID1660CD},
     //8M
     {0x176085, FLASH_LOCK_LOW_4M_MID176085},
+    {0x174120, FLASH_LOCK_LOW_4M_MID174120},
 #elif defined(MCU_CORE_TL721X)
     //1M
     {0x146085, FLASH_LOCK_LOW_512K_MID146085},
@@ -280,7 +282,7 @@ void platform_init(unsigned char flash_protect_en)
 
    #endif
 #if JTAG_MODE
-    #if defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X)
+    #if defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL753X)
         jtag_set_pin_en();
     #endif
 #endif
@@ -396,7 +398,9 @@ void platform_init(unsigned char flash_protect_en)
 #if defined(MCU_CORE_TL753X)
     if (power_mode == LDO_AVDD_LDO_DVDD)
     {
-        // No test data
+ #if A0_VERSION
+
+#endif        
     } else {
 #if A0_VERSION
         analog_write_reg8(0xb5, 0x87);
@@ -404,9 +408,8 @@ void platform_init(unsigned char flash_protect_en)
         pm_set_avdd2(PM_AVDD2_VOLTAGE_2V083);                            // test result 2.138 / target 2.05
         pm_set_dvdd1(PM_DVDD1_VOLTAGE_0V884);                            // test result 0.844 / target 0.85
         pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V858);                            // test result 0.841 / target 0.85
-#endif
-        // pm_set_dvdd1(PM_DVDD1_VOLTAGE_1V019);                            // test result 0.957 / target 0.95
-        // pm_set_dvdd2(PM_DVDD2_VOLTAGE_0V992);                            // test result 0.952 / target 0.95
+
+#endif        
     }
 #endif
     /*
@@ -449,7 +452,7 @@ void platform_init(unsigned char flash_protect_en)
     if (flash_protect_en) {
         #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X)|| defined(MCU_CORE_TL521X) || defined(MCU_CORE_TL752X)
         unsigned char flash_init_flag = hal_flash_init(&flash_handler);
-        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X)
+        #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL753X)
         unsigned char flash_init_flag = hal_flash_init((flash_hal_user_handler_t *)flash_handler);
         #else
         unsigned char flash_init_flag = 0;

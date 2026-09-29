@@ -195,7 +195,7 @@ enum
 
 enum
 {
-    FLD_ADC_CLK_DIV = BIT_RNG(0, 3),
+    FLD_SAR_ADC_CLK_DIV = BIT_RNG(0, 3),
     FLD_ADC_MODE    = BIT(5),
 };
 

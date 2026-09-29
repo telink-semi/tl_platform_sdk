@@ -49,7 +49,7 @@ void user_init(void)
     #elif defined(MCU_CORE_TL753X)
     //Upward Voltage
     pm_set_dvdd(DVDD1_DVDD2_VOL_0P9V, 1000);
-    PLL_192M_D25F_DSP_192M_HCLK_96M_PCLK_48M_MSPI_48M_WT_12M;
+    PLL_192M_D25F_DSP_192M_HCLK_96M_PCLK_48M_MSPI_48M_N22_96M;
 
     #elif defined(MCU_CORE_TL322X)
     //Upward Voltage
@@ -101,7 +101,7 @@ void main_loop(void)
 
     #elif defined(MCU_CORE_TL753X)
     //Downward Voltage
-    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_WT_12M;
+    PLL_192M_D25F_DSP_96M_HCLK_48M_PCLK_48M_MSPI_48M_N22_48M;
     pm_set_dvdd(DVDD1_DVDD2_VOL_0P8V, 1000);
 
     #elif defined(MCU_CORE_TL322X)

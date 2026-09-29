@@ -51,6 +51,8 @@
         #define SRAM_BASE_ADDR 0x00020000
     #elif defined(MCU_CORE_TL322X)
         #define SRAM_BASE_ADDR 0x00000000
+    #elif defined(MCU_CORE_TL523X)
+        #define SRAM_BASE_ADDR 0x00840000
     #else
         #define SRAM_BASE_ADDR 0x00000000
     #endif
@@ -271,7 +273,11 @@ void read_calibration_flash(void)
         break;
     }
     #else
+        #if defined(MCU_CORE_TL523X)
+    user_read_flash_value_calib();
+        #else
     calibration_func();
+        #endif
     #endif
 }
 
@@ -704,7 +710,7 @@ void emi_serviceloop(void)
                     case ble1m:
                         ate_list[i].func(RF_MODE_BLE_1M_NO_PN, g_power_level, g_chn);
                         break;
-
+                #if !defined(MCU_CORE_TL523X)
                     case zigbee250k:
                         ate_list[i].func(RF_MODE_ZIGBEE_250K, g_power_level, g_chn);
                         break;
@@ -716,7 +722,7 @@ void emi_serviceloop(void)
                     case ble500K:
                         ate_list[i].func(RF_MODE_LR_S2_500K, g_power_level, g_chn);
                         break;
-
+                #endif
                     case pri2m:
                         ate_list[i].func(RF_MODE_PRIVATE_2M, g_power_level, g_chn);
                         break;

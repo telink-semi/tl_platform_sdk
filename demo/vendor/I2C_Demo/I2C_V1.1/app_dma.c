@@ -4,9 +4,9 @@
  * @brief   This is the source file for Telink RISC-V MCU
  *
  * @author  Driver Group
- * @date    2019
+ * @date    2026
  *
- * @par     Copyright (c) 2019, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
+ * @par     Copyright (c) 2026, Telink Semiconductor (Shanghai) Co., Ltd. ("TELINK")
  *
  *          Licensed under the Apache License, Version 2.0 (the "License");
  *          you may not use this file except in compliance with the License.
@@ -96,25 +96,25 @@ void user_init(void)
     gpio_function_en(LED4);
     gpio_output_en(LED4); //enable output
     gpio_input_dis(LED4); //disable input
-    i2c_set_pin(I2C0,I2C_GPIO_SDA_PIN, I2C_GPIO_SCL_PIN);
-    i2c_set_tx_dma_config(I2C0,I2C_TX_DMA_CHN);
-    i2c_set_rx_dma_config(I2C0,I2C_RX_DMA_CHN);
+    i2c_set_pin(I2C_NUM,I2C_GPIO_SDA_PIN, I2C_GPIO_SCL_PIN);
+    i2c_set_tx_dma_config(I2C_NUM,I2C_TX_DMA_CHN);
+    i2c_set_rx_dma_config(I2C_NUM,I2C_RX_DMA_CHN);
 #if (I2C_DEVICE == I2C_MASTER_DEVICE)
-    i2c_master_init(I2C0);
-    i2c_set_master_clk(I2C0,(unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED))); //set i2c frequency 200K.
+    i2c_master_init(I2C_NUM);
+    i2c_set_master_clk(I2C_NUM,(unsigned char)(sys_clk.pclk * 1000 * 1000 / (4 * I2C_CLK_SPEED))); //set i2c frequency 200K.
 
-    i2c_set_irq_mask(I2C0,I2C_MASTER_NAK_MASK);
+    i2c_set_irq_mask(I2C_NUM,I2C_MASTER_NAK_MASK);
     plic_interrupt_enable(IRQ_I2C);
     core_interrupt_enable();
 
 #elif (I2C_DEVICE == I2C_SLAVE_DEVICE)
-    i2c_slave_init(I2C0,0x5a);
+    i2c_slave_init(I2C_NUM,0x5a);
 #if (I2C_STRETCH_MODE == I2C_STRETCH_EN)
-    i2c_slave_stretch_en(I2C0);
+    i2c_slave_stretch_en(I2C_NUM);
     i2c_set_irq_mask(I2C0,I2C_RX_END_MASK | I2C_SLAVE_WR_MASK);
 #elif (I2C_STRETCH_MODE == I2C_STRETCH_DIS)
 
-    i2c_set_irq_mask(I2C0,I2C_TX_END_MASK);
+    i2c_set_irq_mask(I2C_NUM,I2C_TX_END_MASK);
     dma_set_irq_mask(I2C_RX_DMA_CHN, TC_MASK);
     plic_interrupt_enable(IRQ_DMA);
 #endif
@@ -134,7 +134,7 @@ void user_init(void)
  *      1.The receiving length of DMA can be any length aligned with 4 bytes.
  *      2.If write_num is turned on, the length of the data received by DMA will be written into the first four bytes of addr.
  */
-    i2c_slave_set_rx_dma(I2C0,(unsigned char *)(i2c_rx_buff + 4), DMA_REV_LEN);
+    i2c_slave_set_rx_dma(I2C_NUM,(unsigned char *)(i2c_rx_buff + 4), DMA_REV_LEN);
 #endif
 }
 
@@ -146,11 +146,11 @@ void main_loop(void)
      *  If there's an error, LED2 stays constant.*/
     for (volatile unsigned int packetSize = 1; packetSize <= BUFF_DATA_LEN_DMA; packetSize++) {
         delay_ms(100);
-        i2c_master_write_dma(I2C0,0x5a, (unsigned char *)i2c_tx_buff, packetSize);
-        while (i2c_master_busy(I2C0));
+        i2c_master_write_dma(I2C_NUM,0x5a, (unsigned char *)i2c_tx_buff, packetSize);
+        while (i2c_master_busy(I2C_NUM));
         delay_ms(10);
-        i2c_master_read_dma(I2C0,0x5a, (unsigned char *)i2c_rx_buff, packetSize);
-        while (i2c_master_busy(I2C0));
+        i2c_master_read_dma(I2C_NUM,0x5a, (unsigned char *)i2c_rx_buff, packetSize);
+        while (i2c_master_busy(I2C_NUM));
         for (volatile unsigned int i = 0; i < packetSize; i++) {
             if (i2c_rx_buff[i] != i2c_tx_buff[i]) {
                 gpio_set_high_level(LED2);
@@ -172,7 +172,7 @@ void dma_irq_handler(void)
 {
     if (dma_get_tc_irq_status(BIT(I2C_RX_DMA_CHN))) {
         dma_clr_tc_irq_status(BIT(I2C_RX_DMA_CHN));
-        i2c_slave_set_tx_dma(I2C0,(unsigned char *)(i2c_rx_buff + 4), *(unsigned int *)i2c_rx_buff);
+        i2c_slave_set_tx_dma(I2C_NUM,(unsigned char *)(i2c_rx_buff + 4), *(unsigned int *)i2c_rx_buff);
 
     }
 }
@@ -185,23 +185,23 @@ PLIC_ISR_REGISTER(dma_irq_handler, IRQ_DMA)
 void i2c_irq_handler(void)
 {
 #if (I2C_DEVICE == I2C_MASTER_DEVICE)
-    if (i2c_get_irq_status(I2C0,I2C_MASTER_NAK_STATUS)) {
-        i2c_clr_irq_status(I2C0,I2C_MASTER_NAK_STATUS);
-        reg_i2c_sct1(I2C0) = (FLD_I2C_LS_STOP);
-        while (i2c_master_busy(I2C0)); //wait for the STOP signal to finish sending.
+    if (i2c_get_irq_status(I2C_NUM,I2C_MASTER_NAK_STATUS)) {
+        i2c_clr_irq_status(I2C_NUM,I2C_MASTER_NAK_STATUS);
+        reg_i2c_sct1(I2C_NUM) = (FLD_I2C_LS_STOP);
+        while (i2c_master_busy(I2C_NUM)); //wait for the STOP signal to finish sending.
         dma_chn_dis(I2C_TX_DMA_CHN);
         /* In B92, TL7518, and TL721X, when sending data in the master, whether in the ID stage or data stage, if NACK signal is received,
          * the processing in the interrupt is disable TX_DMA, clear FIFO, stop the transmission of data, record the number of exceptions,
          * after interrupt, and process the following operations.*/
-        if (I2C_MASTER_WRITE == i2c_get_master_wr_status(I2C0)) {
-            i2c_clr_irq_status(I2C0,I2C_TX_BUF_STATUS);
+        if (I2C_MASTER_WRITE == i2c_get_master_wr_status(I2C_NUM)) {
+            i2c_clr_irq_status(I2C_NUM,I2C_TX_BUF_STATUS);
             i2c_master_write_nack_cnt++;
         }
         /* When receiving data in the master, nack can be received only in the id stage,
          * After receiving nack, the rx_dma shall be disable to stop the data receiving and record the abnormal count,
          * If it is in the data stage the slave is abnormal, the master will not reply nack and detect abnormal problems,
          * so it continues to receive the data 0xFF.When an exception occurs, the data sent in the main_loop does not match the data received.*/
-        if (I2C_MASTER_READ == i2c_get_master_wr_status(I2C0)) {
+        if (I2C_MASTER_READ == i2c_get_master_wr_status(I2C_NUM)) {
             i2c_master_read_nack_cnt++;
         }
     }
@@ -209,21 +209,21 @@ void i2c_irq_handler(void)
 #if (I2C_DEVICE == I2C_SLAVE_DEVICE)
 
 #if (I2C_STRETCH_MODE == I2C_STRETCH_DIS)
-    if (i2c_get_irq_status(I2C0,I2C_TX_END_STATUS)) {
-        i2c_clr_irq_status(I2C0,I2C_TX_END_STATUS);
-        i2c_slave_set_rx_dma(I2C0,(unsigned char *)(i2c_rx_buff + 4), DMA_REV_LEN);
+    if (i2c_get_irq_status(I2C_NUM,I2C_TX_END_STATUS)) {
+        i2c_clr_irq_status(I2C_NUM,I2C_TX_END_STATUS);
+        i2c_slave_set_rx_dma(I2C_NUM,(unsigned char *)(i2c_rx_buff + 4), DMA_REV_LEN);
     }
 
 #elif (I2C_STRETCH_MODE == I2C_STRETCH_EN)
-    if (i2c_get_irq_status(I2C0,I2C_SLAVE_WR_STATUS)) {
-        i2c_clr_irq_status(I2C0,I2C_SLAVE_WR_STATUS);
-        if (I2C_SLAVE_WRITE == i2c_slave_get_cmd(I2C0)) {
-            i2c_slave_set_tx_dma(I2C0,(unsigned char *)(i2c_rx_buff + 4), *(unsigned int *)i2c_rx_buff);
+    if (i2c_get_irq_status(I2C_NUM,I2C_SLAVE_WR_STATUS)) {
+        i2c_clr_irq_status(I2C_NUM,I2C_SLAVE_WR_STATUS);
+        if (I2C_SLAVE_WRITE == i2c_slave_get_cmd(I2C_NUM)) {
+            i2c_slave_set_tx_dma(I2C_NUM,(unsigned char *)(i2c_rx_buff + 4), *(unsigned int *)i2c_rx_buff);
         }
     }
-    if ((i2c_get_irq_status(I2C0,I2C_RX_END_STATUS))) {
-        i2c_clr_irq_status(I2C0,I2C_RX_END_STATUS);
-        i2c_slave_set_rx_dma(I2C0,(unsigned char *)(i2c_rx_buff + 4), DMA_REV_LEN);
+    if ((i2c_get_irq_status(I2C_NUM,I2C_RX_END_STATUS))) {
+        i2c_clr_irq_status(I2C_NUM,I2C_RX_END_STATUS);
+        i2c_slave_set_rx_dma(I2C_NUM,(unsigned char *)(i2c_rx_buff + 4), DMA_REV_LEN);
     }
 
 #endif

@@ -50,10 +50,6 @@ extern "C"
     #define SPI_DMA_LLP_MODE 3 //spi rx with DMA chain transmission
 #endif
 
-#if defined(MCU_CORE_TL753X)
-#define SPI_XIP_MODE 4       //spi xip mode
-#endif
-
 #define SPI_MODE SPI_DMA_MODE
 
 

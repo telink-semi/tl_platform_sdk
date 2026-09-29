@@ -25,7 +25,10 @@
 
 #define SLAVE_N       SLAVE0
 
-extern drv_api_status_e efuse_calib_sar_adc_vref(void);
+extern drv_api_status_e efuse_calib_sar0_gpio_vref(void);
+extern drv_api_status_e efuse_calib_sar0_vbat_vref(void);
+extern drv_api_status_e efuse_calib_sar1_gpio_vref(void);
+
 extern drv_api_status_e efuse_calib_sd_adc_vref(void);
 /**
  * @brief      This function serves to update rf frequency offset.
@@ -65,7 +68,9 @@ void calibration_func(void)
     unsigned char ieee_addr[8];
 
     /******get sar adc calibration value from EFUSE********/
-    efuse_calib_sar_adc_vref();
+    efuse_calib_sar0_gpio_vref();
+    efuse_calib_sar0_vbat_vref();
+    efuse_calib_sar1_gpio_vref();
     /******get sd_adc calibration value from EFUSE********/
     efuse_calib_sd_adc_vref();
     /******get ret ldo calibration value from EFUSE********/

@@ -1,6 +1,8 @@
 {
   "name": "TL_PLATFORM_SDK_322X",
   "language": "c",
+  "source_link_order": "legacy",
+  "target_output_layout": "legacy",
   "toolchain_path": "",
   "targets": [
     {

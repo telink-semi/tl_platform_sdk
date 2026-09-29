@@ -23,7 +23,6 @@
  *******************************************************************************************************/
 #if !defined(MCU_CORE_TL523X)
 #include "pc_interface.h"
-#include "printf.h"
 #if COMMUNICATION_PROTOCOL == TEST_COMMUNICATION_PROTOCOL
 unsigned char command_buff[4 * COMMAND_BUFF_SIZE];
 #else

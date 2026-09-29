@@ -409,6 +409,7 @@ void bqb_serviceloop(void)
         #endif
     #endif
                     rsp = 0;
+#if !defined(MCU_CORE_TL523X)
                 } else if (para == 3) //s=8
                 {
                     rf_set_ble_125K_mode();
@@ -431,6 +432,7 @@ void bqb_serviceloop(void)
         #endif
     #endif
                     rsp = 0;
+#endif
                 } else {
                     rsp = BIT(0);
                 }
@@ -624,7 +626,11 @@ void bqb_serviceloop(void)
     }
     if (test_state == RX_STATE) {
         if (rf_get_irq_status(FLD_RF_IRQ_RX)) {
-            if ((reg_rf_dec_err & 0xf0) == 0) {
+        #if !defined(MCU_CORE_TL523X)
+            if ((reg_rf_dec_err & FLD_RF_PKT_DEC_ERR) == 0) {
+        #else
+            if ((reg_rf_pkt_dec_err & FLD_RF_PKT_DEC_ERR) == 0) {
+        #endif
     #if BQB_PRIVATE_AGREEMENT
                 unsigned short rssi_tmp = 0;
                 rssi_tmp += private_agreement_rssi;

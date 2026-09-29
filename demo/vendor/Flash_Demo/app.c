@@ -44,7 +44,7 @@
     #define FLASH_ADDR          0x00d000
     #define FLASH_SECURITY_ADDR 0x001000
 
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
     #define SLAVE_N             SLAVE0
     #define FLASH_ADDR          g_slave_base_addr[SLAVE_N] + 0x00d000
     #define FLASH_SECURITY_ADDR 0x001000
@@ -149,6 +149,8 @@ unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_2M,FLASH_SIZ
 unsigned char flash_support_capacity[] = {FLASH_SIZE_512K, FLASH_SIZE_1M, FLASH_SIZE_2M};
 #elif defined(MCU_CORE_TL711X)
 unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_4M, FLASH_SIZE_8M};
+#elif defined(MCU_CORE_TL753X)
+unsigned char flash_support_capacity[] = {FLASH_SIZE_1M, FLASH_SIZE_4M, FLASH_SIZE_8M};
 #endif
 const unsigned char FLASH_CAP_CNT = sizeof(flash_support_capacity) / sizeof(*flash_support_capacity);
 
@@ -197,7 +199,7 @@ unsigned char flash_set_4line_read_write(unsigned int flash_mid)
     }
     return status;
 }
-#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X)
+#elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
 /**
  * @brief       This function is used to set the use of four lines when reading and writing flash.
  * @param[in]   device_num  - the number of slave device.
@@ -1002,7 +1004,7 @@ void flash_mid1660c8_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
 void flash_mid146085_test(void)
 {
     int i;
@@ -1288,7 +1290,7 @@ void flash_mid1460c8_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X)
+#if defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
 void flash_mid166085_test(void)
 {
     int i;
@@ -1360,7 +1362,7 @@ void flash_mid166085_test(void)
 }
 #endif
 
-#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X)
+#if defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
 void flash_mid176085_test(void)
 {
     int i;
@@ -1420,6 +1422,148 @@ void flash_mid176085_test(void)
     status5 = flash_read_status_mid176085_with_device_num(SLAVE_N);
     flash_erase_otp_mid176085_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR);
     flash_read_otp_mid176085_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.otp_lock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_lock_check = 1;
+    #endif
+}
+#endif
+
+#if defined(MCU_CORE_TL753X)
+void flash_mid1660cd_test(void)
+{
+    int i;
+
+    status1 = flash_read_status_mid1660cd_with_device_num(SLAVE_N);
+    flash_lock_mid1660cd_with_device_num(SLAVE_N, FLASH_LOCK_LOW_64K_MID1660CD);
+    status2 = flash_read_status_mid1660cd_with_device_num(SLAVE_N);
+    flash_erase_sector(FLASH_ADDR);
+    flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.lock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.lock_check = 1;
+
+    flash_unlock_mid1660cd_with_device_num(SLAVE_N);
+    status3 = flash_read_status_mid1660cd_with_device_num(SLAVE_N);
+    flash_erase_sector(FLASH_ADDR);
+    flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != 0xff) {
+            err_status.unlock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.unlock_check = 1;
+
+    flash_erase_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR);
+    flash_read_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != 0xff) {
+            err_status.otp_erase_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_erase_check = 1;
+
+    flash_write_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Write_Buff);
+    flash_read_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.otp_write_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_write_check = 1;
+
+    #if FLASH_OTP_LOCK
+    status4 = flash_read_status_mid1660cd_with_device_num(SLAVE_N);
+    flash_lock_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_LOCK_OTP_0x001000_1024B_MID1660CD);
+    status5 = flash_read_status_mid1660cd_with_device_num(SLAVE_N);
+    flash_erase_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR);
+    flash_read_otp_mid1660cd_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.otp_lock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_lock_check = 1;
+    #endif
+}
+
+void flash_mid174120_test(void)
+{
+    int i;
+
+    status1 = flash_read_status_mid174120_with_device_num(SLAVE_N);
+    flash_lock_mid174120_with_device_num(SLAVE_N, FLASH_LOCK_LOW_128K_MID174120);
+    status2 = flash_read_status_mid174120_with_device_num(SLAVE_N);
+    flash_erase_sector(FLASH_ADDR);
+    flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.lock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.lock_check = 1;
+
+    flash_unlock_mid174120_with_device_num(SLAVE_N);
+    status3 = flash_read_status_mid174120_with_device_num(SLAVE_N);
+    flash_erase_sector(FLASH_ADDR);
+    flash_read_page(FLASH_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != 0xff) {
+            err_status.unlock_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.unlock_check = 1;
+
+    flash_erase_otp_mid174120_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR);
+    flash_read_otp_mid174120_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != 0xff) {
+            err_status.otp_erase_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_erase_check = 1;
+
+    flash_write_otp_mid174120_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Write_Buff);
+    flash_read_otp_mid174120_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
+    for (i = 0; i < FLASH_BUFF_LEN; i++) {
+        if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
+            err_status.otp_write_err = 1;
+            while (1)
+                ;
+        }
+    }
+    check_status.otp_write_check = 1;
+
+    #if FLASH_OTP_LOCK
+    status4 = flash_read_status_mid174120_with_device_num(SLAVE_N);
+    flash_lock_otp_mid174120_with_device_num(SLAVE_N, FLASH_LOCK_OTP_0x001000_1024B_MID174120);
+    status5 = flash_read_status_mid174120_with_device_num(SLAVE_N);
+    flash_erase_otp_mid174120_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR);
+    flash_read_otp_mid174120_with_device_num(SLAVE_N, FLASH_SECURITY_ADDR + 0x80, FLASH_BUFF_LEN, (unsigned char *)Flash_Read_Buff);
     for (i = 0; i < FLASH_BUFF_LEN; i++) {
         if (Flash_Read_Buff[i] != Flash_Write_Buff[i]) {
             err_status.otp_lock_err = 1;
@@ -1813,7 +1957,7 @@ void user_init(void)
     hal_flash_init(&flash_handler);
     hal_flash_unlock();
     g_flash_mid = flash_read_mid();
-    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X)
+    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
     hal_flash_unlock_with_device_num(SLAVE_N);
     g_flash_mid = flash_read_mid_with_device_num(SLAVE_N);
     #endif
@@ -1841,7 +1985,7 @@ void user_init(void)
             ;
     }
 
-    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL7518) ||defined(MCU_CORE_TL711X)
+    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL7518) ||defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
         #if defined(MCU_CORE_TL751X)
     flash_mspi_set_48Mclk();
         #endif
@@ -2137,6 +2281,26 @@ void user_init(void)
     default:
         break;
     }
+    #elif defined(MCU_CORE_TL753X)
+    switch (g_flash_mid) {
+    case MID146085:
+        flash_mid146085_test();
+        break;
+    case MID166085:
+        flash_mid166085_test();
+        break;
+    case MID1660CD:
+        flash_mid1660cd_test();
+        break;
+    case MID176085:
+        flash_mid176085_test();
+        break;
+    case MID174120:
+        flash_mid174120_test();
+        break;
+    default:
+        break;
+    }
     #endif
 
     #if !(defined(MCU_CORE_B91) || defined(MCU_CORE_TL523X))
@@ -2152,7 +2316,7 @@ void user_init(void)
 
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     check_status.umid_check = flash_read_mid_uid_with_check((unsigned int *)(&(g_flash_mid)), uid);
-    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL711X)
+    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
     check_status.umid_check = flash_read_mid_uid_with_check_with_device_num(SLAVE_N, (unsigned int *)(&(g_flash_mid)), uid);
     #endif
     err_status.uid_err = (!check_status.umid_check);
@@ -2184,7 +2348,7 @@ void user_init(void)
     } else {
         err_status.flash_unlock_init_add_err = 1;
     }
-    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL711X)
+    #elif defined(MCU_CORE_TL7518) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL322X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_TL751X) || defined(MCU_CORE_TL711X) || defined(MCU_CORE_TL753X)
     if (hal_flash_lock_with_device_num(SLAVE_N)) {
         check_status.flash_lock_init_add_check = 1;
     } else {
@@ -2215,7 +2379,7 @@ void user_init(void)
 {
     #if defined(MCU_CORE_B91) || defined(MCU_CORE_B92) || defined(MCU_CORE_TL321X) || defined(MCU_CORE_TL323X) || defined(MCU_CORE_TL521X)
     g_flash_mid = flash_read_mid();
-    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92)
+    #elif defined(MCU_CORE_TL751X) || defined(MCU_CORE_B931) || defined(MCU_CORE_TL721X) || defined(MCU_CORE_TL522X) || defined(MCU_CORE_W92) || defined(MCU_CORE_TL753X)
     g_flash_mid = flash_read_mid_with_device_num(SLAVE_N);
     #endif
 
@@ -2455,6 +2619,31 @@ void user_init(void)
     case MID1660CD:
         flash_write_status_mid1660cd(0x200, FLASH_WRITE_STATUS_QE_MID1660CD);
         g_qe_status = flash_read_status_mid1660cd();
+        break;
+    default:
+        break;
+    }
+    #elif defined(MCU_CORE_TL753X)
+    switch (g_flash_mid) {
+    case MID146085:
+        flash_write_status_mid146085_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID146085);
+        g_qe_status = flash_read_status_mid146085_with_device_num(SLAVE_N);
+        break;
+    case MID166085:
+        flash_write_status_mid166085_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID166085);
+        g_qe_status = flash_read_status_mid166085_with_device_num(SLAVE_N);
+        break;
+    case MID1660CD:
+        flash_write_status_mid1660cd_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID1660CD);
+        g_qe_status = flash_read_status_mid1660cd_with_device_num(SLAVE_N);
+        break;
+    case MID176085:
+        flash_write_status_mid176085_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID176085);
+        g_qe_status = flash_read_status_mid176085_with_device_num(SLAVE_N);
+        break;
+    case MID174120:
+        flash_write_status_mid174120_with_device_num(SLAVE_N, 0x200, FLASH_WRITE_STATUS_QE_MID174120);
+        g_qe_status = flash_read_status_mid174120_with_device_num(SLAVE_N);
         break;
     default:
         break;

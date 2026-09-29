@@ -22,14 +22,15 @@
  *
  *******************************************************************************************************/
 #pragma once
-
+#if !(defined(MCU_CORE_TL752X)||defined(MCU_CORE_TL651X))
+#include "printf.h"
+#endif
 #include "app_config/app_config.h"
 
 #if !(defined(MCU_CORE_TL752X)||defined(MCU_CORE_TL651X))
 #include "auto_test/dut_cmd.h"
 //#include "auto_test/pc_interface.h"
 #include "calibration.h"
-#include "printf.h"
 #include <string.h>
 #include "hal_driver/flash/hal_flash.h"
 #include "gpio.h"
@@ -192,7 +193,7 @@ void platform_init(power_mode_e power_mode, vbat_type_e vbat_v, cap_typedef_e ca
      #define PLATFORM_INIT platform_init(LDO_1P25_LDO_1P8, VBAT_MAX_VALUE_GREATER_THAN_3V6, INTERNAL_CAP_XTAL24M, 0)
     #endif
     #ifndef CLOCK_INIT
-        #define CLOCK_INIT
+        #define CLOCK_INIT DOUBLER_48M_SYSCLK_48M
     #endif
 #else
 void platform_init(unsigned char flash_protect_en);

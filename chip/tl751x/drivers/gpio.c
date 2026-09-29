@@ -21,6 +21,7 @@
  *          limitations under the License.
  *
  *******************************************************************************************************/
+#include <assert.h>
 #include "gpio.h"
 
 /**********************************************************************************************************************
@@ -345,6 +346,18 @@ void gpio_set_up_down_res(gpio_pin_e pin, gpio_pull_type_e up_down_res)
     // PG[3:0]               PG[6:4]
     // sel: ana_0x8c<7:0>    ana_0x8d<5:0>
     unsigned char r_val = up_down_res & 0x03;
+
+    /*
+    * setting gpio_wakeup to GPIO_PIN_PULLUP_10K is not allowed, otherwise the device may fail to wake up
+    */
+    if (up_down_res == GPIO_PIN_PULLUP_10K) {
+        unsigned char group = pin >> 8;
+        if (group < 7) {
+            if (analog_read_reg8(0x9e + group) & (pin & 0xff)) {
+                assert(0);
+            }
+        }
+    }
 
     unsigned char base_ana_reg = 0;
     if ((pin >> 8) < 8) {
